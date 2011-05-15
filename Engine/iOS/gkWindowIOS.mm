@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 harkon.kr
 
-    Contributor(s): none yet.
+    Contributor(s): Jonathan.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -40,6 +40,8 @@
 #include "OgreWindowEventUtilities.h"
 #include "OIS.h"
 
+#include <vector>
+
 @implementation gkGestureView
 
 - (BOOL)canBecomeFirstResponder
@@ -56,6 +58,7 @@
 
 gkWindowIOS::gkWindowIOS()
 	:	m_itouch(0),
+		m_iacc(0),
 		m_gestureView(0)
 {
 }
@@ -68,9 +71,21 @@ gkWindowIOS::~gkWindowIOS()
 	if (m_input)
 	{
 		if (m_itouch)
+		{
 			m_input->destroyInputObject(m_itouch);
-
-		m_itouch = 0;
+			m_itouch = 0;
+		}
+		
+		if (m_iacc)
+		{
+			m_input->destroyInputObject(m_iacc);
+			m_iacc = 0;
+		}
+		
+		UTsize i;
+		for (i=0; i<m_joysticks.size(); ++i)
+			delete m_joysticks[i];
+		
 	}
 }
 
@@ -97,6 +112,23 @@ bool gkWindowIOS::setupInput(const gkUserDefs& prefs)
 		m_itouch = (OIS::MultiTouch*)m_input->createInputObject(OIS::OISMultiTouch, true);
 		GK_ASSERT(m_itouch);
 		m_itouch->setEventCallback(this);
+		
+		m_joysticks.resize(OIS_MAX_NUM_TOUCHES+1,0);
+		UTsize i;
+		for (i=1; i<m_joysticks.size(); ++i)
+			m_joysticks[i] = new gkJoystick(1, 2);
+
+		try {
+			m_iacc = (OIS::JoyStick*)m_input->createInputObject(OIS::OISJoyStick, true);
+			GK_ASSERT(m_iacc);
+			m_iacc->setEventCallback(this);
+		}
+		
+		catch (OIS::Exception&) {
+			m_iacc = 0;
+		}
+		
+		m_joysticks[0] = new gkJoystick(0,0);
 	}
 	catch (OIS::Exception& e)
 	{
@@ -110,11 +142,43 @@ bool gkWindowIOS::setupInput(const gkUserDefs& prefs)
 void gkWindowIOS::dispatch(void)
 {
 	GK_ASSERT(m_itouch);
+	
+	const std::vector<OIS::MultiTouchState>& states = m_itouch->getMultiTouchStates();
 
-	m_itouch->capture();    //OIS don't thing, currently. so instead use a previous saved touch event
+	UTsize i;
+	for(i=1; i<m_joysticks.size(); ++i)
+	{
+		const OIS::MultiTouchState& state = states[i-1];
+		gkJoystick* js = m_joysticks[i];
+		
+		switch(state.touchType)
+		{
+			case OIS::MT_Pressed:
+			case OIS::MT_Moved:
+				js->buttons[0] = GK_Pressed;
+				break;
+			
+			case OIS::MT_Released:
+				js->buttons[0] = GK_Released;
+				break;
+			
+			default:
+				js->buttons[0] = GK_NullState;
+		}
+		
+		js->axes[0] = state.X.abs;
+		js->axes[1] = state.Y.abs;
+		
+		js->relAxes[0] = state.X.rel;
+		js->relAxes[1] = state.Y.rel;
+		
+		js->buttonCount = state.tapCount;
+	}
+	
+	m_itouch->capture();
 
-	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
-		m_mouse.moved = false;
+	if(m_iacc)
+		m_iacc->capture();
 }
 
 void gkWindowIOS::process(void)
@@ -122,6 +186,15 @@ void gkWindowIOS::process(void)
 	[m_gestureView becomeFirstResponder];
 
 	gkWindow::process();
+}
+
+void gkWindowIOS::clearStates(void)
+{
+	UTsize i;
+	for (i=0; i<m_joysticks.size(); ++i)
+		m_joysticks[i]->clear();
+	
+	gkWindow::clearStates();
 }
 
 
@@ -166,35 +239,55 @@ void gkWindowIOS::transformInputState(OIS::MultiTouchState& state)
 
 bool gkWindowIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_mouse;
-
-	data.buttons[gkMouse::Left] = GK_Pressed;
-
+	int fid = arg.state.fingerID+1;
+	if (fid == 0)
+		return true;
+	
+	gkJoystick& data = *m_joysticks[fid];
+		
+	data.buttons[0] = GK_Pressed;
+	data.buttonsPressed[0] = GK_Pressed;
+	data.axes[0] = arg.state.X.abs;
+	data.axes[1] = arg.state.Y.abs;
+	data.relAxes[0] = 0;
+	data.relAxes[1] = 0;
+	data.buttonCount = arg.state.tapCount;
+	
 	if (!m_listeners.empty())
 	{
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
-			node->mousePressed(data);
+			node->joystickPressed(data,0);
 			node = node->getNext();
 		}
 	}
-
+	
 	return true;
 }
 
 bool gkWindowIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_mouse;
+	int fid = arg.state.fingerID+1;
+	if (fid == 0)
+		return true;
+	
+	gkJoystick& data = *m_joysticks[fid];
 
-	data.buttons[gkMouse::Left] = GK_Released;
-
+	data.buttons[0] = GK_Released;
+	data.buttonsPressed[0] = GK_NullState;
+	data.axes[0] = arg.state.X.abs;
+	data.axes[1] = arg.state.Y.abs;
+	data.relAxes[0] = 0;
+	data.relAxes[1] = 0;
+	data.buttonCount = arg.state.tapCount;
+		
 	if (!m_listeners.empty())
 	{
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
-			node->mousePressed(data);
+			node->joystickReleased(data,0);
 			node = node->getNext();
 		}
 	}
@@ -204,29 +297,33 @@ bool gkWindowIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 
 bool gkWindowIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_mouse;
-	OIS::MultiTouchState state = arg.state;;
-
+	int fid = arg.state.fingerID+1;
+	if (fid == 0)
+		return true;
+	
+	gkJoystick& data = *m_joysticks[fid];
+	OIS::MultiTouchState state = arg.state;
+		
 	transformInputState(state);
-
-	data.position.x = (gkScalar)state.X.abs;
-	data.position.y = (gkScalar)state.Y.abs;
-	data.relative.x = (gkScalar)state.X.rel;
-	data.relative.y = (gkScalar)state.Y.rel;
-	data.moved = true;
-
-	data.wheelDelta = 0;
+		
+	data.buttons[0] = GK_Pressed;
+	data.buttonsPressed[0] = GK_NullState;
+	data.axes[0] = state.X.abs;
+	data.axes[1] = state.Y.abs;
+	data.relAxes[0] = arg.state.X.rel;
+	data.relAxes[1] = arg.state.Y.rel;
+	data.buttonCount = arg.state.tapCount;
 
 	if (!m_listeners.empty())
 	{
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
-			node->mouseMoved(data);
+			node->joystickMoved(data,0);
 			node = node->getNext();
 		}
 	}
-
+	
 	return true;
 }
 
@@ -234,4 +331,27 @@ bool gkWindowIOS::touchCancelled(const OIS::MultiTouchEvent& arg)
 {
 	return true;
 }
+
+bool gkWindowIOS::axisMoved(const OIS::JoyStickEvent& arg, int i)
+{
+	const OIS::Vector3& arg_accel = arg.state.mVectors[0];
+	gkVector3& accel = m_joysticks[0]->accel;
+	
+	accel.x = arg_accel.x;
+	accel.y = arg_accel.y;
+	accel.z = arg_accel.z;
+
+	if (!m_listeners.empty())
+	{
+		gkWindowSystem::Listener* node = m_listeners.begin();
+		while (node)
+		{
+			node->joystickMoved(*m_joysticks[0], 0);
+			node = node->getNext();
+		}
+	}
+
+	return true;
+}
+
 

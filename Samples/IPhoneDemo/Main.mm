@@ -34,7 +34,8 @@
 
 #define USE_VIEWPORT_LANDSCAPE 1   //0: viewport_portrait, 1: viewport_landscape
 
-const gkString gkDefaultBlend   = "momo_ogre_i.blend";
+//const gkString gkDefaultBlend   = "momo_ogre_i.blend";
+const gkString gkDefaultBlend   = "multitouch_test.blend";
 const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
 
 
@@ -49,7 +50,7 @@ public:
     OgreKit();
     virtual ~OgreKit() {}
 
-    bool init();
+    bool init(int width, int height);
 
     bool setup(void);
 
@@ -82,18 +83,25 @@ OgreKit::OgreKit()
 }
 
 
-bool OgreKit::init()
+bool OgreKit::init(int width, int height)
 {
     gkString cfgfname;
 
 	m_blend  = gkDefaultBlend;
 	cfgfname = gkDefaultConfig;
 	
+	m_prefs.winsize.x = width;
+	m_prefs.winsize.y = height;
+	
+	// iPad
+	//m_prefs.winsize.x        = 768;
+    //m_prefs.winsize.y        = 1024;
+	
+	// iPhone
 	//960x640, 480x320
 
-
-	m_prefs.winsize.x        = 320;
-    m_prefs.winsize.y        = 480;
+	//m_prefs.winsize.x        = 320;
+    //m_prefs.winsize.y        = 480;
 
 	
 #if USE_VIEWPORT_LANDSCAPE
@@ -233,7 +241,14 @@ int main(int argc, char **argv)
 	m_displayLink = nil;
 	m_timer = nil;
 	
-	m_okit.init();
+	// determine the size of the screen in pixels (according for retina displays)
+	CGRect screenBounds = [[UIScreen mainScreen] bounds];
+	CGFloat screenScale = [[UIScreen mainScreen] scale];
+	CGSize screenSize = CGSizeMake(screenBounds.size.width * screenScale, screenBounds.size.height * screenScale);
+	int width = screenSize.width;
+	int height = screenSize.height;
+	
+	m_okit.init(width, height);
 	
 #if USE_CADISPLAYLINK
 	NSString *reqSysVer = @"3.1";

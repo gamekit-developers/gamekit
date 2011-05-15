@@ -26,6 +26,7 @@
 #include "OISInputManager.h"
 #include "OISFactoryCreator.h"
 #include "iphone/iPhonePrereqs.h"
+#include "OISMultiTouch.h"
 
 #import <UIKit/UIKit.h>
 namespace OIS {
@@ -48,6 +49,34 @@ namespace OIS
 
     class iPhoneInputManager : public InputManager, public FactoryCreator
     {
+		/*
+		class TouchTracker {
+			class TouchTrack {
+			public:
+				void *touchPtr;
+				
+				TouchTrack()
+				:	touchPtr(0)
+				{}
+			};
+			
+			TouchTrack m_touchTracker[OIS_MAX_NUM_TOUCHES];
+			
+		public:
+			TouchTracker() {}
+			
+			int getFingerIDByTouch(void *touch);
+			
+			int addNewTouch(void *touch);
+			
+			void deleteTouch(void *touch);
+			
+			int getTouchesActive();
+		};
+		
+		TouchTracker m_touchTracker;
+		*/
+		
     public:
         iPhoneInputManager();
         virtual ~iPhoneInputManager();

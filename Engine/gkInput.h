@@ -151,7 +151,6 @@ enum gkInputState
 };
 
 
-
 class gkKeyboard
 {
 public:
@@ -260,7 +259,7 @@ public:
 
 	typedef utArray<int> ButtonStates;
 	typedef utArray<int> AxisStates;
-
+	
 	GK_INLINE UTsize getButtonsNumber() {return buttons.size();}
 	GK_INLINE UTsize getAxesNumber()    {return axes.size();}
 
@@ -268,6 +267,13 @@ public:
 	{
 		if (button >= 0 && button < (int)buttons.size())
 			return (buttons[button] == GK_Pressed);
+		return false;
+	}
+	
+	GK_INLINE bool wasButtonPressed(int button) const
+	{
+		if (button >= 0 && button < (int)buttons.size())
+			return (buttonsPressed[button] == GK_Pressed);
 		return false;
 	}
 
@@ -278,29 +284,51 @@ public:
 		return 0;
 	}
 
+	GK_INLINE int getRelAxisValue(int axis) const
+	{
+		if (axis >= 0 && axis < (int)relAxes.size())
+			return relAxes[axis];
+		return 0;
+	}
+	
 	void clear(void)
 	{
 		buttonCount = 0;
 		UTsize i;
 		for (i = 0; i < buttons.size(); ++i)
+		{
 			buttons[i] = GK_NullState;
+			buttonsPressed[i] = GK_NullState;
+		}
 
 		for (i = 0; i < axes.size(); ++i)
-			axes[i] = 0;
+			axes[i] = relAxes[i] = 0;
+
+		accel = gkVector3(0.f, 0.f, 0.f);
 	}
 
 public:
 
 	gkJoystick(unsigned int nbuttons, unsigned int naxis)
-		:        buttonCount(0)
+		:        buttonCount(0), accel(0.f, 0.f, 0.f)
 	{
 		buttons.resize(nbuttons, GK_NullState);
 		axes.resize(naxis, 0);
+
+		buttonsPressed.resize(nbuttons, GK_NullState);
+		relAxes.resize(naxis, 0);
 	}
 
 	int             buttonCount; // currently pressed count
 	ButtonStates    buttons;     // button pressed state
 	AxisStates      axes;
+
+	// for multi-touch
+	ButtonStates	buttonsPressed;
+	AxisStates      relAxes;
+
+	// for accelerometer
+	gkVector3		accel;
 };
 
 class gkTouch

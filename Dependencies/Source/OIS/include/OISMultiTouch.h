@@ -28,7 +28,7 @@ restrictions:
 #include <set>
 #include <vector>
 
-#define OIS_MAX_NUM_TOUCHES 4   // 4 finger touches are probably the highest we'll ever get
+#define OIS_MAX_NUM_TOUCHES 10   // 11 finger touches are probably the highest we'll ever get
 
 namespace OIS
 {
@@ -46,7 +46,7 @@ namespace OIS
 	class _OISExport MultiTouchState
 	{
 	public:
-		MultiTouchState() : width(50), height(50), touchType(MT_None) {};
+		MultiTouchState() : width(50), height(50), touchType(MT_None), fingerID(-1), tapCount(0) {};
 
 		/** Represents the height/width of your display area.. used if touch clipping
 		or touch grabbed in case of X11 - defaults to 50.. Make sure to set this
@@ -63,10 +63,15 @@ namespace OIS
 		Axis Z;
 
         int touchType;
+		
+		int fingerID;
+		
+		int tapCount;
 
         inline bool touchIsType( MultiTypeEventTypeID touch ) const
 		{
-			return ((touchType & ( 1L << touch )) == 0) ? false : true;
+		//	return ((touchType & ( 1L << touch )) == 0) ? false : true;
+			return touchType == touch;
 		}
         
 		//! Clear all the values
@@ -129,7 +134,7 @@ namespace OIS
         void clearStates(void) { mStates.clear(); }
 
 		/** @remarks Returns the state of the touch - is valid for both buffered and non buffered mode */
-		std::vector<MultiTouchState> getMultiTouchStates() const { return mStates; }
+		const std::vector<MultiTouchState>& getMultiTouchStates() const { return mStates; }
         
         /** @remarks Returns the first n touch states.  Useful if you know your app only needs to 
                 process n touches.  The return value is a vector to allow random access */

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Jonathan.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -427,14 +427,91 @@ void gsMouse::capture(void)
 }
 
 
-bool gsMouse::isButtonDown(gsMouseButton btn)
+bool gsMouse::isButtonDown(int btn)
 {
 	if (!gkWindowSystem::getSingletonPtr()) return false;
-	return gkWindowSystem::getSingleton().getMouse()->isButtonDown(btn);
+	return gkWindowSystem::getSingleton().getMouse()->isButtonDown((gsMouseButton)btn);
 }
 
 
 
+int getNumJoysticks(void)
+{
+	if (!gkWindowSystem::getSingletonPtr()) return 0;
+	return gkWindowSystem::getSingleton().getNumJoysticks();
+}
+
+gsJoystick::gsJoystick(int i)
+	: m_joystick(1,3), m_index(i)
+{
+	GK_ASSERT(i >= 0);
+	GK_ASSERT(i < getNumJoysticks());
+}
+
+gsJoystick::~gsJoystick()
+{
+}
+
+void gsJoystick::capture(void)
+{
+	GK_ASSERT(m_index < getNumJoysticks());
+
+	if(m_index >= 0 && m_index < getNumJoysticks())
+		m_joystick = *gkWindowSystem::getSingleton().getJoystick(m_index);
+}
+
+int gsJoystick::getNumAxes()
+{
+	return m_joystick.getAxesNumber();
+}
+
+int gsJoystick::getAxis(int i)
+{
+	return m_joystick.getAxisValue(i);
+}
+
+int gsJoystick::getRelAxis(int i)
+{
+	return m_joystick.getRelAxisValue(i);
+}
+
+int gsJoystick::getNumButtons()
+{
+	return m_joystick.getButtonsNumber();
+}
+
+int gsJoystick::getButtonCount()
+{
+	return m_joystick.buttonCount;
+}
+
+bool gsJoystick::isButtonDown(int i)
+{
+	return m_joystick.isButtonDown(i);
+}
+
+bool gsJoystick::wasButtonPressed(int i)
+{
+	return m_joystick.wasButtonPressed(i);
+}
+
+gsVector3 gsJoystick::getAccel()
+{
+	const gkVector3& a = m_joystick.accel;
+	return gsVector3(a.x, a.y, a.z);
+}
+
+int gsJoystick::getWinWidth(void)
+{
+	if (!gkWindowSystem::getSingletonPtr()) return 0;
+	return gkWindowSystem::getSingleton().getMainWindow()->getWidth();
+}
+
+int gsJoystick::getWinHeight(void)
+{
+	if (!gkWindowSystem::getSingletonPtr()) return 0;
+	return gkWindowSystem::getSingleton().getMainWindow()->getHeight();
+}
 
 
 

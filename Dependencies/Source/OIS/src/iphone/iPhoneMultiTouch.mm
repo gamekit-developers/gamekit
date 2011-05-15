@@ -25,6 +25,63 @@
 
 using namespace OIS;
 
+
+//-------------------------------------------------------------------//
+
+int iPhoneMultiTouch::TouchTracker::getFingerIDByTouch(void *touch) const
+{
+	for (int i=0; i<OIS_MAX_NUM_TOUCHES; ++i)
+	{
+		if(m_touches[i].ptr == touch)
+			return i;
+	}
+	return -1;
+}
+
+int iPhoneMultiTouch::TouchTracker::addNewTouch(void *touch)
+{
+	for (int i=0; i<OIS_MAX_NUM_TOUCHES; ++i)
+	{
+		if(m_touches[i].ptr == 0)
+		{
+			m_touches[i].ptr = touch;
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void iPhoneMultiTouch::TouchTracker::deleteTouch(void *touch)
+{
+	for (int i=0; i<OIS_MAX_NUM_TOUCHES; ++i)
+	{
+		if(m_touches[i].ptr == touch)
+		{
+			m_touches[i].ptr = 0;
+			return;
+		}
+	}
+}
+
+void iPhoneMultiTouch::TouchTracker::deleteTouch(int fingerID)
+{
+	m_touches[fingerID].ptr = 0;
+}
+
+int iPhoneMultiTouch::TouchTracker::getFingerCount() const
+{
+	int count = 0;
+	
+	for (int i=0; i<OIS_MAX_NUM_TOUCHES; ++i)
+	{
+		if(m_touches[i].ptr != 0)
+			count++;
+	}
+	
+	return count;
+}
+
 //-------------------------------------------------------------------//
 iPhoneMultiTouch::iPhoneMultiTouch( InputManager* creator, bool buffered )
 	: MultiTouch(creator->inputSystemName(), buffered, 0, creator)
@@ -33,6 +90,8 @@ iPhoneMultiTouch::iPhoneMultiTouch( InputManager* creator, bool buffered )
 
     man->_setMultiTouchUsed(true);
     [man->_getDelegate() setTouchObject:this];
+	
+	mStates.resize(OIS_MAX_NUM_TOUCHES);
 }
 
 iPhoneMultiTouch::~iPhoneMultiTouch()
@@ -55,6 +114,24 @@ void iPhoneMultiTouch::setBuffered( bool buffered )
 
 void iPhoneMultiTouch::capture()
 {
+	for(int i=0; i<OIS_MAX_NUM_TOUCHES; ++i)
+	{
+		MultiTouchState& state = mStates[i];
+		
+		if(state.touchType == MT_Moved)
+		{
+			state.X.rel =
+			state.Y.rel = 0;
+		}
+		else if(state.touchType == MT_Released || state.touchType == MT_Cancelled)
+		{
+			m_touchTracker.deleteTouch(state.fingerID);
+			state.touchType = MT_None;
+		}
+		
+		state.tapCount = 0;
+	}
+	
 #if 0
     for( std::multiset<MultiTouchState *>::iterator i = mStates.begin(), e = mStates.end(); i != e; ++i )
     {
@@ -100,11 +177,21 @@ void iPhoneMultiTouch::capture()
 void iPhoneMultiTouch::_touchBegan(UITouch *touch)
 {
     CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int taps = [touch tapCount];
 
-    MultiTouchState newState;
+	int fid = m_touchTracker.getFingerIDByTouch(touch);
+	if (fid == -1)
+		fid = m_touchTracker.addNewTouch(touch);
+	
+	MultiTouchState& newState = mStates[fid];
+	
     newState.X.abs = location.x;
     newState.Y.abs = location.y;
-    newState.touchType |= 1 << MT_Pressed;
+    newState.X.rel = 0;
+    newState.Y.rel = 0;
+    newState.touchType = MT_Pressed;
+	newState.fingerID = fid;
+	newState.tapCount = taps;
 
     if( mListener && mBuffered )
     {
@@ -118,12 +205,24 @@ void iPhoneMultiTouch::_touchBegan(UITouch *touch)
 
 void iPhoneMultiTouch::_touchEnded(UITouch *touch)
 {
-    CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int fid = m_touchTracker.getFingerIDByTouch(touch);
+	if (fid == -1)
+		return;
 
-    MultiTouchState newState;
-    newState.X.abs = location.x;
-    newState.Y.abs = location.y;
-    newState.touchType |= 1 << MT_Released;
+	CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int taps = [touch tapCount];
+	
+	MultiTouchState& newState = mStates[fid];
+	
+	newState.X.abs = location.x;
+	newState.Y.abs = location.y;
+	newState.X.rel = 0;
+	newState.Y.rel = 0;
+	newState.touchType = MT_Released;
+	newState.fingerID = fid;
+	newState.tapCount = taps;
+
+	//m_touchTracker.deleteTouch(touch);
 
     if( mListener && mBuffered )
     {
@@ -137,15 +236,23 @@ void iPhoneMultiTouch::_touchEnded(UITouch *touch)
 
 void iPhoneMultiTouch::_touchMoved(UITouch *touch)
 {
-    CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
-    CGPoint previousLocation = [touch previousLocationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int fid = m_touchTracker.getFingerIDByTouch(touch);
+	if (fid == -1)
+		return;
 
-    MultiTouchState newState;
-    newState.X.rel = (location.x - previousLocation.x);
-    newState.Y.rel = (location.y - previousLocation.y);
-    newState.X.abs = location.x;
-    newState.Y.abs = location.y;
-    newState.touchType |= 1 << MT_Moved;
+	CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	CGPoint previousLocation = [touch previousLocationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int taps = [touch tapCount];
+		
+	MultiTouchState& newState = mStates[fid];
+	
+	newState.X.abs = location.x;
+	newState.Y.abs = location.y;
+	newState.X.rel = (location.x - previousLocation.x);
+	newState.Y.rel = (location.y - previousLocation.y);
+	newState.touchType = MT_Moved;
+	newState.fingerID = fid;
+	newState.tapCount = taps;
 
     if( mListener && mBuffered )
     {
@@ -159,12 +266,20 @@ void iPhoneMultiTouch::_touchMoved(UITouch *touch)
 
 void iPhoneMultiTouch::_touchCancelled(UITouch *touch)
 {
-    CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int fid = m_touchTracker.getFingerIDByTouch(touch);
+	if (fid == -1)
+		return;
 
-    MultiTouchState newState;
+    CGPoint location = [touch locationInView:static_cast<iPhoneInputManager*>(mCreator)->_getDelegate()];
+	int taps = [touch tapCount];
+
+    MultiTouchState& newState = mStates[fid];
     newState.X.abs = location.x;
     newState.Y.abs = location.y;
-    newState.touchType |= 1 << MT_Cancelled;
+    newState.touchType = MT_Cancelled;
+	newState.tapCount = taps;
+
+	//m_touchTracker.deleteTouch(touch);
 
     if( mListener && mBuffered )
     {

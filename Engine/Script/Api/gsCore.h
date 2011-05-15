@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Jonathan.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -160,9 +160,36 @@ public:
 	bool    moved;
 
 	void capture(void);
-	bool isButtonDown(gsMouseButton btn);
+	bool isButtonDown(int btn);
 };
 
+extern int getNumJoysticks(void);
+
+class gsJoystick
+{
+	gkJoystick m_joystick;
+	int m_index;
+	
+public:
+	gsJoystick(int i);
+	~gsJoystick();
+	
+	void capture(void);
+	
+	int getNumAxes();
+	int getAxis(int i);
+	int getRelAxis(int i);
+
+	gsVector3 getAccel();
+	
+	int getNumButtons();
+	int getButtonCount();
+	bool isButtonDown(int i);
+	bool wasButtonPressed(int i);
+	
+	int getWinWidth(void);
+	int getWinHeight(void);
+};
 
 
 class gsKeyboard

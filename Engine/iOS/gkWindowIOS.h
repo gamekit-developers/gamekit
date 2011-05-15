@@ -43,7 +43,7 @@ class gkWindowIOS :
 	public OIS::MultiTouchListener
 {
 	virtual bool setupInput(const gkUserDefs& prefs);
-
+	
 public:
 	gkWindowIOS();
 	virtual ~gkWindowIOS();
@@ -51,15 +51,20 @@ public:
 	virtual void dispatch(void);
 	virtual void process(void);
 	
+	virtual void clearStates(void);
+	
 	bool touchPressed(const OIS::MultiTouchEvent& arg);
 	bool touchReleased(const OIS::MultiTouchEvent& arg);
 	bool touchMoved(const OIS::MultiTouchEvent& arg);
 	bool touchCancelled(const OIS::MultiTouchEvent& arg);
-
+	
 	void transformInputState(OIS::MultiTouchState& state);
 
-	OIS::MultiTouch*        m_itouch;
-	gkGestureView*          m_gestureView;
+	bool axisMoved(const OIS::JoyStickEvent& arg, int i);
+
+	OIS::MultiTouch*			m_itouch;
+	OIS::JoyStick*				m_iacc;
+	gkGestureView*				m_gestureView;
 };
 
 #endif //_gkWindowIOS_h_

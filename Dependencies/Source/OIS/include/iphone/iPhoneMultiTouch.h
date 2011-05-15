@@ -34,6 +34,34 @@ namespace OIS
 {
 	class iPhoneMultiTouch : public MultiTouch
     {
+	protected:
+		class TouchTracker {
+			class TouchTrack {
+			public:
+				void *ptr;
+				
+				TouchTrack()
+				:	ptr(0)
+				{}
+			};
+			
+			TouchTrack m_touches[OIS_MAX_NUM_TOUCHES];
+			
+		public:
+			TouchTracker() {}
+			
+			int getFingerCount() const;
+			
+			int getFingerIDByTouch(void *touch) const;
+			
+			int addNewTouch(void *touch);
+			
+			void deleteTouch(void *touch);
+			void deleteTouch(int fingerID);
+		};
+		
+		TouchTracker m_touchTracker;
+
 	public:
 		iPhoneMultiTouch( InputManager* creator, bool buffered );
 		virtual ~iPhoneMultiTouch();
