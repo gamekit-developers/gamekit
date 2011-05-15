@@ -38,7 +38,9 @@ gkGameLevel::gkGameLevel()
 	     m_killThemAll(0),
 	     m_level(GK_LEVEL_EXIT),
 	     m_keyboard(0),
-	     m_mouse(0)
+	     m_mouse(0),
+		 m_player(0),
+		 m_enemy(0)
 {
 	m_keyboard = gkWindowSystem::getSingleton().getKeyboard();
 	m_mouse    = gkWindowSystem::getSingleton().getMouse();
@@ -58,6 +60,8 @@ gkGameLevel::~gkGameLevel()
 {
 	delete m_player;
 	m_player = 0;
+	delete m_enemy;
+	m_enemy = 0;
 
 	gkGameObjectManager::getSingleton().removeResourceListener(this);
 	gkGameObjectManager::getSingleton().removeInstanceListener(this);
@@ -92,6 +96,7 @@ void gkGameLevel::loadPickup(void)
 		m_pickup->reinstance();
 		return;
 	}
+
 
 	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_PLAYER), "", LEVEL_GROUP_NAME);
 	if (!playerData || !playerData->getMainScene())
@@ -128,9 +133,10 @@ void gkGameLevel::loadPickup(void)
 	m_player = new gkGamePlayer(this);
 	m_player->load(playerData);
 
-
-
 	m_pickup->createInstance();
+
+	m_enemy = m_player->clone();
+	m_enemy->setPosition(gkVector3(0,1,1));
 }
 
 
@@ -154,6 +160,9 @@ void gkGameLevel::tick(gkScalar delta)
 	// update game states
 	if (m_player)
 		m_player->update(delta);
+
+	if (m_enemy)
+		m_enemy->update(delta);
 
 	if (m_keyboard->key_count > 0)
 	{

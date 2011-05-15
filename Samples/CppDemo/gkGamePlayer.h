@@ -51,12 +51,23 @@ public:
 		gkEntity*     m_entity;
 		gkSkeleton*   m_skeleton;
 
+		void setup(gkGamePlayer* player)
+		{
+			GK_ASSERT(player);
+
+			m_physics = player->m_physics;
+			m_xRot = player->m_xRot;
+			m_zRot = player->m_zRot;
+			m_camera = player->m_camera;
+			m_entity = player->m_entity;
+			m_skeleton = player->m_skeleton;
+		}
 	};
 
-
+	friend struct Data;
 public:
 
-	gkGamePlayer(gkGameLevel* levelData);
+	gkGamePlayer(gkGameLevel* levelData, bool forceKeyMouseInput=false);
 	~gkGamePlayer();
 
 
@@ -69,7 +80,15 @@ public:
 
 	Data& getData(void) {return m_playerData;}
 
+	gkGamePlayer* clone();
+
+	void setPosition(const gkVector3& pos);
+
 protected:
+	void loadAnimations();
+	void loadConstraints();
+	void loadHuds();
+
 	void setInitialText(void);
 
 	bool wantsToWalk(void);
@@ -141,8 +160,6 @@ protected:
 	gkCamera*     m_camera;
 	gkEntity*     m_entity;
 	gkSkeleton*   m_skeleton;
-
-
 
 	gkAnimations m_animations;
 	gkAnimationSequence* m_comboAttack;

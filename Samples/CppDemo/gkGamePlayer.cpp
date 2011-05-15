@@ -37,7 +37,7 @@
 #include "Animation/gkAnimationManager.h"
 
 
-gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
+gkGamePlayer::gkGamePlayer(gkGameLevel* levelData, bool forceKeyMouseInput)
 	:    m_levelData(levelData),
 	     m_physics(0),
 	     m_xRot(0),
@@ -54,7 +54,7 @@ gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
 	     m_cameraState(0),
 	     m_comboAttack(0)
 {
-	if (gkWindowSystem::getSingleton().getJoystick(0))
+	if (!forceKeyMouseInput && gkWindowSystem::getSingleton().getJoystick(0))
 		m_input = new gkJoystickController(this);
 	else
 		m_input = new gkDefaultController(this);
@@ -66,79 +66,46 @@ gkGamePlayer::~gkGamePlayer()
 	delete m_input;
 }
 
-
-
-void gkGamePlayer::load(gkBlendFile* playerData)
+gkGamePlayer* gkGamePlayer::clone()
 {
+	gkGamePlayer* player = new gkGamePlayer(m_levelData, true);
 	gkScene* dest = m_levelData->getLevel();
-	gkScene* tscene = playerData->getMainScene();
 
+	player->m_physics = dest->cloneObject(m_physics, 0, true);
+	player->m_skeleton = (gkSkeleton*)dest->cloneObject(m_skeleton, 0, true);
+	player->m_entity = (gkEntity*)dest->cloneObject(m_entity, 0);
+	player->m_entity->setSkeleton(player->m_skeleton);
+	player->m_camera = 0;
 
-	GK_ASSERT(
-	    tscene->hasObject(GK_RESOURCE_PLAYER_SKEL) &&
-	    tscene->hasObject(GK_RESOURCE_PLAYER_MESH) &&
-	    tscene->hasObject(GK_RESOURCE_PLAYER_VIEW) &&
-	    tscene->hasObject(GK_RESOURCE_PLAYER_ZROT) &&
-	    tscene->hasObject(GK_RESOURCE_PLAYER_XROT) &&
-	    tscene->hasObject(GK_RESOURCE_PLAYER_PHYS)
-	);
+	player->m_zRot = dest->cloneObject(m_zRot, 0, true);
+	player->m_xRot = dest->cloneObject(m_xRot, 0, true);
+		
+	player->m_entity->createInstance();	
 
+	player->m_physics->setTransform(m_physics->getTransform());
+	player->m_skeleton->setTransform(m_skeleton->getTransform());
+	player->m_entity->setTransform(m_entity->getTransform());
+	
 
-	m_skeleton = tscene->getObject(GK_RESOURCE_PLAYER_SKEL)->getSkeleton();
-	m_entity   = tscene->getObject(GK_RESOURCE_PLAYER_MESH)->getEntity();
-	m_camera   = tscene->getObject(GK_RESOURCE_PLAYER_VIEW)->getCamera();
-	m_zRot     = tscene->getObject(GK_RESOURCE_PLAYER_ZROT);
-	m_xRot     = tscene->getObject(GK_RESOURCE_PLAYER_XROT);
-	m_physics  = tscene->getObject(GK_RESOURCE_PLAYER_PHYS);
+	player->m_zRot->setTransform(m_zRot->getTransform());
+	player->m_xRot->setTransform(m_xRot->getTransform());
 
-	m_playerData.m_physics = m_physics;
-	m_playerData.m_xRot = m_xRot;
-	m_playerData.m_zRot = m_zRot;
-	m_playerData.m_camera = m_camera;
-	m_playerData.m_entity = m_entity;
-	m_playerData.m_skeleton = m_skeleton;
+	player->m_physics->addChild(player->m_skeleton);
+	player->m_skeleton->addChild(player->m_entity);
+	player->m_zRot->addChild(player->m_xRot);
 
+	player->m_playerData.setup(player);
+	
+	player->loadConstraints();
+	player->loadAnimations();
 
-	dest->addObject(m_skeleton);
-	dest->addObject(m_entity);
-	dest->addObject(m_camera);
-	dest->addObject(m_zRot);
-	dest->addObject(m_xRot);
-	dest->addObject(m_physics);
+	player->m_physics->rotate(gkEuler(0,0,180)); //?
 
+	return player;
+}
 
-	gkPhysicsProperties& props = m_physics->getProperties().m_physics;
-	props.m_mode |= GK_CONTACT;
-
-
-
-	// add constraint clamping
-	gkLimitRotConstraint* lr = new gkLimitRotConstraint();
-	lr->setLimitX(gkVector2(-90, 5));
-	dest->addConstraint(m_xRot, lr);
-
-	gkLimitLocConstraint* ll = new gkLimitLocConstraint();
-	ll->setMinX(-30.f);
-	ll->setMaxX(30.f);
-	ll->setMinY(-30.f);
-	ll->setMaxY(30.f);
-	ll->setMinZ(0.f);
-	ll->setMaxZ(30.f);
-	dest->addConstraint(m_physics, ll);
-
-
-	gkCollisionCameraConstraint* col = new gkCollisionCameraConstraint();
-	col->setTarget(m_physics);
-	col->setLength(.95f);
-	col->setForwardOffs(.125f);
-	col->setDownOffs(.125f);
-	dest->addConstraint(m_camera, col);
-
-
-
-	m_camera->setMainCamera(true);
-
-
+void gkGamePlayer::loadAnimations()
+{
 	// save animation states
 	m_skeleton->addAnimation("Momo_Idle1");
 	m_skeleton->addAnimation("Momo_IdleNasty");
@@ -165,9 +132,11 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 	
 	m_animations[GK_ANIM_WHIP]->setSpeedFactor(gkAppData::gkAnimationAttack);
 	m_animations[GK_ANIM_KICK]->setSpeedFactor(gkAppData::gkAnimationAttack);
+
+	//gkString groupName = playerData->getResourceGroup();
 	
 	// COMBO: Kick + Run + Whip
-	m_comboAttack = gkAnimationManager::getSingleton().createAnimationSequence("Momo_ComboAttack");
+	m_comboAttack = gkAnimationManager::getSingleton().createAnimationSequence(gkUtils::getUniqueName("Momo_ComboAttack"));
 	m_comboAttack->addItem("Momo_Kick",      0.f,       17.f/25.f, 0.f,      3.f/25.f);
 	m_comboAttack->addItem("Momo_Run",       15.f/25.f, 32.f/25.f, 2.f/25.f, 4.f/25.f);
 	m_comboAttack->addItem("Momo_TailWhip",  25.f/25.f, 45.f/25.f, 7.f/25.f, 0.f/25.f);
@@ -250,7 +219,43 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 	FSM_END_TRIG(this, GK_PLAY_ATTACK_0, whipEnd);
 	FSM_END_TRIG(this, GK_PLAY_RUN_ATTACK_0, runAttack0End);
 	FSM_END_TRIG(this, GK_PLAY_RUN_ATTACK_1, runAttack1End);
+}
 
+void gkGamePlayer::loadConstraints()
+{
+	gkScene* dest = m_levelData->getLevel();
+
+	gkPhysicsProperties& props = m_physics->getProperties().m_physics;
+	props.m_mode |= GK_CONTACT;
+
+	// add constraint clamping
+	gkLimitRotConstraint* lr = new gkLimitRotConstraint();
+	lr->setLimitX(gkVector2(-90, 5));
+	dest->addConstraint(m_xRot, lr);
+
+	gkLimitLocConstraint* ll = new gkLimitLocConstraint();
+	ll->setMinX(-30.f);
+	ll->setMaxX(30.f);
+	ll->setMinY(-30.f);
+	ll->setMaxY(30.f);
+	ll->setMinZ(0.f);
+	ll->setMaxZ(30.f);
+	dest->addConstraint(m_physics, ll);
+
+	if (m_camera)
+	{
+		gkCollisionCameraConstraint* col = new gkCollisionCameraConstraint();
+		col->setTarget(m_physics);
+		col->setLength(.95f);
+		col->setForwardOffs(.125f);
+		col->setDownOffs(.125f);	
+		dest->addConstraint(m_camera, col);
+		m_camera->setMainCamera(true);
+	}
+}
+
+void gkGamePlayer::loadHuds()
+{
 	m_momoData = gkHUDManager::getSingleton().getOrCreate("m_momoData");
 	if (m_momoData)
 	{
@@ -258,16 +263,56 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 		m_momoData->show();
 
 	}
-
-
+	
 	m_cameraData = gkHUDManager::getSingleton().getOrCreate("Camera_StateOverlay");
 	if (m_cameraData)
 	{
 		m_cameraState = m_cameraData->getChild("Info");
 		m_cameraData->show();
 	}
+}
+
+void gkGamePlayer::load(gkBlendFile* playerData)
+{
+	gkScene* dest = m_levelData->getLevel();
+	gkScene* tscene = playerData->getMainScene();
 
 
+	GK_ASSERT(
+	    tscene->hasObject(GK_RESOURCE_PLAYER_SKEL) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_MESH) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_VIEW) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_ZROT) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_XROT) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_PHYS)
+	);
+
+
+	m_skeleton = tscene->getObject(GK_RESOURCE_PLAYER_SKEL)->getSkeleton();
+	m_entity   = tscene->getObject(GK_RESOURCE_PLAYER_MESH)->getEntity();
+	m_camera   = tscene->getObject(GK_RESOURCE_PLAYER_VIEW)->getCamera();
+	m_zRot     = tscene->getObject(GK_RESOURCE_PLAYER_ZROT);
+	m_xRot     = tscene->getObject(GK_RESOURCE_PLAYER_XROT);
+	m_physics  = tscene->getObject(GK_RESOURCE_PLAYER_PHYS);
+
+	m_playerData.setup(this);
+	
+	dest->addObject(m_skeleton);
+	dest->addObject(m_entity);
+	dest->addObject(m_camera);
+	dest->addObject(m_zRot);
+	dest->addObject(m_xRot);
+	dest->addObject(m_physics);
+
+	loadConstraints();
+	loadAnimations();
+	loadHuds();
+}
+
+void gkGamePlayer::setPosition(const gkVector3& pos)
+{
+	GK_ASSERT(m_physics);
+	m_physics->setPosition(pos);
 }
 
 void gkGamePlayer::setInitialText(void)
@@ -603,7 +648,7 @@ void gkGamePlayer::kickEnd(int from, int to)
 
 
 bool gkGamePlayer::groundTest(void)
-{
+{	
 	gkScene* scene = m_physics->getOwner();
 	gkDynamicsWorld* dyn = scene->getDynamicsWorld();
 
@@ -747,7 +792,8 @@ void gkGamePlayer::update(gkScalar delta)
 	}
 
 	m_input->updateInputState();
-	m_input->moveCamera();
+	if (m_camera)
+		m_input->moveCamera();
 
 	gkFSM::update();
 

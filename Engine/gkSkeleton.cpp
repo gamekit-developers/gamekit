@@ -99,6 +99,7 @@ gkGameObject* gkSkeleton::clone(const gkString& name)
 {
 	gkSkeleton* cl = new gkSkeleton(getInstanceCreator(), name, -1);
 	gkGameObject::cloneImpl(cl);
+	cl->m_resource = m_resource->clone();
 	return cl;
 }
 

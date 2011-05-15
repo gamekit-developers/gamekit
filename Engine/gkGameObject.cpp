@@ -1163,6 +1163,7 @@ gkAnimationPlayer* gkGameObject::getAnimationPlayer(const gkHashedString& name)
 
 gkAnimationBlender& gkGameObject::getAnimationBlender(void)
 {
+	GK_ASSERT(m_actionBlender);
 	return *m_actionBlender;
 }
 

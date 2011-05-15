@@ -27,6 +27,8 @@
 #include "gkSkeletonResource.h"
 #include "gkBone.h"
 #include "gkLogger.h"
+#include "gkResourceManager.h"
+#include "gkUtils.h"
 
 #if GK_EXTERNAL_RENDER == GK_EXTERNAL_RENDER_OGREKIT
 #include "External/Ogre/gkOgreSkeletonLoader.h"
@@ -48,6 +50,40 @@ gkSkeletonResource::~gkSkeletonResource()
 	Bones::Iterator biter = m_bones.iterator();
 	while (biter.hasMoreElements())
 		delete biter.getNext().second;
+}
+
+void gkSkeletonResource::copyBones(gkSkeletonResource& other)
+{
+	{
+		Bones::Iterator biter = other.m_bones.iterator();
+		while (biter.hasMoreElements())
+			createBone(biter.getNext().second->getName());
+	}
+	{
+		Bones::Iterator biter = other.m_bones.iterator();
+		while (biter.hasMoreElements())
+		{
+			gkBone* bone = biter.getNext().second;
+			gkBone* parent = bone->getParent();
+			if (parent)
+			{
+				gkBone* dest = getBone(bone->getName());
+				GK_ASSERT(dest && getBone(parent->getName()));
+				dest->setParent(getBone(parent->getName()));
+				dest->setRestPosition(bone->getPose());
+			}
+		}
+	}
+}
+
+gkSkeletonResource* gkSkeletonResource::clone()
+{
+	GK_ASSERT(m_creator);
+
+	gkResourceName skelName(gkUtils::getUniqueName(getName()), getGroupName());
+	gkSkeletonResource* cl = m_creator->create<gkSkeletonResource>(skelName);
+	cl->copyBones(*this);
+	return cl;
 }
 
 

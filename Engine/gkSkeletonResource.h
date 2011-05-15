@@ -54,13 +54,15 @@ public:
 	gkSkeletonLoader* getExternalLoader(void) {return m_externalLoader;}
 	void makeManual(gkEntity* ent);
 
+	gkSkeletonResource* clone();
 
 private:
 	Bones               m_bones;
 	gkBone::BoneList    m_boneList, m_rootBoneList;
 
-
 	gkSkeletonLoader*   m_externalLoader;
+
+	void copyBones(gkSkeletonResource& other);
 };
 
 

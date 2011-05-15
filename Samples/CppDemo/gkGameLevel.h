@@ -63,6 +63,7 @@ protected:
 	gkLevel m_level;
 
 	gkGamePlayer* m_player;
+	gkGamePlayer* m_enemy;
 
 	gkKeyboard* m_keyboard;
 	gkMouse* m_mouse;
