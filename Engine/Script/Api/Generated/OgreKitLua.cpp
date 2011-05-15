@@ -1539,53 +1539,54 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsFSM swig_types[30]
 #define SWIGTYPE_p_gsGameActuator swig_types[31]
 #define SWIGTYPE_p_gsGameObject swig_types[32]
-#define SWIGTYPE_p_gsKeyboard swig_types[33]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[34]
-#define SWIGTYPE_p_gsLight swig_types[35]
-#define SWIGTYPE_p_gsLogicManager swig_types[36]
-#define SWIGTYPE_p_gsLogicObject swig_types[37]
-#define SWIGTYPE_p_gsLogicOpController swig_types[38]
-#define SWIGTYPE_p_gsLuaManager swig_types[39]
-#define SWIGTYPE_p_gsLuaScript swig_types[40]
-#define SWIGTYPE_p_gsMessageActuator swig_types[41]
-#define SWIGTYPE_p_gsMessageSensor swig_types[42]
-#define SWIGTYPE_p_gsMotionActuator swig_types[43]
-#define SWIGTYPE_p_gsMouse swig_types[44]
-#define SWIGTYPE_p_gsMouseSensor swig_types[45]
-#define SWIGTYPE_p_gsNearSensor swig_types[46]
-#define SWIGTYPE_p_gsObject swig_types[47]
-#define SWIGTYPE_p_gsParentActuator swig_types[48]
-#define SWIGTYPE_p_gsParticles swig_types[49]
-#define SWIGTYPE_p_gsProperty swig_types[50]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[51]
-#define SWIGTYPE_p_gsPropertySensor swig_types[52]
-#define SWIGTYPE_p_gsQuaternion swig_types[53]
-#define SWIGTYPE_p_gsRadarSensor swig_types[54]
-#define SWIGTYPE_p_gsRandomActuator swig_types[55]
-#define SWIGTYPE_p_gsRandomSensor swig_types[56]
-#define SWIGTYPE_p_gsRay swig_types[57]
-#define SWIGTYPE_p_gsRaySensor swig_types[58]
-#define SWIGTYPE_p_gsRayTest swig_types[59]
-#define SWIGTYPE_p_gsScene swig_types[60]
-#define SWIGTYPE_p_gsSceneActuator swig_types[61]
-#define SWIGTYPE_p_gsScriptController swig_types[62]
-#define SWIGTYPE_p_gsSensor swig_types[63]
-#define SWIGTYPE_p_gsSkeleton swig_types[64]
-#define SWIGTYPE_p_gsSoundActuator swig_types[65]
-#define SWIGTYPE_p_gsStateActuator swig_types[66]
-#define SWIGTYPE_p_gsSweptTest swig_types[67]
-#define SWIGTYPE_p_gsTouchSensor swig_types[68]
-#define SWIGTYPE_p_gsUserDefs swig_types[69]
-#define SWIGTYPE_p_gsVector3 swig_types[70]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[71]
-#define SWIGTYPE_p_gsWhenEvent swig_types[72]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[73]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[74]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[75]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[76]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[77]
-static swig_type_info *swig_types[79];
-static swig_module_info swig_module = {swig_types, 78, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsJoystick swig_types[33]
+#define SWIGTYPE_p_gsKeyboard swig_types[34]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[35]
+#define SWIGTYPE_p_gsLight swig_types[36]
+#define SWIGTYPE_p_gsLogicManager swig_types[37]
+#define SWIGTYPE_p_gsLogicObject swig_types[38]
+#define SWIGTYPE_p_gsLogicOpController swig_types[39]
+#define SWIGTYPE_p_gsLuaManager swig_types[40]
+#define SWIGTYPE_p_gsLuaScript swig_types[41]
+#define SWIGTYPE_p_gsMessageActuator swig_types[42]
+#define SWIGTYPE_p_gsMessageSensor swig_types[43]
+#define SWIGTYPE_p_gsMotionActuator swig_types[44]
+#define SWIGTYPE_p_gsMouse swig_types[45]
+#define SWIGTYPE_p_gsMouseSensor swig_types[46]
+#define SWIGTYPE_p_gsNearSensor swig_types[47]
+#define SWIGTYPE_p_gsObject swig_types[48]
+#define SWIGTYPE_p_gsParentActuator swig_types[49]
+#define SWIGTYPE_p_gsParticles swig_types[50]
+#define SWIGTYPE_p_gsProperty swig_types[51]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[52]
+#define SWIGTYPE_p_gsPropertySensor swig_types[53]
+#define SWIGTYPE_p_gsQuaternion swig_types[54]
+#define SWIGTYPE_p_gsRadarSensor swig_types[55]
+#define SWIGTYPE_p_gsRandomActuator swig_types[56]
+#define SWIGTYPE_p_gsRandomSensor swig_types[57]
+#define SWIGTYPE_p_gsRay swig_types[58]
+#define SWIGTYPE_p_gsRaySensor swig_types[59]
+#define SWIGTYPE_p_gsRayTest swig_types[60]
+#define SWIGTYPE_p_gsScene swig_types[61]
+#define SWIGTYPE_p_gsSceneActuator swig_types[62]
+#define SWIGTYPE_p_gsScriptController swig_types[63]
+#define SWIGTYPE_p_gsSensor swig_types[64]
+#define SWIGTYPE_p_gsSkeleton swig_types[65]
+#define SWIGTYPE_p_gsSoundActuator swig_types[66]
+#define SWIGTYPE_p_gsStateActuator swig_types[67]
+#define SWIGTYPE_p_gsSweptTest swig_types[68]
+#define SWIGTYPE_p_gsTouchSensor swig_types[69]
+#define SWIGTYPE_p_gsUserDefs swig_types[70]
+#define SWIGTYPE_p_gsVector3 swig_types[71]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[72]
+#define SWIGTYPE_p_gsWhenEvent swig_types[73]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[74]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[75]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[76]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[77]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[78]
+static swig_type_info *swig_types[80];
+static swig_module_info swig_module = {swig_types, 79, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5731,18 +5732,18 @@ fail:
 static int _wrap_Mouse_isButtonDown(lua_State* L) {
   int SWIG_arg = 0;
   gsMouse *arg1 = (gsMouse *) 0 ;
-  gsMouseButton arg2 ;
+  int arg2 ;
   bool result;
   
   SWIG_check_num_args("isButtonDown",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isButtonDown",1,"gsMouse *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("isButtonDown",2,"gsMouseButton");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("isButtonDown",2,"int");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
     SWIG_fail_ptr("Mouse_isButtonDown",1,SWIGTYPE_p_gsMouse);
   }
   
-  arg2 = (gsMouseButton)(int)lua_tonumber(L, 2);
+  arg2 = (int)lua_tonumber(L, 2);
   result = (bool)(arg1)->isButtonDown(arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
@@ -5778,6 +5779,346 @@ static swig_lua_attribute swig_gsMouse_attributes[] = {
 static swig_lua_class *swig_gsMouse_bases[] = {0};
 static const char *swig_gsMouse_base_names[] = {0};
 static swig_lua_class _wrap_class_gsMouse = { "Mouse", &SWIGTYPE_p_gsMouse,_wrap_new_Mouse, swig_delete_Mouse, swig_gsMouse_methods, swig_gsMouse_attributes, swig_gsMouse_bases, swig_gsMouse_base_names };
+
+static int _wrap_getNumJoysticks(lua_State* L) {
+  int SWIG_arg = 0;
+  int result;
+  
+  SWIG_check_num_args("getNumJoysticks",0,0)
+  result = (int)getNumJoysticks();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_Joystick(lua_State* L) {
+  int SWIG_arg = 0;
+  int arg1 ;
+  gsJoystick *result = 0 ;
+  
+  SWIG_check_num_args("gsJoystick",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gsJoystick",1,"int");
+  arg1 = (int)lua_tonumber(L, 1);
+  result = (gsJoystick *)new gsJoystick(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsJoystick,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_capture(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  
+  SWIG_check_num_args("capture",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("capture",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_capture",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  (arg1)->capture();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getNumAxes(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getNumAxes",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getNumAxes",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getNumAxes",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (int)(arg1)->getNumAxes();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getAxis(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int arg2 ;
+  int result;
+  
+  SWIG_check_num_args("getAxis",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAxis",1,"gsJoystick *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getAxis",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getAxis",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (int)(arg1)->getAxis(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getRelAxis(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int arg2 ;
+  int result;
+  
+  SWIG_check_num_args("getRelAxis",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRelAxis",1,"gsJoystick *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getRelAxis",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getRelAxis",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (int)(arg1)->getRelAxis(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getAccel(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  gsVector3 result;
+  
+  SWIG_check_num_args("getAccel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAccel",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getAccel",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (arg1)->getAccel();
+  {
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getNumButtons(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getNumButtons",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getNumButtons",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getNumButtons",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (int)(arg1)->getNumButtons();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getButtonCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getButtonCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getButtonCount",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getButtonCount",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (int)(arg1)->getButtonCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_isButtonDown(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  SWIG_check_num_args("isButtonDown",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isButtonDown",1,"gsJoystick *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("isButtonDown",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_isButtonDown",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (bool)(arg1)->isButtonDown(arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_wasButtonPressed(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  SWIG_check_num_args("wasButtonPressed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("wasButtonPressed",1,"gsJoystick *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("wasButtonPressed",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_wasButtonPressed",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (bool)(arg1)->wasButtonPressed(arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getWinWidth(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getWinWidth",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWinWidth",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getWinWidth",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (int)(arg1)->getWinWidth();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Joystick_getWinHeight(lua_State* L) {
+  int SWIG_arg = 0;
+  gsJoystick *arg1 = (gsJoystick *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getWinHeight",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWinHeight",1,"gsJoystick *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsJoystick,0))){
+    SWIG_fail_ptr("Joystick_getWinHeight",1,SWIGTYPE_p_gsJoystick);
+  }
+  
+  result = (int)(arg1)->getWinHeight();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Joystick(void *obj) {
+gsJoystick *arg1 = (gsJoystick *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsJoystick_methods[] = {
+    {"capture", _wrap_Joystick_capture}, 
+    {"getNumAxes", _wrap_Joystick_getNumAxes}, 
+    {"getAxis", _wrap_Joystick_getAxis}, 
+    {"getRelAxis", _wrap_Joystick_getRelAxis}, 
+    {"getAccel", _wrap_Joystick_getAccel}, 
+    {"getNumButtons", _wrap_Joystick_getNumButtons}, 
+    {"getButtonCount", _wrap_Joystick_getButtonCount}, 
+    {"isButtonDown", _wrap_Joystick_isButtonDown}, 
+    {"wasButtonPressed", _wrap_Joystick_wasButtonPressed}, 
+    {"getWinWidth", _wrap_Joystick_getWinWidth}, 
+    {"getWinHeight", _wrap_Joystick_getWinHeight}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsJoystick_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsJoystick_bases[] = {0};
+static const char *swig_gsJoystick_base_names[] = {0};
+static swig_lua_class _wrap_class_gsJoystick = { "Joystick", &SWIGTYPE_p_gsJoystick,_wrap_new_Joystick, swig_delete_Joystick, swig_gsJoystick_methods, swig_gsJoystick_attributes, swig_gsJoystick_bases, swig_gsJoystick_base_names };
 
 static int _wrap_new_Keyboard(lua_State* L) {
   int SWIG_arg = 0;
@@ -24092,6 +24433,7 @@ static const struct luaL_reg swig_commands[] = {
     { "QuatMulf", _wrap_QuatMulf},
     { "QuatMulVec3", _wrap_QuatMulVec3},
     { "Vec3RotationTo", _wrap_Vec3RotationTo},
+    { "getNumJoysticks", _wrap_getNumJoysticks},
     { "getActiveScene", _wrap_getActiveScene},
     { "DebugPrint", _wrap_DebugPrint},
     { "getCurrentController", _wrap_getCurrentController},
@@ -24572,6 +24914,7 @@ static swig_type_info _swigt__p_gsExpressionController = {"_p_gsExpressionContro
 static swig_type_info _swigt__p_gsFSM = {"_p_gsFSM", "gsFSM *", 0, 0, (void*)&_wrap_class_gsFSM, 0};
 static swig_type_info _swigt__p_gsGameActuator = {"_p_gsGameActuator", "gsGameActuator *", 0, 0, (void*)&_wrap_class_gsGameActuator, 0};
 static swig_type_info _swigt__p_gsGameObject = {"_p_gsGameObject", "gsGameObject *", 0, 0, (void*)&_wrap_class_gsGameObject, 0};
+static swig_type_info _swigt__p_gsJoystick = {"_p_gsJoystick", "gsJoystick *", 0, 0, (void*)&_wrap_class_gsJoystick, 0};
 static swig_type_info _swigt__p_gsKeyboard = {"_p_gsKeyboard", "gsKeyboard *", 0, 0, (void*)&_wrap_class_gsKeyboard, 0};
 static swig_type_info _swigt__p_gsKeyboardSensor = {"_p_gsKeyboardSensor", "gsKeyboardSensor *", 0, 0, (void*)&_wrap_class_gsKeyboardSensor, 0};
 static swig_type_info _swigt__p_gsLight = {"_p_gsLight", "gsLight *", 0, 0, (void*)&_wrap_class_gsLight, 0};
@@ -24652,6 +24995,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsFSM,
   &_swigt__p_gsGameActuator,
   &_swigt__p_gsGameObject,
+  &_swigt__p_gsJoystick,
   &_swigt__p_gsKeyboard,
   &_swigt__p_gsKeyboardSensor,
   &_swigt__p_gsLight,
@@ -24732,6 +25076,7 @@ static swig_cast_info _swigc__p_gsExpressionController[] = {  {&_swigt__p_gsExpr
 static swig_cast_info _swigc__p_gsFSM[] = {  {&_swigt__p_gsFSM, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsGameActuator[] = {  {&_swigt__p_gsGameActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsGameObject[] = {  {&_swigt__p_gsParticles, _p_gsParticlesTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsGameObject, 0, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsGameObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsJoystick[] = {  {&_swigt__p_gsJoystick, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsKeyboard[] = {  {&_swigt__p_gsKeyboard, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsKeyboardSensor[] = {  {&_swigt__p_gsKeyboardSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLight[] = {  {&_swigt__p_gsLight, 0, 0, 0},{0, 0, 0, 0}};
@@ -24812,6 +25157,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsFSM,
   _swigc__p_gsGameActuator,
   _swigc__p_gsGameObject,
+  _swigc__p_gsJoystick,
   _swigc__p_gsKeyboard,
   _swigc__p_gsKeyboardSensor,
   _swigc__p_gsLight,
