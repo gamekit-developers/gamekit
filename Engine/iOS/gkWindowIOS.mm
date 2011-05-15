@@ -118,13 +118,14 @@ bool gkWindowIOS::setupInput(const gkUserDefs& prefs)
 		for (i=1; i<m_joysticks.size(); ++i)
 			m_joysticks[i] = new gkJoystick(1, 2);
 
-		try {
+		try 
+		{
 			m_iacc = (OIS::JoyStick*)m_input->createInputObject(OIS::OISJoyStick, true);
 			GK_ASSERT(m_iacc);
 			m_iacc->setEventCallback(this);
-		}
-		
-		catch (OIS::Exception&) {
+		}		
+		catch (OIS::Exception&) 
+		{
 			m_iacc = 0;
 		}
 		
@@ -176,6 +177,9 @@ void gkWindowIOS::dispatch(void)
 	}
 	
 	m_itouch->capture();
+	
+	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
+		m_mouse.moved = false;
 
 	if(m_iacc)
 		m_iacc->capture();
@@ -239,6 +243,10 @@ void gkWindowIOS::transformInputState(OIS::MultiTouchState& state)
 
 bool gkWindowIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 {
+	{
+		m_mouse.buttons[gkMouse::Left] = GK_Pressed;
+	}
+	
 	int fid = arg.state.fingerID+1;
 	if (fid == 0)
 		return true;
@@ -258,6 +266,7 @@ bool gkWindowIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
+			node->mousePressed(m_mouse);
 			node->joystickPressed(data,0);
 			node = node->getNext();
 		}
@@ -268,6 +277,10 @@ bool gkWindowIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 
 bool gkWindowIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 {
+	{
+		m_mouse.buttons[gkMouse::Left] = GK_Released;
+	}
+	
 	int fid = arg.state.fingerID+1;
 	if (fid == 0)
 		return true;
@@ -287,6 +300,7 @@ bool gkWindowIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
+			node->mousePressed(m_mouse);
 			node->joystickReleased(data,0);
 			node = node->getNext();
 		}
@@ -297,6 +311,22 @@ bool gkWindowIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 
 bool gkWindowIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 {
+	{
+		gkMouse& data = m_mouse;		
+ 		OIS::MultiTouchState state = arg.state;
+		
+		transformInputState(state);
+		
+		data.position.x = (gkScalar)state.X.abs;
+		data.position.y = (gkScalar)state.Y.abs;
+		data.relative.x = (gkScalar)state.X.rel;
+		data.relative.y = (gkScalar)state.Y.rel;
+		data.moved = true;
+		
+		data.wheelDelta = 0;
+		
+	}
+	
 	int fid = arg.state.fingerID+1;
 	if (fid == 0)
 		return true;
@@ -319,6 +349,7 @@ bool gkWindowIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
+			node->mouseMoved(m_mouse);
 			node->joystickMoved(data,0);
 			node = node->getNext();
 		}

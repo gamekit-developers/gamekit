@@ -686,10 +686,10 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 	)
 
 	if(APPLE)
-		source_group(Script/uiltin    FILES ${Script_TMPL})
-		source_group(Script/Includes  FILES ${SWIG_INPUT} ${Script_INC})
-		source_group(Script/Header    FILES ${Script_HEADER})
-		source_group(Script/Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
+		source_group(Script    FILES ${Script_TMPL}
+			${SWIG_INPUT} ${Script_INC}
+			${Script_HEADER}
+			${Script_SOURCE} ${Script_SOURCE_2})
 	else()
 		source_group(Script\\Builtin   FILES ${Script_TMPL})
 		source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
@@ -779,10 +779,10 @@ else()
 	)
 	
 	if(APPLE)
-		source_group(Script/Builtin   FILES ${Script_TMPL})
-		source_group(Script/Include   FILES ${Script_INC})
-		source_group(Script/Header    FILES ${Script_HEADER})
-		source_group(Script/Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
+		source_group(Script	FILES ${Script_TMPL}
+			${Script_INC}
+			${Script_HEADER}
+			${Script_SOURCE} ${Script_SOURCE_2})
 	else()
 		source_group(Script\\Builtin   FILES ${Script_TMPL})
 		source_group(Script\\Include   FILES ${Script_INC})
