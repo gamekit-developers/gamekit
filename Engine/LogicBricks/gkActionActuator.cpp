@@ -195,8 +195,27 @@ void gkActionActuator::update(void)
 		return;
 	}
 
-	bool end = getElapsedTime() >= m_end;
+	gkScalar t = getElapsedTime() + m_start;
+	bool end = t >= m_end;
 	bool off = isPulseOff();
+
+#if 0
+	static gkScalar k = 0;
+
+	if (end)
+	{
+		k = 0;
+		printf("end\n");
+	}
+	else
+	{
+		if (t - k >= 0.1)
+		{
+			printf("%f\n", t);
+			k = t;
+		}
+	}
+#endif
 
 	if (off)
 		m_ignorePulseOn = false;
