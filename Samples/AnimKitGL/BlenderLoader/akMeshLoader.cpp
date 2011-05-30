@@ -217,14 +217,14 @@ public:
 		if(vbi->getElement(akBufferInfo::BI_DU_VERTEX, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&co, &cos))
 		{
 			akAdvancePointer(co, cos * index);
-			if (!akFuzzyT(lengthSqr(co[0] - b.co), 1e-10))
+			if (!akFuzzyT(lengthSqr(co[0] - b.co), 1e-10f))
 				return false;
 		}
 		
 		if(vbi->getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&no, &nos))
 		{
 			akAdvancePointer(no, nos * index);
-			if (!akFuzzyT(lengthSqr(no[0] - b.no), 1e-10))
+			if (!akFuzzyT(lengthSqr(no[0] - b.no), 1e-10f))
 				return false;
 		}
 		
@@ -235,7 +235,7 @@ public:
 				return false;
 		}
 		
-		for (int i = 0; i < item->getUVLayerCount(); i++)
+		for (unsigned int i = 0; i < item->getUVLayerCount(); i++)
 		{
 			if(vbi->getElement(akBufferInfo::BI_DU_UV, akBufferInfo::VB_DT_2FLOAT32, i+1, (void**)&uvlayer, &uvlayers))
 			{
@@ -243,7 +243,7 @@ public:
 				akAdvancePointer(uv, uvlayers * index);;
 				akScalar d1 = uv[0] - b.uv[i][0];
 				akScalar d2 = uv[1] - b.uv[i][1];
-				if (!akFuzzyT(d1*d1+d2*d2, 1e-10))
+				if (!akFuzzyT(d1*d1+d2*d2, 1e-10f))
 					return false;
 			}
 		}
@@ -610,7 +610,7 @@ void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
 		}
 		
 		akSubMesh* subm = subpair->item;
-		for(int i=0; i<subm->getVertexCount(); i++)
+		for(unsigned int i=0; i<subm->getVertexCount(); i++)
 		{
 			UTuint32 oldi = subpair->idxmap.at(i);
 			
@@ -624,7 +624,7 @@ void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
 			
 		}
 		
-		for(int i=0; i<vgroups.size(); i++)
+		for(unsigned int i=0; i<vgroups.size(); i++)
 		{
 			if(vgroups[i]->getSize())
 				subm->addVertexGroup(vgroups[i]);
@@ -665,11 +665,11 @@ void akMeshLoader::convertMorphTargets(akSubMeshPair *subpair)
 						akVector3 b(bpos[0], bpos[1], bpos[2]);
 						akVector3 offset = k-b;
 						
-						if(!akFuzzyT(lengthSqr(offset), 1e-10))
+						if(!akFuzzyT(lengthSqr(offset), 1e-10f))
 						{
 							// position in shape key is different than in base
 							// insert into target all vertices that was created form this original blender vertex
-							for(int i=0; i<subpair->idxmap.size(); i++)
+							for(unsigned int i=0; i<subpair->idxmap.size(); i++)
 							{
 								if(bi == subpair->idxmap[i])
 								{

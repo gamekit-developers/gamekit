@@ -86,7 +86,7 @@ UT_INLINE akScalar akClampf(const akScalar& v, const akScalar& a, const akScalar
 	return v < a ? a : v > b ? b : v;
 }
 
-UT_INLINE akScalar akClampi(const UTint32& v, const UTint32& a, const UTint32& b)
+UT_INLINE UTint32 akClampi(const UTint32& v, const UTint32& a, const UTint32& b)
 {
 	return v < a ? a : v > b ? b : v;
 }

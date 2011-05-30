@@ -248,7 +248,7 @@ public:
 				const akPose* pose, const btAlignedObjectArray<akMatrix4> * mpalette=0,
 				const btAlignedObjectArray<akDualQuat> * dqpalette =0);
 	
-	UT_INLINE int getNumSubMeshes(void) const
+	UT_INLINE UTuint32 getNumSubMeshes(void) const
 	{
 		return m_submeshes.size();
 	}

@@ -30,7 +30,7 @@
 #define GL_GLEXT_PROTOTYPES
 
 #ifdef WIN32
-//#include <Windows.h>
+#include <Windows.h>
 #include <GL/glut.h>
 #elif defined(__APPLE__)
 #include <GLUT/glut.h>
@@ -317,7 +317,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				if(!color)
 					glColor3f(0,0,0);
 					
-				int i;
+				unsigned int i;
 				for(i=0; i<tot; i++)
 				{
 					UTuint32* id = (UTuint32*)idxbuf->data;
