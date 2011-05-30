@@ -54,8 +54,10 @@ public:
 	~akAnimationClip();
 
 	void addChannel(akAnimationChannel* chan);
-	akAnimationChannel* getChannel(const utString& name);
+	bool removeChannel(const akAnimationChannel* chan);
+	akAnimationChannel* getChannel(const utHashedString& name);
 	
+	void evaluate(akPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
 	void evaluate(akSkeletonPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
 	void evaluate(akTransformState* pose, akScalar time, akScalar weight, akScalar delta=0.5f) const;
 	

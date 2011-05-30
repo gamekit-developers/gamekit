@@ -59,9 +59,9 @@ private:
 
 	void convertCameraObject(Blender::Object *bobj);
 	void convertMeshObject(Blender::Object *bobj);
+	void convertObjectMesh(Blender::Object *bobj);
 	void convertMesh(Blender::Mesh* bme);
 	void convertSkeleton(Blender::bArmature* bskel);
-	void convertTriangle(unsigned int firstIndex, akVector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3);
 	void convertMeshSkinning(akMesh* mesh, Blender::Object* bobj, akSkeleton* skel);
 	
 	void removeMeshTempData(akMesh *mesh);

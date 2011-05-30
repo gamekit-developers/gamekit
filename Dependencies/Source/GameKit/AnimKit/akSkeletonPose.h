@@ -66,6 +66,8 @@ public:
 	const akTransformState* getJointPose(const UTuint8 idx) const;
 	akTransformState* getByName(const utHashedString& name);
 	
+	
+	/// Those can be used "in-place" (with dest==this)
 	void toLocalSpace(akSkeletonPose* dest) const;
 	void toModelSpace(akSkeletonPose* dest) const;
 	
@@ -75,10 +77,10 @@ public:
 	/// Will fill the pallet with the inverse binding pose of the skeleton multiplied by the bone pose.
 	/// If the pose is in model space than the palette can be used to transform vertex/object attached to bones
 	/// You can also process the palette afterward to include world transformation.
-	void fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)const ;
+	void fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette) const ;
 	
 	void fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &palette,
-							btAlignedObjectArray<akMatrix4> &mpalette)const ;
+							btAlignedObjectArray<akMatrix4> &mpalette) const ;
 	
 	UT_INLINE int getSpace(void)
 	{

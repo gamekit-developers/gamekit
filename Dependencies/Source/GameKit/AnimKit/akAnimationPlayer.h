@@ -70,6 +70,7 @@ public:
 	void stepTime(akScalar tick);
 	void reset(void);
 
+	void evaluate(akPose* pose) const;
 	void evaluate(akSkeletonPose* pose) const;
 	void evaluate(akTransformState* pose) const;
 	

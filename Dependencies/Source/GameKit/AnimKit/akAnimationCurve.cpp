@@ -76,7 +76,7 @@ bool StepCubic(const akScalar* P0, const akScalar* P1, const akScalar* P2, const
 	return false;
 }
 
-akAnimationCurve::akAnimationCurve(UTsize numSamples, int code, BezierInterpolation binterp)
+akAnimationCurve::akAnimationCurve(UTsize numSamples, UTuint32 code, BezierInterpolation binterp)
 	: m_numSamples(numSamples), m_code(code), m_interpMethod(binterp), m_handles(0)
 {
 	m_times = new akScalar[m_numSamples];

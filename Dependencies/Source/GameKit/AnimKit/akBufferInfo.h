@@ -25,19 +25,20 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKVERTEXBUFFER_H
-#define AKVERTEXBUFFER_H
+#ifndef AKBUFFERINFO_H
+#define AKBUFFERINFO_H
 
 #include "utTypes.h"
 
 
-/// A simple class to describe a vertex buffer. It contains pointers
+/// A simple class to describe a vertex/face buffer. It contains pointers
 /// to the data but does not hown the memory.
-class akVertexBuffer
+class akBufferInfo
 {
 public:
 
-	/// VB_DU_POSITION    Element is used to describe a postion buffer (Vector3*)
+	/// VB_DU_ELEMENT     Vertex index (for face list)
+	/// VB_DU_VERTEX      Vertex position
 	/// VB_DU_NORMAL      Normals
 	/// VB_DU_COLOR       Vertices colors
 	/// VB_DU_UV          UV coordinates often as 2 float
@@ -46,26 +47,28 @@ public:
 	/// VB_DU_CUSTOM      For custom or temporary data
 	enum DataUsage
 	{
-		VB_DU_POSITION,
-		VB_DU_NORMAL,
-		VB_DU_COLOR,
-		VB_DU_UV,
-		VB_DU_BONE_IDX,
-		VB_DU_BONE_WEIGHT,
-		VB_DU_CUSTOM
+		BI_DU_ELEMENT,
+		BI_DU_VERTEX,
+		BI_DU_NORMAL,
+		BI_DU_COLOR,
+		BI_DU_UV,
+		BI_DU_BONE_IDX,
+		BI_DU_BONE_WEIGHT,
+		BI_DU_CUSTOM
 	};
 	
 	/// VB_DT_4UINT8    4 8bit uint in a 32 bit word, used for bones index
-	/// VB_DT_INT32,    32 bit integer
-	/// VB_DT_FLOAT32,  One float
+	/// VB_DT_INT32,    32 bits integer
+	/// VB_DT_UINT32,   32 bits unsigned integer
+	/// VB_DT_FLOAT32,  One 32 bits float
 	/// VB_DT_2FLOAT32, 2 float, for UV coord for example
-	/// VB_DT_3FLOAT32, 3 floats, can be asumed to be same as VB_DT_3FLOAT32 because of SIMD allignement
+	/// VB_DT_3FLOAT32, 3 floats, can be asumed to be same as VB_DT_4FLOAT32 because of SIMD allignement
 	/// VB_DT_4FLOAT32, 4 floats
-
 	enum DataType
 	{
 		VB_DT_4UINT8,
 		VB_DT_INT32,
+		VB_DT_UINT32,
 		VB_DT_FLOAT32,
 		VB_DT_2FLOAT32,
 		VB_DT_3FLOAT32,
@@ -73,7 +76,7 @@ public:
 	};
 	
 	/// A element of a vertex buffer, it could be a position buffer, normal buffer, weight buffer ...
-	/// Decribe the data location but does not hown memory.
+	/// Decribe the data location but does not own memory.
 	class Element
 	{
 	public:
@@ -81,13 +84,15 @@ public:
 		int dataType;
 		int stride;
 		void* data;
-	
+		void* base;
+		
 		UT_INLINE const Element& operator= (const Element& o)
 		{
 			dataUsage = o.dataUsage;
 			dataType = o.dataType;
 			stride = o.stride;
 			data = o.data;
+			base = o.base;
 			return *this;
 		}
 		
@@ -96,38 +101,59 @@ public:
 			return ((dataUsage == o.dataUsage) &&
 					(dataType == o.dataType) &&
 					(stride == o.stride) &&
-					(data == o.data));
+					(data == o.data) &&
+					(base == o.base));
+		}
+		
+		UT_INLINE UTuint32 getOffset(void) const
+		{
+			return (UTuint64)data-(UTuint64)base;
 		}
 	};
 
 private:
-	UTuint32               m_verticesNumber;
+	UTuint32        m_size;
 	utList<Element> m_elements;
 	
 public:
-	akVertexBuffer();
-	~akVertexBuffer();
-		
+	akBufferInfo();
+	~akBufferInfo();
+	
 	/// Add a element to the buffer
-	void addElement(int dataUsage, int dataType, int stride, void* data);
+	void addElement(int dataUsage, int dataType, int stride, void* data, void* base);
 	
-	
-	/// Retrive an element of the specified usage and type
-	/// occurrence should be one if you have only one corresponding element
+	/// Retrieve an element of the specified usage and type
+	/// occurrence should be 1 to get the first corresponding element
 	/// Elements order is the same as they are added 
 	bool getElement(const int dataUsage, const int dataType, const unsigned int occurrence, void **dataOut, unsigned int* strideOut) const;
 	
+	const Element* getElement(const int dataUsage, const int dataType, const unsigned int occurrence) const;
+	
+	/// Remove an element from the buffer.
 	bool removeElement(const void* elemData);
-
-	UT_INLINE void setVerticesNumber(UTuint32 num)
+	
+	/// Return the number of elements that compose the buffer.
+	UT_INLINE UTuint32 getElementsCount(void) const
 	{
-		m_verticesNumber = num;
+		return m_elements.size();
+	}
+	
+	/// Set the size of the buffer (and thus all its elements)
+	UT_INLINE void setSize(UTuint32 num)
+	{
+		m_size = num;
 	}
 
-	UT_INLINE UTuint32  getVerticesNumber(void) const
+	/// Returns the size of the buffer.
+	UT_INLINE UTuint32  getSize(void) const
 	{
-		return m_verticesNumber;
+		return m_size;
+	}
+	
+	UT_INLINE void clear()
+	{
+		m_elements.clear();
 	}
 };
 
-#endif // AKVERTEXBUFFER_H
+#endif // AKBUFFERINFO_H

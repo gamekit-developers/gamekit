@@ -29,6 +29,7 @@
 #include "akAnimationChannel.h"
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
+#include "akPose.h"
 
 akAnimationClip::akAnimationClip()
 {
@@ -45,6 +46,16 @@ akAnimationClip::~akAnimationClip()
 	m_channels.clear();
 }
 
+void akAnimationClip::evaluate(akPose* pose, akScalar time, akScalar weight, akScalar delta) const
+{
+	akAnimationChannel* const* ptr = m_channels.ptr();
+	int len = getNumChannels();
+	
+	for(int i=0; i<len; i++)
+	{
+		ptr[i]->evaluate(*pose, time, weight, delta);
+	}
+}
 
 void akAnimationClip::evaluate(akSkeletonPose* pose, akScalar time, akScalar weight, akScalar delta) const
 {
@@ -82,13 +93,25 @@ void akAnimationClip::addChannel(akAnimationChannel* chan)
 	m_channels.push_back(chan);
 }
 
+bool akAnimationClip::removeChannel(const akAnimationChannel* chan)
+{
+	for (UTsize i = 0; i < m_channels.size(); i++)
+	{
+		if (m_channels[i] == chan)
+		{
+			m_channels.erase(i);
+			return true;
+		}
+	}
+	return false;
+}
 
-akAnimationChannel* akAnimationClip::getChannel(const utString& name)
+akAnimationChannel* akAnimationClip::getChannel(const utHashedString& name)
 {
 	for (UTsize i = 0; i < m_channels.size(); i++)
 	{
 		akAnimationChannel* chan = m_channels[i];
-		if (chan->getName() == name)
+		if (chan->getName().hash() == name.hash())
 		{
 			return chan;
 		}

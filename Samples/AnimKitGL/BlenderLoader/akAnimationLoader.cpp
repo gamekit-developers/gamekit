@@ -146,7 +146,7 @@ void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access
 	}
 	
 	if (spline->getNumSamples())
-		chan->addSpline(spline);
+		chan->addCurve(spline);
 	else
 		delete spline;
 	
@@ -177,19 +177,19 @@ void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, akScalar sta
 			int code = -1;
 			switch (icu->adrcode)
 			{
-			case AC_QUAT_W: code = akAnimationCurve::SC_ROT_QUAT_W; break;
-			case AC_QUAT_X: code = akAnimationCurve::SC_ROT_QUAT_X; break;
-			case AC_QUAT_Y: code = akAnimationCurve::SC_ROT_QUAT_Y; break;
-			case AC_QUAT_Z: code = akAnimationCurve::SC_ROT_QUAT_Z; break;
-			case AC_EUL_X: code = akAnimationCurve::SC_ROT_EULER_X; yfactor = 10*akRPD; break;
-			case AC_EUL_Y: code = akAnimationCurve::SC_ROT_EULER_Y; yfactor = 10*akRPD; break;
-			case AC_EUL_Z: code = akAnimationCurve::SC_ROT_EULER_Z; yfactor = 10*akRPD; break;
-			case AC_LOC_X: code = akAnimationCurve::SC_LOC_X; break;
-			case AC_LOC_Y: code = akAnimationCurve::SC_LOC_Y; break;
-			case AC_LOC_Z: code = akAnimationCurve::SC_LOC_Z; break;
-			case AC_SIZE_X: code = akAnimationCurve::SC_SCL_X; break;
-			case AC_SIZE_Y: code = akAnimationCurve::SC_SCL_Y; break;
-			case AC_SIZE_Z: code = akAnimationCurve::SC_SCL_Z; break;
+			case AC_QUAT_W: code = akAnimationCurve::AC_CODE_ROT_QUAT_W; break;
+			case AC_QUAT_X: code = akAnimationCurve::AC_CODE_ROT_QUAT_X; break;
+			case AC_QUAT_Y: code = akAnimationCurve::AC_CODE_ROT_QUAT_Y; break;
+			case AC_QUAT_Z: code = akAnimationCurve::AC_CODE_ROT_QUAT_Z; break;
+			case AC_EUL_X: code = akAnimationCurve::AC_CODE_ROT_EULER_X; yfactor = 10*akRPD; break;
+			case AC_EUL_Y: code = akAnimationCurve::AC_CODE_ROT_EULER_Y; yfactor = 10*akRPD; break;
+			case AC_EUL_Z: code = akAnimationCurve::AC_CODE_ROT_EULER_Z; yfactor = 10*akRPD; break;
+			case AC_LOC_X: code = akAnimationCurve::AC_CODE_LOC_X; break;
+			case AC_LOC_Y: code = akAnimationCurve::AC_CODE_LOC_Y; break;
+			case AC_LOC_Z: code = akAnimationCurve::AC_CODE_LOC_Z; break;
+			case AC_SIZE_X: code = akAnimationCurve::AC_CODE_SCL_X; break;
+			case AC_SIZE_Y: code = akAnimationCurve::AC_CODE_SCL_Y; break;
+			case AC_SIZE_Z: code = akAnimationCurve::AC_CODE_SCL_Z; break;
 			}
 			
 			// ignore any other codes
@@ -213,15 +213,15 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, akScalar sta
 			int code = -1;
 			switch (icu->adrcode)
 			{
-			case OB_ROT_X: code = akAnimationCurve::SC_ROT_EULER_X; yfactor = 10*akRPD; break;
-			case OB_ROT_Y: code = akAnimationCurve::SC_ROT_EULER_Y; yfactor = 10*akRPD; break;
-			case OB_ROT_Z: code = akAnimationCurve::SC_ROT_EULER_Z; yfactor = 10*akRPD; break;
-			case OB_LOC_X: code = akAnimationCurve::SC_LOC_X; break;
-			case OB_LOC_Y: code = akAnimationCurve::SC_LOC_Y; break;
-			case OB_LOC_Z: code = akAnimationCurve::SC_LOC_Z; break;
-			case OB_SIZE_X: code = akAnimationCurve::SC_SCL_X; break;
-			case OB_SIZE_Y: code = akAnimationCurve::SC_SCL_Y; break;
-			case OB_SIZE_Z: code = akAnimationCurve::SC_SCL_Z; break;
+			case OB_ROT_X: code = akAnimationCurve::AC_CODE_ROT_EULER_X; yfactor = 10*akRPD; break;
+			case OB_ROT_Y: code = akAnimationCurve::AC_CODE_ROT_EULER_Y; yfactor = 10*akRPD; break;
+			case OB_ROT_Z: code = akAnimationCurve::AC_CODE_ROT_EULER_Z; yfactor = 10*akRPD; break;
+			case OB_LOC_X: code = akAnimationCurve::AC_CODE_LOC_X; break;
+			case OB_LOC_Y: code = akAnimationCurve::AC_CODE_LOC_Y; break;
+			case OB_LOC_Z: code = akAnimationCurve::AC_CODE_LOC_Z; break;
+			case OB_SIZE_X: code = akAnimationCurve::AC_CODE_SCL_X; break;
+			case OB_SIZE_Y: code = akAnimationCurve::AC_CODE_SCL_Y; break;
+			case OB_SIZE_Z: code = akAnimationCurve::AC_CODE_SCL_Z; break;
 			}
 			
 			// ignore any other codes
@@ -351,8 +351,25 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 				act->addChannel(chan);
 			}
 		}
+		// Morph (shape key) action
+		else if(rnap.substr(0, 10) == "key_blocks")
+		{
+			size_t i = rnap.rfind('\"');
+			chan_name = rnap.substr(12, i - 12);
+			transform_name = rnap.substr(i + 3, rnap.length() - i + 3);
+			
+			chan = act->getChannel(chan_name);
+			if(!chan)
+			{
+				chan = new akAnimationChannel(akAnimationChannel::AC_MORPH, chan_name);
+				act->addChannel(chan);
+			}
+		}
 		// Object action
-		else
+		else if( rnap == "rotation_quaternion" ||
+				 rnap == "rotation_euler" ||
+				 rnap == "location" ||
+				 rnap == "scale")
 		{
 			transform_name = rnap;
 			chan_name = "GKMainObjectChannel";
@@ -371,30 +388,34 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 		if (bfc->bezt)
 		{
 			int code = -1;
-			if (transform_name == "rotation_quaternion")
+			if (transform_name == "value")
 			{
-				if (bfc->array_index == 0) code = akAnimationCurve::SC_ROT_QUAT_W;
-				else if (bfc->array_index == 1) code = akAnimationCurve::SC_ROT_QUAT_X;
-				else if (bfc->array_index == 2) code = akAnimationCurve::SC_ROT_QUAT_Y;
-				else if (bfc->array_index == 3) code = akAnimationCurve::SC_ROT_QUAT_Z;
+				code = akAnimationCurve::AC_CODE_VALUE;
+			}
+			else if (transform_name == "rotation_quaternion")
+			{
+				if (bfc->array_index == 0) code = akAnimationCurve::AC_CODE_ROT_QUAT_W;
+				else if (bfc->array_index == 1) code = akAnimationCurve::AC_CODE_ROT_QUAT_X;
+				else if (bfc->array_index == 2) code = akAnimationCurve::AC_CODE_ROT_QUAT_Y;
+				else if (bfc->array_index == 3) code = akAnimationCurve::AC_CODE_ROT_QUAT_Z;
 			}
 			else if (transform_name == "rotation_euler")
 			{
-				if (bfc->array_index == 0) code = akAnimationCurve::SC_ROT_EULER_X;
-				else if (bfc->array_index == 1) code = akAnimationCurve::SC_ROT_EULER_Y;
-				else if (bfc->array_index == 2) code = akAnimationCurve::SC_ROT_EULER_Z;
+				if (bfc->array_index == 0) code = akAnimationCurve::AC_CODE_ROT_EULER_X;
+				else if (bfc->array_index == 1) code = akAnimationCurve::AC_CODE_ROT_EULER_Y;
+				else if (bfc->array_index == 2) code = akAnimationCurve::AC_CODE_ROT_EULER_Z;
 			}
 			else if (transform_name == "location")
 			{
-				if (bfc->array_index == 0) code = akAnimationCurve::SC_LOC_X;
-				else if (bfc->array_index == 1) code = akAnimationCurve::SC_LOC_Y;
-				else if (bfc->array_index == 2) code = akAnimationCurve::SC_LOC_Z;
+				if (bfc->array_index == 0) code = akAnimationCurve::AC_CODE_LOC_X;
+				else if (bfc->array_index == 1) code = akAnimationCurve::AC_CODE_LOC_Y;
+				else if (bfc->array_index == 2) code = akAnimationCurve::AC_CODE_LOC_Z;
 			}
 			else if (transform_name == "scale")
 			{
-				if (bfc->array_index == 0) code = akAnimationCurve::SC_SCL_X;
-				else if (bfc->array_index == 1) code = akAnimationCurve::SC_SCL_Y;
-				else if (bfc->array_index == 2) code = akAnimationCurve::SC_SCL_Z;
+				if (bfc->array_index == 0) code = akAnimationCurve::AC_CODE_SCL_X;
+				else if (bfc->array_index == 1) code = akAnimationCurve::AC_CODE_SCL_Y;
+				else if (bfc->array_index == 2) code = akAnimationCurve::AC_CODE_SCL_Z;
 			}
 			
 			// ignore any other codes

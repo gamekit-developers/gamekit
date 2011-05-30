@@ -36,7 +36,7 @@
 /// Permit to advance all enabled players at once, synchronise them, ...
 /// Once all the time postions and weigths are set, it can evaluate all
 /// the enabled animations it contain's. The blending is additive so make sure
-/// the pose you pass evaluate() is set to 0 (identity).
+/// the pose you pass to the evaluate() funtion is set to 0 (identity).
 class akAnimationPlayerSet
 {
 public:
@@ -61,6 +61,7 @@ public:
 	
 	void stepTime(akScalar seconds);
 	
+	void evaluate(akPose* pose) const;
 	void evaluate(akSkeletonPose* pose) const;
 	void evaluate(akTransformState* pose) const;
 	

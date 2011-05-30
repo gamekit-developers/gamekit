@@ -10,14 +10,17 @@ set(ANIMKIT_SRC
 	akAnimationCurve.cpp
 	akAnimationPlayer.cpp
 	akAnimationPlayerSet.cpp
+	akBufferInfo.cpp
 	akDualQuat.cpp
 	akGeometryDeformer.cpp
 	akMesh.cpp
+	akMorphTarget.cpp
+	akPose.cpp
 	akPoseBlender.cpp
 	akSkeleton.cpp
 	akSkeletonPose.cpp
 	akTransitionBlender.cpp
-	akVertexBuffer.cpp
+	akVertexGroup.cpp
 	
 	btAlignedAllocator.cpp
 )
@@ -28,18 +31,21 @@ set(ANIMKIT_HDR
 	akAnimationCurve.h
 	akAnimationPlayer.h
 	akAnimationPlayerSet.h
+	akBufferInfo.h
 	akDualQuat.h
 	akCommon.h
 	akEuler.h
 	akGeometryDeformer.h
 	akMathUtils.h
 	akMesh.h
+	akMorphTarget.h
+	akPose.h
 	akPoseBlender.h
 	akSkeleton.h
 	akSkeletonPose.h
 	akTransformState.h
 	akTransitionBlender.h
-	akVertexBuffer.h
+	akVertexGroup.h
 	
 	btAlignedAllocator.h
 	btAlignedObjectArray.h

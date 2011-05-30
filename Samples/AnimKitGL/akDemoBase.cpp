@@ -29,8 +29,6 @@
 
 #include "akDemoBase.h"
 
-#include "akEntity.h"
-
 #ifdef WIN32
 #include <Windows.h>
 #include <GL/glut.h>
@@ -40,16 +38,22 @@
 #include <GL/glut.h>
 #endif
 
+#include "akEntity.h"
 #include "akMesh.h"
 #include "akSkeleton.h"
 #include "akAnimationClip.h"
 
 #include "btAlignedAllocator.h"
 
-akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTime(0), m_lastfps(0)
+#include <sstream>
+
+akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTime(0),
+	m_lastfps(0), m_canUseVbo(false), m_drawNormals(false), m_wireframe(false), m_textured(true),
+	m_shaded(true), m_drawColor(true), m_useVbo(true), m_dualQuatUse(0), m_normalMethod(2)
 {
-    //m_camera = new akCamera();
-    m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
+	m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
+	m_glinfo.getInfo();
+	m_glinfo.print();
 }
 
 akDemoBase::~akDemoBase()
@@ -81,11 +85,46 @@ akDemoBase::~akDemoBase()
 	m_animations.clear();
 	m_objects.clear();
 
-        //delete m_camera;
-        btAlignedFree(m_camera);
+	btAlignedFree(m_camera);
 }
 
-void akDemoBase::drawString(float x, float y, char *s)
+void akDemoBase::start(void)
+{
+	init();
+	
+	m_canUseVbo = m_glinfo.isExtensionSupported("GL_ARB_vertex_buffer_object");
+	
+	for(unsigned int i=0; i<m_objects.size(); i++)
+	{
+		akEntity* object = m_objects.at(i);
+		object->init(m_canUseVbo);
+	}
+	
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	
+	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 01.0f, 1.0f };
+	GLfloat LightPosition[]= { 1.0f, 2.0f, 0.0f, 1.0f };
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);
+	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
+	glEnable(GL_LIGHT1);
+}
+
+void akDemoBase::step(akScalar time)
+{
+	unsigned int i;
+	for( i=0; i<m_objects.size(); i++)
+	{		
+		akEntity* object = m_objects.at(i);
+		object->step(time, m_dualQuatUse, m_normalMethod);
+	}
+}
+
+void akDemoBase::drawString(float x, float y, const char *s)
 {
 	const char *c;
 	
@@ -98,25 +137,31 @@ void akDemoBase::drawString(float x, float y, char *s)
 	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
 	glLoadIdentity();
 	
 	
 	glRasterPos2f(x, y);
 	
 	for (c = s; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *c);
+		if( *c != '\n' )
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *c);
+		else
+		{
+			y += 12;
+			glRasterPos2f(x, y);
+		}
 	}
 	
 	glPopMatrix();
+	glEnable(GL_DEPTH_TEST);
 	
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	
 	glMatrixMode(GL_MODELVIEW);
 }
-
-
 
 void akDemoBase::reshapeCallback(int w, int h)
 {
@@ -137,9 +182,9 @@ void akDemoBase::idleCallback(void)
 	
 	// fps
 	m_frame++;
-	if (m_time - m_fpsLastTime > 500) {
-		m_lastfps = m_frame*1000.0/(m_time-m_fpsLastTime);
-		m_fpsLastTime = m_time;		
+	if (m_time - m_fpsLastTime > 1000) {
+		m_lastfps = m_frame*1000.0f/(m_time-m_fpsLastTime);
+		m_fpsLastTime = m_time;
 		m_frame = 0;
 	}
 	
@@ -153,13 +198,46 @@ void akDemoBase::idleCallback(void)
 		dt = 0.016666;
 	
 	step(dt);
-	
 	render();
 }
 
 void akDemoBase::displayCallback(void)
 {
 	render();
+}
+
+void akDemoBase::keyboardCallback(unsigned char key,int x, int y)
+{
+//	printf("%d\n", key);
+	switch(key)
+	{
+		case 110: // N
+			m_drawNormals = m_drawNormals? false:true;
+			break;
+		case 116: // T
+			m_textured = m_textured? false:true;
+			break;
+		case 115: // S
+			m_shaded = m_shaded? false:true;
+			break;
+		case 100: // D
+			m_dualQuatUse +=1;
+			if(m_dualQuatUse>3) m_dualQuatUse = 0;
+			break;
+		case 119: // W
+			m_wireframe = m_wireframe? false:true;
+			break;
+		case 99: // C
+			m_drawColor = m_drawColor? false:true;
+			break;
+		case 118: // V
+			m_useVbo = m_useVbo? false:true;
+			break;
+		case 109: // M
+			m_normalMethod +=1;
+			if(m_normalMethod>3) m_normalMethod = 0;
+			break;
+	}
 }
 
 void akDemoBase::addAnimation(const utHashedString& name, akAnimationClip* anim)
@@ -222,31 +300,21 @@ int akDemoBase::getFps(void)
 
 void akDemoBase::render()
 {
-
 	glViewport(0, 0, m_windowx, m_windowy);
 	
-	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-	
-	glEnable(GL_DEPTH_TEST);
-	
-//	if( options.m_bWireFrame )
+		
+	if( m_wireframe )
 		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-//	else
-//		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-	
-//	if( options.m_bCulling )
-		glEnable(GL_CULL_FACE);
-//	else
-//		glDisable(GL_CULL_FACE);
-	
-	
+	else
+		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+		
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-        gluPerspective(m_camera->m_fov, (float)m_windowx/m_windowy, m_camera->m_clipStart, m_camera->m_clipEnd);
+	gluPerspective(m_camera->m_fov, (float)m_windowx/m_windowy, m_camera->m_clipStart, m_camera->m_clipEnd);
 	
 	glMatrixMode(GL_MODELVIEW);
-        akMatrix4 cam_inv_m = inverse(m_camera->m_transform.toMatrix());
+	akMatrix4 cam_inv_m = inverse(m_camera->m_transform.toMatrix());
 	glLoadMatrixf((GLfloat*)&cam_inv_m);
 
 	// world origin axes
@@ -265,17 +333,78 @@ void akDemoBase::render()
 //	glEnd();
 	
 	// objects
+	bool shaded = m_shaded && !m_wireframe;
 	unsigned int i;
 	for( i=0; i<m_objects.size(); i++)
 	{
-		m_objects.at(i)->draw();
+		m_objects.at(i)->draw(m_drawNormals, m_drawColor, m_textured, m_useVbo, shaded);
 	}
 	
 	// FPS
-	sprintf( m_fpsString, "FPS: %4.0d",getFps());
-	glColor3f(0.0f, 0.0f, 0.0f);
-	drawString(30, 35, m_fpsString);
+	std::stringstream UIString;
+	UIString << "FPS: " << getFps() << "\n\n";
+	utString str = UIString.str();
+	glColor3f(0.2f, 0.2f, 0.2f);
+	drawString(10, 15, str.c_str());
 	
+	// Info text
+	str.clear();
+	str += "W: Togle wireframe (";
+	str += (m_wireframe? "ON":"OFF");
+	str += ")\n";
+	str += "S: Togle shading (";
+	str += (m_shaded? "ON":"OFF");
+	str += ")\n";
+	str += "T: Togle textures (";
+	str += (m_textured? "ON":"OFF");
+	str += ")\n";
+	str += "C: Togle vertex color (";
+	str += (m_drawColor? "ON":"OFF");
+	str += ")\n";
+	str += "N: Togle draw normals (";
+	str += (m_drawNormals? "ON":"OFF");
+	str += ")\n";
+	str += "D: Cycle dual quaternion skinning (";
+	switch(m_dualQuatUse)
+	{
+	case 0:
+		str += "File setting";
+		break;
+	case 1:
+		str += "Matrix";
+		break;
+	case 2:
+		str += "Dual Quat";
+		break;
+	case 3:
+		str += "Dual Quat Antiposality";
+		break;
+	}
+	str += ")\n";
+	str += "M: Cycle normal skinning (";
+	switch(m_normalMethod)
+	{
+	case 0:
+		str += "No normal skinning";
+		break;
+	case 1:
+		str += "No scaling";
+		break;
+	case 2:
+		str += "Uniform scaling";
+		break;
+	case 3:
+		str += "Full";
+		break;
+	}
+	str += ")\n";
+	if(m_canUseVbo)
+	{
+		str += "V: Togle VBO (";
+		str += (m_useVbo? "ON":"OFF");
+		str += ")\n";
+	}
+	drawString(10, m_windowy-100, str.c_str());
 	
 	glFlush();
 	glutSwapBuffers();

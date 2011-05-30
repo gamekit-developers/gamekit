@@ -40,130 +40,13 @@
 #include "../akDemo.h"
 
 #include "akAnimationLoader.h"
+#include "akMeshLoader.h"
 
 #define BLENDER_ARM_DEF_QUATERNION (1<<2)  //form blender dna files
 
 akBLoader::akBLoader(akDemo* demo)
 {
 	m_demo = demo;
-}
-
-void akBLoader::convertTriangle(unsigned int firstIndex, akVector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3)
-{
-	positions[firstIndex] = akVector3(bverts[idx1].co[0], bverts[idx1].co[1], bverts[idx1].co[2]);
-	positions[firstIndex+1] = akVector3(bverts[idx2].co[0], bverts[idx2].co[1], bverts[idx2].co[2]);
-	positions[firstIndex+2] = akVector3(bverts[idx3].co[0], bverts[idx3].co[1], bverts[idx3].co[2]);
-	oldIndices[firstIndex] = idx1;
-	oldIndices[firstIndex+1] = idx2;
-	oldIndices[firstIndex+2] = idx3;
-}
-
-void akBLoader::removeMeshTempData(akMesh* mesh)
-{
-	if(!mesh)
-		return;
-	
-	for (int i=0; i<mesh->getNumSubMeshes(); i++)
-	{
-		akSubMesh* smesh = mesh->getSubMesh(i);
-		akVertexBuffer* vbuf = smesh->getVertexBuffer();
-		int* oldindices;
-	
-		if( vbuf->getElement(akVertexBuffer::VB_DU_CUSTOM, akVertexBuffer::VB_DT_INT32,1 ,(void**)&oldindices, 0) )
-		{
-			vbuf->removeElement(oldindices);
-			
-			delete[] oldindices;
-		}
-	}
-}
-
-void akBLoader::convertMesh(Blender::Mesh *me)
-{
-	unsigned int tricount = 0 ;
-	Blender::MFace*  mface = me->mface;
-	Blender::MVert*  mvert = me->mvert;
-	
-	if (!mface || !mvert)
-		return;
-	
-	//count total triangle faces needed
-	for (int i = 0; i < me->totface; i++)
-	{
-		const Blender::MFace& curface = mface[i];
-		
-		// skip if face is not a triangle || quad
-		if (!curface.v3)
-			continue;
-		
-		tricount++;
-		
-		const bool isQuad = curface.v4 != 0;
-		
-		if (isQuad)
-			tricount++;
-	}
-	
-	akSubMesh* smesh = new akSubMesh(tricount * 3);
-	akMesh* mesh = new akMesh();
-	mesh->addSubMesh(smesh);
-	m_demo->addMesh(AKB_IDNAME(me), mesh);
-
-	akVertexBuffer* vbuf = smesh->getVertexBuffer();
-	unsigned int stride;
-	akVector3* positions;
-	
-	vbuf->getElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, 1, (void**)&positions, &stride);
-
-	// add buffer to save original vertex index to convert deform groups later
-	int* oldindices = new int[tricount*3];
-	vbuf->addElement(akVertexBuffer::VB_DU_CUSTOM, akVertexBuffer::VB_DT_INT32, sizeof(int), oldindices);
-	
-	
-	tricount = 0;
-	for (int i = 0; i < me->totface; i++)
-	{
-		const Blender::MFace& curface = mface[i];
-
-		// skip if face is not a triangle or quad
-		if (!curface.v3)
-			continue;
-
-		const bool isQuad = curface.v4 != 0;
-
-
-		if (isQuad)
-		{
-
-			akVector3 e0, e1;
-
-			e0 = (akVector3(mvert[curface.v1].co[0], mvert[curface.v1].co[1], mvert[curface.v1].co[2]) - akVector3(mvert[curface.v2].co[0], mvert[curface.v2].co[1], mvert[curface.v2].co[2]));
-			e1 = (akVector3(mvert[curface.v3].co[0], mvert[curface.v3].co[1], mvert[curface.v3].co[2]) - akVector3(mvert[curface.v4].co[0], mvert[curface.v4].co[1], mvert[curface.v4].co[2]));
-			
-			if (lengthSqr(e0) <lengthSqr(e1))
-			{
-				convertTriangle(tricount*3, positions, oldindices, mvert, curface.v1, curface.v2, curface.v3);
-				tricount++;
-				
-				convertTriangle(tricount*3, positions, oldindices, mvert, curface.v3, curface.v4, curface.v1);
-				tricount++;
-			}
-			else
-			{
-				convertTriangle(tricount*3, positions, oldindices, mvert, curface.v1, curface.v2, curface.v4);
-				tricount++;
-				
-				convertTriangle(tricount*3, positions, oldindices, mvert, curface.v4, curface.v2, curface.v3);
-				tricount++;
-			}
-		}
-		else
-		{
-			convertTriangle(tricount*3, positions, oldindices, mvert, curface.v1, curface.v2, curface.v3);
-			tricount++;
-		}
-	}
-	
 }
 
 int countBones(Blender::Bone* bone)
@@ -240,127 +123,7 @@ void akBLoader::convertSkeleton(Blender::bArmature *bskel)
 	skel->setBindingPose(bindPose);
 }
 
-void akBLoader::convertMeshSkinning(akMesh* mesh, Blender::Object *bobj, akSkeleton* skel)
-{
-	Blender::Mesh* bmesh = (Blender::Mesh*)bobj->data;
-	
-	utArray<int> bonedgimap;
-	int numb = skel->getNumJoints();
-	
-	for(int i=0; i<numb; i++)
-	{
-		bonedgimap.push_back(-1);
-	}
-	
-	int dgi = 0;
-	for (Blender::bDeformGroup* dg = (Blender::bDeformGroup*)bobj->defbase.first; dg; dg = dg->next, ++dgi)
-	{
-		int bi = skel->getIndex(dg->name);
-		if(bi != -1)
-			bonedgimap[bi] = dgi;
-	}
-	
-	for (int i=0; i<mesh->getNumSubMeshes(); i++)
-	{
-		akSubMesh* smesh = mesh->getSubMesh(i);	
-		smesh->addSkinningDataBuffer();
-		
-		akVertexBuffer* vbuf = smesh->getVertexBuffer();
-		int vertnum = vbuf->getVerticesNumber();
-		
-		int* oldindices;
-		float* weights; 
-		UTuint8* bindices;
-		
-		vbuf->getElement(akVertexBuffer::VB_DU_CUSTOM, akVertexBuffer::VB_DT_INT32, 1, (void**)&oldindices, 0);
-		vbuf->getElement(akVertexBuffer::VB_DU_BONE_IDX, akVertexBuffer::VB_DT_4UINT8, 1, (void**)&bindices, 0);
-		vbuf->getElement(akVertexBuffer::VB_DU_BONE_WEIGHT, akVertexBuffer::VB_DT_4FLOAT32, 1, (void**)&weights, 0);
-		
-		for(int j=0; j<vertnum; j++)
-		{
-			int oldi = oldindices[j];
-			Blender::MDeformVert& dv = bmesh->dvert[oldi];
-			int bcount = 0;
-			utArray<float> tmpweights;
-			utArray<int> tmpbi;
-			float wsum = 0;
-			
-			for (int w = 0; w < dv.totweight; w++)
-			{
-				int bi = bonedgimap.find(dv.dw[w].def_nr);
-				if (bi != UT_NPOS)
-				{
-					wsum += dv.dw[w].weight;
-					tmpweights.push_back(dv.dw[w].weight);
-					tmpbi.push_back(bi);
-					bcount++;
-				}
-			}
-			
-			if( !akFuzzy(wsum, 1.0f))
-			{
-				//std::cout << "Warning vertex " << oldi << " bone weights sum is not 1: " << wsum << std::endl;
-				
-				for(int b=0; b<bcount; b++)
-				{
-					tmpweights[b] = tmpweights[b] / wsum;
-				}
-			}
-			
-			if(bcount > 4)
-			{
-				while(bcount > 4)
-				{
-					//std::cout << "Warning vertex " << oldi << " deformed by more than 4 bones" << std::endl;
-					
-					float minw = 1;
-					int mini;
-					for(int b=0; b<bcount; b++)
-					{
-						if(tmpweights[b]<minw)
-						{
-							minw = tmpweights[b];
-							mini = b;
-						}
-					}
-					tmpweights.erase((UTsize)mini);
-					tmpbi.erase((UTsize)mini);
-					
-					bcount--;
-				}
-				
-				wsum = 0;
-				for(int b=0; b<bcount; b++)
-				{
-					wsum += tmpweights[b];
-				}
-				for(int b=0; b<bcount; b++)
-				{
-					tmpweights[b] = tmpweights[b] / wsum;
-				}
-			}
-			
-			for(int b=0; b<4; b++)
-			{
-				if(bcount<=b)
-				{
-					bindices[j*4+b] = 0;
-					weights[j*4+b] = 0;
-				}
-				else
-				{
-					bindices[j*4+b] = tmpbi[b];
-					weights[j*4+b] = tmpweights[b];
-				}
-			}
-					
-		}
-	}
-	
-	bonedgimap.clear();
-}
-
-void akBLoader::convertMeshObject(Blender::Object *bobj)
+void akBLoader::convertObjectMesh(Blender::Object *bobj)
 {
 	if(!bobj->data)
 		return;
@@ -379,14 +142,21 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 	entity->setTransformState(trans);
 	
 	Blender::Mesh* bmesh =  (Blender::Mesh*)bobj->data;
+	
 	if (!m_demo->getMesh(AKB_IDNAME(bmesh)))
-		convertMesh(bmesh);
-		
+	{
+		akMesh* mesh = new akMesh();
+		m_demo->addMesh(AKB_IDNAME(bmesh), mesh);
+		akMeshLoader meconv(mesh, bobj, bmesh);
+		meconv.convert(false, true);
+	}
+	
 	akMesh* mesh = m_demo->getMesh(AKB_IDNAME(bmesh));
 	entity->setMesh(mesh);
 	
 	if(mesh && bobj->parent != 0 && bobj->parent->type == OB_ARMATURE)
 	{
+	
 		Blender::bArmature* bskel = (Blender::bArmature*)bobj->parent->data;
 		if(!m_demo->getSkeleton(AKB_IDNAME(bskel)))
 			convertSkeleton(bskel);
@@ -394,15 +164,12 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 		akSkeleton* skel = m_demo->getSkeleton(AKB_IDNAME(bskel));
 		entity->setSkeleton(skel);
 		
-		convertMeshSkinning(mesh, bobj, skel);
-		
 		if(bskel->deformflag & BLENDER_ARM_DEF_QUATERNION)
 			entity->setUseDualQuatSkinning(true);
-	}
-	
-	removeMeshTempData(mesh);
-}
 
+		mesh->generateBoneWeightsFromVertexGroups(skel, true);
+	}
+}
 
 void akBLoader::convertCameraObject(Blender::Object *bobj)
 {
@@ -454,7 +221,8 @@ void akBLoader::loadFile(const utString &filename)
 		// test for usable object type
 		if(bobj->type == OB_MESH)
 		{
-			convertMeshObject(bobj);
+//			convertMeshObject(bobj);
+			convertObjectMesh(bobj);
 			
 			akEntity* entity = m_demo->getEntity(AKB_IDNAME(bobj));
 			animLoader.convertObject(entity, bobj, fp.getVersion() <= 249, bscene->r.frs_sec);

@@ -33,15 +33,18 @@ class akAnimationClip;
 class akAnimationCurve;
 class akAnimationPlayer;
 class akAnimationPlayerSet;
+class akVertexGroup;
 class akDualQuat;
 class akEuler;
 class akJoint;
 class akMesh;
+class akMorphTarget;
+class akPose;
 class akSkeleton;
 class akSkeletonPose;
 class akSubMesh;
 class akTransformState;
-class akVertexBuffer;
+class akBufferInfo;
 
 
 #endif//_akCommon_h_

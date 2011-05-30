@@ -68,7 +68,7 @@ void gkSceneManager::copyObjects(gkScene* fromScene, gkScene* toScene, int excep
 
 	gkGameObjectSet objects; 
 	
-	gkGameObjectHashMap::Iterator it = fromScene->getObjects();
+	gkGameObjectHashMap::Iterator it(fromScene->getObjects());
 	while (it.hasMoreElements())
 	{
 		gkGameObject* obj = it.getNext().second;

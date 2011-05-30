@@ -25,19 +25,40 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKDEMO_H
-#define AKDEMO_H
+#ifndef AKOPENGLINFO_H
+#define AKOPENGLINFO_H
 
-#include "akDemoBase.h"
+#include "utTypes.h"
+#include "utString.h"
 
-class akDemo : public akDemoBase
+class akOpenGLInfo
 {
 public:
-	akDemo();
-	~akDemo();
-	
-	virtual void init(void);
+	utString vendor;
+	utString renderer;
+	utString version;
+	utArray <utString> extensions;
+	int redBits;
+	int greenBits;
+	int blueBits;
+	int alphaBits;
+	int depthBits;
+	int stencilBits;
+	int maxTextureSize;
+	int maxLights;
+	int maxAttribStacks;
+	int maxModelViewStacks;
+	int maxProjectionStacks;
+	int maxClipPlanes;
+	int maxTextureStacks;
 
+	akOpenGLInfo() : redBits(0), greenBits(0), blueBits(0), alphaBits(0), depthBits(0),
+		stencilBits(0), maxTextureSize(0), maxLights(0), maxAttribStacks(0),
+		maxModelViewStacks(0), maxClipPlanes(0), maxTextureStacks(0) {}
+	
+	bool getInfo(void);
+	bool isExtensionSupported(const utString& ext);
+	void print(void);
 };
 
-#endif // AKDEMO_H
+#endif // AKOPENGLINFO_H

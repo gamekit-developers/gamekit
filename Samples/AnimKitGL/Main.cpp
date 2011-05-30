@@ -38,6 +38,7 @@ void motion(int x,int y)
 
 void keyboard(unsigned char key,int x,int y)
 {
+	demo->keyboardCallback(key, x, y);
 }
 
 void special(int key,int x,int y)
@@ -46,7 +47,6 @@ void special(int key,int x,int y)
 
 int main(int argc, char** argv)
 {
-	demo = new akDemo();
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -61,7 +61,8 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(special);
 	
-	demo->init();
+	demo = new akDemo();
+	demo->start();
 	
 	glutMainLoop();
 }

@@ -59,8 +59,20 @@ void akAnimationPlayer::setAnimationClip(akAnimationClip *v)
 
 void akAnimationPlayer::setTimePosition(akScalar v)
 {
-	m_evalTime = akClampf(v, 0.f, m_length);
+	if( v != m_evalTime)
+	{
+		m_evalTime = v;
 	
+		if (m_mode & AK_ACT_LOOP)
+		{
+			while (m_evalTime >= m_length)
+				m_evalTime -= m_length;
+		}
+		else
+		{
+			m_evalTime = akClampf(m_evalTime, 0.f, m_length);
+		}
+	}
 }
 
 void akAnimationPlayer::setUniformTimePosition(akScalar v)
@@ -75,29 +87,21 @@ akScalar akAnimationPlayer::getUniformTimePosition(void) const
 
 void akAnimationPlayer::stepTime(akScalar tick)
 {
-	if (!m_enabled || !m_clip)
-		return;
-	
-	akScalar dt = m_speedfactor * tick;
-	
-	m_evalTime += dt;
-
-	if (m_mode & AK_ACT_LOOP)
-	{
-		while (m_evalTime >= m_length)
-			m_evalTime -= m_length;
-	}
-	else
-	{
-		if (m_evalTime >= m_length)
-			m_evalTime = m_length;
-	}
+	setTimePosition(m_evalTime + tick * m_speedfactor);
 }
 
 
 void akAnimationPlayer::reset(void)
 {
 	m_evalTime = 0.f;
+}
+
+void akAnimationPlayer::evaluate(akPose *pose) const
+{
+	if (m_enabled && m_clip)
+	{
+		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition());
+	}
 }
 
 void akAnimationPlayer::evaluate(akSkeletonPose *pose) const

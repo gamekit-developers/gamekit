@@ -25,6 +25,25 @@
 -------------------------------------------------------------------------------
 */
 
+#define GL_GLEXT_PROTOTYPES
+
+#ifdef WIN32
+#include <Windows.h>
+#include <GL/glut.h>
+#elif defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+//#ifdef __APPLE__
+//#include <OpenGL/gl.h>
+//#else
+//#include <GL/gl.h>
+//#endif
+
+#include "GL/glext.h"
+
 #include "akDemo.h"
 
 #include "BlenderLoader/akBLoader.h"
@@ -49,142 +68,25 @@ void akDemo::init(void)
 {
 	akBLoader loader(this);
 	loader.loadFile("Blu.blend");
+	//loader.loadFile("Test.blend");
 	
-	for(unsigned int i=0; i<m_objects.size(); i++)
+	// Set some animation data the loader cannot detect
+	akEntity* square = getEntity("Plane");
+	if(square)
+		square->setPositionAnimated(true);
+	
+	// Join the morph action and the rest action together.
+	akAnimationClip* bluc = getAnimation("Rest");
+	akAnimationClip* morphc = getAnimation("KeyAction");
+	if(bluc && morphc)
 	{
-		akEntity* object = m_objects.at(i);
-		
-		
-		// When an object is deformed we allocate a place in the vertexbuffer to store the deformed positions
-		if(object->isMeshDeformed())
-		{	
-			akMesh* mesh = object->getMesh();
-			for (int i=0; i<mesh->getNumSubMeshes(); i++)
-			{
-				akSubMesh* smesh = mesh->getSubMesh(i);
-				smesh->addSecondPositionBuffer();
-			}
-		}
-		
-		// Activate the first action of each object
-		akAnimationPlayer* player = m_objects.at(i)->getAnimationPlayers()->getAnimationPlayer(0);
-		if(player)
+		akAnimationChannel* chan = morphc->getChannel("Key 1");
+		if(chan)
 		{
-			player->setEnabled(true);
-			player->setWeight(1.0f);
-			player->setMode(akAnimationPlayer::AK_ACT_LOOP);
+			morphc->removeChannel(chan);
+			bluc->addChannel(chan);
 		}
 	}
 	
-
 }
 
-void akDemo::step(akScalar time)
-{
-	unsigned int i;
-	for( i=0; i<m_objects.size(); i++)
-	{		
-		akEntity* object = m_objects.at(i);
-		
-		// advance the players time postions
-		object->getAnimationPlayers()->stepTime(time);
-	
-		if(object->isPositionAnimated())
-		{
-			// evaluate the animation clip values for the object world position
-			akTransformState transform = akTransformState::identity();
-			object->getAnimationPlayers()->evaluate(&transform);
-			object->setTransformState(transform);
-		}
-		
-		if(object->isMeshDeformed())
-		{
-			akSkeletonPose* pose;
-			
-			pose = object->getPose();
-			
-			// evaluate the animation clip values for the skeleton pose
-			pose->setIdentity();
-			object->getAnimationPlayers()->evaluate(pose);
-			pose->setSpace(akSkeletonPose::SP_BINDING_SPACE);
-			pose->toModelSpace(pose);
-			
-
-			
-			btAlignedObjectArray<akDualQuat> &dqpalette = object->getDualQuatPalette();
-			btAlignedObjectArray<akMatrix4> &mpalette = object->getMatrixPalette();
-				
-			if(object->getUseDualQuatSkinning())
-			{
-				// get dualquat and matrix pallete for the pose
-				pose->fillDualQuatPalette(dqpalette, mpalette);
-			}
-			else {
-				// get matrix pallete for the pose
-				pose->fillMatrixPalette(mpalette);
-			}
-			
-			akMesh* mesh = object->getMesh();
-			for (int i=0; i<mesh->getNumSubMeshes(); i++)
-			{
-				akSubMesh *smesh = mesh->getSubMesh(i);
-				akVertexBuffer *vbuf = smesh->getVertexBuffer();
-				
-				UTuint8 *indices;
-				float *weights;
-				akVector3 *posin, *posout;
-				unsigned int indicess, weightss, posins, posouts;
-				
-				
-				// get vertex buffer info needed for vertex skinning
-				vbuf->getElement(akVertexBuffer::VB_DU_BONE_IDX, akVertexBuffer::VB_DT_4UINT8, 1, (void**)&indices, &indicess);
-				vbuf->getElement(akVertexBuffer::VB_DU_BONE_WEIGHT, akVertexBuffer::VB_DT_4FLOAT32, 1, (void**)&weights, &weightss);
-				vbuf->getElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, 1, (void**)&posin, &posins);
-				vbuf->getElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, 2, (void**)&posout, &posouts);
-				
-				
-				// apply vertex skinning
-				if(object->getUseDualQuatSkinning())
-				{
-//					akGeometryDeformer::DLBSkinning(vbuf->getVerticesNumber(), dqpalette, mpalette,
-//														weights, weightss,
-//														indices, indicess,
-//														posin, posins,
-//														posout, posouts);
-
-					akGeometryDeformer::DLBSkinningFast(vbuf->getVerticesNumber(), dqpalette, mpalette,
-														weights, weightss,
-														indices, indicess,
-														posin, posins,
-														posout, posouts);
-	
-//					akGeometryDeformer::DLBSkinningMoreFast(vbuf->getVerticesNumber(), dqpalette, mpalette,
-//														weights, weightss,
-//														indices, indicess,
-//														posin, posins,
-//														posout, posouts);
-	
-//					akGeometryDeformer::DLBSkinningAntipodality(vbuf->getVerticesNumber(), dqpalette, mpalette,
-//														weights, weightss,
-//														indices, indicess,
-//														posin, posins,
-//														posout, posouts);
-				}
-				else
-				{
-//					akGeometryDeformer::LBSkinning(vbuf->getVerticesNumber(), mpalette,
-//														weights, weightss,
-//														indices, indicess,
-//														posin, posins,
-//														posout, posouts);
-
-					akGeometryDeformer::LBSkinningFast(vbuf->getVerticesNumber(), mpalette,
-														weights, weightss,
-														indices, indicess,
-														posin, posins,
-														posout, posouts);
-				}
-			}
-		}
-	}
-}

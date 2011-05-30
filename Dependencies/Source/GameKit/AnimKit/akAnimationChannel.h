@@ -40,41 +40,42 @@ class akAnimationChannel
 public:
 	enum Type
 	{
-		AC_TRANSFORM,
+		AC_TRANSFORM =0,
 		AC_BONE,
 		AC_MORPH,
 		AC_META
 	};
 
-	typedef utArray<akAnimationCurve*> Splines;
+	typedef utArray<akAnimationCurve*> Curves;
 
 
 protected:
 
-	int                  m_type;
-	const utString       m_name;
-	Splines              m_splines;
+	UTuint32             m_type;
+	const utHashedString m_name;
+	Curves               m_curves;
 	bool                 m_isEulerRotation;
 
 public:
 
-	akAnimationChannel(Type type, const utString& name);
+	akAnimationChannel(UTuint32 type, const utHashedString& name);
 	~akAnimationChannel();
 
-	void addSpline(akAnimationCurve* spline);
+	void addCurve(akAnimationCurve* spline);
 	
-	const akAnimationCurve** getSplines(void) const;
+	const akAnimationCurve** getCurves(void) const;
 
-	int getNumSplines(void) const;
+	int getNumCurves(void) const;
 	
+	void evaluate(akPose& pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
 	void evaluate(akTransformState& transform, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
 	
-	UT_INLINE int getType(void) const
+	UT_INLINE UTuint32 getType(void) const
 	{
 		return m_type;
 	}
 	
-	UT_INLINE const utString& getName(void) const
+	UT_INLINE const utHashedString& getName(void) const
 	{
 		return m_name;
 	}

@@ -82,6 +82,17 @@ void akAnimationPlayerSet::stepTime(akScalar seconds)
 	}
 }
 
+void akAnimationPlayerSet::evaluate(akPose *pose) const
+{
+	akAnimationPlayer* const* ptr = m_players.ptr();
+	int len = getNumAnimationPlayers();
+	
+	for(int i=0; i<len; i++)
+	{
+		ptr[i]->evaluate(pose);
+	}
+}
+
 void akAnimationPlayerSet::evaluate(akSkeletonPose *pose) const
 {
 	akAnimationPlayer* const* ptr = m_players.ptr();

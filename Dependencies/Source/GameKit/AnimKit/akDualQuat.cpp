@@ -38,16 +38,16 @@
 
 #include "akDualQuat.h"
 
-akDualQuat::akDualQuat() : nondual(akQuat::identity()), dual(0,0,0,0)
+akDualQuat::akDualQuat() : n(akQuat::identity()), d(0,0,0,0)
 {
 }
 
 akDualQuat::akDualQuat(akQuat rot, akVector3 trans)
 {
-	nondual = rot;
-	dual.setX(0.5*( trans[0]*rot[3] + trans[1]*rot[2] - trans[2]*rot[1]));
-	dual.setY(0.5*(-trans[0]*rot[2] + trans[1]*rot[3] + trans[2]*rot[0]));
-	dual.setZ(0.5*( trans[0]*rot[1] - trans[1]*rot[0] + trans[2]*rot[3]));
-	dual.setW(-0.5*(trans[0]*rot[0] + trans[1]*rot[1] + trans[2]*rot[2]));
+	n = rot;
+	d.setX(0.5*( trans[0]*rot[3] + trans[1]*rot[2] - trans[2]*rot[1]));
+	d.setY(0.5*(-trans[0]*rot[2] + trans[1]*rot[3] + trans[2]*rot[0]));
+	d.setZ(0.5*( trans[0]*rot[1] - trans[1]*rot[0] + trans[2]*rot[3]));
+	d.setW(-0.5*(trans[0]*rot[0] + trans[1]*rot[1] + trans[2]*rot[2]));
 }
 

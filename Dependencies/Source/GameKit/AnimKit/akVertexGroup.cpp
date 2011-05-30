@@ -25,19 +25,33 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKDEMO_H
-#define AKDEMO_H
+#include "akVertexGroup.h"
 
-#include "akDemoBase.h"
-
-class akDemo : public akDemoBase
+akVertexGroup::akVertexGroup(UTuint32 size)
 {
-public:
-	akDemo();
-	~akDemo();
-	
-	virtual void init(void);
+	m_size = size;
+	m_indices.resize(size);
+	m_weights.resize(size);
+}
 
-};
+akVertexGroup::~akVertexGroup()
+{
+	m_indices.clear();
+	m_weights.clear();
+}
 
-#endif // AKDEMO_H
+void akVertexGroup::add(UTuint32 vertexIndex, akScalar weight)
+{
+	m_indices.push_back(vertexIndex);
+	m_weights.push_back(weight);
+	m_size++;
+}
+
+void akVertexGroup::set(UTuint32 idx, UTuint32 vertexIndex, akScalar weight)
+{
+	if(idx < m_size)
+	{
+		m_indices[idx] = vertexIndex;
+		m_weights[idx] = weight;
+	}
+}

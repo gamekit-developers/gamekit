@@ -86,6 +86,11 @@ UT_INLINE akScalar akClampf(const akScalar& v, const akScalar& a, const akScalar
 	return v < a ? a : v > b ? b : v;
 }
 
+UT_INLINE akScalar akClampi(const UTint32& v, const UTint32& a, const UTint32& b)
+{
+	return v < a ? a : v > b ? b : v;
+}
+
 UT_INLINE akScalar akMax(const akScalar& a, const akScalar& b )
 {
 	return a < b ? b : a;
@@ -101,16 +106,26 @@ UT_INLINE bool akFuzzy(const akScalar& x, const akScalar& y)
 	return akAbs(x-y) <= AK_EPSILON;
 }
 
+UT_INLINE bool akFuzzyT(const akScalar& x, const akScalar& tol)
+{
+	return akAbs(x) <= tol;
+}
+
 UT_INLINE bool akEq(const akScalar& v)
 {
 	return v >= -AK_EPSILON && v <= 1.+AK_EPSILON;
 }
 
 template <class T>
-UT_INLINE static void advancePointer(T*& ptr, UTsize offset)
+UT_INLINE static void akAdvancePointer(T*& ptr, UTsize offset)
 {
 	ptr = (T*)((char*)(ptr) + offset);
 }
 
+template <class T>
+UT_INLINE static T* akOffsetPointer(T* ptr, UTsize offset)
+{
+	return (T*)((char*)(ptr) + offset);
+}
 
 #endif // AKMATHUTILS_H

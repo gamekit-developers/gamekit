@@ -27,70 +27,353 @@
 
 #include "akMesh.h"
 #include "akMathUtils.h"
+#include "akSkeleton.h"
+#include "akVertexGroup.h"
+#include "akMorphTarget.h"
+#include "akPose.h"
+#include "akAnimationChannel.h"
+#include "akAnimationCurve.h"
+#include "akGeometryDeformer.h"
 
 #include "btAlignedAllocator.h"
 
-akSubMesh::akSubMesh(UTuint32 numVertices) : m_boneIndices(0), m_boneWeights(0), m_positions2(0)
+akSubMesh::akSubMesh(Type type, bool hasNormals, bool hasColors, UTuint32 uvlayers)
+	 : m_type(type), m_hasNormals(hasNormals), m_hasVertexColor(hasColors), m_uvLayerCount(uvlayers),
+	   m_hasSecondPos(false), m_hasSkinningData(false), m_vBufDirty(true), m_iBufDirty(true)
 {
-	m_vertexBuffer.setVerticesNumber(numVertices);
+	m_posnorStride = sizeof(akVector3);
+	if(m_hasNormals)
+	{
+		m_posnorStride += sizeof(akVector3);
+		m_norOffset = sizeof(akVector3);
+	}
 	
-//	m_positions = new akVector3[numVertices];
-	m_positions = (akVector3*) btAlignedAlloc(numVertices*sizeof(akVector3), 16);
-	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions);
+	m_staticStride = uvlayers * 2 * sizeof(float);
+	if(hasColors)
+	{
+		m_staticStride += sizeof(UTuint32);
+		m_colorOffset = uvlayers * 2 * sizeof(float);
+	}
 	
-//	m_normals = new akVector3[numVertices];
-	m_normals = (akVector3*) btAlignedAlloc(numVertices*sizeof(akVector3), 16);
-	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_NORMAL, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_normals);
-
+	m_elementStride = sizeof(UTuint32);
 }
-
 
 akSubMesh::~akSubMesh()
 {
-//	delete[] m_positions;
-//	delete[] m_normals;
+	m_posnor.clear();
+	m_posnor2.clear();
+	m_static.clear();
+	m_boneIndices.clear();
+	m_boneWeights.clear();
+	m_elements.clear();
+		
+	for(int i=0; i<m_vertexGroups.size(); i++)
+	{
+		delete m_vertexGroups[i];
+	}
+	m_vertexGroups.clear();
 	
-//	if(m_boneIndices)
-//		delete[] m_boneIndices;
-	
-//	if(m_boneWeights)
-//		delete[] m_boneWeights;
-	
-//	if(m_positions2)
-//		delete[] m_positions2;
-
-	btAlignedFree(m_positions);
-	btAlignedFree(m_normals);
-	if(m_boneIndices)
-		btAlignedFree(m_boneIndices);
-	if(m_boneWeights)
-		btAlignedFree(m_boneWeights);
-	if(m_positions2)
-		btAlignedFree(m_positions2);
+	for(int i=0; i<m_morphTargets.size(); i++)
+	{
+		delete m_morphTargets[i];
+	}
+	m_morphTargets.clear();
 }
 
+void akSubMesh::addVertex(const akVector3 &co, const akVector3 &no, const UTuint32 &color, utArray<float>& uv)
+{
+	m_posnor.push_back(co);
+	if(m_hasNormals)
+		m_posnor.push_back(no);
+	
+	VBufBrick vbb;
+	for(int i=0; i<m_uvLayerCount; i++)
+	{
+		if( (i+1)*2 <= uv.size() )
+		{
+			vbb.f = uv[i*2];
+			m_static.push_back(vbb);
+			vbb.f = uv[i*2+1];
+			m_static.push_back(vbb);
+		}
+	}
+	
+	if(m_hasVertexColor)
+	{
+		vbb.ui32 = color;
+		m_static.push_back(vbb);
+	}
+	
+	// add whatever data to keep size in sync
+	if(m_hasSecondPos)
+	{
+		m_posnor2.push_back(akVector3(0,0,0));
+		if(m_hasNormals)
+			m_posnor2.push_back(akVector3(1,0,0));
+	}
+	if(m_hasSkinningData)
+	{
+		for(int i=0; i<4; i++)
+		{
+			m_boneIndices.push_back(0);
+			m_boneWeights.push_back(0.f);
+		}
+	}
+	
+	m_vertexBuffer.setSize(m_vertexBuffer.getSize()+1);
+	m_vBufDirty = true;
+}
+
+void akSubMesh::addIndex(UTuint32 idx)
+{
+	m_elements.push_back(idx);
+	m_elementBuffer.setSize(m_elementBuffer.getSize()+1);
+	m_iBufDirty = true;
+}
 
 void akSubMesh::addSkinningDataBuffer(void)
 {
-	if(!m_boneIndices && !m_boneWeights)
+	if(!m_hasSkinningData)
 	{
-//		m_boneIndices = new UTuint8[4 * m_vertexBuffer.getVerticesNumber()];
-		m_boneIndices = (UTuint8*) btAlignedAlloc( 4 * m_vertexBuffer.getVerticesNumber() * sizeof(UTuint8), 16);
-		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_BONE_IDX, akVertexBuffer::VB_DT_4UINT8, 4*sizeof(UTuint8), m_boneIndices);
+		m_boneIndices.resize(4 * m_vertexBuffer.getSize());
+		m_boneWeights.resize(4 * m_vertexBuffer.getSize());
 		
-//		m_boneWeights = new float[4 * m_vertexBuffer.getVerticesNumber()];
-		m_boneWeights = (float*) btAlignedAlloc(4 * m_vertexBuffer.getVerticesNumber() * sizeof(float), 16);
-		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_BONE_WEIGHT, akVertexBuffer::VB_DT_4FLOAT32, 4*sizeof(float), m_boneWeights);
+		m_hasSkinningData = true;
+		m_vBufDirty = true;
 	}
 }
 
 void akSubMesh::addSecondPositionBuffer(void)
 {
-	if(!m_positions2)
+	if(!m_hasSecondPos)
 	{
-//		m_positions2 = new akVector3[m_vertexBuffer.getVerticesNumber()];
-		m_positions2 = (akVector3*) btAlignedAlloc(m_vertexBuffer.getVerticesNumber() * sizeof(akVector3), 16);
-		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions2);
+		m_posnor2.resize(m_vertexBuffer.getSize()*2);
+		m_hasSecondPos = true;
+		m_vBufDirty = true;
+	}
+}
+
+void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool deleteVGroups)
+{
+	addSkinningDataBuffer();
+	
+	utHashSet<akVertexGroup*> todelete;
+	
+	UTuint32 vertnum = m_vertexBuffer.getSize();
+	for(int j=0; j<vertnum; j++)
+	{
+		int bcount = 0;
+		utArray<float> tmpweights;
+		utArray<int> tmpbi;
+		float wsum = 0;
+		
+		for (int w = 0; w < getNumVertexGroups(); w++)
+		{
+			akVertexGroup* vg = getVertexGroup(w);
+			int bi = skel->getIndex(vg->getName());
+			if (bi != -1)
+			{
+				UTuint32 idx = vg->findIndex(j);
+				if(idx!= UT_NPOS)
+				{
+					wsum += vg->getWeight(idx);
+					tmpweights.push_back(vg->getWeight(idx));
+					tmpbi.push_back(bi);
+					bcount++;
+				}
+				if(deleteVGroups)
+					todelete.insert(vg);
+			}
+		}
+		
+		while(bcount > 4)
+		{
+			float minw = 1;
+			int mini;
+			for(int b=0; b<bcount; b++)
+			{
+				if(tmpweights[b]<minw)
+				{
+					minw = tmpweights[b];
+					mini = b;
+				}
+			}
+			tmpweights.erase((UTsize)mini);
+			tmpbi.erase((UTsize)mini);
+			wsum -= minw;
+			bcount--;
+		}
+		
+		
+		if( !akFuzzy(wsum, 1.0f))
+		{
+			for(int b=0; b<bcount; b++)
+			{
+				tmpweights[b] = tmpweights[b] / wsum;
+			}
+		}
+		
+		for(int b=0; b<4; b++)
+		{
+			if(b<bcount)
+			{
+				m_boneIndices[j*4+b] = tmpbi[b];
+				m_boneWeights[j*4+b] = tmpweights[b];
+			}
+			else
+			{
+				m_boneIndices[j*4+b] = 0;
+				m_boneWeights[j*4+b] = 0;
+			}
+		}
+	}
+	
+	for(int i=0; i<todelete.size(); i++)
+	{
+		removeVertexGroup(todelete[i]);
+		delete todelete[i];
+	}
+}
+
+const akBufferInfo* akSubMesh::getVertexBuffer()
+{
+	if(m_vBufDirty)
+	{
+		m_vertexBuffer.clear();
+		
+		m_vertexBuffer.addElement(akBufferInfo::BI_DU_VERTEX, akBufferInfo::VB_DT_3FLOAT32, m_posnorStride, &m_posnor[0], &m_posnor[0]);
+		
+		if(m_hasNormals)
+		{
+			void* nordata = (char*)(&m_posnor[0]) + m_norOffset;
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, m_posnorStride, nordata, &m_posnor[0]);
+		}
+
+		if(m_hasSecondPos)
+		{
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_VERTEX, akBufferInfo::VB_DT_3FLOAT32, m_posnorStride, &m_posnor2[0], &m_posnor2[0]);
+			if(m_hasNormals)
+			{
+				void* nordata = (char*)(&m_posnor2[0]) + m_norOffset;
+				m_vertexBuffer.addElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, m_posnorStride, nordata, &m_posnor2[0]);
+			}
+		}
+		
+		for(int i=0; i<m_uvLayerCount; i++)
+		{
+			void* uvdata = (char*)(&m_static[0]) + i * 2 * sizeof(float);
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_UV, akBufferInfo::VB_DT_2FLOAT32, m_staticStride, uvdata, &m_static[0]);
+		}
+		
+		if(m_hasVertexColor)
+		{
+			void* vcoldata = (char*)(&m_static[0]) + m_colorOffset;
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_COLOR, akBufferInfo::VB_DT_4UINT8, m_staticStride, vcoldata, &m_static[0]);
+		}
+		
+		if(m_hasSkinningData)
+		{
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_BONE_IDX, akBufferInfo::VB_DT_4UINT8, 4*sizeof(UTuint8), &m_boneIndices[0], &m_boneIndices[0]);
+			m_vertexBuffer.addElement(akBufferInfo::BI_DU_BONE_WEIGHT, akBufferInfo::VB_DT_4FLOAT32, 4*sizeof(float), &m_boneWeights[0], &m_boneIndices[0]);
+		}
+		
+		m_vBufDirty = false;
+	}
+	return &m_vertexBuffer;
+}
+
+const akBufferInfo* akSubMesh::getIndexBuffer()
+{
+	if(m_iBufDirty)
+	{
+		m_elementBuffer.clear();
+		m_elementBuffer.addElement(akBufferInfo::BI_DU_ELEMENT, akBufferInfo::VB_DT_UINT32, sizeof(UTuint32), &m_elements[0], &m_elements[0]);
+		m_iBufDirty = false;
+	}
+	return &m_elementBuffer;
+}
+
+bool akSubMesh::hasMorphTargets(void)
+{
+	return m_morphTargets.size()>0;
+}
+
+void akSubMesh::deform(akGeometryDeformer::SkinningOption method, 
+					   akGeometryDeformer::NormalsOption normalMethod, 
+						const akPose* pose, const btAlignedObjectArray<akMatrix4> * mpalette,
+						const btAlignedObjectArray<akDualQuat> * dqpalette)
+{
+	akVector3 *posin, *posout;
+	unsigned int posins, posouts;
+	akVector3 *norin, *norout;
+	unsigned int norins, norouts;
+	
+	//be sure vbuf is up to date
+	getVertexBuffer();
+	
+	m_vertexBuffer.getElement(akBufferInfo::BI_DU_VERTEX, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&posin, &posins);
+	m_vertexBuffer.getElement(akBufferInfo::BI_DU_VERTEX, akBufferInfo::VB_DT_3FLOAT32, 2, (void**)&posout, &posouts);
+	
+	if(m_hasNormals)
+	{
+		m_vertexBuffer.getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&norin, &norins);
+		m_vertexBuffer.getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 2, (void**)&norout, &norouts);
+	}
+	
+	if(pose)
+	{
+		akVector3* pi = posin;
+		akVector3* po = posout;
+		akVector3* ni = norin;
+		akVector3* no = norout;
+		for(int j=0; j<m_vertexBuffer.getSize(); j++)
+		{
+			*po = *pi;
+			akAdvancePointer(pi, posins);
+			akAdvancePointer(po, posouts);
+			if(m_hasNormals)
+			{
+				*no = *ni;
+				akAdvancePointer(ni, norins);
+				akAdvancePointer(no, norouts);
+			}
+		}
+		posin = posout;
+		posins = posouts;
+		norin = norout;
+		norins = norouts;
+		
+		for(int j=0; j<m_morphTargets.size();j++)
+		{
+			akMorphTarget* target = m_morphTargets[j];
+			const akPose::FloatResult* result = pose->getFloatResult(akAnimationChannel::AC_MORPH, 
+																 target->getName().hash(), 
+																 akAnimationCurve::AC_CODE_VALUE);
+			if(result)
+				akGeometryDeformer::Morphing(target, result->value, posout, posouts, norout, norouts);
+		}
+	}
+	
+	if(mpalette)
+	{
+		UTuint8 *indices;
+		float *weights;
+		unsigned int indicess, weightss;
+		
+		m_vertexBuffer.getElement(akBufferInfo::BI_DU_BONE_IDX, akBufferInfo::VB_DT_4UINT8, 1, (void**)&indices, &indicess);
+		m_vertexBuffer.getElement(akBufferInfo::BI_DU_BONE_WEIGHT, akBufferInfo::VB_DT_4FLOAT32, 1, (void**)&weights, &weightss);
+		
+		akGeometryDeformer::Skinning(method,
+									 normalMethod,
+									 mpalette, dqpalette,
+									 m_vertexBuffer.getSize(),
+									 weights, weightss,
+									 indices, indicess,
+									 posin, posins,
+									 posout, posouts,
+									 norin, norins,
+									 norout, norouts);
+		
 	}
 }
 
@@ -112,5 +395,53 @@ akMesh::~akMesh()
 void akMesh::addSubMesh(akSubMesh* smesh)
 {
 	m_submeshes.push_back(smesh);
+}
+
+void akMesh::addSkinningDataBuffer(void)
+{
+	for(int i=0; i<m_submeshes.size(); i++)
+	{
+		m_submeshes[i]->addSkinningDataBuffer();
+	}
+}
+
+void akMesh::addSecondPositionBuffer(void)
+{
+	for(int i=0; i<m_submeshes.size(); i++)
+	{
+		m_submeshes[i]->addSecondPositionBuffer();
+	}
+}
+
+void akMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool deleteVGroups)
+{
+	for(int i=0; i<m_submeshes.size(); i++)
+	{
+		m_submeshes[i]->generateBoneWeightsFromVertexGroups(skel, deleteVGroups);
+	}
+}
+
+bool akMesh::hasMorphTargets(void)
+{
+	for(int i=0; i<m_submeshes.size(); i++)
+	{
+		if(m_submeshes[i]->hasMorphTargets())
+			return true;
+	}
+	return false;
+}
+
+void akMesh::deform(akGeometryDeformer::SkinningOption method, 
+					akGeometryDeformer::NormalsOption normalMethod, 
+					const akPose* pose, const btAlignedObjectArray<akMatrix4>* palette, 
+					const btAlignedObjectArray<akDualQuat>* dqpalette)
+{
+	for (int i=0; i<m_submeshes.size(); i++)
+	{
+		if(hasMorphTargets())
+			m_submeshes[i]->deform(method, normalMethod, pose, palette, dqpalette);
+		else
+			m_submeshes[i]->deform(method, normalMethod, 0, palette, dqpalette);
+	}
 }
 

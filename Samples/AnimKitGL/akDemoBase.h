@@ -34,6 +34,9 @@
 #include "akCommon.h"
 #include "akTransformState.h"
 
+#include "akOpenGLInfo.h"
+
+
 class akEntity;
 
 typedef struct akCamera
@@ -55,11 +58,12 @@ public:
 	akDemoBase();
 	virtual ~akDemoBase();
 	
-	void drawString(float x, float y, char *s);
+	void drawString(float x, float y, const char *s);
 	
 	void displayCallback(void);
 	void reshapeCallback(int w, int h);
 	void idleCallback(void);
+	void keyboardCallback(unsigned char key,int x,int y);
 	
 	void render(void);
 	
@@ -94,13 +98,23 @@ public:
                 return m_camera;
 	}
 	
+	void start(void);
+	void step(akScalar seconds);
 	virtual void init(void) =0;
-	virtual void step(akScalar seconds) =0;
 	
 protected:
 	int m_windowx, m_windowy;
 	unsigned int m_frame, m_time, m_fpsLastTime, m_stepLastTime, m_lastfps;
-	char m_fpsString[10];
+	akOpenGLInfo m_glinfo;
+	bool m_canUseVbo;
+	bool m_useVbo;
+	bool m_drawNormals;
+	bool m_wireframe;
+	bool m_textured;
+	bool m_shaded;
+	bool m_drawColor;
+	int m_dualQuatUse;
+	int m_normalMethod;
 	
 	// Ressources
 	AnimationClips m_animations;
@@ -108,7 +122,7 @@ protected:
 	Meshes         m_meshes;
 	Entities       m_objects;
 	
-        akCamera* m_camera;
+	akCamera* m_camera;
 	
 };
 

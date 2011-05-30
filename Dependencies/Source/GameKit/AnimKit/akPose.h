@@ -25,63 +25,56 @@
 -------------------------------------------------------------------------------
 */
 
-#include "akVertexBuffer.h"
+#ifndef AKPOSE_H
+#define AKPOSE_H
 
-akVertexBuffer::akVertexBuffer() : m_verticesNumber(0)
-{
-}
+#include "akCommon.h"
+#include "akTransformState.h"
+#include "akSkeletonPose.h"
 
-akVertexBuffer::~akVertexBuffer()
-{
-	m_elements.clear();
-}
+#include "utTypes.h"
 
-void akVertexBuffer::addElement(int dataUsage, int dataType, int stride, void *data)
+class akPose
 {
-	akVertexBuffer::Element elem;
-	
-	elem.dataUsage = dataUsage;
-	elem.dataType = dataType;
-	elem.stride = stride;
-	elem.data = data;
-	
-	m_elements.push_back(elem);
-}
-
-bool akVertexBuffer::getElement(const int dataUsage, const int dataType, const unsigned int occurrence, void **dataOut, unsigned int* strideOut) const
-{
-	int i, occur=0;
-	
-	for(i=0; i<m_elements.size(); i++)
+public:
+	struct FloatResult
 	{
-		if(m_elements.at(i).dataUsage == dataUsage && m_elements.at(i).dataType == dataType )
-		{
-			occur +=1;
-			
-			if(occur >= occurrence)
-			{
-				if(dataOut)
-					*dataOut = m_elements.at(i).data;
-				if(strideOut)
-					*strideOut = m_elements.at(i).stride;
-				
-				return true;
-			}
-		}
-	}
-	return false;
-}
+		UTuint32 channelType;
+		UTuint32 channelNameHash;
+		UTuint32 curveCode;
+		akScalar value;
+	};
 
-bool akVertexBuffer::removeElement(const void *elemData)
-{
-	for(int i=0; i<m_elements.size(); i++)
+private:
+	akTransformState*    m_transform;
+	akSkeletonPose*      m_skelpose;
+	utArray<FloatResult> m_floats;
+
+public:
+	akPose();
+	akPose(akSkeleton* skeleton);
+	~akPose();
+	
+	void reset(akSkeletonPose::Space=akSkeletonPose::SP_LOCAL_SPACE);
+	FloatResult* getFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code);
+	const FloatResult* getFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code) const;
+	void addFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code, float value);
+	
+	void fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette) const ;
+	
+	void fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &palette,
+							btAlignedObjectArray<akMatrix4> &mpalette) const ;
+							
+	UT_INLINE akTransformState& getTransform(void)
 	{
-		if(m_elements.at(i).data == elemData)
-		{
-			m_elements.erase(m_elements.at(i));
-			return true;
-		}
+		return *m_transform;
 	}
-	return false;
-}
+	
+	UT_INLINE akSkeletonPose* getSkeletonPose(void)
+	{
+		return m_skelpose;
+	}
+	
+};
 
+#endif // AKPOSE_H

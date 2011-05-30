@@ -17,19 +17,23 @@ set(AKGL_SRC
 	akEntity.cpp
 	akDemo.cpp
 	akDemoBase.cpp
+	akOpenGLInfo.cpp
 	
 	BlenderLoader/akAnimationLoader.cpp
 	BlenderLoader/akBLoader.cpp
+	BlenderLoader/akMeshLoader.cpp
 )
 
 set(AKGL_HDR
 	akEntity.h
 	akDemo.h
 	akDemoBase.h
+	akOpenGLInfo.h
 	
 	BlenderLoader/akAnimationLoader.h
 	BlenderLoader/akBlenderDefines.h
 	BlenderLoader/akBLoader.h
+	BlenderLoader/akMeshLoader.h
 )
 
 set(DATA 

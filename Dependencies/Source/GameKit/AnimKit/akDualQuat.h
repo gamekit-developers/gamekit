@@ -33,26 +33,26 @@
 UT_ATTRIBUTE_ALIGNED_CLASS16(class) akDualQuat
 {
 public:
-	akQuat nondual;
-	akQuat dual;
+	akQuat n;
+	akQuat d;
 
 	akDualQuat();
-	akDualQuat(akQuat nd, akQuat d) : nondual(nd), dual(d) {};
+	akDualQuat(akQuat nd, akQuat dual) : n(nd), d(dual) {};
 	akDualQuat(akQuat rot, akVector3 trans);
 	
 	inline const akDualQuat operator +( akDualQuat v ) const
 	{
-		return akDualQuat(nondual+v.nondual, dual+v.dual);
+		return akDualQuat(n+v.n, d+v.d);
 	};
 	
 	inline const akDualQuat operator *( const float v ) const
 	{
-		return akDualQuat(nondual*v, dual*v);
+		return akDualQuat(n*v, d*v);
 	};
 	
 	inline const akDualQuat operator /( const float v ) const
 	{
-		return akDualQuat(nondual/v, dual/v);
+		return akDualQuat(n/v, d/v);
 	};
 	
 	inline akDualQuat & operator +=( const akDualQuat & v )

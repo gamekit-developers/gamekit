@@ -36,6 +36,15 @@
 #include "btAlignedAllocator.h"
 #include "btAlignedObjectArray.h"
 
+#ifdef WIN32
+#include <Windows.h>
+#include <GL/glut.h>
+#elif defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
 class akEntity
 {
 private:
@@ -48,21 +57,31 @@ private:
 	
 	// per object anim data
 	akAnimationPlayerSet             m_players;
-	akSkeletonPose*                  m_pose;
+	akPose*                          m_pose;
 	btAlignedObjectArray<akMatrix4>  m_matrixPalette;
 	btAlignedObjectArray<akDualQuat> m_dualquatPalette;
 	bool                             m_useDualQuatSkinning;
+	bool                             m_posAnimated, m_morphAnimated;
+	
+	bool m_useVbo;
+	
+	utArray<GLuint> m_posnoVertexVboIds, m_staticVertexVboIds, m_staticIndexVboIds;
 
 public:
 	akEntity();
 	~akEntity();
 	
-	void draw(void);
-	
 	void setSkeleton(akSkeleton* skel);
 	
+	void init(bool useVbo);
+	void step(akScalar dt, int dualQuat, int normalsMethos);
+	void draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded);
 	
-	void setMesh(akMesh* mesh)
+	bool isMeshDeformedByMorphing(void);
+	
+	void updateVBO(void);
+	
+	UT_INLINE void setMesh(akMesh* mesh)
 	{
 		m_mesh = mesh;
 	}
@@ -77,7 +96,7 @@ public:
 		m_transform = v;
 	}
 	
-	UT_INLINE akSkeletonPose* getPose(void)
+	UT_INLINE akPose* getPose(void)
 	{
 		return m_pose;
 	}
@@ -92,9 +111,24 @@ public:
 		return &m_players;
 	}
 	
-	UT_INLINE bool isMeshDeformed(void)
+	UT_INLINE bool isPositionAnimated(void)
+	{
+		return m_posAnimated;
+	}
+	
+	UT_INLINE void setPositionAnimated(bool v)
+	{
+		m_posAnimated = v;
+	}
+	
+	UT_INLINE bool isMeshDeformedBySkeleton(void)
 	{
 		return m_skeleton? true:false;
+	}
+	
+	UT_INLINE bool isMeshDeformed(void)
+	{
+		return isMeshDeformedBySkeleton() || isMeshDeformedByMorphing();
 	}
 	
 	UT_INLINE bool getUseDualQuatSkinning(void)
@@ -105,11 +139,6 @@ public:
 	UT_INLINE void setUseDualQuatSkinning(const bool v)
 	{
 		m_useDualQuatSkinning = v;
-	}
-	
-	UT_INLINE bool isPositionAnimated(void)
-	{
-		return true;
 	}
 	
 	UT_INLINE btAlignedObjectArray<akMatrix4>& getMatrixPalette(void)

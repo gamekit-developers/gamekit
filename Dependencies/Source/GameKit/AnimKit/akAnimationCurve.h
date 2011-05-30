@@ -43,19 +43,20 @@ class akAnimationCurve
 public:
 	enum Codes
 	{
-		SC_LOC_X,
-		SC_LOC_Y,
-		SC_LOC_Z,
-		SC_SCL_X,
-		SC_SCL_Y,
-		SC_SCL_Z,
-		SC_ROT_QUAT_X,
-		SC_ROT_QUAT_Y,
-		SC_ROT_QUAT_Z,
-		SC_ROT_QUAT_W,
-		SC_ROT_EULER_X,
-		SC_ROT_EULER_Y,
-		SC_ROT_EULER_Z,
+		AC_CODE_VALUE =0,
+		AC_CODE_LOC_X,
+		AC_CODE_LOC_Y,
+		AC_CODE_LOC_Z,
+		AC_CODE_SCL_X,
+		AC_CODE_SCL_Y,
+		AC_CODE_SCL_Z,
+		AC_CODE_ROT_QUAT_X,
+		AC_CODE_ROT_QUAT_Y,
+		AC_CODE_ROT_QUAT_Z,
+		AC_CODE_ROT_QUAT_W,
+		AC_CODE_ROT_EULER_X,
+		AC_CODE_ROT_EULER_Y,
+		AC_CODE_ROT_EULER_Z,
 	};
 	
 	enum BezierInterpolation
@@ -70,7 +71,7 @@ protected:
 	akScalar                        *m_times;
 	akScalar                        *m_values;
 	akScalar                        *m_handles;
-	int                             m_code;
+	UTuint32                        m_code;
 	BezierInterpolation             m_interpMethod;
 
 
@@ -92,7 +93,7 @@ protected:
 
 
 public:
-	akAnimationCurve(UTsize numSamples, int code, BezierInterpolation binterp);
+	akAnimationCurve(UTsize numSamples, UTuint32 code, BezierInterpolation binterp);
 	~akAnimationCurve();
 
 	akScalar evaluate(akScalar time, akScalar delta=0.5f) const;
@@ -111,7 +112,7 @@ public:
 
 	/// Gets the code bound to this spline.
 	/// ie; where to apply results, loc, rot, ...
-	UT_INLINE int getCode(void) const
+	UT_INLINE UTuint32 getCode(void) const
 	{
 		return m_code;
 	}

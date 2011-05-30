@@ -25,19 +25,61 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKDEMO_H
-#define AKDEMO_H
+#ifndef AKVERTEXGROUP_H
+#define AKVERTEXGROUP_H
 
-#include "akDemoBase.h"
+#include "akCommon.h"
+#include "akMathUtils.h"
+#include "utCommon.h"
+#include "utTypes.h"
+#include "utString.h"
 
-class akDemo : public akDemoBase
+class akVertexGroup
 {
-public:
-	akDemo();
-	~akDemo();
+private:
+	utString m_name;
+	UTuint32 m_size;
 	
-	virtual void init(void);
+	utArray<UTuint32> m_indices;
+	utArray<akScalar> m_weights;
 
+public:
+	akVertexGroup() : m_size(0) {}
+	akVertexGroup(UTuint32 size);
+	~akVertexGroup();
+
+	void add(UTuint32 vertexIndex, akScalar weight);
+	void set(UTuint32 idx, UTuint32 vertexIndex, akScalar weight);
+
+	UT_INLINE void setName(const utString& v)
+	{
+		m_name = v;
+	}
+
+	UT_INLINE const utString& getName(void)
+	{
+		return m_name;
+	}
+	
+	UT_INLINE UTuint32 getSize(void) const
+	{
+		return m_size;
+	}
+	
+	UT_INLINE UTuint32 getIndex(UTuint32 i) const
+	{
+		return m_indices[i];
+	}
+	
+	UT_INLINE akScalar getWeight(UTuint32 i) const
+	{
+		return m_weights[i];
+	}
+	
+	UT_INLINE UTuint32 findIndex(UTuint32 idx)
+	{
+		return m_indices.find(idx);
+	}
 };
 
-#endif // AKDEMO_H
+#endif // AKVERTEXGROUP_H

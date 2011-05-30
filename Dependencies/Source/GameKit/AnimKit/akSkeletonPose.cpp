@@ -191,7 +191,7 @@ void akSkeletonPose::fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &dqpal
 			akDualQuat& dq(dqpalette[i]);
 			akDualQuat& dqp(dqpalette[pid]);
 			
-			if( dot(dqp.nondual, dq.nondual) < 0 )
+			if( dot(dqp.n, dq.n) < 0 )
 				dq *= -1.0;
 		}
 	}
