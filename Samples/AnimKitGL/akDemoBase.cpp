@@ -29,6 +29,8 @@
 
 #include "akDemoBase.h"
 
+#define GL_GLEXT_PROTOTYPES
+
 #ifdef WIN32
 #include <Windows.h>
 #include <GL/glut.h>
@@ -36,6 +38,12 @@
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
+#endif
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
 #endif
 
 #include "akEntity.h"

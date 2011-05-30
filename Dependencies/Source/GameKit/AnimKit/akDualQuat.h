@@ -37,10 +37,10 @@ public:
 	akQuat d;
 
 	akDualQuat();
-	akDualQuat(akQuat nd, akQuat dual) : n(nd), d(dual) {};
-	akDualQuat(akQuat rot, akVector3 trans);
+	akDualQuat(const akQuat& nd, const akQuat& dual) : n(nd), d(dual) {};
+	akDualQuat(const akQuat& rot, const akVector3& trans);
 	
-	inline const akDualQuat operator +( akDualQuat v ) const
+	inline const akDualQuat operator +(const akDualQuat& v ) const
 	{
 		return akDualQuat(n+v.n, d+v.d);
 	};

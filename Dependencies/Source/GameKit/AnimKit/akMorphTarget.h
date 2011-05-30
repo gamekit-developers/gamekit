@@ -52,8 +52,8 @@ public:
 	akMorphTarget(UTuint32 size, bool hasNormals);
 	~akMorphTarget();
 
-	void add(UTuint32 vertexIndex, akVector3 vertexOffset, akVector3 normal = akVector3(0,0,0));
-	void set(UTuint32 idx, UTuint32 vertexIndex, akVector3 vertexOffset, akVector3 normal = akVector3(0,0,0));
+	void add(UTuint32 vertexIndex, const akVector3& vertexOffset, const akVector3& normal = akVector3(0,0,0));
+	void set(UTuint32 idx, UTuint32 vertexIndex, const akVector3& vertexOffset, const akVector3& normal = akVector3(0,0,0));
 
 	UT_INLINE void setName(const utHashedString& v)
 	{

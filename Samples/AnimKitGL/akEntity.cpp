@@ -30,7 +30,7 @@
 #define GL_GLEXT_PROTOTYPES
 
 #ifdef WIN32
-#include <Windows.h>
+//#include <Windows.h>
 #include <GL/glut.h>
 #elif defined(__APPLE__)
 #include <GLUT/glut.h>

@@ -42,7 +42,7 @@ akDualQuat::akDualQuat() : n(akQuat::identity()), d(0,0,0,0)
 {
 }
 
-akDualQuat::akDualQuat(akQuat rot, akVector3 trans)
+akDualQuat::akDualQuat(const akQuat& rot, const akVector3& trans)
 {
 	n = rot;
 	d.setX(0.5*( trans[0]*rot[3] + trans[1]*rot[2] - trans[2]*rot[1]));

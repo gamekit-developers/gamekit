@@ -48,7 +48,7 @@ akMorphTarget::~akMorphTarget()
 }
 
 
-void akMorphTarget::add(UTuint32 vertexIndex, akVector3 vertexOffset, akVector3 normal)
+void akMorphTarget::add(UTuint32 vertexIndex, const akVector3& vertexOffset, const akVector3& normal)
 {
 	m_indices.push_back(vertexIndex);
 	m_vertexOffsets.push_back(vertexOffset);
@@ -57,7 +57,7 @@ void akMorphTarget::add(UTuint32 vertexIndex, akVector3 vertexOffset, akVector3 
 	m_size++;
 }
 
-void akMorphTarget::set(UTuint32 idx, UTuint32 vertexIndex, akVector3 vertexOffset, akVector3 normal)
+void akMorphTarget::set(UTuint32 idx, UTuint32 vertexIndex, const akVector3& vertexOffset, const akVector3& normal)
 {
 	if(idx < m_size)
 	{
