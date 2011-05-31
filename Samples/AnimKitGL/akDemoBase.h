@@ -34,9 +34,6 @@
 #include "akCommon.h"
 #include "akTransformState.h"
 
-#include "akOpenGLInfo.h"
-
-
 class akEntity;
 
 typedef struct akCamera
@@ -105,7 +102,6 @@ public:
 protected:
 	int m_windowx, m_windowy;
 	unsigned int m_frame, m_time, m_fpsLastTime, m_stepLastTime, m_lastfps;
-	akOpenGLInfo m_glinfo;
 	bool m_canUseVbo;
 	bool m_useVbo;
 	bool m_drawNormals;

@@ -38,11 +38,12 @@
 
 #ifdef WIN32
 #include <Windows.h>
-#include <GL/glut.h>
-#elif defined(__APPLE__)
-#include <GLUT/glut.h>
+#endif
+
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
 #else
-#include <GL/glut.h>
+#include <GL/gl.h>
 #endif
 
 class akEntity

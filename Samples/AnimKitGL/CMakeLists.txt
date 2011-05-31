@@ -17,7 +17,6 @@ set(AKGL_SRC
 	akEntity.cpp
 	akDemo.cpp
 	akDemoBase.cpp
-	akOpenGLInfo.cpp
 	
 	BlenderLoader/akAnimationLoader.cpp
 	BlenderLoader/akBLoader.cpp
@@ -28,7 +27,6 @@ set(AKGL_HDR
 	akEntity.h
 	akDemo.h
 	akDemoBase.h
-	akOpenGLInfo.h
 	
 	BlenderLoader/akAnimationLoader.h
 	BlenderLoader/akBlenderDefines.h
@@ -50,12 +48,11 @@ if(WIN32)
 	source_group(Datafiles FILES ${DATA})
 endif()
 
-
 find_package(GLUT)
 #find_package(OpenGL)
 if(NOT GLUT_FOUND)
 	IF (MINGW)
-		MESSAGE ("GLUT NOT FOUND not found, trying to use MINGW glut32")
+		MESSAGE ("GLUT NOT FOUND, trying to use MINGW glut32")
 		SET(GLUT_LIBRARIES glut32)
 		#TODO add better GLUT detection for MinGW
 		SET(GLUT_FOUND TRUE)
@@ -73,10 +70,14 @@ if(NOT GLUT_FOUND)
 	endif()
 endif()
 
+find_package(GLEW)
+if(NOT GLUT_FOUND)
+	message("GLEW NOT FOUND")
+endif()
 
-include_directories(${GLUT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GAMEKIT_ANIMKIT_PATH} ${GAMEKIT_UTILS_PATH} ${FBT_SOURCE_DIR}/File ${FBT_SOURCE_DIR}/FileFormats/Blend)
+include_directories(${GLEW_INCLUDE_PATH} ${GLUT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GAMEKIT_ANIMKIT_PATH} ${GAMEKIT_UTILS_PATH} ${FBT_SOURCE_DIR}/File ${FBT_SOURCE_DIR}/FileFormats/Blend)
 
-link_libraries(${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GAMEKIT_ANIMKIT_TARGET} fbtFile bfBlend)
+link_libraries(${GLEW_LIBRARY} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GAMEKIT_ANIMKIT_TARGET} fbtFile bfBlend)
 
 
 

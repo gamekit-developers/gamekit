@@ -26,25 +26,19 @@
 */
 
 
-
-#define GL_GLEXT_PROTOTYPES
-
 #ifdef WIN32
 #include <Windows.h>
-#include <GL/glut.h>
-#elif defined(__APPLE__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
+#include <GLUT/glew.h>
+#include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #else
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <GL/gl.h>
 #endif
-
-#include "GL/glext.h"
 
 #include "akEntity.h"
 #include "akMesh.h"

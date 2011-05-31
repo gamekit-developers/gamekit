@@ -29,20 +29,17 @@
 
 #include "akDemoBase.h"
 
-#define GL_GLEXT_PROTOTYPES
-
 #ifdef WIN32
 #include <Windows.h>
-#include <GL/glut.h>
-#elif defined(__APPLE__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
+#include <GLUT/glew.h>
+#include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #else
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <GL/gl.h>
 #endif
 
@@ -60,8 +57,6 @@ akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTi
 	m_shaded(true), m_drawColor(true), m_useVbo(true), m_dualQuatUse(0), m_normalMethod(2)
 {
 	m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
-	m_glinfo.getInfo();
-	m_glinfo.print();
 }
 
 akDemoBase::~akDemoBase()
@@ -100,7 +95,8 @@ void akDemoBase::start(void)
 {
 	init();
 	
-	m_canUseVbo = m_glinfo.isExtensionSupported("GL_ARB_vertex_buffer_object");
+	if (GLEW_ARB_vertex_buffer_object)
+		m_canUseVbo = true;
 	
 	for(unsigned int i=0; i<m_objects.size(); i++)
 	{
@@ -360,18 +356,23 @@ void akDemoBase::render()
 	str += "W: Togle wireframe (";
 	str += (m_wireframe? "ON":"OFF");
 	str += ")\n";
+	
 	str += "S: Togle shading (";
 	str += (m_shaded? "ON":"OFF");
 	str += ")\n";
+	
 	str += "T: Togle textures (";
 	str += (m_textured? "ON":"OFF");
 	str += ")\n";
+	
 	str += "C: Togle vertex color (";
 	str += (m_drawColor? "ON":"OFF");
 	str += ")\n";
+	
 	str += "N: Togle draw normals (";
 	str += (m_drawNormals? "ON":"OFF");
 	str += ")\n";
+	
 	str += "D: Cycle dual quaternion skinning (";
 	switch(m_dualQuatUse)
 	{
@@ -389,6 +390,7 @@ void akDemoBase::render()
 		break;
 	}
 	str += ")\n";
+	
 	str += "M: Cycle normal skinning (";
 	switch(m_normalMethod)
 	{
@@ -406,6 +408,7 @@ void akDemoBase::render()
 		break;
 	}
 	str += ")\n";
+	
 	if(m_canUseVbo)
 	{
 		str += "V: Togle VBO (";

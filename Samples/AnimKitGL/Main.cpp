@@ -1,10 +1,13 @@
 
 #ifdef WIN32
 #include <Windows.h>
-#include <GL/glut.h>
-#elif defined(__APPLE__)
+#endif
+
+#if defined(__APPLE__)
+#include <GLUT/glew.h>
 #include <GLUT/glut.h>
 #else
+#include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 
@@ -60,6 +63,7 @@ int main(int argc, char** argv)
 	glutMotionFunc(motion);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(special);
+	glewInit();
 	
 	demo = new akDemo();
 	demo->start();
