@@ -71,8 +71,24 @@ if(NOT GLUT_FOUND)
 endif()
 
 find_package(GLEW)
-if(NOT GLUT_FOUND)
-	message("GLEW NOT FOUND")
+if(NOT GLEW_FOUND)
+	if(MINGW)
+		message("GLEW NOT FOUND, trying to use MINGW glew32")
+		set(GLEW_LIBRARY glew32)
+		#TODO add better GLEW detection for MinGW
+		set(GLEW_FOUND TRUE)
+	endif(MINGW)
+	if(MSVC)
+		if(CMAKE_CL_64)
+			message("Win64 using Glut/glew64.lib")
+			set(GLEW_LIBRARY ${OGREKIT_SAMPLES_DIR}/Glut/glew64.lib)
+		else(CMAKE_CL_64)
+			message("Win32 using Glut/glew32.lib")
+			SET(GLEW_LIBRARY ${OGREKIT_SAMPLES_DIR}/Glut/glew32.lib)
+		endif()
+		set(GLEW_INCLUDE_PATH ${OGREKIT_SAMPLES_DIR}/Glut)
+		set(GLEW_FOUND TRUE)
+	endif()
 endif()
 
 include_directories(${GLEW_INCLUDE_PATH} ${GLUT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GAMEKIT_ANIMKIT_PATH} ${GAMEKIT_UTILS_PATH} ${FBT_SOURCE_DIR}/File ${FBT_SOURCE_DIR}/FileFormats/Blend)
@@ -99,8 +115,43 @@ else ()
 		ADD_CUSTOM_COMMAND(
 			TARGET ${TargetName} 
 			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Blu.blend ${CMAKE_CURRENT_BINARY_DIR}/Blu.blend
+			COMMAND ${CMAKE_COMMAND}
+			ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Blu.blend ${CMAKE_CURRENT_BINARY_DIR}
 		)
 	ENDIF ()
 
 endif()
+
+IF(WIN32)
+IF (CMAKE_CL_64)
+	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${TargetName}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND}
+			ARGS -E copy_if_different ${OGREKIT_SAMPLES_DIR}/Glut/glut64.dll ${CMAKE_CURRENT_BINARY_DIR}
+		)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${TargetName}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND}
+			ARGS -E copy_if_different ${OGREKIT_SAMPLES_DIR}/Glut/glew64.DLL ${CMAKE_CURRENT_BINARY_DIR}
+		)
+    ENDIF()
+ELSE(CMAKE_CL_64)
+	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${TargetName}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND}
+			ARGS -E copy_if_different ${OGREKIT_SAMPLES_DIR}/Glut/glut32.dll ${CMAKE_CURRENT_BINARY_DIR}
+		)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${TargetName}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND}
+			ARGS -E copy_if_different ${OGREKIT_SAMPLES_DIR}/Glut/glew32.dll ${CMAKE_CURRENT_BINARY_DIR}
+		)
+    ENDIF()
+ENDIF(CMAKE_CL_64)
+ENDIF(WIN32)
