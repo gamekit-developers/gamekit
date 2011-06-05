@@ -104,11 +104,16 @@ if(WIN32) # The only platform it makes sense to check for DirectX SDK
 	message(STATUS "DX lib dir: ${DirectX_LIBRARY_DIR}")
 	find_library(DirectX_D3D11_LIBRARY NAMES d3d11 d3d11_beta HINTS ${DirectX_LIBRARY_DIR} NO_DEFAULT_PATH)
 	find_library(DirectX_D3DX11_LIBRARY NAMES d3dx11 HINTS ${DirectX_LIBRARY_DIR} NO_DEFAULT_PATH)
+	find_library(DirectX_D3DX11COMPILER_LIBRARY NAMES d3dcompiler HINTS ${DirectX_LIBRARY_DIR} NO_DEFAULT_PATH)
+	find_library(DirectX_DXGI_LIBRARY NAMES dxgi HINTS ${DirectX_LIBRARY_DIR} NO_DEFAULT_PATH)
+
+
+
 
 	if (DirectX_D3D11_INCLUDE_DIR AND DirectX_D3D11_LIBRARY AND DirectX_D3DX11_LIBRARY)
 	  set(DirectX_D3D11_FOUND TRUE)
 	  set(DirectX_D3D11_INCLUDE_DIRS ${DirectX_D3D11_INCLUDE_DIR})
-	  set(DirectX_D3D11_LIBRARIES ${DirectX_D3D11_LIBRARY} ${DirectX_D3DX11_LIBRARY})
+	  set(DirectX_D3D11_LIBRARIES ${DirectX_D3D11_LIBRARY} ${DirectX_D3DX11_LIBRARY} ${DirectX_D3DX11COMPILER_LIBRARY} ${DirectX_DXGI_LIBRARY})
 	endif ()
   endif ()
   
