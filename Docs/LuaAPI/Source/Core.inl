@@ -673,7 +673,7 @@ function UserDefs:__newindex(name, string)
 
 \code
 -- Is equal to
-UserDefs.someValue = "abc"
+UserDefs.someValue = 'abc'
 \endcode
 
 
@@ -2210,7 +2210,36 @@ function OgreKit.DebugPrint(string)
 \endpage
 
 
+<!-- ============================================ SetCompoisitorChain ============================================ -->
+\LuaClass{SetCompoisitorChain}
 
+
+Set compositor chain operation to the viewport. (build option: OGREKIT_USE_COMPOSITOR)
+
+\code
+function OgreKit.SetCompoisitorChain(op, name)
+\endcode
+
+
+\param op \LuaClassRef{CompositorOp}.
+\param name compositor name as string. 
+\remark Built-in compositor name is 'Bloom', 'B&W', 'Embossed', 'Sharpen Edges', 'Invert', 'Posterize', 'Laplace', 'Tiling', 'HDR', 'Gaussian Blur', 'Radial Blur', 'Halftone', 'Dither'.
+\remark Extra compositor is required compositor textures. Name is 'Glass', 'Old TV', 'Old Movie', 'ASCII', 'Night Vision', 'Motion Blur', 'Heat Vision'. (build option: OGREKIT_USE_COMPOSITOR_TEX)
+
+\endpage
+
+
+<!-- ============================================ Compositor Op ============================================ -->
+\LuaClass{CompositorOp }
+
+Compositor chain operation.
+
+\code
+OgreKit.COP_ADD
+OgreKit.COP_DEL
+OgreKit.COP_REPLACE
+OgreKit.COP_RESET 
+\endcode
 
 <!-- ============================================ RenderSystem ============================================ -->
 \LuaClass{RenderSystem}
@@ -2310,6 +2339,7 @@ OgreKit.LEFT
 OgreKit.RIGHT
 OgreKit.MIDDLE
 \endcode
+
 
 <!-- ============================================ ScanCode ============================================ -->
 \LuaClass{ScanCode}

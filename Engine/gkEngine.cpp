@@ -71,6 +71,9 @@
 
 #include "External/Ogre/gkOgreBlendArchive.h"
 
+#ifdef OGREKIT_USE_COMPOSITOR
+#include "External/Ogre/gkOgreCompositorManager.h"
+#endif
 
 #include "OgreRoot.h"
 #include "OgreConfigFile.h"
@@ -83,7 +86,6 @@
 #include "OgreRTShaderSystem.h"
 #endif
 
-//using namespace Ogre;
 
 
 // shorthand
@@ -263,6 +265,10 @@ void gkEngine::initialize()
 	new gkSoundManager();
 #endif
 
+#ifdef OGREKIT_USE_COMPOSITOR
+	new gkCompositorManager();
+#endif
+
 	initializeWindow();
 
 
@@ -275,9 +281,17 @@ void gkEngine::initialize()
 
 	// create the builtin resource group
 	gkResourceGroupManager::getSingleton().createResourceGroup(GK_BUILTIN_GROUP);
+
+	gkResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
 #ifdef OGREKIT_USE_PARTICLE
 	gkParticleManager::getSingleton().initialize();
 #endif
+
+#ifdef OGREKIT_USE_COMPOSITOR
+	gkCompositorManager::getSingleton().initialize();
+#endif
+
 	// debug info
 	m_private->debug = new gkDebugScreen();
 	m_private->debug->initialize();
@@ -374,6 +388,10 @@ void gkEngine::finalize()
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 	Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
 	Ogre::RTShader::ShaderGenerator::finalize();
+#endif
+
+#ifdef OGREKIT_USE_COMPOSITOR
+	delete gkCompositorManager::getSingletonPtr();
 #endif
 
 	delete gkBlendLoader::getSingletonPtr();

@@ -25,12 +25,17 @@
 -------------------------------------------------------------------------------
 */
 
-#include "OgreRenderWindow.h"
-#include "OgreRoot.h"
 #include "gkCommon.h"
 #include "gkViewport.h"
 #include "gkWindow.h"
+#include "gkLogger.h"
 
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+
+#ifdef OGREKIT_USE_COMPOSITOR
+#include "External/Ogre/gkOgreCompositorManager.h"
+#endif
 
 gkViewport::gkViewport(gkWindow* window, Ogre::Viewport* vp)
 	:	m_window(window),
@@ -41,7 +46,15 @@ gkViewport::gkViewport(gkWindow* window, Ogre::Viewport* vp)
 }
 
 gkViewport::~gkViewport()
-{
+{	
+	if (m_viewport)
+	{
+#ifdef OGREKIT_USE_COMPOSITOR
+		gkCompositorManager::getSingleton().removeCompositorChain(this);
+#endif
+		GK_ASSERT(m_window->getRenderWindow() != 0);
+		m_window->getRenderWindow()->removeViewport(m_viewport->getZOrder());
+	}
 }
 
 

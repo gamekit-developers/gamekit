@@ -90,6 +90,13 @@ enum gsMouseButton
 };
 
 
+typedef enum gsCompositorOp 
+{ 
+	COP_ADD = 0, 
+	COP_DEL, 
+	COP_REPLACE, 
+	COP_RESET 
+};
 
 
 class gsProperty
@@ -243,7 +250,6 @@ public:
 	void unloadAllBlendFiles();
 
 	gsUserDefs& getUserDefs(void);
-
 
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS(gkEngine, m_engine);
@@ -486,5 +492,6 @@ public:
 
 extern void gsDebugPrint(const char* str);
 
+extern bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName);
 
 #endif//_OgreKitApi_h_

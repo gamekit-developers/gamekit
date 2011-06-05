@@ -27,8 +27,8 @@
 #ifndef _OgreKit_h_
 #define _OgreKit_h_
 
-#include "gkCamera.h"
 #include "gkCommon.h"
+#include "gkCamera.h"
 #include "gkCoreApplication.h"
 #include "gkDebugProperty.h"
 #include "gkDebugScreen.h"
@@ -67,6 +67,7 @@
 #include "gkVariable.h"
 #include "gkWindowSystem.h"
 #include "gkWindow.h"
+#include "gkViewport.h"
 #include "gkResourceGroupManager.h"
 
 #include "AI/gkFSM.h"
@@ -211,6 +212,10 @@
 #include "Sound/gkSource.h"
 #include "Sound/gkStreamer.h"
 #include "Sound/gkWaveform.h"
+#endif
+
+#ifdef OGREKIT_USE_COMPOSITOR
+#include "External/Ogre/gkOgreCompositorManager.h"
 #endif
 
 #endif//_OgreKit_h_

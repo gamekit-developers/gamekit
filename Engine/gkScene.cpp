@@ -1105,10 +1105,10 @@ void gkScene::destroyInstanceImpl(void)
 	}
 
 
+
 	if (m_viewport)
 	{
-		getDisplayWindow()->removeViewport(m_viewport);
-		
+		getDisplayWindow()->removeViewport(m_viewport);		
 		m_viewport = 0;		
 	}
 

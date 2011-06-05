@@ -28,6 +28,7 @@
 #include "OgreKit.h"
 
 
+
 const gkString gkDefaultBlend   = "momo_ogre.blend";
 const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
 
@@ -238,6 +239,11 @@ bool OgreKit::setup(void)
 
 	// add input hooks
 	gkWindowSystem::getSingleton().addListener(this);
+
+#ifdef OGREKIT_USE_COMPOSITOR
+	//gkCompositorManager::getSingleton().setCompositorChain(GK_COMPOSITOR_OP_ADD, GK_COMPOSITOR_BLOOM);
+#endif
+
 	return true;
 }
 

@@ -327,11 +327,10 @@ gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
 
 void gkWindow::removeViewport(gkViewport* viewport)
 {
-	if (m_rwindow && viewport)
-	{
+	if (viewport)
+	{		
 		m_viewports.erase(m_viewports.find(viewport));
-		m_rwindow->removeViewport(viewport->getViewport()->getZOrder());
-		delete viewport;
+		delete viewport;		
 	}
 }
 
@@ -630,6 +629,7 @@ int gkWindow::getKeyModifier()
 
 	return modifier;
 }
+
 
 int gkWindow::getKeyCode(int kc)
 {

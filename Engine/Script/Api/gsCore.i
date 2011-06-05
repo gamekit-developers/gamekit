@@ -83,6 +83,7 @@ GS_SCRIPT_NAME(MouseButton)
 // Globals
 GS_SCRIPT_NAME(DebugPrint)
 
+GS_SCRIPT_NAME(SetCompositorChain)
 
 %rename(OGRE_RS_GL)       GS_RS_GL;
 %rename(OGRE_RS_GLES)     GS_RS_GLES;

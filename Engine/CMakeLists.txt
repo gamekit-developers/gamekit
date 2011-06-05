@@ -863,7 +863,7 @@ set(External_SOURCE
 	External/Ogre/gkOgreMeshLoader.cpp
 	External/Ogre/gkOgreSkeletonLoader.cpp
 	External/Ogre/gkOgreSkyBoxGradient.cpp
-	External/Ogre/gkOgreBlendArchive.cpp
+	External/Ogre/gkOgreBlendArchive.cpp	
 )
 
 set(External_HEADER
@@ -872,8 +872,13 @@ set(External_HEADER
 	External/Ogre/gkOgreMeshLoader.h
 	External/Ogre/gkOgreSkeletonLoader.h
 	External/Ogre/gkOgreSkyBoxGradient.h
-	External/Ogre/gkOgreBlendArchive.h
+	External/Ogre/gkOgreBlendArchive.h	
 )
+
+if (OGREKIT_USE_COMPOSITOR)
+	list(APPEND External_SOURCE External/Ogre/gkOgreCompositorManager.cpp External/Ogre/gkOgreCompositorHelper.cpp)
+	list(APPEND External_HEADER External/Ogre/gkOgreCompositorManager.h   External/Ogre/gkOgreCompositorHelper.h)
+endif()
 
 if(APPLE)
 	source_group(External FILES ${External_SOURCE} ${External_HEADER})
@@ -901,11 +906,19 @@ if (OGREKIT_GENERATE_BUILTIN_RES)
 	LIST(APPEND Resources_FILES	${GEN_PARTICLE_OUT})
 	
 	#rtshader
-	set(RTSHADER_TMPL
-		User/RTShaderLib.zip
-	)
+	set(RTSHADER_TMPL User/RTShaderLib.zip)
 	add_templates(1 GEN_RTSHADER_OUT User/gkRTShaderTemplates.inl ${RTSHADER_TMPL})
 	LIST(APPEND Resources_FILES	${GEN_RTSHADER_OUT})
+	
+	#compositor
+	set(COMPOSITOR_TMPL User/Compositor.zip)
+	add_templates(1 GEN_COMPOSITOR_OUT User/gkCompositorTemplates.inl ${COMPOSITOR_TMPL})
+	LIST(APPEND Resources_FILES	${GEN_COMPOSITOR_OUT})
+	
+	#compositor textures
+	set(COMPOSITOR_TEX_TMPL User/CompositorTextures.zip)
+	add_templates(1 GEN_COMPOSITOR_TEX_OUT User/gkCompositorTextures.inl ${COMPOSITOR_TEX_TMPL})
+	LIST(APPEND Resources_FILES	${GEN_COMPOSITOR_TEX_OUT})
 	
 	#font, etc...
 

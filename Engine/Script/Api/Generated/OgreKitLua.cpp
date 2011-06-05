@@ -10160,6 +10160,33 @@ fail:
 }
 
 
+static int _wrap_SetCompositorChain(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCompositorOp arg1 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  bool result;
+  
+  SWIG_check_num_args("gsSetCompositorChain",2,2)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gsSetCompositorChain",1,"gsCompositorOp");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsSetCompositorChain",2,"gkString const &");
+  arg1 = (gsCompositorOp)(int)lua_tonumber(L, 1);
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (bool)gsSetCompositorChain(arg1,(gkString const &)*arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_WhenEvent_when(lua_State* L) {
   int SWIG_arg = 0;
   gsWhenEvent *arg1 = (gsWhenEvent *) 0 ;
@@ -24436,6 +24463,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getNumJoysticks", _wrap_getNumJoysticks},
     { "getActiveScene", _wrap_getActiveScene},
     { "DebugPrint", _wrap_DebugPrint},
+    { "SetCompositorChain", _wrap_SetCompositorChain},
     { "getCurrentController", _wrap_getCurrentController},
     {0,0}
 };
@@ -24467,6 +24495,10 @@ static swig_lua_const_info swig_constants[] = {
 { SWIG_LUA_INT,     (char *)"LEFT", (long) LEFT, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"RIGHT", (long) RIGHT, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"MIDDLE", (long) MIDDLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"COP_ADD", (long) COP_ADD, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"COP_DEL", (long) COP_DEL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"COP_REPLACE", (long) COP_REPLACE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"COP_RESET", (long) COP_RESET, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_NONE", (long) KC_NONE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_AKEY", (long) KC_AKEY, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_BKEY", (long) KC_BKEY, 0, 0, 0},

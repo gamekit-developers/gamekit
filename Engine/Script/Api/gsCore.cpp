@@ -724,8 +724,6 @@ void gsEngine::run(void)
 }
 
 
-
-
 gsGameObject* gsGameObject::createNew(gkGameObject* ob)
 {
 	if (!ob) return 0;
@@ -1665,3 +1663,15 @@ void gsDebugPrint(const char* str)
 {
 	gkDebugScreen::printTo(str);
 }
+
+
+
+bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
+{
+#ifdef OGREKIT_USE_COMPOSITOR
+	return gkCompositorManager::getSingleton().setCompositorChain((gkCompositorOp)op, compositorName);
+#else
+	return false;
+#endif
+}
+

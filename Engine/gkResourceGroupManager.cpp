@@ -57,6 +57,14 @@
 #include "User/gkRTShaderTemplates.inl"
 #endif
 
+#ifdef OGREKIT_USE_COMPOSITOR
+#include "User/gkCompositorTemplates.inl"
+#endif
+
+#ifdef OGREKIT_USE_COMPOSITOR_TEX
+#include "User/gkCompositorTextures.inl"
+#endif
+
 UT_IMPLEMENT_SINGLETON(gkResourceGroupManager)
 
 
@@ -65,15 +73,24 @@ gkResourceGroupManager::gkResourceGroupManager()
 {
 	try
 	{
-		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("",
-			gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-#ifdef OGREKIT_USE_RTSHADER_SYSTEM
-		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib.zip", RTSHADERLIB, RTSHADERLIB_SIZE, 0);
-		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("RTShaderLib.zip",
-			"EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		Ogre::ResourceGroupManager& mgr = Ogre::ResourceGroupManager::getSingleton();
 
+		mgr.addResourceLocation("", gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM		
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib.zip", RTSHADERLIB, RTSHADERLIB_SIZE, 0);
+		mgr.addResourceLocation("RTShaderLib.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 #endif
 
+#ifdef OGREKIT_USE_COMPOSITOR
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("Compositor.zip", COMPOSITOR, COMPOSITOR_SIZE, 0);
+		mgr.addResourceLocation("Compositor.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+#endif
+
+#ifdef OGREKIT_USE_COMPOSITOR_TEX
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("CompositorTextures.zip", COMPOSITORTEXTURES, COMPOSITORTEXTURES_SIZE, 0);
+		mgr.addResourceLocation("CompositorTextures.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+#endif
 	}
 	catch (Ogre::Exception& e)
 	{
@@ -171,9 +188,15 @@ void gkResourceGroupManager::clearResourceGroup(const gkResourceNameString& grou
 		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(group.str());
 }
 
-#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+void gkResourceGroupManager::initialiseAllResourceGroups()
+{
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+}
 
-#endif
+void gkResourceGroupManager::initialiseResourceGroup(const gkString& group)
+{
+
+}
 
 bool gkResourceGroupManager::initRTShaderSystem(const gkString& shaderLang, const gkString& shaderCachePath, bool hasFixedCapability)
 {

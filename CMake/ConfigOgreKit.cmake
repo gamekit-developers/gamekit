@@ -50,9 +50,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_USE_PARTICLE				"Use Paritcle" ON)
 	option(OGREKIT_COMPILE_OGRE_COMPONENTS	"Eanble compile additional Ogre components (RTShader, Terrain, Paging, ... etc)" OFF)
 	option(OGREKIT_USE_RTSHADER_SYSTEM		"Eanble shader system instead of fixed piped functions." OFF)
+	option(OGREKIT_USE_COMPOSITOR			"Enable post effect by compositor (Bloom, BlackAndWhite, HDR, ...)" OFF)
+	option(OGREKIT_USE_COMPOSITOR_TEX		"Add Compositor texture resources (NightVision, HeatVision, OldTV...)" OFF)
 	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)	
 	option(OGREKIT_UNITY_BUILD				"Enable / Dsiable Unity builds for OgreKit" OFF)			
-	option(OGRE_UNITY_BUILD				"Enable / Dsiable Unity builds for Ogre" ON)
+	option(OGRE_UNITY_BUILD					"Enable / Dsiable Unity builds for Ogre" ON)
 	set(OGRE_UNITY_FILES_PER_UNIT "40" CACHE STRING "Number of files per compilation unit in Unity build.")
 
 	
@@ -71,19 +73,22 @@ macro (configure_ogrekit ROOT OGREPATH)
         set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem" FORCE)
     endif()
 	
+	if (OGREKIT_USE_RTSHADER_SYSTEM OR OGREKIT_USE_COMPOSITOR)
+		set(OGREKIT_DISABLE_ZIP CACHE BOOL "Forcing ZZLib" FORCE)
+	endif()
+	
 	if (OGREKIT_USE_RTSHADER_SYSTEM)
 		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
 		set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 1)
-		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)		
-		set(OGREKIT_DISABLE_ZIP CACHE BOOL "Forcing ZZLib" FORCE)
+		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)				
 		
 		if (OGREKIT_BUILD_MOBILE)
-		  message(STATUS "mobile rtshader")
-		  set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing OpenGLES" FORCE)
-		  set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
-		  
-		  set(OGREKIT_BUILD_GLESRS  CACHE BOOL "Forcing remove GLES"   FORCE)
-		  set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+			message(STATUS "mobile rtshader")
+			set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing OpenGLES" FORCE)
+			set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+
+			set(OGREKIT_BUILD_GLESRS  CACHE BOOL "Forcing remove GLES"   FORCE)
+			set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
         endif()
 	endif()	
 	

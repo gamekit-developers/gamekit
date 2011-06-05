@@ -49,6 +49,9 @@ public:
 	bool existResourceGroup(const gkResourceNameString& group);
 	void destroyAllResourceGroup(void);
 
+	void initialiseAllResourceGroups();
+	void initialiseResourceGroup(const gkString& group);
+
 	bool initRTShaderSystem(const gkString& shaderLang, const gkString& shaderCachePath, bool hasFixedCapability);
 
 	GK_INLINE const utArray<gkResourceNameString> getResourceGroupList() { return m_groups; }
