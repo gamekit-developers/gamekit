@@ -43,7 +43,7 @@ namespace RTShader {
 String FFPTexturing::Type = "FFP_Texturing";
 #define _INT_VALUE(f) (*(int*)(&(f)))
 
-const String c_ParamTexel("texel_");
+const String c_ParamTexelEx("texel_");
 
 //-----------------------------------------------------------------------
 FFPTexturing::FFPTexturing()
@@ -438,7 +438,7 @@ bool FFPTexturing::addPSFunctionInvocations(TextureUnitParams* textureUnitParams
 	
 			
 	// Add texture sampling code.
-	ParameterPtr texel = psMain->resolveLocalParameter(Parameter::SPS_UNKNOWN, 0, c_ParamTexel + StringConverter::toString(textureUnitParams->mTextureSamplerIndex), GCT_FLOAT4);
+	ParameterPtr texel = psMain->resolveLocalParameter(Parameter::SPS_UNKNOWN, 0, c_ParamTexelEx + StringConverter::toString(textureUnitParams->mTextureSamplerIndex), GCT_FLOAT4);
 	addPSSampleTexelInvocation(textureUnitParams, psMain, texel, FFP_PS_SAMPLING, internalCounter);
 
 	// Build colour argument for source1.
@@ -677,7 +677,7 @@ void FFPTexturing::addPSBlendInvocations(Function* psMain,
 		break;
 	case LBX_BLEND_CURRENT_ALPHA:
 		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_LERP, groupOrder, internalCounter++);
-		curFuncInvocation->pushOperand(arg2, Operand::OPS_IN, targetChannels);		
+		curFuncInvocation->pushOperand(arg2, Operand::OPS_IN, targetChannels);
 		curFuncInvocation->pushOperand(arg1, Operand::OPS_IN, targetChannels);
 
 		if (samplerIndex == 0)
@@ -934,7 +934,7 @@ SubRenderState*	FFPTexturingFactory::createInstance(ScriptCompiler* compiler,
 
 			if (modelType == "ffp")
 			{
-				return SubRenderStateFactory::createInstance();
+				return createOrRetrieveInstance(translator);
 			}
 		}		
 	}
