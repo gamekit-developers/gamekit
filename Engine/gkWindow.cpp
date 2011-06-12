@@ -129,7 +129,7 @@ bool gkWindow::setupInput(const gkUserDefs& prefs)
 		if (!prefs.grabInput)
 		{
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_FOREGROUND")));
 			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_NONEXCLUSIVE")));
 			params.insert(std::make_pair(std::string("w32_keyboard"),		std::string("DISCL_FOREGROUND")));
@@ -138,7 +138,7 @@ bool gkWindow::setupInput(const gkUserDefs& prefs)
 			if (m_useExternalWindow)
 				params.insert(std::make_pair(std::string("w32_pass_event"), std::string(""))); //pass event to old window proc
 
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+#elif GK_PLATFORM == GK_PLATFORM_APPLE
 			params.insert(std::make_pair(std::string("MacAutoRepeatOn"),	std::string("true")));
 #else
 			params.insert(std::make_pair(std::string("x11_mouse_grab"),		std::string("false")));

@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <limits.h>
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
+#if GK_PLATFORM == GK_PLATFORM_LINUX
 #include <linux/limits.h>
 #endif
 
@@ -46,21 +46,18 @@
 #endif
 
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 # include <direct.h>
 #else
 # include <unistd.h>
 #endif
 
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 const gkString gkPath::SEPERATOR = "\\";
 #else
 const gkString gkPath::SEPERATOR = "/";
 #endif
-
-//using namespace Ogre;
-
 
 void gkGetCurrentDir(gkString& buf)
 {
@@ -106,7 +103,7 @@ gkString gkPath::getAbsPath(void) const
 	if (!exists())
 	{
 		// cannot get path
-		return Ogre::StringUtil::BLANK;
+		return gkStringUtils::BLANK;
 	}
 
 	if (isAbs())
@@ -206,7 +203,7 @@ gkString gkPath::base(void) const
 	split(arr);
 
 	if (arr.empty())
-		return Ogre::StringUtil::BLANK;
+		return gkStringUtils::BLANK;
 	return arr.at(arr.size() - 1);
 }
 
@@ -217,28 +214,28 @@ gkString gkPath::extension(void) const
 	gkString bn = base();
 
 	if (bn.empty())
-		return Ogre::StringUtil::BLANK;
+		return gkStringUtils::BLANK;
 
 	gkStringVector arr;
 	utStringUtils::split(arr, bn, ".");
 	if (arr.empty())
-		return Ogre::StringUtil::BLANK;
+		return gkStringUtils::BLANK;
 	return gkString(".") + arr.at(arr.size() - 1);
 }
 
 
 void gkPath::normalize(void) const
 {
-	Ogre::StringUtil::replaceAll(m_path, "\\\\", "/");
+	utStringUtils::replace(m_path, "\\\\", "/");
 }
 
 
 void gkPath::normalizePlatform(void) const
 {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-	Ogre::StringUtil::replaceAll(m_path, "/", "\\");
+#if GK_PLATFORM == GK_PLATFORM_WIN32
+	utStringUtils::replace(m_path, "/", "\\");
 #else
-	Ogre::StringUtil::replaceAll(m_path, "\\\\", "/");
+	utStringUtils::replace(m_path, "\\\\", "/");
 #endif
 }
 
@@ -248,7 +245,7 @@ bool gkPath::isAbs(void) const
 	// assumes (Drive:) || or root /
 	if (m_path.empty())
 		return false;
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 	if (m_path.size() > 2)
 		return m_path[1] == ':';
 #else

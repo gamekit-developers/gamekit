@@ -52,7 +52,7 @@
 
 OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 # ifdef OGREKIT_BUILD_D3D9RS
 	if (wanted == OGRE_RS_D3D9) return OGRE_RS_D3D9;
 # endif

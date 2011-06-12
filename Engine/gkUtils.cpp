@@ -24,9 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCommon.h"
 #include "OgrePlatform.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 # include <windows.h>
 #else
 # include <unistd.h>
