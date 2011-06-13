@@ -1,3 +1,0 @@
-#define WX_MSC_FULL_VER 140040130
-#include "wx/msw/wx.rc"
-APP_ICON ICON "app.ico"

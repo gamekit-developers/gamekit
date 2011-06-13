@@ -1,3 +1,0 @@
-#define WX_MSC_FULL_VER 140040130
-#include "wx/msw/wx.rc"
-APPICON ICON "edit-find.ico"

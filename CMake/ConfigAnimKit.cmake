@@ -2,7 +2,7 @@ macro(configure_animkit)
 
 option(ANIMKIT_DOUBLE_PRECISION		"Use double instead of floats" OFF)
 option(ANIMKIT_USE_SSE_IF_AVAILABLE	"Use SIMD optimisation if available" ON)
-
+option(SAMPLES_ANIMKIT_GL			"Compile Animkit OpenGL demo" ON)
 
 if(ANIMKIT_DOUBLE_PRECISION)
 
@@ -28,5 +28,8 @@ else(ANIMKIT_DOUBLE_PRECISION)
 	endif(ANIMKIT_USE_SSE_IF_AVAILABLE)
 	
 endif(ANIMKIT_DOUBLE_PRECISION)
+
+
+
 
 endmacro()
