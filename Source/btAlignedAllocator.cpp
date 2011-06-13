@@ -24,7 +24,7 @@ subject to the following restrictions:
 Start of the modif of the original file
 Included malloc.h
 */
-#include <malloc.h>
+#include <stdlib.h>
 /*
 End of the modif of the original file
 */
