@@ -122,8 +122,8 @@ namespace Ogre {
         // Destroy and recreate the framebuffer with new dimensions 
         mContext->destroyFramebuffer();
         
-        mWidth = width;
-        mHeight = height;
+        mWidth = width * mContentScalingFactor;
+        mHeight = height * mContentScalingFactor;
         
         mContext->createFramebuffer();
 
@@ -190,7 +190,12 @@ namespace Ogre {
                 h = StringConverter::parseUnsignedInt(val.substr(pos + 1));
             }
         }
-        
+
+        if ((opt = mGLSupport->getConfigOptions().find("Content Scaling Factor")) != end)
+        {
+            mContentScalingFactor = StringConverter::parseReal(opt->second.currentValue);
+        }
+
         // Set us up with an external window, or create our own.
         if(!mIsExternal)
         {
@@ -399,7 +404,7 @@ namespace Ogre {
 		mTop = top;
 
         // Resize, taking content scaling factor into account
-        resize(mWidth * mContentScalingFactor, mHeight * mContentScalingFactor);
+        resize(mWidth, mHeight);
 
 		mActive = true;
 		mVisible = true;
