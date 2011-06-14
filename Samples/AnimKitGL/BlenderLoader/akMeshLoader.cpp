@@ -665,55 +665,55 @@ void akMeshLoader::convertMorphTargets(akSubMeshPair *subpair)
 						akVector3 b(bpos[0], bpos[1], bpos[2]);
 						akVector3 offset = k-b;
 						
-						if(!akFuzzyT(lengthSqr(offset), 1e-10f))
+						// check normal of all vertices that was created form this original blender vertex
+						for(unsigned int i=0; i<subpair->idxmap.size(); i++)
 						{
-							// position in shape key is different than in base
-							// insert into target all vertices that was created form this original blender vertex
-							for(unsigned int i=0; i<subpair->idxmap.size(); i++)
+							if(bi == subpair->idxmap[i])
 							{
-								if(bi == subpair->idxmap[i])
+								UTuint32 bfi = subpair->facemap[i];
+								const Blender::MFace& bface = m_bmesh->mface[bfi];
+								float* pos = (float*)bkb->data;
+								akVector3 normal(0,0,0);
+								
+								if(bface.flag & ME_SMOOTH)
 								{
-									UTuint32 bfi = subpair->facemap[i];
-									const Blender::MFace& bface = m_bmesh->mface[bfi];
-									float* pos = (float*)bkb->data;
-									akVector3 normal(0,0,0);
-									
-									if(bface.flag & ME_SMOOTH)
+									btAlignedObjectArray<akVector3> norms;
+									for (int bfi2 = 0; bfi2 < m_bmesh->totface; bfi2++)
 									{
-										btAlignedObjectArray<akVector3> norms;
-										for (int bfi2 = 0; bfi2 < m_bmesh->totface; bfi2++)
-										{
-											const Blender::MFace& bface2 = m_bmesh->mface[bfi2];
-											if( bface2.v1 == bi ||
+										const Blender::MFace& bface2 = m_bmesh->mface[bfi2];
+										if( bface2.v1 == bi ||
 												bface2.v2 == bi ||
 												bface2.v3 == bi ||
 												bface2.v4 == bi )
-											{
-												norms.push_back(calcMorphNormal(bface2, pos));
-											}
-										}
-										for(int ni=0; ni<norms.size(); ni++)
 										{
-											normal += norms[ni];
+											norms.push_back(calcMorphNormal(bface2, pos));
 										}
-										normal = normalize( normal );
-										norms.clear();
 									}
-									else
+									for(int ni=0; ni<norms.size(); ni++)
 									{
-										normal = calcMorphNormal(bface, pos);
+										normal += norms[ni];
 									}
-									
-									akVector3* norms;
-									UTuint32 normstride;
-									vbuffi->getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&norms, &normstride);
-									akAdvancePointer(norms, normstride * i);
-									akVector3 ndiff = normal - *norms;
-									
+									normal = normalize( normal );
+									norms.clear();
+								}
+								else
+								{
+									normal = calcMorphNormal(bface, pos);
+								}
+								
+								akVector3* norms;
+								UTuint32 normstride;
+								vbuffi->getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&norms, &normstride);
+								akAdvancePointer(norms, normstride * i);
+								akVector3 ndiff = normal - *norms;
+								
+								if(!akFuzzyT(lengthSqr(offset), 1e-10f) || !akFuzzyT(lengthSqr(ndiff), 1e-10f))
+								{
 									mt->add(i, offset, ndiff);
 								}
 							}
 						}
+						
 						
 						kpos+=3;
 						bpos+=3;
