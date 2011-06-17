@@ -86,10 +86,15 @@ Ogre::StringVectorPtr gkBlendArchive::find(const Ogre::String& pattern, bool rec
 	return Ogre::StringVectorPtr(new Ogre::StringVector());
 }
 
+#if OGRE_VERSION >= 0x10800
 Ogre::FileInfoListPtr gkBlendArchive::findFileInfo(const Ogre::String& pattern, bool recursive, bool dirs) const
+#else
+Ogre::FileInfoListPtr gkBlendArchive::findFileInfo(const Ogre::String& pattern, bool recursive, bool dirs)
+#endif
 {
 	return Ogre::FileInfoListPtr(new Ogre::FileInfoList());
 }
+
 
 bool gkBlendArchive::exists(const Ogre::String& filename)
 {

@@ -51,8 +51,11 @@ public:
 	Ogre::StringVectorPtr find(const Ogre::String& pattern, bool recursive = true, bool dirs = false);
 
 	time_t  getModifiedTime (const Ogre::String &filename) { return 0; }
-
+#if OGRE_VERSION >= 0x10800
 	Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
+#else
+	Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false);
+#endif
 
 	bool exists(const Ogre::String& filename);
 };

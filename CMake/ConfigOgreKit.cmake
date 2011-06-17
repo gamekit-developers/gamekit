@@ -1,6 +1,6 @@
 
 macro (configure_ogrekit ROOT OGREPATH)
-
+	#message(STATUS ${OGREPATH})
 	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
 	
 	if(APPLE OR GNUSTEP_SYSTEM_ROOT)
@@ -56,7 +56,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_UNITY_BUILD				"Enable / Dsiable Unity builds for OgreKit" OFF)			
 	option(OGRE_UNITY_BUILD					"Enable / Dsiable Unity builds for Ogre" ON)
 	set(OGRE_UNITY_FILES_PER_UNIT "40" CACHE STRING "Number of files per compilation unit in Unity build.")
-
 	
 	if (APPLE)
 		option(OGREKIT_BUILD_IPHONE	"Build GameKit on iOS SDK"	OFF)

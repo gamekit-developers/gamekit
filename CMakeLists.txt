@@ -33,9 +33,30 @@ include(ConfigGameKit)
 include(ConfigIPhone)
 include(OgreAddTargets)
 
-
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
-configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/Ogre-1.8)
+
+ set(GAMEKIT_GRAPHIC_BACKEND 1 CACHE STRING 
+	"Select the graphic backend for GameKit. Possible values:
+		 1 - Ogre 1.8
+		 2 - Ogre 1.7
+		 3 - GLUT
+	"
+	)
+	
+if (GAMEKIT_GRAPHIC_BACKEND EQUAL 1)
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8)	
+elseif (GAMEKIT_GRAPHIC_BACKEND EQUAL 2)	
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.7)
+else()
+	message(FATAL_ERROR "Invalid graphice backend or not supported yet.")
+endif()
+
+message(STATUS "-----------------------------------------------------------------------------")
+message(STATUS "-- Graphic backend is " ${GAMEKIT_GRAPHIC_BACKEND_DIR})
+message(STATUS "-----------------------------------------------------------------------------")
+
+configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/${GAMEKIT_GRAPHIC_BACKEND_DIR})
+
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision  LinearMath)	
 set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)
@@ -96,7 +117,7 @@ set(OGREKIT_LIB OgreKitCore ${OGREKIT_OGRE_LIBS})
 
 subdirs(bullet)
 subdirs(Dependencies)
-subdirs(Ogre-1.8)
+subdirs(${GAMEKIT_GRAPHIC_BACKEND_DIR})
 subdirs(Engine)
 
 if (NOT OGREKIT_USE_BPARSE OR OGREKIT_USE_FILETOOLS)

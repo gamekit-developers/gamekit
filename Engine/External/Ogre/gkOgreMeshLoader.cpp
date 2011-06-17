@@ -260,7 +260,11 @@ void gkMeshLoader::loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh* gks)
 
 			if (totvert > 0)
 			{
+#if OGRE_VERSION >= 0x10800
 				Ogre::VertexDeclaration* newDecl = decl->getAutoOrganisedDeclaration(true, false, false);
+#else
+				Ogre::VertexDeclaration* newDecl = decl->getAutoOrganisedDeclaration(true, false);
+#endif
 				vdata->reorganiseBuffers(newDecl);
 			}
 		}
