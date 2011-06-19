@@ -19,6 +19,7 @@ configure_animkit()
 set(GAMEKIT_UTILS_PATH 		${PROJECT_SOURCE_DIR}/Dependencies/Utils/)
 set(ANIMKIT_VECTORMATH_PATH	${PROJECT_SOURCE_DIR}/Dependencies/vectormath/)
 set(FBT_SOURCE_DIR			${PROJECT_SOURCE_DIR}/Dependencies/FileTools)
+set(ZLIB_SOURCE_DIR			${PROJECT_SOURCE_DIR}/Dependencies/ZLib)
 set(ANIMKIT_ANIMKIT_PATH	${PROJECT_SOURCE_DIR}/Source/)
 set(ANIMKIT_SAMPLES_DIR		${PROJECT_SOURCE_DIR}/Samples/)
 
