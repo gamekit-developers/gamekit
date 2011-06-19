@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,32 +24,47 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akCommon_h_
-#define _akCommon_h_
 
+#ifndef AKBLOADER_H
+#define AKBLOADER_H
 
-class akAnimationChannel;
-class akAnimationClip;
-class akAnimationCurve;
-class akAnimationPlayer;
-class akAnimationPlayerSet;
-class akBufferInfo;
-class akColor;
-class akDualQuat;
-class akEuler;
-class akGeometryDeformer;
-class akJoint;
-class akJointMask;
-class akMaterial;
+#include "utString.h"
+
+#include "akMathUtils.h"
+
+#include "Blender.h"
+
+#define AKB_IDNAME(x) ((x) && (x)->id.name[0] != '0' ? (x)->id.name + 2 : "")
+
+class akDemoBase;
 class akMesh;
-class akMorphTarget;
-class akPose;
 class akSkeleton;
-class akSkeletonPose;
-class akSubMesh;
-class akTexture;
-class akTransformState;
-class akVertexGroup;
 
+namespace Blender
+{
+struct Object;
+struct Mesh;
+struct bArmature;
+}
 
-#endif//_akCommon_h_
+class akBLoader
+{
+public:
+	akBLoader(akDemoBase* demo);
+	
+	void loadFile(const utString& filename);
+	
+private:
+	akDemoBase* m_demo;
+
+	void convertCameraObject(Blender::Object *bobj);
+	void convertMeshObject(Blender::Object *bobj);
+	void convertObjectMesh(Blender::Object *bobj);
+	void convertMesh(Blender::Mesh* bme);
+	void convertSkeleton(Blender::bArmature* bskel);
+	void convertMeshSkinning(akMesh* mesh, Blender::Object* bobj, akSkeleton* skel);
+	
+	void removeMeshTempData(akMesh *mesh);
+};
+
+#endif // AKBLOADER_H

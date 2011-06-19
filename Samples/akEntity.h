@@ -28,6 +28,8 @@
 #ifndef AKENTITY_H
 #define AKENTITY_H
 
+#include "akDemoBase.h"
+
 #include "akCommon.h"
 #include "akTransformState.h"
 #include "akAnimationPlayer.h"
@@ -36,15 +38,6 @@
 #include "btAlignedAllocator.h"
 #include "btAlignedObjectArray.h"
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
 
 class akEntity
 {
@@ -67,6 +60,7 @@ private:
 	bool m_useVbo;
 	
 	utArray<GLuint> m_posnoVertexVboIds, m_staticVertexVboIds, m_staticIndexVboIds;
+	utArray<GLuint> m_textures;
 
 public:
 	akEntity();
@@ -74,7 +68,7 @@ public:
 	
 	void setSkeleton(akSkeleton* skel);
 	
-	void init(bool useVbo);
+	void init(bool useVbo, akDemoBase* demo);
 	void step(akScalar dt, int dualQuat, int normalsMethos);
 	void draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded);
 	
@@ -95,6 +89,11 @@ public:
 	UT_INLINE void setTransformState(const akTransformState& v)
 	{
 		m_transform = v;
+	}
+	
+	UT_INLINE akSkeleton* getSkeleton(void)
+	{
+		return m_skeleton;
 	}
 	
 	UT_INLINE akPose* getPose(void)

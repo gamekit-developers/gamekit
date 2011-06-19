@@ -31,10 +31,6 @@
 #include "akSkeletonPose.h"
 #include "akPose.h"
 
-akAnimationClip::akAnimationClip()
-{
-}
-
 
 akAnimationClip::~akAnimationClip()
 {
@@ -46,30 +42,25 @@ akAnimationClip::~akAnimationClip()
 	m_channels.clear();
 }
 
-void akAnimationClip::evaluate(akPose* pose, akScalar time, akScalar weight, akScalar delta) const
+void akAnimationClip::evaluate(akPose* pose, akScalar time, akScalar weight, akScalar delta, const akJointMask* mask) const
 {
 	akAnimationChannel* const* ptr = m_channels.ptr();
 	int len = getNumChannels();
 	
 	for(int i=0; i<len; i++)
 	{
-		ptr[i]->evaluate(*pose, time, weight, delta);
+		ptr[i]->evaluate(*pose, time, weight, delta, mask);
 	}
 }
 
-void akAnimationClip::evaluate(akSkeletonPose* pose, akScalar time, akScalar weight, akScalar delta) const
+void akAnimationClip::evaluate(akSkeletonPose* pose, akScalar time, akScalar weight, akScalar delta, const akJointMask* mask) const
 {
 	akAnimationChannel* const* ptr = m_channels.ptr();
 	int len = getNumChannels();
 	
 	for(int i=0; i<len; i++)
 	{
-		if(ptr[i]->getType() == akAnimationChannel::AC_BONE)
-		{
-			akTransformState* jpose = pose->getByName(ptr[i]->getName());
-			if (jpose)
-				ptr[i]->evaluate(*jpose, time, weight, delta);
-		}
+		ptr[i]->evaluate(*pose, time, weight, delta, mask);
 	}
 }
 

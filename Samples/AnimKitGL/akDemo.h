@@ -28,7 +28,7 @@
 #ifndef AKDEMO_H
 #define AKDEMO_H
 
-#include "akDemoBase.h"
+#include "../akDemoBase.h"
 
 class akDemo : public akDemoBase
 {

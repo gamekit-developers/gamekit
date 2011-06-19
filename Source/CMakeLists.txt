@@ -32,8 +32,9 @@ set(ANIMKIT_HDR
 	akAnimationPlayer.h
 	akAnimationPlayerSet.h
 	akBufferInfo.h
-	akDualQuat.h
+	akColor.h
 	akCommon.h
+	akDualQuat.h
 	akEuler.h
 	akGeometryDeformer.h
 	akMathUtils.h
@@ -54,6 +55,4 @@ set(ANIMKIT_HDR
 include_directories(${GAMEKIT_UTILS_PATH} ${ANIMKIT_VECTORMATH_PATH})
 
 add_library(${PROJECT_NAME} ${ANIMKIT_HDR} ${ANIMKIT_SRC})
-
-set(ANIMKIT_ANIMKIT_TARGET	${PROJECT_NAME})
 

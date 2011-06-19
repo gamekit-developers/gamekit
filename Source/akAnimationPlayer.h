@@ -30,6 +30,7 @@
 
 #include "akCommon.h"
 #include "akMathUtils.h"
+#include "akSkeleton.h"
 
 
 /// A player is linked to an animation clip and contains temporal
@@ -54,12 +55,16 @@ protected:
 	akScalar             m_weight;
 	int                  m_mode;
 	bool                 m_enabled;
+	akJointMask*         m_mask;
 
 
 public:
 	akAnimationPlayer();
 	akAnimationPlayer(akAnimationClip* clip);
-	~akAnimationPlayer() {}
+	~akAnimationPlayer()
+	{
+		deleteJointMask();
+	}
 	
 	void setAnimationClip(akAnimationClip* v);
 	void setTimePosition(akScalar v);
@@ -134,6 +139,25 @@ public:
 		return m_evalTime >= m_length; 
 	}
 
+	UT_INLINE void createJointMask(akSkeleton* skel, akScalar weight=1.0f)
+	{
+		m_mask = new akJointMask(skel, weight);
+	}
+	
+	UT_INLINE void deleteJointMask()
+	{
+		if(m_mask) delete m_mask;
+	}
+	
+	UT_INLINE void setJointMaskWeight(UTuint8 boneid, akScalar weight)
+	{
+		if(m_mask) m_mask->setWeight(boneid, weight);
+	}
+	
+	UT_INLINE akScalar getJointMaskWeight(UTuint8 boneid)
+	{
+		if(m_mask) return m_mask->getWeight(boneid);
+	}
 };
 
 #endif // AKANIMATIONPLAYER_H

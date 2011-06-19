@@ -50,15 +50,15 @@ protected:
 	Channels m_channels;
 
 public:
-	akAnimationClip();
+	akAnimationClip() : m_length(0) {}
 	~akAnimationClip();
 
 	void addChannel(akAnimationChannel* chan);
 	bool removeChannel(const akAnimationChannel* chan);
 	akAnimationChannel* getChannel(const utHashedString& name);
 	
-	void evaluate(akPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
-	void evaluate(akSkeletonPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
+	void evaluate(akPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f, const akJointMask* mask =0) const;
+	void evaluate(akSkeletonPose* pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f, const akJointMask* mask =0) const;
 	void evaluate(akTransformState* pose, akScalar time, akScalar weight, akScalar delta=0.5f) const;
 	
 	UT_INLINE Channels::ConstPointer getChannels(void) const

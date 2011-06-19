@@ -34,6 +34,8 @@
 #include "akCommon.h"
 #include "akTransformState.h"
 
+#include "akGlutDemo.h"
+
 class akEntity;
 
 typedef struct akCamera
@@ -50,6 +52,7 @@ public:
 	typedef utHashTable<utIntHashKey, akSkeleton*> Skeletons;
 	typedef utHashTable<utIntHashKey, akMesh*> Meshes;
 	typedef utHashTable<utIntHashKey, akEntity*> Entities;
+	typedef utHashTable<utIntHashKey, GLuint> Textures;
 	
 public:
 	akDemoBase();
@@ -90,6 +93,12 @@ public:
 	Entities::ConstPointer       getEntities(void) const    { return m_objects.ptr(); }
 	UTsize                       getNumEntities(void) const { return m_objects.size(); }
 	
+	void        addTexture(const utHashedString& name, GLuint tex);
+	GLuint      getTexture(const utHashedString& name);
+	
+	Textures::ConstPointer       getTextures(void) const    { return m_textures.ptr(); }
+	UTsize                       getNumTextures(void) const { return m_textures.size(); }
+	
 	UT_INLINE akCamera* getCamera(void)
 	{
                 return m_camera;
@@ -111,12 +120,17 @@ protected:
 	bool m_drawColor;
 	int m_dualQuatUse;
 	int m_normalMethod;
+	UTuint32 m_meshCount;
+	UTuint32 m_subCount;
+	UTuint32 m_vertexCount;
+	UTuint32 m_triCount;
 	
 	// Ressources
 	AnimationClips m_animations;
 	Skeletons      m_skeletons;
 	Meshes         m_meshes;
 	Entities       m_objects;
+	Textures       m_textures;
 	
 	akCamera* m_camera;
 	

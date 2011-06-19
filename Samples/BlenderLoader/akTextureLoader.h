@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,32 +24,27 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akCommon_h_
-#define _akCommon_h_
 
+#ifndef AKTEXTURELOADER_H
+#define AKTEXTURELOADER_H
 
-class akAnimationChannel;
-class akAnimationClip;
-class akAnimationCurve;
-class akAnimationPlayer;
-class akAnimationPlayerSet;
-class akBufferInfo;
-class akColor;
-class akDualQuat;
-class akEuler;
-class akGeometryDeformer;
-class akJoint;
-class akJointMask;
-class akMaterial;
-class akMesh;
-class akMorphTarget;
-class akPose;
-class akSkeleton;
-class akSkeletonPose;
-class akSubMesh;
-class akTexture;
-class akTransformState;
-class akVertexGroup;
+namespace Blender
+{
+struct Image;
+};
 
+class akDemoBase;
 
-#endif//_akCommon_h_
+class akTextureLoader
+{
+public:
+	akTextureLoader(akDemoBase* demo, Blender::Image* ima) : m_demo(demo), m_image(ima) {}
+	
+	void load(void);
+	
+private:
+	akDemoBase* m_demo;
+	Blender::Image* m_image;
+};
+
+#endif // AKTEXTURELOADER_H

@@ -27,12 +27,13 @@
 
 #include "akDemo.h"
 
-#include "BlenderLoader/akBLoader.h"
+#include "../BlenderLoader/akBLoader.h"
+#include "../akEntity.h"
 
 #include "akMesh.h"
-#include "akEntity.h"
 #include "akSkeletonPose.h"
 #include "akGeometryDeformer.h"
+#include "akAnimationPlayerSet.h"
 
 akDemo::akDemo() : akDemoBase()
 {
@@ -69,5 +70,31 @@ void akDemo::init(void)
 		}
 	}
 	
+	// Joint mask test
+	akEntity* blu = getEntity("Blu");
+	if(blu)
+	{
+		akAnimationPlayer* play = blu->getAnimationPlayers()->getAnimationPlayer(0);
+		akSkeleton* skel = blu->getSkeleton();
+		if(play && skel)
+		{
+			UTuint32 bid = skel->getIndex("Arm.L");
+			if(bid>0)
+			{
+				play->createJointMask(skel);
+				play->setJointMaskWeight(bid, 0.3f);
+			}
+		}
+	}
+	
+}
+
+
+int main(int argc, char** argv)
+{
+	akDemo* demo = new akDemo();
+	
+	startDemo(argc, argv, demo,"AnimKit OpenGL Demo");
+	return 0;
 }
 

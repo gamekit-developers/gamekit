@@ -56,6 +56,8 @@ akSubMesh::akSubMesh(Type type, bool hasNormals, bool hasColors, UTuint32 uvlaye
 	}
 	
 	m_elementStride = sizeof(UTuint32);
+	
+	m_material = new akMaterial();
 }
 
 akSubMesh::~akSubMesh()
@@ -78,6 +80,8 @@ akSubMesh::~akSubMesh()
 		delete m_morphTargets[i];
 	}
 	m_morphTargets.clear();
+	
+	delete m_material;
 }
 
 void akSubMesh::addVertex(const akVector3 &co, const akVector3 &no, const UTuint32 &color, utArray<float>& uv)
@@ -293,6 +297,22 @@ const akBufferInfo* akSubMesh::getIndexBuffer()
 	return &m_elementBuffer;
 }
 
+
+UTuint32 akSubMesh::getTriangleCount(void)
+{
+	switch(m_type)
+	{
+	case ME_TRIANGLE_STRIP:
+	case ME_TRIANGLE_FAN:
+		return m_elementBuffer.getSize() - 2;
+		break;
+	case ME_TRIANGLES:
+	default:
+		return m_elementBuffer.getSize() / 3;
+		break;
+	}
+}
+
 bool akSubMesh::hasMorphTargets(void)
 {
 	return m_morphTargets.size()>0;
@@ -320,6 +340,7 @@ void akSubMesh::deform(akGeometryDeformer::SkinningOption method,
 		m_vertexBuffer.getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 2, (void**)&norout, &norouts);
 	}
 	
+	// Morphing
 	if(pose)
 	{
 		akVector3* pi = posin;
@@ -354,6 +375,7 @@ void akSubMesh::deform(akGeometryDeformer::SkinningOption method,
 		}
 	}
 	
+	// Skinning
 	if(mpalette)
 	{
 		UTuint8 *indices;
@@ -443,5 +465,25 @@ void akMesh::deform(akGeometryDeformer::SkinningOption method,
 		else
 			m_submeshes[i]->deform(method, normalMethod, 0, palette, dqpalette);
 	}
+}
+
+UTuint32 akMesh::getVertexCount(void)
+{
+	UTuint32 c = 0;
+	for (int i=0; i<m_submeshes.size(); i++)
+	{
+		c += m_submeshes[i]->getVertexCount();
+	}
+	return c;
+}
+
+UTuint32 akMesh::getTriangleCount(void)
+{
+	UTuint32 c = 0;
+	for (int i=0; i<m_submeshes.size(); i++)
+	{
+		c += m_submeshes[i]->getTriangleCount();
+	}
+	return c;
 }
 

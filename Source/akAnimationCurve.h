@@ -35,7 +35,7 @@
 
 
 /// Base component of an animation clip (and animation channel).
-/// Contains "samples" of the animated values and theiur time postions. 
+/// Contains "samples" of the animated values and theiur time postions.
 /// Interpolation for time values between samples can be constant, linear
 /// or using bezier curves (for which you need to set the handles).
 class akAnimationCurve

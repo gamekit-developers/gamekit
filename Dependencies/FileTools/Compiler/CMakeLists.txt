@@ -24,5 +24,5 @@
 set(FILE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../File)
 
 include_directories(. ${FILE_SRC_DIR})
-link_libraries(fbtFile)
+link_libraries(fbtFile ${FBT_ZLIB_LIBRARY})
 add_executable(makefbt  makefbt.cpp)

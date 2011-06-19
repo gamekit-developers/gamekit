@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,32 +24,32 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akCommon_h_
-#define _akCommon_h_
+
+#ifndef AKCOLOR_H
+#define AKCOLOR_H
 
 
-class akAnimationChannel;
-class akAnimationClip;
-class akAnimationCurve;
-class akAnimationPlayer;
-class akAnimationPlayerSet;
-class akBufferInfo;
-class akColor;
-class akDualQuat;
-class akEuler;
-class akGeometryDeformer;
-class akJoint;
-class akJointMask;
-class akMaterial;
-class akMesh;
-class akMorphTarget;
-class akPose;
-class akSkeleton;
-class akSkeletonPose;
-class akSubMesh;
-class akTexture;
-class akTransformState;
-class akVertexGroup;
+class akColor
+{
+public:
+	enum BlendType
+	{
+		BT_MIXTURE,
+		BT_MULTIPLY,
+		BT_ADDITIVE,
+		BT_SUBTRACT,
+		BT_SCREEN,
+		BT_DARKEN,
+		BT_LIGHTEN,
+		BT_COLOR
+	};
+	
+	akColor(float red, float green, float blue, float alpha=1.0f)
+		: r(red), g(green), b(blue), a(alpha)
+	{
+	}
+	
+	float r,g,b,a;
+};
 
-
-#endif//_akCommon_h_
+#endif // AKCOLOR_H

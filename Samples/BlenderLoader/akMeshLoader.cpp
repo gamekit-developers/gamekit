@@ -29,6 +29,10 @@
 
 #include "Blender.h"
 #include "akBlenderDefines.h"
+#include "akBLoader.h"
+#include "akTextureLoader.h"
+
+#include "../akDemoBase.h"
 
 #include "akVertexGroup.h"
 #include "akMorphTarget.h"
@@ -40,7 +44,6 @@
 
 // float normal from short
 #define VEC3CPN(a, b) {a.setX(b[0]/32767.f); a.setY(b[1]/32767.f); a.setZ(b[2]/32767.f);}
-
 
 
 static void akMeshLoaderUtils_getLayers(
@@ -82,18 +85,69 @@ static void akMeshLoaderUtils_getLayers(
 }
 
 
+Blender::Material* akMeshLoaderUtils_getMaterial(Blender::Object* ob, int index)
+{
+	if (!ob || ob->totcol == 0) return 0;
+
+	index = akClampi(index, 0, ob->totcol - 1);
+	Blender::Material* ma = 0;
+
+	int inObject = ob->matbits && ob->matbits[index] ? 1 : 0;
+
+	if (!inObject)
+		inObject = ob->colbits & (1 << index);
+
+	if (inObject)
+		ma = (Blender::Material*)ob->mat[index];
+	else
+	{
+		Blender::Mesh* me = (Blender::Mesh*)ob->data;
+		if (me && me->mat && me->mat[index])
+			ma = me->mat[index];
+	}
+	return ma;
+}
+
+int akMeshLoaderUtils_getRampBlendType(int blend)
+{
+	switch (blend)
+	{
+	case MA_RAMP_BLEND:   return akColor::BT_MIXTURE;	
+	case MA_RAMP_ADD:     return akColor::BT_ADDITIVE;	
+	case MA_RAMP_SUB:     return akColor::BT_SUBTRACT;	
+	case MA_RAMP_SCREEN:  return akColor::BT_SCREEN;	
+	case MA_RAMP_DARK:	  return akColor::BT_DARKEN;	
+	case MA_RAMP_LIGHT:	  return akColor::BT_LIGHTEN;	
+	case MA_RAMP_COLOR:   return akColor::BT_COLOR;		
+	default:              break;
+	}
+	return akColor::BT_MULTIPLY;	
+}
+
+int akMeshLoaderUtils_getTexBlendType(int blend)
+{
+	switch (blend)
+	{
+	case MTEX_BLEND:      return akColor::BT_MIXTURE;	
+	case MTEX_ADD:        return akColor::BT_ADDITIVE;	
+	case MTEX_SUB:        return akColor::BT_SUBTRACT;	
+	case MTEX_SCREEN:	  return akColor::BT_SCREEN;	
+	case MTEX_DARK:		  return akColor::BT_DARKEN;	
+	case MTEX_LIGHT:	  return akColor::BT_LIGHTEN;	
+	case MTEX_BLEND_VAL:  return akColor::BT_COLOR;		
+	default:              break;
+	}
+	return akColor::BT_MULTIPLY;	
+}
+
+
 class akSubMeshHashKey
 {
-protected:
-
-	friend class    akMeshLoader;
-
+public:
 	short           m_matnr, m_mode;
 	bool            m_blenderMat;
-
 	Blender::Image* m_images[8];
 
-public:
 	akSubMeshHashKey()
 		: m_matnr(0), m_mode(0), m_blenderMat(false)
 	{
@@ -105,8 +159,8 @@ public:
 		: m_matnr(mat_nr), m_mode(0), m_blenderMat(true)
 	{
 		for (int i = 0; i < 8; ++i) m_images[i] = 0;
-//		if (mode & TF_INVISIBLE)    m_mode |= gkMaterialProperties::MA_INVISIBLE;
-//		if (mode & TF_TWOSIDE)      m_mode |= gkMaterialProperties::MA_TWOSIDE;
+		if (mode & TF_INVISIBLE)    m_mode |= akMaterial::MA_INVISIBLE;
+		if (mode & TF_TWOSIDE)      m_mode |= akMaterial::MA_TWOSIDE;
 	}
 
 
@@ -114,29 +168,20 @@ public:
 	akSubMeshHashKey(int mode, int alpha, Blender::Image* images[8])
 		: m_matnr(-1), m_mode(0), m_blenderMat(false)
 	{
-//		m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
-//		m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
+		m_mode |= akMaterial::MA_RECEIVESHADOWS;
+		m_mode |= akMaterial::MA_DEPTHWRITE;
 
-//		if (mode & TF_INVISIBLE)    m_mode |= gkMaterialProperties::MA_INVISIBLE;
-//		if (mode & TF_LIGHT)        m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
-//		if (mode & TF_TWOSIDE)      m_mode |= gkMaterialProperties::MA_TWOSIDE;
-//		if (alpha & TF_CLIP)        m_mode &= ~gkMaterialProperties::MA_DEPTHWRITE;
-//		if (alpha & TF_ADD)         m_mode |= gkMaterialProperties::MA_ADDITIVEBLEND;
-//		if (mode & TF_TEX)          m_mode |= gkMaterialProperties::MA_HASFACETEX;
+		if (mode & TF_INVISIBLE)    m_mode |= akMaterial::MA_INVISIBLE;
+		if (mode & TF_LIGHT)        m_mode |= akMaterial::MA_LIGHTINGENABLED;
+		if (mode & TF_TWOSIDE)      m_mode |= akMaterial::MA_TWOSIDE;
+		if (alpha & TF_CLIP)        m_mode &= ~akMaterial::MA_DEPTHWRITE;
+		if (alpha & TF_ADD)         m_mode |= akMaterial::MA_ADDITIVEBLEND;
+		if (mode & TF_TEX)          m_mode |= akMaterial::MA_HASFACETEX;
 
-//		if (alpha & TF_ALPHA || alpha & TF_CLIP)
-//			m_mode |= gkMaterialProperties::MA_ALPHABLEND;
+		if (alpha & TF_ALPHA || alpha & TF_CLIP)
+			m_mode |= akMaterial::MA_ALPHABLEND;
 		for (int i = 0; i < 8; ++i) m_images[i] = images[i];
 	}
-
-	// Copy constructor
-	akSubMeshHashKey(const akSubMeshHashKey& k)
-		:   m_matnr(k.m_matnr), m_mode(k.m_mode),  m_blenderMat(k.m_blenderMat)
-
-	{
-		for (int i = 0; i < 8; ++i) m_images[i] = m_blenderMat ? 0 : k.m_images[i];
-	}
-
 
 	bool operator == (const akSubMeshHashKey& rhs) const
 	{
@@ -266,8 +311,8 @@ public:
 
 
 
-akMeshLoader::akMeshLoader(akMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh)
-	:   m_gmesh(gmesh), m_bmesh(bmesh), m_bobj(bobject)
+akMeshLoader::akMeshLoader(akDemoBase* demo, akMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh)
+	: m_demo(demo), m_gmesh(gmesh), m_bmesh(bmesh), m_bobj(bobject)
 {
 }
 
@@ -410,7 +455,38 @@ unsigned int akMeshLoader::packColour(const Blender::MCol& col, bool opengl)
 	return out_color.integer;
 }
 
+void akMeshLoader::convertTextureFace(akSubMeshPair* subpair)
+{
+	akMaterial& ma = subpair->item->getMaterial();
+	akSubMeshHashKey& hk = subpair->test;
+	Blender::Image** imas = subpair->test.m_images;
+	
+	ma.m_mode = hk.m_mode;
 
+	if (imas && ma.m_mode & akMaterial::MA_HASFACETEX)
+	{
+//		ma.m_name = "TextureFace";
+		ma.m_totaltex = 0;
+		for (int i = 0; i < 8; i++)
+		{
+			if (imas[i] != 0)
+			{
+				akTexture tex;
+//				tex.m_name = AKB_IDNAME(imas[i]);
+				tex.m_image = AKB_IDNAME(imas[i]);
+				tex.m_layer = i;
+				ma.m_textures.push_back(tex);
+				ma.m_totaltex++;
+				
+				if (!m_demo->getTexture(AKB_IDNAME(imas[i])))
+				{
+					akTextureLoader teconv(m_demo, imas[i]);
+					teconv.load();
+				}
+			}
+		}
+	}
+}
 
 int akMeshLoader::findTextureLayer(Blender::MTex* te)
 {
@@ -435,164 +511,100 @@ int akMeshLoader::findTextureLayer(Blender::MTex* te)
 		}
 	}
 	return 0;
-
 }
 
+void akMeshLoader::convertMaterial(Blender::Material* bma, akSubMeshPair* subpair)
+{
+	akMaterial& ma = subpair->item->getMaterial();
+	akSubMeshHashKey& hk = subpair->test;
+	
+	ma.m_mode = hk.m_mode;
 
-//void akMeshLoader::convertTextureFace(gkMaterialProperties& gma, akMeshHashKey& hk, Blender::Image** imas)
-//{
-//	gma.m_mode = hk.m_mode;
-//	if (imas)
-//	{
-//		static char buf[32];
-//		static int uid = 0;
-	struct TempVert
+//	ma.m_name          = GKB_IDNAME(bma);
+	ma.m_hardness      = bma->har / 4.f;
+	ma.m_refraction    = bma->ref;
+	ma.m_emissive      = bma->emit;
+	ma.m_ambient       = bma->amb;
+	ma.m_spec          = bma->spec;
+	ma.m_alpha         = bma->alpha;
+	ma.m_diffuse       = akColor(bma->r, bma->g, bma->b);
+	ma.m_specular      = akColor(bma->specr, bma->specg, bma->specb);
+	ma.m_blend		= akMeshLoaderUtils_getRampBlendType(bma->rampblend_col);
+
+	if (bma->mode & MA_ZTRA)        ma.m_mode |= akMaterial::MA_DEPTHWRITE;
+	if (bma->mode & MA_SHADOW)      ma.m_mode |= akMaterial::MA_RECEIVESHADOWS;
+	if (bma->mode & MA_WIRE)        ma.m_mode |= akMaterial::MA_WIREFRAME;
+	if (!(bma->mode & MA_SHLESS))   ma.m_mode |= akMaterial::MA_LIGHTINGENABLED;
+	if (bma->alpha <= 0.f)          ma.m_mode |= akMaterial::MA_INVISIBLE;
+	if (bma->mode & MA_RAMP_COL)	ma.m_mode |= akMaterial::MA_HASRAMPBLEND;
+
+
+	// textures
+	if (bma->mtex != 0)
 	{
-		akVector3       co;                 // vertex coordinates
-		akVector3       no;                 // normals
-		unsigned int    vcol;               // vertex color
-		akScalar       uv[AK_UV_MAX][2];    // texture coordinates < GK_UV_MAX
-	};
+		ma.m_totaltex = 0;
 
-//		sprintf(buf, "TextureFace %i", (uid++));
-//		gma.m_name = buf;
-//	}
+		for (int i = 0; i < MAX_MTEX; i++)
+		{
+			if (!bma->mtex[i] || !bma->mtex[i]->tex)
+				continue;
 
-//	if (imas && gma.m_mode & gkMaterialProperties::MA_HASFACETEX)
-//	{
-//		gma.m_totaltex = 0;
-//		for (int i = 0; i < 8; i++)
-//		{
-//			if (imas[i] != 0)
-//			{
-//				Blender::Image* ima = imas[i];
-//				gkTextureProperties& gte = gma.m_textures[gma.m_totaltex++];
-//				gte.m_layer = i;
-//				gte.m_image = gte.m_name = GKB_IDNAME(ima);
-//			}
-//		}
-//	}
-//}
+			if (bma->mtex[i]->tex->type == TEX_IMAGE)
+			{
+				Blender::MTex* mtex = bma->mtex[i];
 
-//int akMeshLoader::getRampBlendType(int blend)
-//{
-//	switch (blend)
-//	{
-//	case MA_RAMP_BLEND:   return GK_BT_MIXTURE;	
-//	case MA_RAMP_ADD:     return GK_BT_ADDITIVE;	
-//	case MA_RAMP_SUB:     return GK_BT_SUBTRACT;	
-//	case MA_RAMP_SCREEN:  return GK_BT_SCREEN;	
-//	case MA_RAMP_DARK:	  return GK_BT_DARKEN;	
-//	case MA_RAMP_LIGHT:	  return GK_BT_LIGHTEN;	
-//	case MA_RAMP_COLOR:   return GK_BT_COLOR;		
-//	default:              break;
-//	}
+				Blender::Image* ima = mtex->tex->ima;
+				if (!ima)
+					continue;
+				
+				akTexture tex;
+//				tex.m_name = AKB_IDNAME(ima);
+				tex.m_image = AKB_IDNAME(ima);
 
-//	return GK_BT_MULTIPLY;	
-//}
+				if (mtex->texflag & MTEX_STENCIL)
+				{
+					tex.m_mode |= akTexture::TM_SPLAT;
+					tex.m_texmode |= akTexture::TX_STENCIL;
+				}
+				if (mtex->texflag & MTEX_NEGATIVE)
+					tex.m_texmode |= akTexture::TX_NEGATIVE;
+				if (mtex->texflag &  MTEX_RGBTOINT)
+					tex.m_texmode |= akTexture::TX_RGBTOINTEN;
 
-//int akMeshLoader::getTexBlendType(int blend)
-//{
-//	switch (blend)
-//	{
-//	case MTEX_BLEND:      return GK_BT_MIXTURE;	
-//	case MTEX_ADD:        return GK_BT_ADDITIVE;	
-//	case MTEX_SUB:        return GK_BT_SUBTRACT;	
-//	case MTEX_SCREEN:	  return GK_BT_SCREEN;	
-//	case MTEX_DARK:		  return GK_BT_DARKEN;	
-//	case MTEX_LIGHT:	  return GK_BT_LIGHTEN;	
-//	case MTEX_BLEND_VAL:  return GK_BT_COLOR;		
-//	default:              break;
-//	}
+				if (mtex->mapto & MAP_ALPHA)
+				{
+					tex.m_mode |= akTexture::TM_ALPHA;
+					ma.m_mode |= akMaterial::MA_ALPHABLEND;
+				}
+				if ((mtex->mapto & MAP_NORM) || (mtex->maptoneg & MAP_NORM))
+					tex.m_mode |= akTexture::TM_NORMAL;
+				if ((mtex->mapto & MAP_SPEC) || (mtex->maptoneg & MAP_SPEC))
+					tex.m_mode |= akTexture::TM_SPECULAR;
+				if ((mtex->mapto & MAP_REF)  || (mtex->maptoneg & MAP_REF))
+					tex.m_mode |= akTexture::TM_REFRACTION;
+				if ((mtex->mapto & MAP_EMIT) || (mtex->maptoneg & MAP_EMIT))
+					tex.m_mode |= akTexture::TM_EMMISIVE;
 
-//	return GK_BT_MULTIPLY;	
-//}
+				if (mtex->normapspace == MTEX_NSPACE_OBJECT) //else set to tagent space.
+					tex.m_texmode |= akTexture::TX_OBJ_SPACE;
 
-//void akMeshLoader::convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, akMeshHashKey& hk)
-//{
-//	convertTextureFace(gma, hk, 0);
+				tex.m_blend = akMeshLoaderUtils_getTexBlendType(mtex->blendtype);
 
-//	gma.m_name          = GKB_IDNAME(bma);
-//	gma.m_hardness      = bma->har / 4.f;
-//	gma.m_refraction    = bma->ref;
-//	gma.m_emissive      = bma->emit;
-//	gma.m_ambient       = bma->amb;
-//	gma.m_spec          = bma->spec;
-//	gma.m_alpha         = bma->alpha;
-//	gma.m_diffuse       = gkColor(bma->r, bma->g, bma->b);
-//	gma.m_specular      = gkColor(bma->specr, bma->specg, bma->specb);
-//	gma.m_rblend		= getRampBlendType(bma->rampblend_col);
+				tex.m_layer = findTextureLayer(mtex);
+				tex.m_mix   = mtex->colfac;
 
-//	if (bma->mode & MA_ZTRA)        gma.m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
-//	if (bma->mode & MA_SHADOW)      gma.m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
-//	if (bma->mode & MA_WIRE)        gma.m_mode |= gkMaterialProperties::MA_WIREFRAME;
-//	if (!(bma->mode & MA_SHLESS))   gma.m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
-//	if (bma->alpha <= 0.f)          gma.m_mode |= gkMaterialProperties::MA_INVISIBLE;
-//	if (bma->mode & MA_RAMP_COL)	gma.m_mode |= gkMaterialProperties::MA_HASRAMPBLEND;
-
-
-//	// textures
-//	if (bma->mtex != 0)
-//	{
-//		gma.m_totaltex = 0;
-
-//		for (int i = 0; i < MAX_MTEX; i++)
-//		{
-//			if (!bma->mtex[i] || !bma->mtex[i]->tex)
-//				continue;
-
-//			if (bma->mtex[i]->tex->type == TEX_IMAGE)
-//			{
-//				Blender::MTex* mtex = bma->mtex[i];
-
-//				Blender::Image* ima = mtex->tex->ima;
-//				if (!ima)
-//					continue;
-
-//				gkTextureProperties& gte = gma.m_textures[gma.m_totaltex++];
-//				gte.m_image = gte.m_name = GKB_IDNAME(ima);
-
-//				if (mtex->texflag & MTEX_STENCIL)
-//				{
-//					gte.m_mode |= gkTextureProperties::TM_SPLAT;
-//					gte.m_texmode |= gkTextureProperties::TX_STENCIL;
-//				}
-//				if (mtex->texflag & MTEX_NEGATIVE)
-//					gte.m_texmode |= gkTextureProperties::TX_NEGATIVE;
-//				if (mtex->texflag &  MTEX_RGBTOINT)
-//					gte.m_texmode |= gkTextureProperties::TX_RGBTOINTEN;
-
-//				if (mtex->mapto & MAP_ALPHA)
-//				{
-//					gte.m_mode |= gkTextureProperties::TM_ALPHA;
-//					gma.m_mode |= gkMaterialProperties::MA_ALPHABLEND;
-//				}
-//				if ((mtex->mapto & MAP_NORM) || (mtex->maptoneg & MAP_NORM))
-//					gte.m_mode |= gkTextureProperties::TM_NORMAL;
-//				if ((mtex->mapto & MAP_SPEC) || (mtex->maptoneg & MAP_SPEC))
-//					gte.m_mode |= gkTextureProperties::TM_SPECULAR;
-//				if ((mtex->mapto & MAP_REF)  || (mtex->maptoneg & MAP_REF))
-//					gte.m_mode |= gkTextureProperties::TM_REFRACTION;
-//				if ((mtex->mapto & MAP_EMIT) || (mtex->maptoneg & MAP_EMIT))
-//					gte.m_mode |= gkTextureProperties::TM_EMMISIVE;
-
-//				if (mtex->normapspace == MTEX_NSPACE_OBJECT) //else set to tagent space.
-//					gte.m_texmode |= gkTextureProperties::TX_OBJ_SPACE;
-
-//				gte.m_blend = getTexBlendType(mtex->blendtype);				
-
-//				gte.m_layer = findTextureLayer(mtex);
-//				gte.m_mix   = mtex->colfac;				
-
-//				gte.m_normalFactor = mtex->norfac;
-//				gte.m_diffuseColorFactor = mtex->colfac;
-//				gte.m_diffuseAlpahFactor = mtex->alphafac;
-//				gte.m_speculaColorFactor = mtex->colspecfac;
-//				gte.m_speculaHardFactor = mtex->hardfac;
-//			}
-//		}
-//	}
-//}
+				tex.m_normalFactor = mtex->norfac;
+				tex.m_diffuseColorFactor = mtex->colfac;
+				tex.m_diffuseAlphaFactor = mtex->alphafac;
+				tex.m_specularColorFactor = mtex->colspecfac;
+				tex.m_specularHardFactor = mtex->hardfac;
+				
+				ma.m_textures.push_back(tex);
+				ma.m_totaltex++;
+			}
+		}
+	}
+}
 
 
 void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
@@ -621,7 +633,6 @@ void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
 				akVertexGroup* vg = vgroups.at(vgi);
 				vg->add(i, dv.dw[j].weight);
 			}
-			
 		}
 		
 		for(unsigned int i=0; i<vgroups.size(); i++)
@@ -681,10 +692,8 @@ void akMeshLoader::convertMorphTargets(akSubMeshPair *subpair)
 									for (int bfi2 = 0; bfi2 < m_bmesh->totface; bfi2++)
 									{
 										const Blender::MFace& bface2 = m_bmesh->mface[bfi2];
-										if( bface2.v1 == bi ||
-												bface2.v2 == bi ||
-												bface2.v3 == bi ||
-												bface2.v4 == bi )
+										if( bface2.v1 == bi || bface2.v2 == bi ||
+											bface2.v3 == bi || bface2.v4 == bi )
 										{
 											norms.push_back(calcMorphNormal(bface2, pos));
 										}
@@ -714,15 +723,12 @@ void akMeshLoader::convertMorphTargets(akSubMeshPair *subpair)
 							}
 						}
 						
-						
 						kpos+=3;
 						bpos+=3;
 					}
 					
 					if(mt->getSize())
-					{
 						subm->addMorphTarget(mt);
-					}
 					else
 						delete mt;
 				}
@@ -904,6 +910,7 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 			m_gmesh->addSubMesh(curSubMesh);
 			
 			curSubMeshPair = new akSubMeshPair(curSubMesh);
+			curSubMeshPair->test = test;
 			meshtable.push_back(curSubMeshPair);
 		}
 		else
@@ -953,46 +960,18 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 		convertVertexGroups(subpair);
 		convertMorphTargets(subpair);
 		
-//		akSubMeshHashKey& key  = iter.peekNext()->test;
-//		akSubMesh* val      = iter.peekNext()->item;
-//		Blender::Material* bmat = BlenderMaterial(m_bobj, key.m_matnr);
-//		if (key.m_blenderMat)
-//		{
-//			if (bmat)
-//				convertMaterial(bmat, val->getMaterial(), key);
-//		}
-//		else
-//			convertTextureFace(val->getMaterial(), key, (Blender::Image**)key.m_images);
+		if(subpair->test.m_blenderMat)
+		{
+			Blender::Material* bmat = akMeshLoaderUtils_getMaterial(m_bobj, subpair->test.m_matnr);
+			if (bmat)
+				convertMaterial(bmat, subpair);
+		}
+		else
+			convertTextureFace(subpair);
 
 		delete subpair;
 		iter.getNext();
 	}
-}
-
-
-Blender::Material* akMeshLoader::getMaterial(Blender::Object* ob, int index)
-{
-	if (!ob || ob->totcol == 0) return 0;
-
-	index = akClampi(index, 0, ob->totcol - 1);
-	Blender::Material* ma = 0;
-
-	int inObject = ob->matbits && ob->matbits[index] ? 1 : 0;
-
-	if (!inObject)
-		inObject = ob->colbits & (1 << index);
-
-
-	if (inObject)
-		ma = (Blender::Material*)ob->mat[index];
-	else
-	{
-		Blender::Mesh* me = (Blender::Mesh*)ob->data;
-		if (me && me->mat && me->mat[index])
-			ma = me->mat[index];
-	}
-
-	return ma;
 }
 
 

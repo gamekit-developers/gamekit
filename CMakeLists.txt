@@ -23,6 +23,8 @@ set(ANIMKIT_ANIMKIT_PATH	${PROJECT_SOURCE_DIR}/Source/)
 set(ANIMKIT_SAMPLES_DIR		${PROJECT_SOURCE_DIR}/Samples/)
 
 set(ANIMKIT_ANIMKIT_TARGET	AnimKit)
+set(GAMEKIT_UTILS_TARGET	GameKitUtils)
+set(OGREKIT_ZLIB_TARGET		ZLib)
 
 subdirs(Dependencies)
 subdirs(Source)

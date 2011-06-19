@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,32 +24,27 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akCommon_h_
-#define _akCommon_h_
+
+#ifndef AKGLUTDEMO_H
+#define AKGLUTDEMO_H
+
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
+#if defined(__APPLE__)
+#include <GLUT/glew.h>
+#include <GLUT/glut.h>
+#include <OpenGL/gl.h>
+#else
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <GL/gl.h>
+#endif
 
 
-class akAnimationChannel;
-class akAnimationClip;
-class akAnimationCurve;
-class akAnimationPlayer;
-class akAnimationPlayerSet;
-class akBufferInfo;
-class akColor;
-class akDualQuat;
-class akEuler;
-class akGeometryDeformer;
-class akJoint;
-class akJointMask;
-class akMaterial;
-class akMesh;
-class akMorphTarget;
-class akPose;
-class akSkeleton;
-class akSkeletonPose;
-class akSubMesh;
-class akTexture;
-class akTransformState;
-class akVertexGroup;
+class akDemoBase;
 
+int startDemo(int argc, char** argv, akDemoBase* demo, const char* title);
 
-#endif//_akCommon_h_
+#endif // AKGLUTDEMO_H

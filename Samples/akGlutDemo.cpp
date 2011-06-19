@@ -25,46 +25,65 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKBLOADER_H
-#define AKBLOADER_H
+#include "akGlutDemo.h"
 
-#include "utString.h"
+#include "akDemoBase.h"
 
-#include "akMathUtils.h"
+static akDemoBase* demo=0;
 
-#include "Blender.h"
-
-#define AKB_IDNAME(x) ((x) && (x)->id.name[0] != '0' ? (x)->id.name + 2 : "")
-
-class akDemo;
-class akMesh;
-class akSkeleton;
-
-namespace Blender
+void display(void)
 {
-struct Object;
-struct Mesh;
-struct bArmature;
+	demo->displayCallback();
 }
 
-class akBLoader
+
+void idle(void)
 {
-public:
-	akBLoader(akDemo* demo);
-	
-	void loadFile(const utString& filename);
-	
-private:
-	akDemo* m_demo;
+	demo->idleCallback();
+}
 
-	void convertCameraObject(Blender::Object *bobj);
-	void convertMeshObject(Blender::Object *bobj);
-	void convertObjectMesh(Blender::Object *bobj);
-	void convertMesh(Blender::Mesh* bme);
-	void convertSkeleton(Blender::bArmature* bskel);
-	void convertMeshSkinning(akMesh* mesh, Blender::Object* bobj, akSkeleton* skel);
-	
-	void removeMeshTempData(akMesh *mesh);
-};
+void reshape(int w, int h)
+{
+	demo->reshapeCallback(w, h);
+}
 
-#endif // AKBLOADER_H
+void mouse(int button,int state,int x,int y)
+{
+}
+
+void motion(int x,int y)
+{
+}
+
+void keyboard(unsigned char key,int x,int y)
+{
+	demo->keyboardCallback(key, x, y);
+}
+
+void special(int key,int x,int y)
+{
+}
+
+int startDemo(int argc, char** argv, akDemoBase* d, const char* title)
+{
+	demo =d;
+	
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(100,30);
+	glutInitWindowSize(800,800);
+	glutCreateWindow(title);
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
+	glutReshapeFunc(reshape);
+	glutMouseFunc(mouse);
+	glutMotionFunc(motion);
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
+	glewInit();
+	
+	demo->start();
+	
+	glutMainLoop();
+	return 0;
+}

@@ -74,15 +74,20 @@ int akAnimationChannel::getNumCurves(void) const
 }
 
 
-void akAnimationChannel::evaluate(akPose& pose, akScalar time, akScalar weight, akScalar delta) const
+void akAnimationChannel::evaluate(akPose& pose, akScalar time, akScalar weight, akScalar delta, const akJointMask* mask) const
 {
 	switch(m_type)
 	{
 	case akAnimationChannel::AC_BONE:
 	{
-		akTransformState* jpose = pose.getSkeletonPose()->getByName(m_name);
-		if (jpose)
+		UTuint32 bid = pose.getSkeletonPose()->getIndex(m_name);
+		if( bid >= 0 )
+		{
+			akTransformState* jpose = pose.getSkeletonPose()->getJointPose(bid);
+			if(mask)
+				weight *= mask->getWeight(bid);
 			evaluate(*jpose, time, weight, delta);
+		}
 		break;
 	}
 	case akAnimationChannel::AC_TRANSFORM:
@@ -112,22 +117,37 @@ void akAnimationChannel::evaluate(akPose& pose, akScalar time, akScalar weight, 
 	}
 }
 
+void akAnimationChannel::evaluate(akSkeletonPose& pose, akScalar time, akScalar weight, akScalar delta, const akJointMask* mask) const
+{
+	if(m_type == akAnimationChannel::AC_BONE)
+	{
+		UTuint32 bid = pose.getIndex(m_name);
+		if( bid >= 0 )
+		{
+			akTransformState* jpose = pose.getJointPose(bid);
+			if(mask)
+				weight *= mask->getWeight(bid);
+			evaluate(*jpose, time, weight, delta);
+		}
+	}
+}
+
 void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, akScalar weight, akScalar delta) const
 {
 	const akAnimationCurve** splines = getCurves();
 	int len = getNumCurves();
-
+	
 	akTransformState channel;
 	channel.rot = akQuat::identity();
 	channel.loc = akVector3(0.f, 0.f, 0.f);
 	channel.scale = akVector3(1.f, 1.f, 1.f);
-
+	
 	akEuler euler(0,0,0);
 	
 	for (int i=0; i<len; i++)
 	{
 		float eval = splines[i]->evaluate(time, delta);
-
+		
 		switch (splines[i]->getCode())
 		{
 		case akAnimationCurve::AC_CODE_LOC_X: { channel.loc.setX(eval); break; }
@@ -145,7 +165,7 @@ void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, ak
 		case akAnimationCurve::AC_CODE_ROT_EULER_Z: { euler.z = eval; break; }
 		}
 	}
-
+	
 	if(m_isEulerRotation)
 		channel.rot = euler.toQuaternion();
 	else
@@ -161,6 +181,6 @@ void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, ak
 	UT_ASSERT(!channel.scl.isNaN());
 	
 	akPoseBlender::blendJoint(akPoseBlender::PB_BM_ADD, akPoseBlender::PB_RM_LERP,
-								weight, transform, channel, transform );
+							  weight, transform, channel, transform );
 }
 

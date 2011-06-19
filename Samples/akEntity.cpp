@@ -25,21 +25,6 @@
 -------------------------------------------------------------------------------
 */
 
-
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
-#if defined(__APPLE__)
-#include <GLUT/glew.h>
-#include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#else
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#endif
-
 #include "akEntity.h"
 #include "akMesh.h"
 #include "akSkeleton.h"
@@ -71,7 +56,7 @@ void akEntity::setSkeleton(akSkeleton *skel)
 	m_skeleton = skel;
 }
 
-void akEntity::init(bool useVbo)
+void akEntity::init(bool useVbo, akDemoBase* demo)
 {
 	m_useVbo = useVbo;
 	
@@ -87,10 +72,10 @@ void akEntity::init(bool useVbo)
 	if(isMeshDeformed())
 		m_mesh->addSecondPositionBuffer();
 	
+	int nsub = m_mesh->getNumSubMeshes();
+	
 	if(m_useVbo)
 	{
-		int nsub = m_mesh->getNumSubMeshes();
-		
 		m_posnoVertexVboIds.resize(nsub);
 		m_staticVertexVboIds.resize(nsub);
 		m_staticIndexVboIds.resize(nsub);
@@ -120,6 +105,20 @@ void akEntity::init(bool useVbo)
 			
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, m_staticIndexVboIds[i]);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, ni*idatas, idata, GL_STATIC_DRAW);
+		}
+	}
+	
+	m_textures.resize(nsub);
+	for(int i=0; i<nsub; i++)
+	{
+		akSubMesh* sub = m_mesh->getSubMesh(i);
+		
+		if(sub->getMaterial().m_mode & akMaterial::MA_HASFACETEX)
+		{
+			const utString& texname = sub->getMaterial().m_textures.at(0).m_image;
+			GLuint tex = demo->getTexture(texname);
+			if(tex)
+				m_textures[i] = tex;
 		}
 	}
 	
@@ -234,7 +233,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 			
 			bool color = drawColor && sm->hasVertexColor();
 			bool hasnormals = sm->hasNormals();
-			bool texture = textured && sm->getUVLayerCount() >=1;
+			bool texture = m_textures[j] && textured && sm->getUVLayerCount() >=1;
 	
 			const akBufferInfo::Element *posbuf, *norbuf, *idxbuf, *uvbuf, *colorbuf;
 			
@@ -261,6 +260,9 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				glEnable(GL_LIGHTING);
 			else
 				glDisable(GL_LIGHTING);
+			
+			if(texture)
+				glBindTexture(GL_TEXTURE_2D, m_textures[j]);
 			
 			if(m_useVbo && useVbo)
 			{
@@ -289,8 +291,8 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				
 				if(texture)
 				{
-//					glTexCoordPointer(2, GL_FLOAT, uvstride, );
-//					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+					glTexCoordPointer(2, GL_FLOAT, uvbuf->stride, (GLvoid*)uvbuf->getOffset());
+					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 				}
 				else
 				{
@@ -318,17 +320,19 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 					akVector3* v = (akVector3*)posbuf->data;
 					akVector3* n = (akVector3*)norbuf->data;
 					UTuint8* c = (UTuint8*)colorbuf->data;
+					float* uv = (float*)uvbuf->data;
 					
 					akAdvancePointer(id, i * idxbuf->stride);
 					akAdvancePointer(v, *id * posbuf->stride);
 					akAdvancePointer(n, *id * norbuf->stride);
 					akAdvancePointer(c, *id * colorbuf->stride);
+					akAdvancePointer(uv, *id * uvbuf->stride);
 					
 					if(color)
 						glColor4ub(c[0], c[1], c[2], c[3]);
 					
-					//if(texture)
-						//todo
+					if(texture)
+						glTexCoord2f(uv[0],uv[1]);
 					
 					if(hasnormals)
 						glNormal3f(n->getX(), n->getY(), n->getZ());

@@ -47,32 +47,21 @@ struct MFace;
 class gkBlendFile;
 
 class akSubMeshPair;
+class akDemoBase;
 
 class akMeshLoader
 {
 public:
 
-	akMeshLoader(akMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh);
+	akMeshLoader(akDemoBase* demo, akMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh);
 	~akMeshLoader();
 
 	void convert(bool sortByMat, bool openglVertexColor);
 
-	static Blender::Material* getMaterial(Blender::Object* ob, int index);
-	static int getTexBlendType(int blend);
-	static int getRampBlendType(int blend);
-	
-	struct TempVert
-	{
-		akVector3       co;                 // vertex coordinates
-		akVector3       no;                 // normals
-		unsigned int    vcol;               // vertex color
-		akScalar       uv[AK_UV_MAX][2];    // texture coordinates < GK_UV_MAX
-	};
-	
 private:
 
-	typedef utArray<int>                                AssignmentIndexList;
-
+	friend class akSubMeshPair;
+	
 	struct PackedFace
 	{
 		Blender::MVert*          verts;
@@ -82,7 +71,14 @@ private:
 		unsigned int*            index;
 	};
 
-
+	struct TempVert
+	{
+		akVector3       co;                 // vertex coordinates
+		akVector3       no;                 // normals
+		unsigned int    vcol;               // vertex color
+		akScalar       uv[AK_UV_MAX][2];    // texture coordinates < GK_UV_MAX
+	};
+	
 	struct TempFace
 	{
 		TempVert v0, v1, v2;
@@ -112,21 +108,18 @@ private:
 	void convertVertexGroups(akSubMeshPair* subpair);
 	void convertMorphTargets(akSubMeshPair* subpair);
 	
-//	void convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, class gkMeshHashKey& hk);
-//	void convertTextureFace(gkMaterialProperties& gma, class gkMeshHashKey& hk, Blender::Image** imas);
+	void convertMaterial(Blender::Material* bma, akSubMeshPair* subpair);
+	void convertTextureFace(akSubMeshPair* subpair);
 
 	int findTextureLayer(Blender::MTex* te);
 
 
 	unsigned int packColour(const Blender::MCol& col, bool opengl);
 
-
+	akDemoBase* m_demo;
 	akMesh*          m_gmesh;
 	Blender::Mesh*   m_bmesh;
 	Blender::Object* m_bobj;
 };
-
-
-#define BlenderMaterial(ob, i) akMeshLoader::getMaterial(ob, i)
 
 #endif//AKMESHLOADER_H

@@ -67,7 +67,8 @@ public:
 
 	int getNumCurves(void) const;
 	
-	void evaluate(akPose& pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
+	void evaluate(akPose& pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f, const akJointMask* mask =0) const;
+	void evaluate(akSkeletonPose& pose, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f, const akJointMask* mask =0) const;
 	void evaluate(akTransformState& transform, akScalar time, akScalar weight=1.0f, akScalar delta=0.5f) const;
 	
 	UT_INLINE UTuint32 getType(void) const

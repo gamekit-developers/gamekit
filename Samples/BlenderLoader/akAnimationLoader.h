@@ -32,13 +32,14 @@
 #include "fbtBlend.h"
 #include "akMathUtils.h"
 
-#include "../akDemo.h"
+class akDemoBase;
+class akAnimationClip;
 
 class akAnimationLoader
 {
 public:
 
-	akAnimationLoader(akDemo* demo) : m_demo(demo) {}
+	akAnimationLoader(akDemoBase* demo) : m_demo(demo) {}
 	~akAnimationLoader() {}
 
 	void convertAction(Blender::bAction* action, bool pre25compat, akScalar animfps);
@@ -48,7 +49,7 @@ public:
 	
 	
 private:
-	akDemo* m_demo;
+	akDemoBase* m_demo;
 	
 	akAnimationClip * convertObjectIpoToAnimation(Blender::Ipo *bipo, akScalar animfps);
 	void convertAction24(Blender::bAction *action, akScalar animfps);

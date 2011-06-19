@@ -29,20 +29,6 @@
 
 #include "akDemoBase.h"
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
-#if defined(__APPLE__)
-#include <GLUT/glew.h>
-#include <GLUT/glut.h>
-#include <OpenGL/gl.h>
-#else
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#endif
-
 #include "akEntity.h"
 #include "akMesh.h"
 #include "akSkeleton.h"
@@ -82,11 +68,17 @@ akDemoBase::~akDemoBase()
 	{
 		delete m_skeletons[i];
 	}
-		
+	
+	for( i=0; i<m_textures.size(); i++)
+	{
+		glDeleteTextures( 1, &m_textures[i] );
+	}
+	
 	m_meshes.clear();
 	m_skeletons.clear();
 	m_animations.clear();
 	m_objects.clear();
+	m_textures.clear();
 
 	btAlignedFree(m_camera);
 }
@@ -98,16 +90,25 @@ void akDemoBase::start(void)
 	if (GLEW_ARB_vertex_buffer_object)
 		m_canUseVbo = true;
 	
+	m_meshCount = m_objects.size();
+	m_subCount = 0;
+	m_vertexCount = 0;
+	m_triCount = 0;
 	for(unsigned int i=0; i<m_objects.size(); i++)
 	{
 		akEntity* object = m_objects.at(i);
-		object->init(m_canUseVbo);
+		object->init(m_canUseVbo, this);
+		
+		m_subCount += object->getMesh()->getNumSubMeshes();
+		m_vertexCount += object->getMesh()->getVertexCount();
+		m_triCount  += object->getMesh()->getTriangleCount();
 	}
 	
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	
 	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 01.0f, 1.0f };
@@ -264,6 +265,11 @@ void akDemoBase::addEntity(const utHashedString &name, akEntity *ent)
 	m_objects.insert(name.hash(), ent);
 }
 
+void akDemoBase::addTexture(const utHashedString &name, GLuint tex)
+{
+	m_textures.insert(name.hash(), tex);
+}
+
 akAnimationClip* akDemoBase::getAnimation(const utHashedString &name)
 {
 	UTsize pos = m_animations.find(name.hash());
@@ -296,6 +302,13 @@ akEntity * akDemoBase::getEntity(const utHashedString &name)
 	return m_objects.at(pos);
 }
 
+GLuint akDemoBase::getTexture(const utHashedString &name)
+{
+	UTsize pos = m_textures.find(name.hash());
+	if(pos==UT_NPOS)
+		return 0;
+	return m_textures.at(pos);
+}
 
 int akDemoBase::getFps(void)
 {
@@ -344,9 +357,13 @@ void akDemoBase::render()
 		m_objects.at(i)->draw(m_drawNormals, m_drawColor, m_textured, m_useVbo, shaded);
 	}
 	
-	// FPS
+	// Stats
 	std::stringstream UIString;
 	UIString << "FPS: " << getFps() << "\n\n";
+	UIString << "Meshes: " << m_meshCount <<"\n";
+	UIString << "Submeshes: " << m_subCount <<"\n";
+	UIString << "Triangles: " << m_triCount <<"\n";
+	UIString << "Vertices: " << m_vertexCount <<"\n";
 	utString str = UIString.str();
 	glColor3f(0.2f, 0.2f, 0.2f);
 	drawString(10, 15, str.c_str());

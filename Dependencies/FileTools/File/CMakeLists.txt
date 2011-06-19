@@ -44,9 +44,9 @@ set(File_HDR
 #add_flex(fbtScanner File_HDR fbtScanner.l fbt)
 set(fbtScanner Generated/fbtScanner.inl)
 
-if (FBT_USE_ZLIB)
+#if (FBT_USE_ZLIB)
     include_directories(${FBT_ZLIB_INCLUDE})
     link_libraries(${FBT_ZLIB_LIBRARY})
-endif()
+#endif()
 
 add_library(fbtFile ${File_SRC} ${File_HDR} ${fbtScanner})

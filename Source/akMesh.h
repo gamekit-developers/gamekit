@@ -32,11 +32,127 @@
 #include "utString.h"
 
 #include "akCommon.h"
+#include "akColor.h"
 #include "akMathUtils.h"
 #include "akBufferInfo.h"
 #include "akGeometryDeformer.h"
 
 #include "btAlignedObjectArray.h"
+
+
+class akTexture
+{
+public:
+	enum Mode
+	{
+		TM_SPLAT        = (1 << 0),
+		TM_INVERT       = (1 << 1),
+		TM_ALPHA        = (1 << 2),
+		TM_SPECULAR     = (1 << 3),
+		TM_EMMISIVE     = (1 << 4),
+		TM_AMBIENT      = (1 << 5),
+		TM_REFRACTION   = (1 << 6),
+		TM_MIRROR       = (1 << 7),
+		TM_NORMAL       = (1 << 8)
+	};
+	
+	enum TexMode
+	{
+		TX_NEGATIVE     = (1 << 0),
+		TX_STENCIL      = (1 << 1),
+		TX_RGBTOINTEN   = (1 << 2),
+		TX_OBJ_SPACE    = (1 << 3)
+	};
+	
+	enum Type
+	{
+		IMT_IMAGE,
+		IMT_CUBEMAP
+	};
+	
+	akTexture()
+		: m_image(),
+		  m_color(1.f, 1.f, 1.f),
+		  m_layer(0),
+		  m_type(IMT_IMAGE),
+		  m_blend(akColor::BT_MIXTURE),
+		  m_mode(0),
+		  m_texmode(0),
+		  m_mix(1.f),
+		  m_normalFactor(0),
+		  m_diffuseColorFactor(0),
+		  m_diffuseAlphaFactor(0),
+		  m_specularColorFactor(0),
+		  m_specularHardFactor(0)
+	{
+	}
+	
+//	utString    m_name;
+	utString    m_image;
+	akColor     m_color;
+	int         m_layer;
+	int         m_type;
+	int         m_blend;
+	int         m_mode;
+	int         m_texmode;
+	akScalar    m_mix;
+	akScalar    m_normalFactor;
+	akScalar    m_diffuseColorFactor;
+	akScalar    m_diffuseAlphaFactor;
+	akScalar    m_specularColorFactor;
+	akScalar    m_specularHardFactor;
+};
+
+class akMaterial
+{
+public:
+	enum Mode
+	{
+		MA_RECEIVESHADOWS   = (1 << 0),
+		MA_LIGHTINGENABLED  = (1 << 1),
+		MA_WIREFRAME        = (1 << 2),
+		MA_DEPTHWRITE       = (1 << 3),
+		MA_INVISIBLE        = (1 << 4),
+		MA_TWOSIDE          = (1 << 5),
+		MA_ALPHABLEND       = (1 << 6),
+		MA_ADDITIVEBLEND    = (1 << 7),
+		MA_HASFACETEX       = (1 << 8),
+		MA_HASRAMPBLEND     = (1 << 9)
+	};
+
+	
+	akMaterial()
+		: m_mode(MA_RECEIVESHADOWS | MA_LIGHTINGENABLED | MA_DEPTHWRITE),
+		  m_blend(akColor::BT_MIXTURE),
+		  m_diffuse(1.f, 1.f, 1.f, 1.f),
+		  m_specular(0.f, 0.f, 0.f, 1.f),
+		  m_hardness(0.f),
+		  m_refraction(1.f),
+		  m_emissive(.0f),
+		  m_ambient(.5f),
+		  m_spec(.0f),
+		  m_alpha(1.f),
+		  m_depthOffset(0.f),
+		  m_totaltex(0)
+	{
+	}
+	
+//	utString m_name;
+	UTuint32 m_mode;
+	int      m_blend;
+	akColor  m_diffuse;
+	akColor  m_specular;
+	akScalar m_hardness;
+	akScalar m_refraction;
+	akScalar m_emissive;
+	akScalar m_ambient;
+	akScalar m_spec;
+	akScalar m_alpha;
+	akScalar m_depthOffset;
+	UTuint32 m_totaltex;
+	utList<akTexture> m_textures;
+	
+};
 
 /// Contains the BufferInfo (description of the vertex data) and owns the memory
 class akSubMesh
@@ -67,6 +183,7 @@ private:
 	bool            m_hasSkinningData;
 	bool            m_vBufDirty, m_iBufDirty;
 	UTuint32        m_uvLayerCount;
+	akMaterial*     m_material;
 	
 	// vertex buffer
 	akBufferInfo                    m_vertexBuffer;
@@ -109,6 +226,8 @@ public:
 	
 	/// Populate skinning data buffer acording to skeleton and vgroups.
 	void generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool deleteVGroups);
+	
+	UTuint32 getTriangleCount(void);
 	
 	bool hasMorphTargets(void);
 		
@@ -215,6 +334,11 @@ public:
 	{
 		return m_morphTargets[i];
 	}
+	
+	UT_INLINE akMaterial& getMaterial(void)
+	{
+		return *m_material;
+	}
 };
 
 /// A triangle mesh
@@ -240,6 +364,10 @@ public:
 
 	/// Populate skinning data buffer acording to skeleton and vgroups.
 	void generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool deleteVGroups);
+	
+	UTuint32 getVertexCount(void);
+	
+	UTuint32 getTriangleCount(void);
 	
 	bool hasMorphTargets(void);
 	

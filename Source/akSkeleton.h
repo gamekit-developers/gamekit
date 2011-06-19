@@ -52,7 +52,7 @@ public:
 
 /// A skeleton is an articulated armature used to deforme a mesh.
 /// Composed of joints organised in a hierachical way (parent/child)
-/// PArent joints are assumed to be positioned in the array before any of their child
+/// Parent joints are assumed to be positioned in the array before any of their child
 class akSkeleton
 {
 private:
@@ -95,5 +95,32 @@ public:
 	}
 };
 
+class akJointMask
+{
+private:
+	akSkeleton* m_skel;
+	utArray<akScalar> m_mask;
+
+public:
+	akJointMask(akSkeleton* skel, akScalar weight) : m_skel(skel)
+	{
+		m_mask.resize(m_skel->getNumJoints(), weight);
+	}
+	
+	~akJointMask()
+	{
+		m_mask.clear();
+	}
+	
+	UT_INLINE void setWeight(UTuint8 boneid, akScalar weight)
+	{
+		m_mask[boneid] = weight;
+	}
+	
+	UT_INLINE akScalar getWeight(UTuint8 boneid) const
+	{
+		return m_mask[boneid];
+	}
+};
 
 #endif // AKSKELETON_H

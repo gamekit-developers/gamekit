@@ -30,6 +30,10 @@ project(FBT)
 
 list(APPEND CMAKE_MODULE_PATH ${FBT_SOURCE_DIR}/CMake)
 
+set(FBT_ZLIB_INCLUDE	)
+set(FBT_ZLIB_LIBRARY		${OGREKIT_ZLIB_TARGET})
+add_definitions(-DFBT_USE_GZ_FILE=1)
+
 subdirs(File)
-subdirs(FileFormats/Blend)
 subdirs(Compiler)
+subdirs(FileFormats/Blend)

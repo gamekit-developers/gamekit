@@ -4,25 +4,11 @@ cmake_minimum_required(VERSION 2.6)
 set(TargetName AppAnimKitGL)
 
 set(AKGL_SRC
-	Main.cpp
-	akEntity.cpp
 	akDemo.cpp
-	akDemoBase.cpp
-	
-	BlenderLoader/akAnimationLoader.cpp
-	BlenderLoader/akBLoader.cpp
-	BlenderLoader/akMeshLoader.cpp
 )
 
 set(AKGL_HDR
-	akEntity.h
 	akDemo.h
-	akDemoBase.h
-	
-	BlenderLoader/akAnimationLoader.h
-	BlenderLoader/akBlenderDefines.h
-	BlenderLoader/akBLoader.h
-	BlenderLoader/akMeshLoader.h
 )
 
 set(DATA 
@@ -39,49 +25,6 @@ if(WIN32)
 	source_group(Datafiles FILES ${DATA})
 endif()
 
-find_package(OpenGL)
-
-find_package(GLUT)
-if(NOT GLUT_FOUND)
-	IF (MINGW)
-		MESSAGE ("GLUT NOT FOUND, trying to use MINGW glut32")
-		SET(GLUT_LIBRARIES glut32)
-		#TODO add better GLUT detection for MinGW
-		SET(GLUT_FOUND TRUE)
-	ENDIF (MINGW)
-	IF (MSVC)
-		SET(GLUT_FOUND TRUE)
-		IF (CMAKE_CL_64)
-			message("Win64 using Glut/glut64.lib")
-			SET(GLUT_LIBRARIES ${ANIMKIT_SAMPLES_DIR}/Glut/glut64.lib)
-		ELSE(CMAKE_CL_64)
-			message("Win32 using Glut/glut32.lib")
-			SET(GLUT_LIBRARIES ${ANIMKIT_SAMPLES_DIR}/Glut/glut32.lib)
-		ENDIF (CMAKE_CL_64)
-		set(GLUT_INCLUDE_DIR ${ANIMKIT_SAMPLES_DIR}/Glut)
-	endif()
-endif()
-
-find_package(GLEW)
-if(NOT GLEW_FOUND)
-	if(MINGW)
-		message("GLEW NOT FOUND, trying to use MINGW glew32")
-		set(GLEW_LIBRARY glew32)
-		#TODO add better GLEW detection for MinGW
-		set(GLEW_FOUND TRUE)
-	endif(MINGW)
-	if(MSVC)
-		if(CMAKE_CL_64)
-			message("Win64 using Glut/glew64.lib")
-			set(GLEW_LIBRARY ${ANIMKIT_SAMPLES_DIR}/Glut/glew64.lib)
-		else(CMAKE_CL_64)
-			message("Win32 using Glut/glew32.lib")
-			SET(GLEW_LIBRARY ${ANIMKIT_SAMPLES_DIR}/Glut/glew32.lib)
-		endif()
-		set(GLEW_INCLUDE_PATH ${ANIMKIT_SAMPLES_DIR}/Glut)
-		set(GLEW_FOUND TRUE)
-	endif()
-endif()
 
 include_directories(${GLEW_INCLUDE_PATH}
 	${GLUT_INCLUDE_DIR}
@@ -97,6 +40,9 @@ link_libraries(${GLEW_LIBRARY}
 	${GLUT_LIBRARIES} 
 	${OPENGL_LIBRARIES} 
 	${ANIMKIT_ANIMKIT_TARGET} 
+	${GAMEKIT_UTILS_TARGET}
+	${AK_DEMOBASE_LIBRARY}
+	${AK_BLOADER_LIBRARY}
 	fbtFile
 	bfBlend
 	)

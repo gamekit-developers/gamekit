@@ -36,7 +36,8 @@ akAnimationPlayer::akAnimationPlayer()
 		m_speedfactor(1.0f),
 		m_enabled(false),
 		m_weight(0.0),
-		m_length(0.0)
+		m_length(0.0),
+		m_mask(0)
 {
 }
 
@@ -46,7 +47,8 @@ akAnimationPlayer::akAnimationPlayer(akAnimationClip* clip)
 		m_mode(AK_ACT_END),
 		m_speedfactor(1.0f),
 		m_enabled(false),
-		m_weight(0.0)
+		m_weight(0.0),
+		m_mask(0)
 {
 	m_length = clip->getLength();
 }
@@ -100,7 +102,7 @@ void akAnimationPlayer::evaluate(akPose *pose) const
 {
 	if (m_enabled && m_clip)
 	{
-		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition());
+		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition(), m_mask);
 	}
 }
 
@@ -108,7 +110,7 @@ void akAnimationPlayer::evaluate(akSkeletonPose *pose) const
 {
 	if (m_enabled && m_clip)
 	{
-		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition());
+		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition(), m_mask);
 	}
 }
 

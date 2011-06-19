@@ -37,14 +37,14 @@
 #include "Blender.h"
 
 #include "../akEntity.h"
-#include "../akDemo.h"
+#include "../akDemoBase.h"
 
 #include "akAnimationLoader.h"
 #include "akMeshLoader.h"
 
 #define BLENDER_ARM_DEF_QUATERNION (1<<2)  //form blender dna files
 
-akBLoader::akBLoader(akDemo* demo)
+akBLoader::akBLoader(akDemoBase* demo)
 {
 	m_demo = demo;
 }
@@ -146,9 +146,9 @@ void akBLoader::convertObjectMesh(Blender::Object *bobj)
 	if (!m_demo->getMesh(AKB_IDNAME(bmesh)))
 	{
 		akMesh* mesh = new akMesh();
-		m_demo->addMesh(AKB_IDNAME(bmesh), mesh);
-		akMeshLoader meconv(mesh, bobj, bmesh);
+		akMeshLoader meconv(m_demo, mesh, bobj, bmesh);
 		meconv.convert(false, true);
+		m_demo->addMesh(AKB_IDNAME(bmesh), mesh);
 	}
 	
 	akMesh* mesh = m_demo->getMesh(AKB_IDNAME(bmesh));
