@@ -630,8 +630,11 @@ void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
 			for(int j=0;j<dv.totweight;j++)
 			{
 				UTuint32 vgi = dv.dw[j].def_nr;
-				akVertexGroup* vg = vgroups.at(vgi);
-				vg->add(i, dv.dw[j].weight);
+				if(vgi<vgroups.size())
+				{
+					akVertexGroup* vg = vgroups.at(vgi);
+					vg->add(i, dv.dw[j].weight);
+				}
 			}
 		}
 		

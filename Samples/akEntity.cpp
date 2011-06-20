@@ -303,6 +303,9 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				glDrawElements(GL_TRIANGLES, tot, GL_UNSIGNED_INT, (GLvoid*)idxbuf->getOffset());
 				
 				glDisableClientState(GL_VERTEX_ARRAY);
+				glDisableClientState(GL_NORMAL_ARRAY);
+				glDisableClientState(GL_COLOR_ARRAY);
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 				glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 			}
@@ -342,6 +345,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				}
 				glEnd();
 			}
+			glBindTexture(GL_TEXTURE_2D, 0);
 			
 			// normals
 			if(drawNormal && hasnormals)
@@ -375,6 +379,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		glLineWidth(1.5);
+		glBegin(GL_LINES);
 		
 		int i, tot;
 		tot = m_pose->getSkeletonPose()->getNumJoints();
@@ -402,6 +407,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 			
 			glPopMatrix();
 		}
+		glEnd();
 		glLineWidth(1);
 		glEnable(GL_DEPTH_TEST);
 	}
