@@ -84,7 +84,7 @@ akSubMesh::~akSubMesh()
 	delete m_material;
 }
 
-void akSubMesh::addVertex(const akVector3 &co, const akVector3 &no, const UTuint32 &color, utArray<float>& uv)
+UTuint32 akSubMesh::addVertex(const akVector3 &co, const akVector3 &no, const UTuint32 &color, utArray<float>& uv)
 {
 	m_posnor.push_back(co);
 	if(m_hasNormals)
@@ -123,9 +123,10 @@ void akSubMesh::addVertex(const akVector3 &co, const akVector3 &no, const UTuint
 			m_boneWeights.push_back(0.f);
 		}
 	}
-	
-	m_vertexBuffer.setSize(m_vertexBuffer.getSize()+1);
+	UTuint32 size = m_vertexBuffer.getSize();
+	m_vertexBuffer.setSize(size+1);
 	m_vBufDirty = true;
+	return size;
 }
 
 void akSubMesh::addIndex(UTuint32 idx)

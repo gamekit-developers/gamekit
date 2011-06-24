@@ -61,7 +61,7 @@ void akAnimationPlayer::setAnimationClip(akAnimationClip *v)
 
 void akAnimationPlayer::setTimePosition(akScalar v)
 {
-	if( v != m_evalTime)
+	if( v != m_evalTime && m_length > 0)
 	{
 		m_evalTime = v;
 	

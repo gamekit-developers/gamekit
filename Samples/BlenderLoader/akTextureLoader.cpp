@@ -95,9 +95,13 @@ GLuint LoadRawTargaTexture(utStream& stream)
 	data = malloc(size);
 	stream.read(data, size);
 	
-	GLint textype = GL_RGBA;
+	GLint intform = 4;
+	GLint form = GL_BGRA;
 	if(header.PixelDepth == 24)
-		textype = GL_RGB;
+	{
+		intform = 3;
+		form = GL_BGR;
+	}
 	
 	glGenTextures( 1, &texture );
 	glBindTexture( GL_TEXTURE_2D, texture );
@@ -105,7 +109,7 @@ GLuint LoadRawTargaTexture(utStream& stream)
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, textype, header.Width, header.Height, 0, textype, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, intform, header.Width, header.Height, 0, form, GL_UNSIGNED_BYTE, data);
 //	gluBuild2DMipmaps( GL_TEXTURE_2D, textype, header.Width, header.Height, textype, GL_UNSIGNED_BYTE, data );
 	
 	free(data);

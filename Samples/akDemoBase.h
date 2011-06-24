@@ -118,6 +118,7 @@ protected:
 	bool m_textured;
 	bool m_shaded;
 	bool m_drawColor;
+	bool m_drawSkeleton;
 	int m_dualQuatUse;
 	int m_normalMethod;
 	UTuint32 m_meshCount;

@@ -64,7 +64,7 @@ void special(int key,int x,int y)
 {
 }
 
-int startDemo(int argc, char** argv, akDemoBase* d, const char* title)
+int startGlutDemo(int argc, char** argv, akDemoBase* d, const char* title)
 {
 	demo =d;
 	

@@ -33,7 +33,7 @@
 #endif
 
 #if defined(__APPLE__)
-#include <GLUT/glew.h>
+#include <GL/glew.h>
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #else
@@ -45,6 +45,6 @@
 
 class akDemoBase;
 
-int startDemo(int argc, char** argv, akDemoBase* demo, const char* title);
+int startGlutDemo(int argc, char** argv, akDemoBase* demo, const char* title);
 
 #endif // AKGLUTDEMO_H

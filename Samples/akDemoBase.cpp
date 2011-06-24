@@ -40,7 +40,8 @@
 
 akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTime(0),
 	m_lastfps(0), m_canUseVbo(false), m_drawNormals(false), m_wireframe(false), m_textured(true),
-	m_shaded(true), m_drawColor(true), m_useVbo(true), m_dualQuatUse(0), m_normalMethod(2)
+	m_shaded(true), m_drawColor(true), m_useVbo(true), m_dualQuatUse(0), m_normalMethod(2),
+	m_drawSkeleton(true)
 {
 	m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
 }
@@ -242,6 +243,9 @@ void akDemoBase::keyboardCallback(unsigned char key,int x, int y)
 			m_normalMethod +=1;
 			if(m_normalMethod>3) m_normalMethod = 0;
 			break;
+		case 112: // P
+			m_drawSkeleton = m_drawSkeleton? false:true;
+			break;
 	}
 }
 
@@ -320,7 +324,7 @@ void akDemoBase::render()
 	glViewport(0, 0, m_windowx, m_windowy);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-		
+	
 	if( m_wireframe )
 		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	else
@@ -333,7 +337,7 @@ void akDemoBase::render()
 	glMatrixMode(GL_MODELVIEW);
 	akMatrix4 cam_inv_m = inverse(m_camera->m_transform.toMatrix());
 	glLoadMatrixf((GLfloat*)&cam_inv_m);
-
+	
 	// world origin axes
 //	glBegin(GL_LINES);
 //		glColor3f(1,0,0);
@@ -354,7 +358,7 @@ void akDemoBase::render()
 	unsigned int i;
 	for( i=0; i<m_objects.size(); i++)
 	{
-		m_objects.at(i)->draw(m_drawNormals, m_drawColor, m_textured, m_useVbo, shaded);
+		m_objects.at(i)->draw(m_drawNormals, m_drawColor, m_textured, m_useVbo, shaded, m_drawSkeleton);
 	}
 	
 	// Stats
@@ -370,6 +374,11 @@ void akDemoBase::render()
 	
 	// Info text
 	str.clear();
+	
+	str += "P: Togle draw pose (";
+	str += (m_drawSkeleton? "ON":"OFF");
+	str += ")\n";
+	
 	str += "W: Togle wireframe (";
 	str += (m_wireframe? "ON":"OFF");
 	str += ")\n";

@@ -52,7 +52,7 @@ class akBLoader
 public:
 	akBLoader(akDemoBase* demo);
 	
-	void loadFile(const utString& filename);
+	void loadFile(const utString& filename, bool sortByMat, bool openglVertexColor);
 	
 private:
 	akDemoBase* m_demo;

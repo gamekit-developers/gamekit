@@ -215,7 +215,7 @@ void akEntity::step(akScalar dt, int dualQuat, int normalsMethod)
 	}
 }
 
-void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded)
+void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded, bool drawskel)
 {
 	glPushMatrix();
 	
@@ -262,7 +262,10 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				glDisable(GL_LIGHTING);
 			
 			if(texture)
+			{
 				glBindTexture(GL_TEXTURE_2D, m_textures[j]);
+				glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			}
 			
 			if(m_useVbo && useVbo)
 			{
@@ -286,7 +289,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				else
 				{
 					glColor3f(0,0,0);
-					glDisableClientState(GL_COLOR_ARRAY);
+					//glDisableClientState(GL_COLOR_ARRAY);
 				}
 				
 				if(texture)
@@ -296,7 +299,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				}
 				else
 				{
-					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+					//wglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				}
 				
 				glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_staticIndexVboIds[j]);
@@ -374,11 +377,11 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 		}
 	}
 	
-	if(m_skeleton)
+	if(m_skeleton && drawskel)
 	{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
-		glLineWidth(1.5);
+		glLineWidth(1);
 		glBegin(GL_LINES);
 		
 		int i, tot;

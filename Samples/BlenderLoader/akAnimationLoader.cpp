@@ -105,6 +105,12 @@ void get25ActionStartEnd(Blender::bAction* action, akScalar& start, akScalar& en
 		if (end < tend) end = tend;
 		bfc = bfc->next;
 	}
+	
+	if(start == FLT_MAX && end == -FLT_MAX)
+	{
+		start = 0;
+		end =0;
+	}
 }
 
 void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, 
@@ -341,14 +347,17 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 		if (rnap.substr(0, 10) == "pose.bones")
 		{
 			size_t i = rnap.rfind('\"');
-			chan_name = rnap.substr(12, i - 12);
-			transform_name = rnap.substr(i + 3, rnap.length() - i + 3);
-			
-			chan = act->getChannel(chan_name);
-			if(!chan)
+			if(i!=UT_NPOS)
 			{
-				chan = new akAnimationChannel(akAnimationChannel::AC_BONE, chan_name);
-				act->addChannel(chan);
+				chan_name = rnap.substr(12, i - 12);
+				transform_name = rnap.substr(i + 3, rnap.length() - i + 3);
+				
+				chan = act->getChannel(chan_name);
+				if(!chan)
+				{
+					chan = new akAnimationChannel(akAnimationChannel::AC_BONE, chan_name);
+					act->addChannel(chan);
+				}
 			}
 		}
 		// Morph (shape key) action

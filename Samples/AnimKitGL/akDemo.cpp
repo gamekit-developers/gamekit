@@ -49,8 +49,8 @@ akDemo::~akDemo()
 void akDemo::init(void)
 {
 	akBLoader loader(this);
-	loader.loadFile("Blu.blend");
-	//loader.loadFile("Test.blend");
+	loader.loadFile("Blu.blend", false, true);
+	//loader.loadFile("Sintel.blend", false, true);
 	
 	// Set some animation data the loader cannot detect
 	akEntity* square = getEntity("Plane");
@@ -82,7 +82,7 @@ void akDemo::init(void)
 			if(bid>0)
 			{
 				play->createJointMask(skel);
-				play->setJointMaskWeight(bid, 0.3f);
+				play->setJointMaskWeight(bid, 0.5f);
 			}
 		}
 	}
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
 {
 	akDemo* demo = new akDemo();
 	
-	startDemo(argc, argv, demo,"AnimKit OpenGL Demo");
+	startGlutDemo(argc, argv, demo,"AnimKit OpenGL Demo");
 	return 0;
 }
 

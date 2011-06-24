@@ -213,7 +213,7 @@ public:
 	akSubMesh(Type type, bool hasNormals, bool hasColors, UTuint32 uvlayers);
 	~akSubMesh();
 	
-	void addVertex(const akVector3& co, const akVector3& no, const UTuint32& color, utArray<float>& uv);
+	UTuint32 addVertex(const akVector3& co, const akVector3& no, const UTuint32& color, utArray<float>& uv);
 	
 	void addIndex(UTuint32 idx);
 	

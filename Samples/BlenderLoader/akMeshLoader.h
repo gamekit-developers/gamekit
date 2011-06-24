@@ -104,9 +104,6 @@ private:
 	akVector3 calcNormal(akVector3& v0, akVector3& v1, akVector3& v2);
 	void calcNormal(TempFace* tri);
 	akVector3 calcMorphNormal(const Blender::MFace& bface, float *pos);
-
-	void convertVertexGroups(akSubMeshPair* subpair);
-	void convertMorphTargets(akSubMeshPair* subpair);
 	
 	void convertMaterial(Blender::Material* bma, akSubMeshPair* subpair);
 	void convertTextureFace(akSubMeshPair* subpair);

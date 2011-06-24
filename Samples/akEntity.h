@@ -70,7 +70,7 @@ public:
 	
 	void init(bool useVbo, akDemoBase* demo);
 	void step(akScalar dt, int dualQuat, int normalsMethos);
-	void draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded);
+	void draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded, bool drawskel);
 	
 	bool isMeshDeformedByMorphing(void);
 	

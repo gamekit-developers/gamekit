@@ -191,7 +191,7 @@ void akBLoader::convertCameraObject(Blender::Object *bobj)
 }
 
 
-void akBLoader::loadFile(const utString &filename)
+void akBLoader::loadFile(const utString &filename, bool sortByMat, bool openglVertexColor)
 {
 	fbtBlend fp;
 
@@ -221,28 +221,12 @@ void akBLoader::loadFile(const utString &filename)
 		// test for usable object type
 		if(bobj->type == OB_MESH)
 		{
-//			convertMeshObject(bobj);
 			convertObjectMesh(bobj);
 			
 			akEntity* entity = m_demo->getEntity(AKB_IDNAME(bobj));
 			animLoader.convertObject(entity, bobj, fp.getVersion() <= 249, bscene->r.frs_sec);
 		}
-		
-		
 	}
-	
-	//add animation players to objects (automagic)
-//	UTsize i;
-//	UTsize count = m_demo->getNumEntities();
-//	akDemo::Entities::ConstPointer ptr = m_demo->getEntities();
-	
-//	for(i=0; i<count; i++)
-//	{
-//		akEntity* entity = ptr[i].second;
-//		//TODO search for animation clip that corrrespond to the object
-//	}
-
-	
 }
 
 

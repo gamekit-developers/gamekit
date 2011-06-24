@@ -108,6 +108,85 @@ Blender::Material* akMeshLoaderUtils_getMaterial(Blender::Object* ob, int index)
 	return ma;
 }
 
+void akMeshLoaderUtils_getVertexGroups(Blender::Mesh* bmesh, Blender::Object* bobj, utArray<utString>& vgroups)
+{
+	if(bmesh->dvert)
+	{
+		Blender::bDeformGroup* dg = (Blender::bDeformGroup*)bobj->defbase.first;
+		while(dg)
+		{
+			vgroups.push_back(dg->name);
+			dg = dg->next;
+		}
+	}
+}
+
+void akMeshLoaderUtils_getShapeKeys(Blender::Mesh* bmesh, utArray<utString>& shapes)
+{
+	Blender::Key* bk = bmesh->key;
+	if(bk)
+	{
+		Blender::KeyBlock* bkb = (Blender::KeyBlock*)bk->block.first;
+		
+		// skip first shape key (basis)
+		if(bkb) bkb = bkb->next;
+		while(bkb)
+		{
+			if(bkb->type == KEY_RELATIVE)
+			{
+				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
+				for(int i=0; i<bkb->relative; i++) if(basis) basis = basis->next;
+				
+				if(basis)
+					shapes.push_back(bkb->name);
+			}
+			bkb = bkb->next;
+		}
+	}
+}
+
+akVector3 akMeshLoaderUtils_calcNormal(akVector3& v0, akVector3& v1, akVector3& v2)
+{
+	return normalize(cross((v1-v2),(v2-v0)));
+}
+
+akVector3 akMeshLoaderUtils_calcMorphNormal(const Blender::MFace& bface, float* pos)
+{
+	akVector3 normal;
+	if(bface.v4 != 0)
+	{
+		akVector3 e0, e1;
+		akVector3 n1, n2;
+		akVector3 v0(pos[bface.v1*3], pos[bface.v1*3+1], pos[bface.v1*3+2]);
+		akVector3 v1(pos[bface.v2*3], pos[bface.v2*3+1], pos[bface.v2*3+2]);
+		akVector3 v2(pos[bface.v3*3], pos[bface.v3*3+1], pos[bface.v3*3+2]);
+		akVector3 v3(pos[bface.v4*3], pos[bface.v4*3+1], pos[bface.v4*3+2]);
+		
+		e0 = v0 - v2;
+		e1 = v1 - v3;
+		
+		if (lengthSqr(e0) <lengthSqr(e1))
+		{
+			n1 = akMeshLoaderUtils_calcNormal(v0,v1,v2);
+			n2 = akMeshLoaderUtils_calcNormal(v2,v3,v0);
+		}
+		else
+		{
+			n1 = akMeshLoaderUtils_calcNormal(v0, v1, v3);
+			n2 = akMeshLoaderUtils_calcNormal(v3, v1, v2);
+		}
+		normal = normalize(n1+n2);
+	}
+	else
+	{
+		akVector3 v0(pos[bface.v1*3], pos[bface.v1*3+1], pos[bface.v1*3+2]);
+		akVector3 v1(pos[bface.v2*3], pos[bface.v2*3+1], pos[bface.v2*3+2]);
+		akVector3 v2(pos[bface.v3*3], pos[bface.v3*3+1], pos[bface.v3*3+2]);
+		normal = akMeshLoaderUtils_calcNormal(v0,v1,v2);
+	}
+	return normal;
+}
+
 int akMeshLoaderUtils_getRampBlendType(int blend)
 {
 	switch (blend)
@@ -206,20 +285,20 @@ class akSubMeshPair
 public:
 	akSubMeshHashKey test;
 	akSubMesh*     item;
+	Blender::Mesh* m_bmesh;
 	utArray<UTuint32> idxmap; // store the old index (in the blender mesh) of the vertex
-	utArray<UTuint32> facemap; // store the old face index (in the blender mesh) of the vertex
 	
 	akSubMeshPair() : test(), item(0)
 	{
 	}
-	akSubMeshPair(akSubMesh* cur) : test(), item(cur)
+	
+	akSubMeshPair(akSubMesh* cur, Blender::Mesh* bmesh) : test(), item(cur), m_bmesh(bmesh)
 	{
 	}
 
 	~akSubMeshPair()
 	{
 		idxmap.clear();
-		facemap.clear();
 	}
 
 	akSubMeshPair& operator = (const akSubMeshPair& p)
@@ -238,18 +317,17 @@ public:
 		return test == rhs.test;
 	}
 
-	unsigned int getVertexIndex(unsigned int fi, unsigned int index, const akMeshLoader::TempVert& ref)
+	unsigned int getVertexIndex(unsigned int fi, unsigned int bindex, const akMeshLoader::TempVert& ref)
 	{
 		UTsize size = item->getVertexCount();
 		for(unsigned int i=0; i<size; i++)
 		{
-			if(idxmap[i] == index && vertEq(i,ref))
+			if(idxmap[i] == bindex && vertEq(i,ref))
 				return i;
 		}
-		addVertex(fi, index, ref);
+		addVertex(fi, bindex, ref);
 		return size;
 	}
-
 
 	bool vertEq(const unsigned int index, const akMeshLoader::TempVert& b)
 	{
@@ -295,7 +373,7 @@ public:
 		return true;
 	}
 	
-	void addVertex(unsigned int fi, unsigned int index, const akMeshLoader::TempVert& ref)
+	void addVertex(unsigned int fi, unsigned int bindex, const akMeshLoader::TempVert& ref)
 	{
 		utArray<float> uvs;
 		for(int j=0; j<AK_UV_MAX; j++)
@@ -303,9 +381,86 @@ public:
 			uvs.push_back(ref.uv[j][0]);
 			uvs.push_back(ref.uv[j][1]);
 		}
-		item->addVertex(ref.co, ref.no, ref.vcol, uvs);
-		idxmap.push_back(index);
-		facemap.push_back(fi);
+		UTuint32 id = item->addVertex(ref.co, ref.no, ref.vcol, uvs);
+		idxmap.push_back(bindex);
+		//facesmap.resize(size+1);
+		
+		// vgroups
+		if(m_bmesh->dvert)
+		{
+			Blender::MDeformVert& dv = m_bmesh->dvert[bindex];
+			for(int j=0;j<dv.totweight;j++)
+			{
+				UTuint32 vgi = dv.dw[j].def_nr;
+				if( vgi < item->getNumVertexGroups() )
+				{
+					akVertexGroup* vg = item->getVertexGroup(vgi);
+					vg->add(id, dv.dw[j].weight);
+				}
+			}
+		}
+		
+		// morphtargets
+		if(m_bmesh->key)
+		{
+			Blender::KeyBlock* bkb = (Blender::KeyBlock*)m_bmesh->key->block.first;
+			
+			// skip first shape key (basis)
+			int mti=0;
+			if(bkb) bkb = bkb->next;
+			while(bkb)
+			{
+				if(bkb->type == KEY_RELATIVE)
+				{
+					Blender::KeyBlock* basis = (Blender::KeyBlock*)m_bmesh->key->block.first;
+					for(int i=0; i<bkb->relative; i++) if(basis) basis = basis->next;
+					
+					if(basis)
+					{
+						//akMorphTarget* mt = item->getMorphTarget(bkb->name);
+						akMorphTarget* mt = item->getMorphTarget(mti);
+						mti++;
+						
+						float* kpos = (float*)bkb->data;
+						float* bpos = (float*)basis->data;
+						
+						akVector3 k(kpos[3*bindex+0], kpos[3*bindex+1], kpos[3*bindex+2]);
+						akVector3 b(bpos[3*bindex+0], bpos[3*bindex+1], bpos[3*bindex+2]);
+						k = k-b;
+						
+						
+						akVector3 normal(0,0,0);
+						const Blender::MFace& bface = m_bmesh->mface[fi];
+						
+						if(bface.flag & ME_SMOOTH)
+						{
+							for (int j = 0; j< m_bmesh->totface; j++)
+							{
+								const Blender::MFace& bface2 = m_bmesh->mface[j];
+								if( (bface2.flag & ME_SMOOTH) &&
+									(bface2.v1 == bindex ||
+									 bface2.v2 == bindex ||
+									 bface2.v3 == bindex ||
+									 bface2.v4 == bindex ))
+								{
+									normal += akMeshLoaderUtils_calcMorphNormal(bface2, kpos);
+								}
+							}
+							normal = normalize(normal);
+						}
+						else
+						{
+							normal = akMeshLoaderUtils_calcMorphNormal(bface, kpos);
+						}
+						normal = normal - ref.no;
+						
+						if(!akFuzzyT(lengthSqr(k), 1e-10f) || !akFuzzyT(lengthSqr(normal), 1e-10f))
+							mt->add(id, k, normal);
+					}
+				}
+				bkb = bkb->next;
+			}
+		}
 	}
 };
 
@@ -320,6 +475,12 @@ akMeshLoader::akMeshLoader(akDemoBase* demo, akMesh* gmesh, Blender::Object* bob
 akMeshLoader::~akMeshLoader()
 {
 
+}
+
+void akMeshLoader::calcNormal(TempFace* tri)
+{
+	akVector3 n = akMeshLoaderUtils_calcNormal(tri->v0.co, tri->v1.co, tri->v2.co);
+	tri->v0.no = tri->v1.no = tri->v2.no = n;
 }
 
 void akMeshLoader::addTriangle(akSubMeshPair* subp,
@@ -372,55 +533,6 @@ void akMeshLoader::convertIndexedTriangle(
 		VEC2CPY(v1.uv[i], face.uvLayers[i][i1]);
 		VEC2CPY(v2.uv[i], face.uvLayers[i][i2]);
 	}
-}
-
-
-akVector3 akMeshLoader::calcNormal(akVector3& v0, akVector3& v1, akVector3& v2)
-{
-	return normalize(cross((v1-v2),(v2-v0)));
-}
-
-void akMeshLoader::calcNormal(TempFace* tri)
-{
-	akVector3 n = calcNormal(tri->v0.co, tri->v1.co, tri->v2.co);
-	tri->v0.no = tri->v1.no = tri->v2.no = n;
-}
-
-akVector3 akMeshLoader::calcMorphNormal(const Blender::MFace& bface, float* pos)
-{
-	akVector3 normal;
-	if(bface.v4 != 0)
-	{
-		akVector3 e0, e1;
-		akVector3 n1, n2;
-		akVector3 v0(pos[bface.v1*3], pos[bface.v1*3+1], pos[bface.v1*3+2]);
-		akVector3 v1(pos[bface.v2*3], pos[bface.v2*3+1], pos[bface.v2*3+2]);
-		akVector3 v2(pos[bface.v3*3], pos[bface.v3*3+1], pos[bface.v3*3+2]);
-		akVector3 v3(pos[bface.v4*3], pos[bface.v4*3+1], pos[bface.v4*3+2]);
-		
-		e0 = v0 - v2;
-		e1 = v1 - v3;
-		
-		if (lengthSqr(e0) <lengthSqr(e1))
-		{
-			n1 = calcNormal(v0,v1,v2);
-			n2 = calcNormal(v2,v3,v0);
-		}
-		else
-		{
-			n1 = calcNormal(v0, v1, v3);
-			n2 = calcNormal(v3, v1, v2);
-		}
-		normal = normalize(n1+n2);
-	}
-	else
-	{
-		akVector3 v0(pos[bface.v1*3], pos[bface.v1*3+1], pos[bface.v1*3+2]);
-		akVector3 v1(pos[bface.v2*3], pos[bface.v2*3+1], pos[bface.v2*3+2]);
-		akVector3 v2(pos[bface.v3*3], pos[bface.v3*3+1], pos[bface.v3*3+2]);
-		normal = calcNormal(v0,v1,v2);
-	}
-	return normal;
 }
 
 unsigned int akMeshLoader::packColour(const Blender::MCol& col, bool opengl)
@@ -606,141 +718,6 @@ void akMeshLoader::convertMaterial(Blender::Material* bma, akSubMeshPair* subpai
 	}
 }
 
-
-void akMeshLoader::convertVertexGroups(akSubMeshPair *subpair)
-{
-	if(m_bmesh->dvert)
-	{
-		utArray<akVertexGroup*> vgroups;
-		Blender::bDeformGroup* dg = (Blender::bDeformGroup*)m_bobj->defbase.first;
-		while(dg)
-		{
-			akVertexGroup* vg = new akVertexGroup();
-			vg->setName(dg->name);
-			vgroups.push_back(vg);
-			dg = dg->next;
-		}
-		
-		akSubMesh* subm = subpair->item;
-		for(unsigned int i=0; i<subm->getVertexCount(); i++)
-		{
-			UTuint32 oldi = subpair->idxmap.at(i);
-			
-			Blender::MDeformVert& dv = m_bmesh->dvert[oldi];
-			for(int j=0;j<dv.totweight;j++)
-			{
-				UTuint32 vgi = dv.dw[j].def_nr;
-				if(vgi<vgroups.size())
-				{
-					akVertexGroup* vg = vgroups.at(vgi);
-					vg->add(i, dv.dw[j].weight);
-				}
-			}
-		}
-		
-		for(unsigned int i=0; i<vgroups.size(); i++)
-		{
-			if(vgroups[i]->getSize())
-				subm->addVertexGroup(vgroups[i]);
-			else
-				delete vgroups[i];
-		}
-	}
-}
-
-void akMeshLoader::convertMorphTargets(akSubMeshPair *subpair)
-{
-	Blender::Key* bk = m_bmesh->key;
-	if(bk)
-	{
-		akSubMesh* subm = subpair->item;
-		const akBufferInfo* vbuffi = subm->getVertexBuffer();
-		Blender::KeyBlock* bkb = (Blender::KeyBlock*)bk->block.first;
-		
-		// skip first shape key (basis)
-		if(bkb) bkb = bkb->next;
-		while(bkb)
-		{
-			if(bkb->type == KEY_RELATIVE)
-			{
-				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
-				for(int i=0; i<bkb->relative; i++) if(basis) basis = basis->next;
-				
-				if(basis)
-				{
-					akMorphTarget* mt = new akMorphTarget(true);
-					mt->setName(bkb->name);
-					
-					float* kpos = (float*)bkb->data;
-					float* bpos = (float*)basis->data;
-					for(int bi=0; bi<bkb->totelem; bi++)
-					{
-						akVector3 k(kpos[0], kpos[1], kpos[2]);
-						akVector3 b(bpos[0], bpos[1], bpos[2]);
-						akVector3 offset = k-b;
-						
-						// check normal of all vertices that was created form this original blender vertex
-						for(unsigned int i=0; i<subpair->idxmap.size(); i++)
-						{
-							if(bi == subpair->idxmap[i])
-							{
-								UTuint32 bfi = subpair->facemap[i];
-								const Blender::MFace& bface = m_bmesh->mface[bfi];
-								float* pos = (float*)bkb->data;
-								akVector3 normal(0,0,0);
-								
-								if(bface.flag & ME_SMOOTH)
-								{
-									btAlignedObjectArray<akVector3> norms;
-									for (int bfi2 = 0; bfi2 < m_bmesh->totface; bfi2++)
-									{
-										const Blender::MFace& bface2 = m_bmesh->mface[bfi2];
-										if( bface2.v1 == bi || bface2.v2 == bi ||
-											bface2.v3 == bi || bface2.v4 == bi )
-										{
-											norms.push_back(calcMorphNormal(bface2, pos));
-										}
-									}
-									for(int ni=0; ni<norms.size(); ni++)
-									{
-										normal += norms[ni];
-									}
-									normal = normalize( normal );
-									norms.clear();
-								}
-								else
-								{
-									normal = calcMorphNormal(bface, pos);
-								}
-								
-								akVector3* norms;
-								UTuint32 normstride;
-								vbuffi->getElement(akBufferInfo::BI_DU_NORMAL, akBufferInfo::VB_DT_3FLOAT32, 1, (void**)&norms, &normstride);
-								akAdvancePointer(norms, normstride * i);
-								akVector3 ndiff = normal - *norms;
-								
-								if(!akFuzzyT(lengthSqr(offset), 1e-10f) || !akFuzzyT(lengthSqr(ndiff), 1e-10f))
-								{
-									mt->add(i, offset, ndiff);
-								}
-							}
-						}
-						
-						kpos+=3;
-						bpos+=3;
-					}
-					
-					if(mt->getSize())
-						subm->addMorphTarget(mt);
-					else
-						delete mt;
-				}
-			}
-			bkb = bkb->next;
-		}
-	}
-}
-
 void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 {
 	Blender::MFace*  mface = m_bmesh->mface;
@@ -759,9 +736,13 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 
 	akSubMesh* curSubMesh = 0;
 	utArray<akSubMeshPair*> meshtable;
+	utArray<utString> vgroups;
+	utArray<utString> shapekeys;
 
 	akMeshLoaderUtils_getLayers(m_bmesh, mtface, &mcol, totlayer);
-
+	akMeshLoaderUtils_getVertexGroups(m_bmesh, m_bobj, vgroups);
+	akMeshLoaderUtils_getShapeKeys(m_bmesh, shapekeys);
+	
 	for (int fi = 0; fi < m_bmesh->totface; fi++)
 	{
 		const Blender::MFace& curface = mface[fi];
@@ -912,8 +893,23 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 			curSubMesh = new akSubMesh(akSubMesh::ME_TRIANGLES, true, true, totlayer);
 			m_gmesh->addSubMesh(curSubMesh);
 			
-			curSubMeshPair = new akSubMeshPair(curSubMesh);
+			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh);
 			curSubMeshPair->test = test;
+			
+			for(int i=0;i<vgroups.size(); i++)
+			{
+				akVertexGroup* vg = new akVertexGroup();
+				vg->setName(vgroups[i]);
+				curSubMesh->addVertexGroup(vg);
+			}
+			
+			for(int i=0;i<shapekeys.size(); i++)
+			{
+				akMorphTarget* mt = new akMorphTarget(true);
+				mt->setName(shapekeys[i]);
+				curSubMesh->addMorphTarget(mt);
+			}
+			
 			meshtable.push_back(curSubMeshPair);
 		}
 		else
@@ -955,13 +951,12 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 	}
 
 	utArrayIterator<utArray<akSubMeshPair*> > iter(meshtable);
-
 	while (iter.hasMoreElements())
 	{
 		akSubMeshPair* subpair = iter.peekNext();
 		
-		convertVertexGroups(subpair);
-		convertMorphTargets(subpair);
+//		convertVertexGroups(subpair);
+//		convertMorphTargets(subpair);
 		
 		if(subpair->test.m_blenderMat)
 		{
@@ -975,6 +970,19 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 		delete subpair;
 		iter.getNext();
 	}
+	meshtable.clear();
+	
+	for(int i=0;i<vgroups.size(); i++)
+	{
+		vgroups[i].clear();
+	}
+	vgroups.clear();
+	
+	for(int i=0;i<shapekeys.size(); i++)
+	{
+		shapekeys[i].clear();
+	}
+	shapekeys.clear();
 }
 
 
