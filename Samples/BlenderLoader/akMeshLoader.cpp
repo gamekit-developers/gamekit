@@ -135,12 +135,33 @@ void akMeshLoaderUtils_getShapeKeys(Blender::Mesh* bmesh, utArray<utString>& sha
 			if(bkb->type == KEY_RELATIVE)
 			{
 				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
-				for(int i=0; i<bkb->relative; i++) if(basis) basis = basis->next;
+				for(int i=0; basis && i<bkb->relative; i++)
+					basis = basis->next;
 				
 				if(basis)
 					shapes.push_back(bkb->name);
 			}
 			bkb = bkb->next;
+		}
+	}
+}
+
+void akMeshLoaderUtils_getSmoothFaces(Blender::Mesh* bmesh, utArray<utArray<UTuint32> >& faces)
+{
+	faces.resize(bmesh->totvert);
+	for (int i = 0; i< bmesh->totvert; i++)
+	{
+		for (int j = 0; j< bmesh->totface; j++)
+		{
+			const Blender::MFace& bface = bmesh->mface[j];
+			if( (bface.flag & ME_SMOOTH) &&
+					(bface.v1 == i ||
+					 bface.v2 == i ||
+					 bface.v3 == i ||
+					 bface.v4 == i ))
+			{
+				faces[i].push_back(j);
+			}
 		}
 	}
 }
@@ -288,11 +309,14 @@ public:
 	Blender::Mesh* m_bmesh;
 	utArray<UTuint32> idxmap; // store the old index (in the blender mesh) of the vertex
 	
+	utArray<utArray<UTuint32> >* smoothfacesarray;
+	
 	akSubMeshPair() : test(), item(0)
 	{
 	}
 	
-	akSubMeshPair(akSubMesh* cur, Blender::Mesh* bmesh) : test(), item(cur), m_bmesh(bmesh)
+	akSubMeshPair(akSubMesh* cur, Blender::Mesh* bmesh, utArray<utArray<UTuint32> >* smoothfaces)
+		: test(), item(cur), m_bmesh(bmesh), smoothfacesarray(smoothfaces)
 	{
 	}
 
@@ -383,7 +407,6 @@ public:
 		}
 		UTuint32 id = item->addVertex(ref.co, ref.no, ref.vcol, uvs);
 		idxmap.push_back(bindex);
-		//facesmap.resize(size+1);
 		
 		// vgroups
 		if(m_bmesh->dvert)
@@ -413,7 +436,8 @@ public:
 				if(bkb->type == KEY_RELATIVE)
 				{
 					Blender::KeyBlock* basis = (Blender::KeyBlock*)m_bmesh->key->block.first;
-					for(int i=0; i<bkb->relative; i++) if(basis) basis = basis->next;
+					for(int i=0; basis && i<bkb->relative; i++)
+						basis = basis->next;
 					
 					if(basis)
 					{
@@ -434,17 +458,13 @@ public:
 						
 						if(bface.flag & ME_SMOOTH)
 						{
-							for (int j = 0; j< m_bmesh->totface; j++)
+							utArray<UTuint32>& smoothfaces = smoothfacesarray->at(bindex);
+							for (int j = 0; j< smoothfaces.size(); j++)
 							{
-								const Blender::MFace& bface2 = m_bmesh->mface[j];
-								if( (bface2.flag & ME_SMOOTH) &&
-									(bface2.v1 == bindex ||
-									 bface2.v2 == bindex ||
-									 bface2.v3 == bindex ||
-									 bface2.v4 == bindex ))
-								{
-									normal += akMeshLoaderUtils_calcMorphNormal(bface2, kpos);
-								}
+								UTuint32 bface2id = smoothfaces[j];
+								const Blender::MFace& bface2 = m_bmesh->mface[bface2id];
+								normal += akMeshLoaderUtils_calcMorphNormal(bface2, kpos);
+								
 							}
 							normal = normalize(normal);
 						}
@@ -738,10 +758,13 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 	utArray<akSubMeshPair*> meshtable;
 	utArray<utString> vgroups;
 	utArray<utString> shapekeys;
+	utArray<utArray<UTuint32> > smoothfacesarray;
 
 	akMeshLoaderUtils_getLayers(m_bmesh, mtface, &mcol, totlayer);
 	akMeshLoaderUtils_getVertexGroups(m_bmesh, m_bobj, vgroups);
 	akMeshLoaderUtils_getShapeKeys(m_bmesh, shapekeys);
+	if(shapekeys.size()>0)
+		akMeshLoaderUtils_getSmoothFaces(m_bmesh, smoothfacesarray);
 	
 	for (int fi = 0; fi < m_bmesh->totface; fi++)
 	{
@@ -893,7 +916,7 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 			curSubMesh = new akSubMesh(akSubMesh::ME_TRIANGLES, true, true, totlayer);
 			m_gmesh->addSubMesh(curSubMesh);
 			
-			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh);
+			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh, &smoothfacesarray);
 			curSubMeshPair->test = test;
 			
 			for(int i=0;i<vgroups.size(); i++)
@@ -955,9 +978,6 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 	{
 		akSubMeshPair* subpair = iter.peekNext();
 		
-//		convertVertexGroups(subpair);
-//		convertMorphTargets(subpair);
-		
 		if(subpair->test.m_blenderMat)
 		{
 			Blender::Material* bmat = akMeshLoaderUtils_getMaterial(m_bobj, subpair->test.m_matnr);
@@ -983,6 +1003,12 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 		shapekeys[i].clear();
 	}
 	shapekeys.clear();
+	
+	for(int i=0;i<smoothfacesarray.size(); i++)
+	{
+		smoothfacesarray[i].clear();
+	}
+	smoothfacesarray.clear();
 }
 
 
