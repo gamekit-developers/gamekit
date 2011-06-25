@@ -163,6 +163,33 @@ void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool delet
 	addSkinningDataBuffer();
 	
 	utHashSet<akVertexGroup*> todelete;
+	utArray<UTint32> bonevgmap;
+	utArray<utArray<akScalar> > weightmaplist;
+	
+	bonevgmap.resize(skel->getNumJoints(), -1);
+	weightmaplist.resize(skel->getNumJoints());
+	
+	for (int w = 0; w < getNumVertexGroups(); w++)
+	{
+		akVertexGroup* vg = getVertexGroup(w);
+		int bi = skel->getIndex(vg->getName());
+		if (bi != -1)
+		{
+			bonevgmap[bi]=w;
+			utArray<akScalar> & weightmap = weightmaplist.at(bi);
+			weightmap.resize(m_vertexBuffer.getSize(), AK_INFINITY);
+			
+			akVertexGroup* vg = getVertexGroup(w);
+			for(int vi=0; vi<vg->getSize(); vi++)
+			{
+				weightmap[vg->getIndex(vi)] = vg->getWeight(vi);
+			}
+			
+			if(deleteVGroups)
+				todelete.insert(vg);
+		}
+	}
+	
 	
 	UTuint32 vertnum = m_vertexBuffer.getSize();
 	for(int j=0; j<vertnum; j++)
@@ -172,22 +199,20 @@ void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool delet
 		utArray<int> tmpbi;
 		float wsum = 0;
 		
-		for (int w = 0; w < getNumVertexGroups(); w++)
+		for (int bi = 0; bi< bonevgmap.size(); bi++)
 		{
-			akVertexGroup* vg = getVertexGroup(w);
-			int bi = skel->getIndex(vg->getName());
-			if (bi != -1)
+			int vgi = bonevgmap[bi];
+			if (vgi != -1)
 			{
-				UTuint32 idx = vg->findIndex(j);
-				if(idx!= UT_NPOS)
+				utArray<akScalar>& weightmap = weightmaplist[bi];
+				akScalar weight = weightmap[j];
+				if(weight != AK_INFINITY)
 				{
-					wsum += vg->getWeight(idx);
-					tmpweights.push_back(vg->getWeight(idx));
+					wsum += weight;
+					tmpweights.push_back(weight);
 					tmpbi.push_back(bi);
 					bcount++;
 				}
-				if(deleteVGroups)
-					todelete.insert(vg);
 			}
 		}
 		
@@ -238,6 +263,15 @@ void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool delet
 		removeVertexGroup(todelete[i]);
 		delete todelete[i];
 	}
+	todelete.clear();
+	
+	bonevgmap.clear();
+	
+	for(int i=0; i<weightmaplist.size(); i++)
+	{
+		weightmaplist[i].clear();
+	}
+	weightmaplist.clear();
 }
 
 const akBufferInfo* akSubMesh::getVertexBuffer()
