@@ -121,51 +121,6 @@ void akMeshLoaderUtils_getVertexGroups(Blender::Mesh* bmesh, Blender::Object* bo
 	}
 }
 
-void akMeshLoaderUtils_getShapeKeys(Blender::Mesh* bmesh, utArray<utString>& shapes)
-{
-	Blender::Key* bk = bmesh->key;
-	if(bk)
-	{
-		Blender::KeyBlock* bkb = (Blender::KeyBlock*)bk->block.first;
-		
-		// skip first shape key (basis)
-		if(bkb) bkb = bkb->next;
-		while(bkb)
-		{
-			if(bkb->type == KEY_RELATIVE)
-			{
-				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
-				for(int i=0; basis && i<bkb->relative; i++)
-					basis = basis->next;
-				
-				if(basis)
-					shapes.push_back(bkb->name);
-			}
-			bkb = bkb->next;
-		}
-	}
-}
-
-void akMeshLoaderUtils_getSmoothFaces(Blender::Mesh* bmesh, utArray<utArray<UTuint32> >& faces)
-{
-	faces.resize(bmesh->totvert);
-	for (int i = 0; i< bmesh->totvert; i++)
-	{
-		for (int j = 0; j< bmesh->totface; j++)
-		{
-			const Blender::MFace& bface = bmesh->mface[j];
-			if( (bface.flag & ME_SMOOTH) &&
-					(bface.v1 == i ||
-					 bface.v2 == i ||
-					 bface.v3 == i ||
-					 bface.v4 == i ))
-			{
-				faces[i].push_back(j);
-			}
-		}
-	}
-}
-
 akVector3 akMeshLoaderUtils_calcNormal(akVector3& v0, akVector3& v1, akVector3& v2)
 {
 	return normalize(cross((v1-v2),(v2-v0)));
@@ -206,6 +161,89 @@ akVector3 akMeshLoaderUtils_calcMorphNormal(const Blender::MFace& bface, float* 
 		normal = akMeshLoaderUtils_calcNormal(v0,v1,v2);
 	}
 	return normal;
+}
+
+void akMeshLoaderUtils_getShapeKeys(Blender::Mesh* bmesh, utArray<utString>& shapes)
+{
+	Blender::Key* bk = bmesh->key;
+	if(bk)
+	{
+		Blender::KeyBlock* bkb = (Blender::KeyBlock*)bk->block.first;
+		
+		// skip first shape key (basis)
+		if(bkb) bkb = bkb->next;
+		while(bkb)
+		{
+			if(bkb->type == KEY_RELATIVE)
+			{
+				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
+				for(int i=0; basis && i<bkb->relative; i++)
+					basis = basis->next;
+				
+				if(basis)
+					shapes.push_back(bkb->name);
+			}
+			bkb = bkb->next;
+		}
+	}
+}
+
+void akMeshLoaderUtils_getShapeKeysNormals(Blender::Mesh* bmesh, UTuint32 numshape, utArray<btAlignedObjectArray<akVector3> >& shapenormals)
+{
+	Blender::Key* bk = bmesh->key;
+	if(bk)
+	{
+		
+		shapenormals.resize(numshape);
+		Blender::KeyBlock* bkb = (Blender::KeyBlock*)bk->block.first;
+		
+		// skip first shape key (basis)
+		UTuint32 shape=0;
+		if(bkb) bkb = bkb->next;
+		while(bkb)
+		{
+			if(bkb->type == KEY_RELATIVE)
+			{
+				Blender::KeyBlock* basis = (Blender::KeyBlock*)bk->block.first;
+				for(int i=0; basis && i<bkb->relative; i++)
+					basis = basis->next;
+				
+				if(basis)
+				{
+					float* pos = (float*)bkb->data;
+					shapenormals[shape].resize(bmesh->totface);
+					for(int i=0; i<bmesh->totface; i++)
+					{
+						const Blender::MFace& bface = bmesh->mface[i];
+						akVector3 normal = akMeshLoaderUtils_calcMorphNormal(bface, pos);
+						shapenormals[shape][i]=normal;
+					}
+					shape++;
+				}
+			}
+			bkb = bkb->next;
+		}
+	}
+}
+
+void akMeshLoaderUtils_getSmoothFaces(Blender::Mesh* bmesh, utArray<utArray<UTuint32> >& faces)
+{
+	faces.resize(bmesh->totvert);
+	for (int i = 0; i< bmesh->totvert; i++)
+	{
+		for (int j = 0; j< bmesh->totface; j++)
+		{
+			const Blender::MFace& bface = bmesh->mface[j];
+			if( (bface.flag & ME_SMOOTH) &&
+					(bface.v1 == i ||
+					 bface.v2 == i ||
+					 bface.v3 == i ||
+					 bface.v4 == i ))
+			{
+				faces[i].push_back(j);
+			}
+		}
+	}
 }
 
 int akMeshLoaderUtils_getRampBlendType(int blend)
@@ -310,13 +348,14 @@ public:
 	utArray<UTuint32> idxmap; // store the old index (in the blender mesh) of the vertex
 	
 	utArray<utArray<UTuint32> >* smoothfacesarray;
+	utArray<btAlignedObjectArray<akVector3> >* shapekeysnormals;
 	
 	akSubMeshPair() : test(), item(0)
 	{
 	}
 	
-	akSubMeshPair(akSubMesh* cur, Blender::Mesh* bmesh, utArray<utArray<UTuint32> >* smoothfaces)
-		: test(), item(cur), m_bmesh(bmesh), smoothfacesarray(smoothfaces)
+	akSubMeshPair(akSubMesh* cur, Blender::Mesh* bmesh, utArray<utArray<UTuint32> >* smoothfaces, utArray<btAlignedObjectArray<akVector3> >* shapenorm)
+		: test(), item(cur), m_bmesh(bmesh), smoothfacesarray(smoothfaces), shapekeysnormals(shapenorm)
 	{
 	}
 
@@ -332,6 +371,8 @@ public:
 			test = akSubMeshHashKey(p.test);
 			item = p.item;
 			idxmap = p.idxmap;
+			smoothfacesarray = p.smoothfacesarray;
+			shapekeysnormals = p.shapekeysnormals;
 		}
 		return *this;
 	}
@@ -443,7 +484,6 @@ public:
 					{
 						//akMorphTarget* mt = item->getMorphTarget(bkb->name);
 						akMorphTarget* mt = item->getMorphTarget(mti);
-						mti++;
 						
 						float* kpos = (float*)bkb->data;
 						float* bpos = (float*)basis->data;
@@ -452,8 +492,9 @@ public:
 						akVector3 b(bpos[3*bindex+0], bpos[3*bindex+1], bpos[3*bindex+2]);
 						k = k-b;
 						
-						
+						btAlignedObjectArray<akVector3>& norms = shapekeysnormals->at(mti);
 						akVector3 normal(0,0,0);
+						
 						const Blender::MFace& bface = m_bmesh->mface[fi];
 						
 						if(bface.flag & ME_SMOOTH)
@@ -462,20 +503,21 @@ public:
 							for (int j = 0; j< smoothfaces.size(); j++)
 							{
 								UTuint32 bface2id = smoothfaces[j];
-								const Blender::MFace& bface2 = m_bmesh->mface[bface2id];
-								normal += akMeshLoaderUtils_calcMorphNormal(bface2, kpos);
+								normal += norms.at(bface2id);
 								
 							}
 							normal = normalize(normal);
 						}
 						else
 						{
-							normal = akMeshLoaderUtils_calcMorphNormal(bface, kpos);
+							normal = norms.at(fi);
 						}
 						normal = normal - ref.no;
 						
 						if(!akFuzzyT(lengthSqr(k), 1e-10f) || !akFuzzyT(lengthSqr(normal), 1e-10f))
 							mt->add(id, k, normal);
+						
+						mti++;
 					}
 				}
 				bkb = bkb->next;
@@ -758,13 +800,17 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 	utArray<akSubMeshPair*> meshtable;
 	utArray<utString> vgroups;
 	utArray<utString> shapekeys;
+	utArray<btAlignedObjectArray<akVector3> > shapekeysnormals;
 	utArray<utArray<UTuint32> > smoothfacesarray;
 
 	akMeshLoaderUtils_getLayers(m_bmesh, mtface, &mcol, totlayer);
 	akMeshLoaderUtils_getVertexGroups(m_bmesh, m_bobj, vgroups);
 	akMeshLoaderUtils_getShapeKeys(m_bmesh, shapekeys);
 	if(shapekeys.size()>0)
+	{
+		akMeshLoaderUtils_getShapeKeysNormals(m_bmesh, shapekeys.size(), shapekeysnormals);
 		akMeshLoaderUtils_getSmoothFaces(m_bmesh, smoothfacesarray);
+	}
 	
 	for (int fi = 0; fi < m_bmesh->totface; fi++)
 	{
@@ -916,7 +962,7 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 			curSubMesh = new akSubMesh(akSubMesh::ME_TRIANGLES, true, true, totlayer);
 			m_gmesh->addSubMesh(curSubMesh);
 			
-			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh, &smoothfacesarray);
+			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh, &smoothfacesarray, &shapekeysnormals);
 			curSubMeshPair->test = test;
 			
 			for(int i=0;i<vgroups.size(); i++)
@@ -1009,6 +1055,12 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 		smoothfacesarray[i].clear();
 	}
 	smoothfacesarray.clear();
+	
+	for(int i=0;i<shapekeysnormals.size(); i++)
+	{
+		shapekeysnormals[i].clear();
+	}
+	shapekeysnormals.clear();
 }
 
 
