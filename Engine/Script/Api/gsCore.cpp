@@ -647,7 +647,7 @@ gsUserDefs& gsEngine::getUserDefs(void)
 
 gsScene* gsEngine::loadBlendFile(const gkString& name)
 {
-	if (m_engine && m_ctxOwner) // && !m_running
+	if (m_engine) // && m_ctxOwner) // && !m_running
 	{
 		if (!m_engine->isInitialized())
 		{
@@ -684,7 +684,7 @@ gsScene* gsEngine::loadBlendFile(const gkString& name)
 
 void gsEngine::unloadBlendFile(const gkString& name)
 {
-	if (m_engine && m_ctxOwner)
+	if (m_engine) // && m_ctxOwner)
 	{
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: unloadBlendFile on uninitialized engine.");
@@ -695,7 +695,7 @@ void gsEngine::unloadBlendFile(const gkString& name)
 
 void gsEngine::unloadAllBlendFiles()
 {
-	if (m_engine && m_ctxOwner)
+	if (m_engine) // && m_ctxOwner)
 	{
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: unloadAllBlendFiles on uninitialized engine.");
