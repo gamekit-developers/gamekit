@@ -574,7 +574,7 @@ elseif(OGREKIT_BUILD_ANDROID)
       src/OgreSearchOps.cpp
       src/OgreStringSerialiser.cpp
     )
-    set(PLATFORM_LIBS pthread dl)
+    set(PLATFORM_LIBS dl)
     set(PLATFORM_HEADER_INSTALL "Android")
     # some platforms require explicit linking to libdl, see if it's available
     find_library(DL_LIBRARY NAMES dl dlsym)

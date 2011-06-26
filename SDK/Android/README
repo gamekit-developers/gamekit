@@ -1,0 +1,5 @@
+This toolchain require 3 environment variable setting.
+
+NDK : S:\Programming\android-ndk-r5b
+NDK_BIN : S:\Programming\android-ndk-r5b\toolchains\arm-linux-androideabi-4.4.3\prebuilt\windows\bin
+PATH : ...... ;S:\Programming\android-ndk-r5b\toolchains\arm-linux-androideabi-4.4.3\prebuilt\windows\bin;......

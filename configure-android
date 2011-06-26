@@ -1,17 +1,5 @@
 #!/bin/bash
 
-unset CPATH
-unset C_INCLUDE_PATH
-unset CPLUS_INCLUDE_PATH
-unset OBJC_INCLUDE_PATH
-unset LIBS
-unset DYLD_FALLBACK_LIBRARY_PATH
-unset DYLD_FALLBACK_FRAMEWORK_PATH
-
-export DEVROOT="/Developer/Platforms/iPhoneOS.platform/Developer"
-export SDKROOT="$DEVROOT/SDKs/iPhoneOS$SDKVER.sdk"
-export PKG_CONFIG_PATH="$SDROOT/usr/lib/pkgconfig":"/opt/iphone-$SDKVER/lib/pkgconfig":"/usr/local/iphone-$SDKVER/lib/pkgconfig"
-export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
 export MAINFOLDER=`pwd`
 
 if [ "" = "$1" ]; 
@@ -26,11 +14,6 @@ then
 	exit 1
 fi
 
-if [ `uname -o` = "Cygwin" ];
-then
-	export NDK=`cygpath ${NDK}`
-fi
-
 if [ ! -d $1 ]; 
 then
 	mkdir "$1"
@@ -41,11 +24,11 @@ cd "$1" #>/dev/null 2>&1 &&
 
 if [ "debug" = "$2" ];
 then
-cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGREKIT_BUILD_ANDROID=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android.toolchain" -DMTPIP_Platform="Android" --debug-trycompile && \
-cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGREKIT_BUILD_ANDROID=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android.toolchain" -DMTPIP_Platform="Android" --debug-trycompile 
+cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGRE_BUILD_PLATFORM_ANDROID=1 -DOGREKIT_UNITY_BUILD=1 -DOGRE_UNITY_BUILD=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DOGREKIT_BUILD_ANDROID=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android-r5b.toolchain" --debug-trycompile && \
+cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGRE_BUILD_PLATFORM_ANDROID=1 -DOGREKIT_UNITY_BUILD=1 -DOGRE_UNITY_BUILD=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DOGREKIT_BUILD_ANDROID=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android-r5b.toolchain" --debug-trycompile
 else
-cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGREKIT_BUILD_ANDROID=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android.toolchain" -DMTPIP_Platform="Android" -DCMAKE_BUILD_TYPE="MinSizeRel" && \
-cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGREKIT_BUILD_ANDROID=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android.toolchain" -DMTPIP_Platform="Android" -DCMAKE_BUILD_TYPE="MinSizeRel"
+cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGRE_BUILD_PLATFORM_ANDROID=1 -DOGREKIT_UNITY_BUILD=1 -DOGRE_UNITY_BUILD=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DOGREKIT_BUILD_ANDROID=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android-r5b.toolchain" -DCMAKE_BUILD_TYPE="MinSizeRel" && \
+cmake "$MAINFOLDER" -G "Unix Makefiles" -DOGRE_BUILD_PLATFORM_ANDROID=1 -DOGREKIT_UNITY_BUILD=1 -DOGRE_UNITY_BUILD=1 -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1 -DOGREKIT_BUILD_ANDROID=1 -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android-r5b.toolchain" -DCMAKE_BUILD_TYPE="MinSizeRel"
 fi
 
 # make

@@ -262,9 +262,11 @@ namespace Ogre {
     #define OGRE_PLATFORM_LIB "libOgrePlatform.so"
 #endif
 
+#ifndef __ANDROID__
 // Always enable unicode support for the moment
 // Perhaps disable in old versions of gcc if necessary
 #define OGRE_UNICODE_SUPPORT 1
+#endif
 
 #endif
 

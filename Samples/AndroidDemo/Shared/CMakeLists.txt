@@ -8,10 +8,9 @@ include_directories(
 )
 
 link_libraries(
-	${OGREKIT_LIB}
+	${OGREKIT_LIB}	
 	log	
 )
-
 
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
@@ -26,7 +25,7 @@ ADD_LIBRARY(${PROJECT_NAME}
 if (1) #cp && strip
 
 set (OUTPUT_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}) #lib<name>.so
-set (STRIP_TOOL arm-eabi-strip)
+set (STRIP_TOOL arm-linux-androideabi-strip)
 
 #message(STATUS ${PROJECT_NAME} "-------" ${OUTPUT_NAME} "-------" ${STRIP_TOOL})
 
