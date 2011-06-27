@@ -347,7 +347,7 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 		if (rnap.substr(0, 10) == "pose.bones")
 		{
 			size_t i = rnap.rfind('\"');
-			if(i!=UT_NPOS)
+			if(i!=UT_NPOS && i<rnap.length()-3)
 			{
 				chan_name = rnap.substr(12, i - 12);
 				transform_name = rnap.substr(i + 3, rnap.length() - i + 3);

@@ -84,9 +84,12 @@ void akAnimationChannel::evaluate(akPose& pose, akScalar time, akScalar weight, 
 		if( bid >= 0 )
 		{
 			akTransformState* jpose = pose.getSkeletonPose()->getJointPose(bid);
-			if(mask)
-				weight *= mask->getWeight(bid);
-			evaluate(*jpose, time, weight, delta);
+			if(jpose)
+			{
+				if(mask)
+					weight *= mask->getWeight(bid);
+				evaluate(*jpose, time, weight, delta);
+			}
 		}
 		break;
 	}

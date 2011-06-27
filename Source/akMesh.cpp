@@ -177,7 +177,7 @@ void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool delet
 		{
 			bonevgmap[bi]=w;
 			utArray<akScalar> & weightmap = weightmaplist.at(bi);
-			weightmap.resize(m_vertexBuffer.getSize(), AK_INFINITY);
+			weightmap.resize(m_vertexBuffer.getSize(), 0.0f);
 			
 			akVertexGroup* vg = getVertexGroup(w);
 			for(int vi=0; vi<vg->getSize(); vi++)
@@ -206,7 +206,7 @@ void akSubMesh::generateBoneWeightsFromVertexGroups(akSkeleton* skel, bool delet
 			{
 				utArray<akScalar>& weightmap = weightmaplist[bi];
 				akScalar weight = weightmap[j];
-				if(weight != AK_INFINITY)
+				if(weight != 0.0f)
 				{
 					wsum += weight;
 					tmpweights.push_back(weight);

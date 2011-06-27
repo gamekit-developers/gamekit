@@ -47,6 +47,7 @@ public:
 	UTuint8        m_parentId;
 	
 	akJoint() : m_parentId(AK_JOINT_NO_PARENT) {}
+	akJoint(utHashedString& name, UTuint8 parent = AK_JOINT_NO_PARENT) : m_name(name), m_parentId(parent) {}
 };
 
 
@@ -56,18 +57,19 @@ public:
 class akSkeleton
 {
 private:
-	UTuint8 m_numJoints;
-	akJoint* m_joints;
+	utArray<akJoint> m_joints;
 	
 	akSkeletonPose* m_localBindPose;
 	akSkeletonPose* m_modelBindPose;
 	btAlignedObjectArray<akMatrix4>      m_inverseBindPose;
 	
 public:
+	akSkeleton() : m_localBindPose(0), m_modelBindPose(0) {}
 	akSkeleton(UTuint32 numJoints);
 	~akSkeleton();
 		
 	int getIndex(const utHashedString& name) const;
+	UTuint8 addJoint(utHashedString& name, UTuint8 parent = AK_JOINT_NO_PARENT);
 	akJoint* getJoint(UTuint8 idx);
 	akJoint* getByName(const utHashedString &name);
 	
@@ -76,7 +78,7 @@ public:
 	
 	UT_INLINE UTuint8  getNumJoints(void) const
 	{
-		return m_numJoints;
+		return m_joints.size();
 	}
 	
 	UT_INLINE akSkeletonPose* getLocalBindPose(void)

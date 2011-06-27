@@ -231,10 +231,6 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 			const akBufferInfo* ibuf = sm->getIndexBuffer();
 			UTuint32 tot = ibuf->getSize();
 			
-			bool color = drawColor && sm->hasVertexColor();
-			bool hasnormals = sm->hasNormals();
-			bool texture = m_textures[j] && textured && sm->getUVLayerCount() >=1;
-	
 			const akBufferInfo::Element *posbuf, *norbuf, *idxbuf, *uvbuf, *colorbuf;
 			
 			if(isMeshDeformed())
@@ -256,6 +252,10 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 			if(!posbuf ||! idxbuf)
 				continue;
 			
+			bool color = colorbuf && drawColor && sm->hasVertexColor();
+			bool hasnormals = norbuf && sm->hasNormals();
+			bool texture = uvbuf && m_textures[j] && textured && sm->getUVLayerCount() >=1;
+	
 			if(shaded)
 				glEnable(GL_LIGHTING);
 			else
@@ -324,24 +324,30 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				{
 					UTuint32* id = (UTuint32*)idxbuf->data;
 					akVector3* v = (akVector3*)posbuf->data;
-					akVector3* n = (akVector3*)norbuf->data;
-					UTuint8* c = (UTuint8*)colorbuf->data;
-					float* uv = (float*)uvbuf->data;
 					
 					akAdvancePointer(id, i * idxbuf->stride);
 					akAdvancePointer(v, *id * posbuf->stride);
-					akAdvancePointer(n, *id * norbuf->stride);
-					akAdvancePointer(c, *id * colorbuf->stride);
-					akAdvancePointer(uv, *id * uvbuf->stride);
 					
 					if(color)
+					{
+						UTuint8* c = (UTuint8*)colorbuf->data;
+						akAdvancePointer(c, *id * colorbuf->stride);
 						glColor4ub(c[0], c[1], c[2], c[3]);
+					}
 					
 					if(texture)
+					{
+						float* uv = (float*)uvbuf->data;
+						akAdvancePointer(uv, *id * uvbuf->stride);
 						glTexCoord2f(uv[0],uv[1]);
+					}
 					
 					if(hasnormals)
+					{
+						akVector3* n = (akVector3*)norbuf->data;
+						akAdvancePointer(n, *id * norbuf->stride);
 						glNormal3f(n->getX(), n->getY(), n->getZ());
+					}
 					
 					glVertex3f(v->getX(), v->getY(), v->getZ());
 					
@@ -381,8 +387,6 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 	{
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
-		glLineWidth(1);
-		glBegin(GL_LINES);
 		
 		int i, tot;
 		tot = m_pose->getSkeletonPose()->getNumJoints();
@@ -390,28 +394,28 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 		{
 			glPushMatrix();
 			
-			akTransformState* jointpose = m_pose->getSkeletonPose()->getJointPose(i);
+			akSkeletonPose* pose = m_pose->getSkeletonPose();
+			const akTransformState* jointpose = pose->getJointPose(i);
 			akMatrix4 mat = jointpose->toMatrix();
+			
 			glMultMatrixf((GLfloat*)&mat);
 	
 			glBegin(GL_LINES);
 			glColor3f(1,0,0);
-			glVertex3f(0.1,0,0);
+			glVertex3f(0.05,0,0);
 			glVertex3f(0,0,0);
 			
 			glColor3f(0,1,0);
-			glVertex3f(0,0.1,0);
+			glVertex3f(0,0.05,0);
 			glVertex3f(0,0,0);
 			
 			glColor3f(0,0,1);
-			glVertex3f(0,0,0.1);
+			glVertex3f(0,0,0.05);
 			glVertex3f(0,0,0);
 			glEnd();
 			
 			glPopMatrix();
 		}
-		glEnd();
-		glLineWidth(1);
 		glEnable(GL_DEPTH_TEST);
 	}
 	

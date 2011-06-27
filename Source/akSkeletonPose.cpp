@@ -103,6 +103,10 @@ void akSkeletonPose::toLocalSpace(akSkeletonPose* dest) const
 			{
 				dest->m_jointPoses[i] = akTransformState(inverse(m_jointPoses[pid].toMatrix()) * m_jointPoses[i].toMatrix());
 			}
+			else
+			{
+				dest->m_jointPoses[i] = m_jointPoses[i];
+			}
 		}
 	}
 	
@@ -144,6 +148,10 @@ void akSkeletonPose::toModelSpace(akSkeletonPose* dest) const
 			if( pid != AK_JOINT_NO_PARENT)
 			{
 				dest->m_jointPoses[i] = akTransformState(dest->m_jointPoses[pid].toMatrix() * m_jointPoses[i].toMatrix());
+			}
+			else
+			{
+				dest->m_jointPoses[i] = m_jointPoses[i];
 			}
 		}
 	}

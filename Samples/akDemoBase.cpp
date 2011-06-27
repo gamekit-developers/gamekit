@@ -111,7 +111,7 @@ void akDemoBase::start(void)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	
-	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat LightAmbient[]= { 1.0f, 1.0f, 01.0f, 1.0f };
 	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 01.0f, 1.0f };
 	GLfloat LightPosition[]= { 1.0f, 2.0f, 0.0f, 1.0f };
 	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);

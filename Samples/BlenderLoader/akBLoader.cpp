@@ -49,78 +49,53 @@ akBLoader::akBLoader(akDemoBase* demo)
 	m_demo = demo;
 }
 
-int countBones(Blender::Bone* bone)
+int buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blender::Bone* bone, UTuint8 parent)
 {
-	int bcount = 1;
-	
-	Blender::Bone* chi = static_cast<Blender::Bone*>(bone->childbase.first);
-	while (chi)
+	if(!(bone->flag & BONE_NO_DEFORM) || parent == AK_JOINT_NO_PARENT)
 	{
-		// recurse
-		bcount += countBones(chi);
-		chi = chi->next;
-	}
-	return bcount;
-}
-
-int buildBoneTree(akSkeleton* skel, akSkeletonPose* bindPose, unsigned int idx, Blender::Bone* bone, Blender::Bone* parent)
-{
-	int bcount = 1;
-	
-	akJoint* joint = skel->getJoint(idx);
-	joint->m_name = bone->name;
-	
-	float* bmat = (float*)bone->arm_mat; 
-	akMatrix4 mat(akVector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
-				akVector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
-				akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
-				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
-				
-	//joint->m_inverseBindPose = inverse(mat);
-	akTransformState* jp = bindPose->getJointPose(idx);
-	*jp = akTransformState(mat);
-	
-	if(parent)
-	{
-		joint->m_parentId = skel->getIndex(parent->name);
+		utHashedString jname = bone->name;
+		
+		float* bmat = (float*)bone->arm_mat; 
+		akMatrix4 mat(akVector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+					  akVector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+					  akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+					  akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+		
+		bind.push_back(mat);
+		parent = skel->addJoint(jname, parent);
 	}
 	
 	Blender::Bone* chi = static_cast<Blender::Bone*>(bone->childbase.first);
 	while (chi)
 	{
 		// recurse
-		bcount += buildBoneTree(skel, bindPose, idx+bcount, chi, bone);
+		buildBoneTree(skel, bind, chi, parent);
 		chi = chi->next;
 	}
-	
-	return bcount;
 }
 
 void akBLoader::convertSkeleton(Blender::bArmature *bskel)
 {
-	unsigned int bcount = 0;
+	akSkeleton* skel = new akSkeleton();
+	btAlignedObjectArray<akMatrix4> bind;
+	
 	Blender::Bone* bone = static_cast<Blender::Bone*>(bskel->bonebase.first);
-	while (bone)
-	{
-		bcount += countBones(bone);
-		bone = bone->next;
-	}
-	
-	akSkeleton* skel = new akSkeleton(bcount);
-	m_demo->addSkeleton(AKB_IDNAME(bskel), skel);
-	akSkeletonPose* bindPose = new akSkeletonPose(skel, akSkeletonPose::SP_MODEL_SPACE);
-	
-	bcount = 0;
-	bone = static_cast<Blender::Bone*>(bskel->bonebase.first);
 	while (bone)
 	{
 		// only process root bones
 		if (bone->parent == 0)
-			bcount += buildBoneTree(skel, bindPose, bcount, bone, 0);
+			buildBoneTree(skel, bind, bone, AK_JOINT_NO_PARENT);
 		bone = bone->next;
 	}
-	
+
+	akSkeletonPose* bindPose = new akSkeletonPose(skel, akSkeletonPose::SP_MODEL_SPACE);
+	for(int i=0; i<skel->getNumJoints(); i++)
+	{
+		*bindPose->getJointPose(i) = akTransformState(bind[i]);
+	}
 	skel->setBindingPose(bindPose);
+	
+	m_demo->addSkeleton(AKB_IDNAME(bskel), skel);
 }
 
 void akBLoader::convertObjectMesh(Blender::Object *bobj)
