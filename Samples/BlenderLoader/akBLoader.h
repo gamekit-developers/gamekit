@@ -35,6 +35,7 @@
 #include "Blender.h"
 
 #define BONE_NO_DEFORM	(1<<12)
+#define BONE_NO_SCALE	(1<<15)
 
 #define AKB_IDNAME(x) ((x) && (x)->id.name[0] != '0' ? (x)->id.name + 2 : "")
 

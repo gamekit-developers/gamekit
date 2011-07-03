@@ -45,9 +45,10 @@ class akJoint
 public:
 	utHashedString m_name;
 	UTuint8        m_parentId;
+	bool           m_inheritScale;
 	
-	akJoint() : m_parentId(AK_JOINT_NO_PARENT) {}
-	akJoint(utHashedString& name, UTuint8 parent = AK_JOINT_NO_PARENT) : m_name(name), m_parentId(parent) {}
+	akJoint() : m_parentId(AK_JOINT_NO_PARENT), m_inheritScale(true) {}
+	akJoint(utHashedString& name, UTuint8 parent = AK_JOINT_NO_PARENT) : m_name(name), m_parentId(parent), m_inheritScale(true) {}
 };
 
 

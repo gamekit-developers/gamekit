@@ -217,33 +217,42 @@ void akDemoBase::keyboardCallback(unsigned char key,int x, int y)
 //	printf("%d\n", key);
 	switch(key)
 	{
-		case 110: // N
+		case 'n':
+		case 'N':
 			m_drawNormals = m_drawNormals? false:true;
 			break;
-		case 116: // T
+		case 't':
+		case 'T':
 			m_textured = m_textured? false:true;
 			break;
-		case 115: // S
+		case 's':
+		case 'S':
 			m_shaded = m_shaded? false:true;
 			break;
-		case 100: // D
+		case 'd':
+		case 'D':
 			m_dualQuatUse +=1;
 			if(m_dualQuatUse>3) m_dualQuatUse = 0;
 			break;
-		case 119: // W
+		case 'w':
+		case 'W':
 			m_wireframe = m_wireframe? false:true;
 			break;
-		case 99: // C
+		case 'c':
+		case 'C':
 			m_drawColor = m_drawColor? false:true;
 			break;
-		case 118: // V
+		case 'v':
+		case 'V':
 			m_useVbo = m_useVbo? false:true;
 			break;
-		case 109: // M
+		case 'm':
+		case 'M':
 			m_normalMethod +=1;
 			if(m_normalMethod>3) m_normalMethod = 0;
 			break;
-		case 112: // P
+		case 'p':
+		case 'P':
 			m_drawSkeleton = m_drawSkeleton? false:true;
 			break;
 	}

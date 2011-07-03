@@ -88,78 +88,6 @@ akTransformState* akSkeletonPose::getByName(const utHashedString& name)
 		return 0;
 }
 
-void akSkeletonPose::toLocalSpace(akSkeletonPose* dest) const
-{
-	if(m_space == SP_MODEL_SPACE)
-	{
-		int i, count;
-		count = getNumJoints();
-		
-		for(i=count-1; i>=0; i--)
-		{
-			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
-			
-			if( pid != AK_JOINT_NO_PARENT)
-			{
-				dest->m_jointPoses[i] = akTransformState(inverse(m_jointPoses[pid].toMatrix()) * m_jointPoses[i].toMatrix());
-			}
-			else
-			{
-				dest->m_jointPoses[i] = m_jointPoses[i];
-			}
-		}
-	}
-	
-	else if(m_space == SP_BINDING_SPACE)
-	{
-		akSkeletonPose* bindPose;
-		int i, count;
-		
-		count = getNumJoints();
-		bindPose = m_skeleton->getLocalBindPose();
-		
-		for(i=0; i<count; i++)
-		{
-			akTransformState* jbp = bindPose->getJointPose(i);
-			dest->m_jointPoses[i] = akTransformState(jbp->toMatrix() * m_jointPoses[i].toMatrix());
-		}
-	}
-	
-	dest->m_space = SP_LOCAL_SPACE;
-}
-
-void akSkeletonPose::toModelSpace(akSkeletonPose* dest) const
-{
-	if(m_space == SP_BINDING_SPACE)
-	{
-		toLocalSpace(dest);
-		dest->toModelSpace(dest);
-	}
-	
-	else if(m_space == SP_LOCAL_SPACE)
-	{
-		int i, count;
-		count = getNumJoints();
-		
-		for(i=0; i<count; i++)
-		{
-			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
-			
-			if( pid != AK_JOINT_NO_PARENT)
-			{
-				dest->m_jointPoses[i] = akTransformState(dest->m_jointPoses[pid].toMatrix() * m_jointPoses[i].toMatrix());
-			}
-			else
-			{
-				dest->m_jointPoses[i] = m_jointPoses[i];
-			}
-		}
-	}
-	
-	dest->m_space = SP_MODEL_SPACE;
-}
-
-
 void akSkeletonPose::setIdentity(void)
 {
 	for(int i=0; i<getNumJoints(); i++)
@@ -168,26 +96,179 @@ void akSkeletonPose::setIdentity(void)
 	}
 }
 
+void akSkeletonPose::toLocalSpace(akSkeletonPose* dest) const
+{
+	int i, count;
+	count = getNumJoints();
+	
+	switch(m_space)
+	{
+	case SP_MODEL_SPACE:
+		for(i=count-1; i>=0; i--)
+		{
+			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+			
+			if( pid != AK_JOINT_NO_PARENT)
+			{
+				akMatrix4 mat = inverse(m_jointPoses[pid].toMatrix()) * m_jointPoses[i].toMatrix();
+				akTransformState& ts = dest->m_jointPoses[i];
+				
+				if(!m_skeleton->getJoint(i)->m_inheritScale)
+					mat = akMathUtils::setScale(mat, ts.scale);
+					
+				akMathUtils::extractTransform(mat, ts.loc, ts.rot, ts.scale);
+			}
+			else
+			{
+				dest->m_jointPoses[i] = m_jointPoses[i];
+			}
+		}
+		break;
+		
+	case SP_BINDING_SPACE:
+		for(i=0; i<count; i++)
+		{
+			const akTransformState* jbp = m_skeleton->getLocalBindPose()->getJointPose(i);
+			akMatrix4 mat = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+			akTransformState& ts = dest->m_jointPoses[i];
+			akMathUtils::extractTransform(mat, ts.loc, ts.rot, ts.scale);
+		}
+		break;
+		
+	case SP_LOCAL_SPACE:
+		for(i=0; i<count; i++)
+		{
+			dest->m_jointPoses[i] = m_jointPoses[i];
+		}
+		break;
+	}
+	
+	dest->m_space = SP_LOCAL_SPACE;
+}
+
+void akSkeletonPose::toModelSpace(akSkeletonPose* dest) const
+{
+	int i, count;
+	count = getNumJoints();
+	
+	switch(m_space)
+	{
+	case SP_BINDING_SPACE:
+		for(i=0; i<count; i++)
+		{
+			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+			const akTransformState* jbp = m_skeleton->getLocalBindPose()->getJointPose(i);
+			akTransformState& ts = dest->m_jointPoses[i];
+			akMatrix4 mat;
+			
+			if( pid != AK_JOINT_NO_PARENT)
+			{
+				akMatrix4 local = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+				mat = dest->m_jointPoses[pid].toMatrix() * local;
+				
+				if(!m_skeleton->getJoint(i)->m_inheritScale)
+					mat = akMathUtils::setScale(mat, akMathUtils::getScale(local));
+			}
+			else
+				mat = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+			
+			akMathUtils::extractTransform(mat, ts.loc, ts.rot, ts.scale);
+		}
+		break;
+	
+	case SP_LOCAL_SPACE:
+		for(i=0; i<count; i++)
+		{
+			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+			
+			if( pid != AK_JOINT_NO_PARENT)
+			{
+				akTransformState& ts = dest->m_jointPoses[i];
+				akMatrix4 mat = dest->m_jointPoses[pid].toMatrix() * m_jointPoses[i].toMatrix();
+				
+				if(!m_skeleton->getJoint(i)->m_inheritScale)
+					mat = akMathUtils::setScale(mat, ts.scale);
+		
+				akMathUtils::extractTransform(mat, ts.loc, ts.rot, ts.scale);
+			}
+			else
+				dest->m_jointPoses[i] = m_jointPoses[i];
+		}
+		break;
+	
+	case SP_MODEL_SPACE:
+		for(i=0; i<count; i++)
+			dest->m_jointPoses[i] = m_jointPoses[i];
+		break;
+	}
+	
+	dest->m_space = SP_MODEL_SPACE;
+}
 
 void akSkeletonPose::fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette) const
 {
+	switch(m_space)
+	{
+	case SP_MODEL_SPACE:
+		for(int i=0; i<getNumJoints(); i++)
+		{
+			palette[i] = m_jointPoses[i].toMatrix();
+		}
+		break;
+	case SP_LOCAL_SPACE:
+		for(int i=0; i<getNumJoints(); i++)
+		{
+			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+			if( pid != AK_JOINT_NO_PARENT)
+			{
+				palette[i] = palette[pid] * m_jointPoses[i].toMatrix();
+				
+				if(!m_skeleton->getJoint(i)->m_inheritScale)
+					palette[i] = akMathUtils::setScale(palette[i], m_jointPoses[i].scale);
+			}
+			else
+				palette[i] = m_jointPoses[i].toMatrix();
+		}
+		break;
+	case SP_BINDING_SPACE:
+		for(int i=0; i<getNumJoints(); i++)
+		{
+			UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+			const akTransformState* jbp = m_skeleton->getLocalBindPose()->getJointPose(i);
+			if( pid != AK_JOINT_NO_PARENT)
+			{
+				akMatrix4 parent = palette[pid];
+				akMatrix4 local = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+				
+				palette[i] = parent * local;
+				
+				if(!m_skeleton->getJoint(i)->m_inheritScale)
+					palette[i] = akMathUtils::setScale(palette[i], akMathUtils::getScale(local));
+			}
+			else
+				palette[i] = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+		}
+		break;
+	}
+	
 	for(int i=0; i<getNumJoints(); i++)
 	{
-		palette[i] = m_jointPoses[i].toMatrix() * m_skeleton->getJointInverseBindPose(i);
+		palette[i] = palette[i] * m_skeleton->getJointInverseBindPose(i);
 	}
 }
 
 void akSkeletonPose::fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &dqpalette,
 										btAlignedObjectArray<akMatrix4> &mpalette) const
 {
+	fillMatrixPalette(mpalette);
+	
 	for(int i=0; i<getNumJoints(); i++)
 	{
-		akTransformState ts(m_jointPoses[i].toMatrix() * m_skeleton->getJointInverseBindPose(i));
-		akDualQuat dq(ts.rot, ts.loc);
-		akMatrix4 m = akMatrix4::identity();
-		appendScale(m, ts.scale);
-		dqpalette[i] = dq;
-		mpalette[i] = m;
+		akTransformState ts;
+		akMathUtils::extractTransform(mpalette[i], ts.loc, ts.rot, ts.scale);
+		
+		dqpalette[i] = akDualQuat(ts.rot, ts.loc);
+		mpalette[i] = akMatrix4::scale(ts.scale);
 	}
 	
 	// antipodality

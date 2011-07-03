@@ -27,6 +27,7 @@
 
 #include "akPoseBlender.h"
 #include "akSkeleton.h"
+#include "akMathUtils.h"
 
 void akPoseBlender::blendJoint(BlendMode bmode, RotMode rmode, akScalar weight, const akTransformState& a, const akTransformState& b, akTransformState& out)
 {
@@ -52,6 +53,20 @@ void akPoseBlender::blendJoint(BlendMode bmode, RotMode rmode, akScalar weight, 
 			out.rot = lerp(weight, a.rot, a.rot*b.rot);
 		
 		out.scale = lerp(weight, a.scale, mulPerElem(a.scale, b.scale) );
+
+//		{
+//		akTransformState sum;
+//		akMathUtils::extractTransform(a.toMatrix()*b.toMatrix(), sum.loc, sum.rot, sum.scale);
+//		out.loc =  lerp(weight, a.loc, sum.loc);
+		
+//		if(rmode==PB_RM_SLERP)
+//			out.rot = slerp(weight, a.rot, sum.rot);
+//		else
+//			out.rot = lerp(weight, a.rot, sum.rot);
+			
+//		out.scale = lerp(weight, a.scale, sum.scale);
+//		}
+
 		break;
 		
 	//TODO test this.

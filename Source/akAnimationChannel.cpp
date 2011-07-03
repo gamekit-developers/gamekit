@@ -181,7 +181,7 @@ void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, ak
 	
 	UT_ASSERT(!channel.loc.isNaN());
 	UT_ASSERT(!channel.rot.isNaN());
-	UT_ASSERT(!channel.scl.isNaN());
+	UT_ASSERT(!channel.scale.isNaN());
 	
 	akPoseBlender::blendJoint(akPoseBlender::PB_BM_ADD, akPoseBlender::PB_RM_LERP,
 							  weight, transform, channel, transform );

@@ -164,9 +164,6 @@ void akEntity::step(akScalar dt, int dualQuat, int normalsMethod)
 	
 	if(isMeshDeformed())
 	{
-		akSkeletonPose* skelpose = m_pose->getSkeletonPose();
-		skelpose->toModelSpace(skelpose);
-		
 		int dq ;
 		switch(dualQuat)
 		{
@@ -202,7 +199,11 @@ void akEntity::step(akScalar dt, int dualQuat, int normalsMethod)
 			nm = akGeometryDeformer::GD_NO_FULL;
 			break;
 		}
-
+	
+		
+		//akSkeletonPose* skelpose = m_pose->getSkeletonPose();
+		//skelpose->toModelSpace(skelpose);
+		
 		if( dq != akGeometryDeformer::GD_SO_MATRIX )
 			m_pose->fillDualQuatPalette(m_dualquatPalette, m_matrixPalette);
 		else
@@ -289,17 +290,12 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 				else
 				{
 					glColor3f(0,0,0);
-					//glDisableClientState(GL_COLOR_ARRAY);
 				}
 				
 				if(texture)
 				{
 					glTexCoordPointer(2, GL_FLOAT, uvbuf->stride, (GLvoid*)uvbuf->getOffset());
 					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				}
-				else
-				{
-					//wglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				}
 				
 				glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_staticIndexVboIds[j]);
@@ -385,11 +381,14 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 	
 	if(m_skeleton && drawskel)
 	{
+		akSkeletonPose* skelpose = m_pose->getSkeletonPose();
+		skelpose->toModelSpace(skelpose);
+		
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		
 		int i, tot;
-		tot = m_pose->getSkeletonPose()->getNumJoints();
+		tot = skelpose->getNumJoints();
 		for(i=0; i<tot; i++)
 		{
 			glPushMatrix();

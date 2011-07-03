@@ -36,8 +36,8 @@
 UT_ATTRIBUTE_ALIGNED_CLASS16(class) akTransformState
 {
 public:
-	akQuat    rot;
 	akVector3 loc;
+	akQuat    rot;
 	akVector3 scale;
 	
 public:
@@ -45,32 +45,15 @@ public:
 					 const akQuat&    orot = akQuat::identity(),
 					 const akVector3& oscl = akVector3(1,1,1))
 	{
-		rot = orot;
 		loc = oloc;
+		rot = orot;
 		scale = oscl;
-	}
-	
-	akTransformState(const akMatrix4& mat)
-	{
-		loc = mat.getTranslation();
-		
-		akMatrix3 m3 = mat.getUpper3x3();
-		
-		rot = akQuat(m3);
-		if(norm(rot)==0)
-			rot = akQuat::identity();
-		
-		akMatrix4 mrot = akMatrix4(rot, akVector3(0,0,0));
-		akMatrix4 T = mat*mrot;
-		
-		scale = akVector3(T[0][0], T[1][1], T[2][2]);
 	}
 	
 	UT_INLINE akTransform3 toTransform3(void) const
 	{
 		akTransform3 t3(rot, loc);
-		appendScale(t3, scale);
-		return t3;
+		return appendScale(t3, scale);
 	}
 	
 	UT_INLINE akMatrix4 toMatrix(void) const
@@ -85,8 +68,8 @@ public:
 	
 	UT_INLINE const akTransformState& operator= (const akTransformState& o)
 	{
-		rot = o.rot;
 		loc = o.loc;
+		rot = o.rot;
 		scale = o.scale;
 		return *this;
 	}

@@ -93,17 +93,6 @@ void akGeometryDeformer::Skinning(akGeometryDeformer::SkinningOption method,
 								 vtxSrc, vtxSrcStride,
 								 vtxDst, vtxDstStride);
 			break;
-		case GD_NO_NOSCALE:
-			DLBSkinningNoScaling(matrices,
-								 dquats,
-								 vtxCount,
-								 weights, weightsStride,
-								 indices, indicesStride,
-								 vtxSrc, vtxSrcStride,
-								 vtxDst, vtxDstStride,
-								 normSrc, normSrcStride,
-								 normDst, normDstStride);
-			break;
 		case GD_NO_FULL:
 			DLBSkinning(matrices,
 						dquats,
@@ -116,7 +105,6 @@ void akGeometryDeformer::Skinning(akGeometryDeformer::SkinningOption method,
 						normDst, normDstStride);
 			break;
 		case GD_NO_UNIFORM_SCALE:
-		default:
 			DLBSkinningUniformScale(matrices,
 									dquats,
 									vtxCount,
@@ -126,6 +114,18 @@ void akGeometryDeformer::Skinning(akGeometryDeformer::SkinningOption method,
 									vtxDst, vtxDstStride,
 									normSrc, normSrcStride,
 									normDst, normDstStride);
+			break;
+		case GD_NO_NOSCALE:
+		default:
+			DLBSkinningNoScaling(matrices,
+								 dquats,
+								 vtxCount,
+								 weights, weightsStride,
+								 indices, indicesStride,
+								 vtxSrc, vtxSrcStride,
+								 vtxDst, vtxDstStride,
+								 normSrc, normSrcStride,
+								 normDst, normDstStride);
 			break;
 		}
 		break;
@@ -596,6 +596,7 @@ void akGeometryDeformer::DLBAntipodalitySkinning(
 		
 		// normal 2nd pass
 		*normDst = tmpNor + 2.0 * cross( ndxyz, cross(ndxyz, tmpNor) + dq.n.getW() * tmpNor );
+		*normDst = normalize(*normDst);
 		
 		akAdvancePointer(normSrc, normSrcStride);
 		akAdvancePointer(normDst, normDstStride);
@@ -658,6 +659,7 @@ void akGeometryDeformer::DLBAntipodalitySkinningUniformScale(
 		
 		// normal 2nd pass
 		*normDst = tmpNor + 2.0 * cross( ndxyz, cross(ndxyz, tmpNor) + dq.n.getW() * tmpNor );
+		*normDst = normalize(*normDst);
 		
 		akAdvancePointer(normSrc, normSrcStride);
 		akAdvancePointer(normDst, normDstStride);
@@ -735,6 +737,15 @@ void akGeometryDeformer::DLBAntipodalitySkinningNoNormals(
 	
 	for(unsigned int i=0; i<vtxCount; i++)
 	{
+	
+		// position 1st pass for non rigid part of the transformation using matrices
+		akVector4 pos(vtxSrc[0].getX(), vtxSrc[0].getY(), vtxSrc[0].getZ(), 1);
+		akVector4 posout(0,0,0,1);
+		if (weights[0]) posout += matrices[indices[0]] * weights[0] * pos;
+		if (weights[1]) posout += matrices[indices[1]] * weights[1] * pos;
+		if (weights[2]) posout += matrices[indices[2]] * weights[2] * pos;
+		if (weights[3]) posout += matrices[indices[3]] * weights[3] * pos;
+		
 		akDualQuat dq0 = dquats[indices[0]];
 		akDualQuat dq1 = dquats[indices[1]];
 		akDualQuat dq2 = dquats[indices[2]];
@@ -755,7 +766,7 @@ void akGeometryDeformer::DLBAntipodalitySkinningNoNormals(
 		akVector3 dxyz(dq.d.getXYZ());
 		
 		//position
-		akVector3 in(*vtxSrc);
+		akVector3 in(posout.getXYZ());
 		*vtxDst = in + 2.0 * cross( ndxyz, cross(ndxyz, in) + dq.n.getW() * in ) +
 				2.0 * ( dq.n.getW() * dxyz - dq.d.getW() * ndxyz + cross(ndxyz, dxyz) );
 	

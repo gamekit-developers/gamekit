@@ -51,7 +51,7 @@ akBLoader::akBLoader(akDemoBase* demo)
 
 int buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blender::Bone* bone, UTuint8 parent)
 {
-	if(!(bone->flag & BONE_NO_DEFORM) || parent == AK_JOINT_NO_PARENT)
+	//if(!(bone->flag & BONE_NO_DEFORM) || parent == AK_JOINT_NO_PARENT)
 	{
 		utHashedString jname = bone->name;
 		
@@ -63,6 +63,8 @@ int buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blend
 		
 		bind.push_back(mat);
 		parent = skel->addJoint(jname, parent);
+		if(bone->flag & BONE_NO_SCALE)
+			skel->getJoint(parent)->m_inheritScale = false;
 	}
 	
 	Blender::Bone* chi = static_cast<Blender::Bone*>(bone->childbase.first);
@@ -91,7 +93,9 @@ void akBLoader::convertSkeleton(Blender::bArmature *bskel)
 	akSkeletonPose* bindPose = new akSkeletonPose(skel, akSkeletonPose::SP_MODEL_SPACE);
 	for(int i=0; i<skel->getNumJoints(); i++)
 	{
-		*bindPose->getJointPose(i) = akTransformState(bind[i]);
+		akTransformState t;
+		akMathUtils::extractTransform(bind[i], t.loc, t.rot,t.scale );
+		*bindPose->getJointPose(i) = t;
 	}
 	skel->setBindingPose(bindPose);
 	
@@ -113,7 +117,8 @@ void akBLoader::convertObjectMesh(Blender::Object *bobj)
 				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
 				
 				
-	akTransformState trans(mat);
+	akTransformState trans;
+	akMathUtils::extractTransform(mat, trans.loc, trans.rot,trans.scale );
 	entity->setTransformState(trans);
 	
 	Blender::Mesh* bmesh =  (Blender::Mesh*)bobj->data;
@@ -159,7 +164,9 @@ void akBLoader::convertCameraObject(Blender::Object *bobj)
 				akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
 				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
 				
-	camera->m_transform = akTransformState(mat);
+	akTransformState trans;
+	akMathUtils::extractTransform(mat, trans.loc, trans.rot,trans.scale );
+	camera->m_transform = trans;
 	camera->m_clipStart = bcam->clipsta;
 	camera->m_clipEnd = bcam->clipend;
 	camera->m_fov = 360.0f * atanf(16.0f / bcam->lens) / akPi; //TODO fovx to fovy

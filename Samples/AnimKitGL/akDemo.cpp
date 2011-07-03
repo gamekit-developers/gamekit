@@ -49,8 +49,9 @@ akDemo::~akDemo()
 void akDemo::init(void)
 {
 	akBLoader loader(this);
-	loader.loadFile("Blu.blend", false, true);
+	//loader.loadFile("Blu.blend", false, true);
 	//loader.loadFile("Sintel.blend", false, true);
+	loader.loadFile("Test3.blend", false, true);
 	
 	// Set some animation data the loader cannot detect
 	akEntity* square = getEntity("Plane");

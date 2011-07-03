@@ -13,6 +13,7 @@ set(ANIMKIT_SRC
 	akBufferInfo.cpp
 	akDualQuat.cpp
 	akGeometryDeformer.cpp
+	akMathUtils.cpp
 	akMesh.cpp
 	akMorphTarget.cpp
 	akPose.cpp
