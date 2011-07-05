@@ -209,7 +209,7 @@ void gkRigidBody::createConstraints(void)
 		btTypedConstraint* constraint = m_owner->createConstraint(rbA, rbB, cprops);
 
 		if (constraint)
-			addConstraint(constraint);
+			addConstraint(constraint, cprops.m_disableLinkedCollision);
 
 	}
 }
