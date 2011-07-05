@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -116,6 +116,9 @@ namespace irr
 		//! This sets the clipboard selection and _not_ the primary selection which you have on X on the middle mouse button.
 		virtual void copyToClipboard(const c8* text) const;
 
+		//! Remove all messages pending in the system message loop
+		virtual void clearSystemMessages();
+
 		//! Get the device type
 		virtual E_DEVICE_TYPE getType() const
 		{
@@ -134,6 +137,8 @@ namespace irr
 		void pollJoysticks();
 
 		void initXAtoms();
+
+		bool switchToFullscreen(bool reset=false);
 
 		//! Implementation of the linux cursor control
 		class CCursorControl : public gui::ICursorControl
@@ -250,7 +255,7 @@ namespace irr
 			}
 
 			//! Returns the current position of the mouse cursor.
-			virtual core::position2d<s32> getPosition()
+			virtual const core::position2d<s32>& getPosition()
 			{
 				updateCursorPos();
 				return CursorPos;
@@ -354,7 +359,6 @@ namespace irr
 		#endif
 #endif
 		u32 Width, Height;
-		bool Close;
 		bool WindowHasFocus;
 		bool WindowMinimized;
 		bool UseXVidMode;

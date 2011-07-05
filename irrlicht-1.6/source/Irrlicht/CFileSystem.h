@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -46,8 +46,10 @@ public:
 	virtual IWriteFile* createAndWriteFile(const io::path& filename, bool append=false);
 
 	//! Adds an archive to the file system.
-	virtual bool addFileArchive(const io::path& filename, bool ignoreCase = true,
-		bool ignorePaths = true, E_FILE_ARCHIVE_TYPE archiveType = EFAT_UNKNOWN);
+	virtual bool addFileArchive(const io::path& filename,
+			bool ignoreCase = true, bool ignorePaths = true,
+			E_FILE_ARCHIVE_TYPE archiveType = EFAT_UNKNOWN,
+			const core::stringc& password="");
 
 	//! move the hirarchy of the filesystem. moves sourceIndex relative up or down
 	virtual bool moveFileArchive( u32 sourceIndex, s32 relative );
@@ -95,6 +97,9 @@ public:
 	//! Creates a list of files and directories in the current working directory
 	//! and returns it.
 	virtual IFileList* createFileList();
+
+	//! Creates an empty filelist
+	virtual IFileList* createEmptyFileList(const io::path& path, bool ignoreCase, bool ignorePaths);
 
 	//! determines if a file exists and would be able to be opened.
 	virtual bool existFile(const io::path& filename) const;

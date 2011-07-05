@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -13,18 +13,18 @@
 #include <limits.h> // For INT_MAX / UINT_MAX
 
 #if defined(_IRR_SOLARIS_PLATFORM_) || defined(__BORLANDC__) || defined (__BCPLUSPLUS__) || defined (_WIN32_WCE)
-	#define sqrtf(X) (f32)sqrt((f64)(X))
-	#define sinf(X) (f32)sin((f64)(X))
-	#define cosf(X) (f32)cos((f64)(X))
-	#define asinf(X) (f32)asin((f64)(X))
-	#define acosf(X) (f32)acos((f64)(X))
-	#define atan2f(X,Y) (f32)atan2((f64)(X),(f64)(Y))
-	#define ceilf(X) (f32)ceil((f64)(X))
-	#define floorf(X) (f32)floor((f64)(X))
-	#define powf(X,Y) (f32)pow((f64)(X),(f64)(Y))
-	#define fmodf(X,Y) (f32)fmod((f64)(X),(f64)(Y))
-	#define fabsf(X) (f32)fabs((f64)(X))
-	#define logf(X) (f32)log((f64)(X))
+	#define sqrtf(X) (irr::f32)sqrt((irr::f64)(X))
+	#define sinf(X) (irr::f32)sin((irr::f64)(X))
+	#define cosf(X) (irr::f32)cos((irr::f64)(X))
+	#define asinf(X) (irr::f32)asin((irr::f64)(X))
+	#define acosf(X) (irr::f32)acos((irr::f64)(X))
+	#define atan2f(X,Y) (irr::f32)atan2((irr::f64)(X),(irr::f64)(Y))
+	#define ceilf(X) (irr::f32)ceil((irr::f64)(X))
+	#define floorf(X) (irr::f32)floor((irr::f64)(X))
+	#define powf(X,Y) (irr::f32)pow((irr::f64)(X),(irr::f64)(Y))
+	#define fmodf(X,Y) (irr::f32)fmod((irr::f64)(X),(irr::f64)(Y))
+	#define fabsf(X) (irr::f32)fabs((irr::f64)(X))
+	#define logf(X) (irr::f32)log((irr::f64)(X))
 #endif
 
 #ifndef FLT_MAX
@@ -38,7 +38,7 @@ namespace core
 
 	//! Rounding error constant often used when comparing f32 values.
 
-	const s32 ROUNDING_ERROR_S32 = 1;
+	const s32 ROUNDING_ERROR_S32 = 0;
 	const f32 ROUNDING_ERROR_f32 = 0.000001f;
 	const f64 ROUNDING_ERROR_f64 = 0.00000001;
 
@@ -47,7 +47,7 @@ namespace core
 #endif
 	//! Constant for PI.
 	const f32 PI		= 3.14159265359f;
-						
+
 	//! Constant for reciprocal of PI.
 	const f32 RECIPROCAL_PI	= 1.0f/PI;
 
@@ -159,6 +159,19 @@ namespace core
 	inline const T clamp (const T& value, const T& low, const T& high)
 	{
 		return min_ (max_(value,low), high);
+	}
+
+	//! swaps the content of the passed parameters
+	// Note: We use the same trick as boost and use two template arguments to
+	// avoid ambiguity when swapping objects of an Irrlicht type that has not
+	// it's own swap overload. Otherwise we get conflicts with some compilers
+	// in combination with stl.
+	template <class T1, class T2>
+	inline void swap(T1& a, T2& b)
+	{
+		T1 c(a);
+		a = b;
+		b = c;
 	}
 
 	//! returns if a equals b, taking possible rounding errors into account
@@ -462,7 +475,7 @@ namespace core
 		__asm mulss xmm1, xmm0            // xmm1 = f * rcpss(f)
 		__asm mulss xmm1, xmm0            // xmm2 = f * rcpss(f) * rcpss(f)
 		__asm addss xmm0, xmm0            // xmm0 = 2 * rcpss(f)
-		__asm subss xmm0, xmm1            // xmm0 = 2 * rcpss(f) 
+		__asm subss xmm0, xmm1            // xmm0 = 2 * rcpss(f)
 										  //        - f * rcpss(f) * rcpss(f)
 		__asm movss rec, xmm0             // return xmm0
 		return rec;
@@ -502,7 +515,7 @@ namespace core
 		__asm mulss xmm1, xmm0            // xmm1 = f * rcpss(f)
 		__asm mulss xmm1, xmm0            // xmm2 = f * rcpss(f) * rcpss(f)
 		__asm addss xmm0, xmm0            // xmm0 = 2 * rcpss(f)
-		__asm subss xmm0, xmm1            // xmm0 = 2 * rcpss(f) 
+		__asm subss xmm0, xmm1            // xmm0 = 2 * rcpss(f)
 										  //        - f * rcpss(f) * rcpss(f)
 		__asm movss rec, xmm0             // return xmm0
 		return rec;

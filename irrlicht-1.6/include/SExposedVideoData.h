@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -24,6 +24,9 @@ you are using the software or the null device.
 */
 struct SExposedVideoData
 {
+	SExposedVideoData() {OpenGLWin32.HDc=0; OpenGLWin32.HRc=0; OpenGLWin32.HWnd=0;}
+	explicit SExposedVideoData(void* Window) {OpenGLWin32.HDc=0; OpenGLWin32.HRc=0; OpenGLWin32.HWnd=Window;}
+
 	union
 	{
 		struct

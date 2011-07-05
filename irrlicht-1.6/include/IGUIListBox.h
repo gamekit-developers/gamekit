@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -78,7 +78,7 @@ namespace gui
 		//! sets the selected item. Set this to 0 if no item should be selected
 		virtual void setSelected(const wchar_t *item) = 0;
 
-		//! set whether the listbox should scroll to new or newly selected items
+		//! set whether the listbox should scroll to newly selected items
 		virtual void setAutoScrollEnabled(bool scroll) = 0;
 
 		//! returns true if automatic scrolling is enabled, false if not.
@@ -118,8 +118,8 @@ namespace gui
 		//! set global itemHeight
 		virtual void setItemHeight( s32 height ) = 0;
 
-        //! Sets whether to draw the background
-        virtual void setDrawBackground(bool draw) = 0;
+		//! Sets whether to draw the background
+		virtual void setDrawBackground(bool draw) = 0;
 };
 
 

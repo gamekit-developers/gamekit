@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Gaz Davidson
+// Copyright (C) 2009-2010 Gaz Davidson
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -153,7 +153,7 @@ namespace irr
 			}
 
 			//! Returns the current position of the mouse cursor.
-			virtual core::position2d<s32> getPosition()
+			virtual const core::position2d<s32>& getPosition()
 			{
 				return CursorPos;
 			}
@@ -223,8 +223,7 @@ namespace irr
 			core::stringc         Text;
 		};
 
-		bool IsDeviceRunning,
-		     IsWindowFocused;
+		bool IsWindowFocused;
 
 		core::array<core::stringc> OutputBuffer;
 		gui::IGUIFont  *ConsoleFont;
@@ -328,3 +327,4 @@ namespace gui
 
 #endif // _IRR_COMPILE_WITH_CONSOLE_DEVICE_
 #endif // __C_IRR_DEVICE_CONSOLE_H_INCLUDED__
+

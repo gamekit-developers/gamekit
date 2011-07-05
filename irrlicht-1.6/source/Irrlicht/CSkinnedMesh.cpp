@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -62,7 +62,6 @@ IMesh* CSkinnedMesh::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop, s32
 		return this;
 
 	animateMesh((f32)frame, 1.0f);
-	buildAll_LocalAnimatedMatrices();
 	skinMesh();
 	return this;
 }
@@ -117,17 +116,17 @@ void CSkinnedMesh::animateMesh(f32 frame, f32 blend)
 			joint->Animatedscale = core::lerp(oldScale, scale, blend);
 			joint->Animatedrotation.slerp(oldRotation, rotation, blend);
 		}
-
-		//Note:
-		//_LocalAnimatedMatrix needs to be built at some point, but this function may be called lots of times for
-		//one render (to play two animations at the same time) _LocalAnimatedMatrix only needs to be built once.
-		//a call to buildAllLocalAnimatedMatrices is needed before skinning the mesh, and before the user gets the joints to move
-
-		//----------------
-		// Temp!
-		buildAll_LocalAnimatedMatrices();
-		//-----------------
 	}
+
+	//Note:
+	//_LocalAnimatedMatrix needs to be built at some point, but this function may be called lots of times for
+	//one render (to play two animations at the same time) _LocalAnimatedMatrix only needs to be built once.
+	//a call to buildAllLocalAnimatedMatrices is needed before skinning the mesh, and before the user gets the joints to move
+
+	//----------------
+	// Temp!
+	buildAll_LocalAnimatedMatrices();
+	//-----------------
 
 	updateBoundingBox();
 }
@@ -462,6 +461,7 @@ void CSkinnedMesh::skinMesh()
 		for (i=0; i<SkinningBuffers->size(); ++i)
 			(*SkinningBuffers)[i]->setDirty(EBT_VERTEX);
 	}
+	updateBoundingBox();
 }
 
 
@@ -1254,17 +1254,13 @@ void CSkinnedMesh::recoverJointsFromMesh(core::array<IBoneSceneNode*> &JointChil
 		SJoint *joint=AllJoints[i];
 		node->setPosition( joint->LocalAnimatedMatrix.getTranslation() );
 		node->setRotation( joint->LocalAnimatedMatrix.getRotationDegrees() );
-
-		//node->setScale( joint->LocalAnimatedMatrix.getScale() );
+		node->setScale( joint->LocalAnimatedMatrix.getScale() );
 
 		node->positionHint=joint->positionHint;
 		node->scaleHint=joint->scaleHint;
 		node->rotationHint=joint->rotationHint;
 
-		//node->setAbsoluteTransformation(joint->GlobalMatrix); //not going to work
-
-		//Note: This updateAbsolutePosition will not work well if joints are not nested like b3d
-		//node->updateAbsolutePosition();
+		node->updateAbsolutePosition();
 	}
 }
 
@@ -1276,19 +1272,15 @@ void CSkinnedMesh::transferJointsToMesh(const core::array<IBoneSceneNode*> &Join
 		const IBoneSceneNode* const node=JointChildSceneNodes[i];
 		SJoint *joint=AllJoints[i];
 
-		joint->LocalAnimatedMatrix.setTranslation(node->getPosition());
 		joint->LocalAnimatedMatrix.setRotationDegrees(node->getRotation());
-
-		//joint->LocalAnimatedMatrix.setScale( node->getScale() );
+		joint->LocalAnimatedMatrix.setTranslation(node->getPosition());
+		joint->LocalAnimatedMatrix *= core::matrix4().setScale(node->getScale());
 
 		joint->positionHint=node->positionHint;
 		joint->scaleHint=node->scaleHint;
 		joint->rotationHint=node->rotationHint;
 
-		if (node->getSkinningSpace()==EBSS_GLOBAL)
-			joint->GlobalSkinningSpace=true;
-		else
-			joint->GlobalSkinningSpace=false;
+		joint->GlobalSkinningSpace=(node->getSkinningSpace()==EBSS_GLOBAL);
 	}
 	//Remove cache, temp...
 	LastAnimatedFrame=-1;
@@ -1363,7 +1355,7 @@ void CSkinnedMesh::convertMeshToTangents()
 	{
 		if (LocalBuffers[b])
 		{
-			LocalBuffers[b]->MoveTo_Tangents();
+			LocalBuffers[b]->convertToTangents();
 
 			const s32 idxCnt = LocalBuffers[b]->getIndexCount();
 
@@ -1446,12 +1438,6 @@ void CSkinnedMesh::calculateTangents(
 		binormal *= -1.0f;
 	}
 }
-
-
-
-
-
-
 
 
 } // end namespace scene

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -57,10 +57,37 @@ namespace core
 		vector3d<T> operator/(const T v) const { T i=(T)1.0/v; return vector3d<T>(X * i, Y * i, Z * i); }
 		vector3d<T>& operator/=(const T v) { T i=(T)1.0/v; X*=i; Y*=i; Z*=i; return *this; }
 
-		bool operator<=(const vector3d<T>&other) const { return X<=other.X && Y<=other.Y && Z<=other.Z;}
-		bool operator>=(const vector3d<T>&other) const { return X>=other.X && Y>=other.Y && Z>=other.Z;}
-		bool operator<(const vector3d<T>&other) const { return X<other.X && Y<other.Y && Z<other.Z;}
-		bool operator>(const vector3d<T>&other) const { return X>other.X && Y>other.Y && Z>other.Z;}
+		//! sort in order X, Y, Z. Equality with rounding tolerance.
+		bool operator<=(const vector3d<T>&other) const
+		{
+			return 	(X<other.X || core::equals(X, other.X)) ||
+					(core::equals(X, other.X) && (Y<other.Y || core::equals(Y, other.Y))) ||
+					(core::equals(X, other.X) && core::equals(Y, other.Y) && (Z<other.Z || core::equals(Z, other.Z)));
+		}
+
+		//! sort in order X, Y, Z. Equality with rounding tolerance.
+		bool operator>=(const vector3d<T>&other) const
+		{
+			return 	(X>other.X || core::equals(X, other.X)) ||
+					(core::equals(X, other.X) && (Y>other.Y || core::equals(Y, other.Y))) ||
+					(core::equals(X, other.X) && core::equals(Y, other.Y) && (Z>other.Z || core::equals(Z, other.Z)));
+		}
+
+		//! sort in order X, Y, Z. Difference must be above rounding tolerance.
+		bool operator<(const vector3d<T>&other) const
+		{
+			return 	(X<other.X && !core::equals(X, other.X)) ||
+					(core::equals(X, other.X) && Y<other.Y && !core::equals(Y, other.Y)) ||
+					(core::equals(X, other.X) && core::equals(Y, other.Y) && Z<other.Z && !core::equals(Z, other.Z));
+		}
+
+		//! sort in order X, Y, Z. Difference must be above rounding tolerance.
+		bool operator>(const vector3d<T>&other) const
+		{
+			return 	(X>other.X && !core::equals(X, other.X)) ||
+					(core::equals(X, other.X) && Y>other.Y && !core::equals(Y, other.Y)) ||
+					(core::equals(X, other.X) && core::equals(Y, other.Y) && Z>other.Z && !core::equals(Z, other.Z));
+		}
 
 		//! use weak float compare
 		bool operator==(const vector3d<T>& other) const
@@ -140,10 +167,10 @@ namespace core
 		\return Reference to this vector after normalization. */
 		vector3d<T>& normalize()
 		{
-		    f64 length = (f32)(X*X + Y*Y + Z*Z);
+			f64 length = X*X + Y*Y + Z*Z;
 			if (core::equals(length, 0.0)) // this check isn't an optimization but prevents getting NAN in the sqrt.
 				return *this;
-			length = core::reciprocal_squareroot ( (f64) (X*X + Y*Y + Z*Z) );
+			length = core::reciprocal_squareroot(length);
 
 			X = (T)(X * length);
 			Y = (T)(Y * length);
@@ -161,9 +188,9 @@ namespace core
 		//! Inverts the vector.
 		vector3d<T>& invert()
 		{
-			X *= -1.0f;
-			Y *= -1.0f;
-			Z *= -1.0f;
+			X *= -1;
+			Y *= -1;
+			Z *= -1;
 			return *this;
 		}
 
@@ -275,22 +302,47 @@ namespace core
 		{
 			vector3d<T> angle;
 
-			angle.Y = (T)(atan2(X, Z) * (T) RADTODEG64);
+			const f64 tmp = (atan2((f64)X, (f64)Z) * RADTODEG64);
+			angle.Y = (T)tmp;
 
-			if (angle.Y < 0.0f)
-				angle.Y += 360.0f;
-			if (angle.Y >= 360.0f)
-				angle.Y -= 360.0f;
+			if (angle.Y < 0)
+				angle.Y += 360;
+			if (angle.Y >= 360)
+				angle.Y -= 360;
 
-			const T z1 = core::squareroot(X*X + Z*Z);
+			const f64 z1 = core::squareroot(X*X + Z*Z);
 
-			angle.X = (T)(atan2(z1, (T)Y) * (T) RADTODEG64 - (T) 90.0);
+			angle.X = (T)(atan2((f64)z1, (f64)Y) * RADTODEG64 - 90.0);
 
-			if (angle.X < (T) 0.0)
-				angle.X += (T) 360.0;
-			if (angle.X >= (T) 360.0)
-				angle.X -= (T) 360.0;
+			if (angle.X < 0)
+				angle.X += 360;
+			if (angle.X >= 360)
+				angle.X -= 360;
 
+			return angle;
+		}
+
+		//! Get the spherical coordinate angles
+		/** This returns Euler degrees for the point represented by
+		this vector.  The calculation assumes the pole at (0,1,0) and
+		returns the angles in X and Y.
+		*/
+		vector3d<T> getSphericalCoordinateAngles()
+		{
+			vector3d<T> angle;
+			const f64 length = X*X + Y*Y + Z*Z;
+
+			if (length)
+			{
+				if (X!=0)
+				{
+					angle.Y = (T)(atan2((f64)Z,(f64)X) * RADTODEG64);
+				}
+				else if (Z<0)
+					angle.Y=180;
+
+				angle.X = (T)(acos(Y * core::reciprocal_squareroot(length)) * RADTODEG64);
+			}
 			return angle;
 		}
 
@@ -352,6 +404,12 @@ namespace core
 		T Z;
 	};
 
+	//! partial specialization for integer vectors
+	// Implementor note: inline keyword needed due to template specialization for s32. Otherwise put specialization into a .cpp
+	template <>
+	inline vector3d<s32> vector3d<s32>::operator /(s32 val) const {return core::vector3d<s32>(X/val,Y/val,Z/val);}
+	template <>
+	inline vector3d<s32>& vector3d<s32>::operator /=(s32 val) {X/=val;Y/=val;Z/=val; return *this;}
 
 	//! Typedef for a f32 3d vector.
 	typedef vector3d<f32> vector3df;

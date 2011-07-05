@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -26,7 +26,7 @@ class IImageWriter : public IReferenceCounted
 {
 public:
 	//! Check if this writer can write a file with the given extension
-	/** \param fileName Name of the file to check.
+	/** \param filename Name of the file to check.
 	\return True if file extension specifies a writable type. */
 	virtual bool isAWriteableFileExtension(const io::path& filename) const = 0;
 

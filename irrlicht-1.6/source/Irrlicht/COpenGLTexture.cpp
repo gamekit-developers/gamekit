@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -21,8 +21,8 @@ namespace video
 {
 
 //! constructor for usual textures
-COpenGLTexture::COpenGLTexture(IImage* origImage, const io::path& name, COpenGLDriver* driver)
-	: ITexture(name), ColorFormat(ECF_A8R8G8B8), Driver(driver), Image(0),
+COpenGLTexture::COpenGLTexture(IImage* origImage, const io::path& name, void* mipmapData, COpenGLDriver* driver)
+	: ITexture(name), ColorFormat(ECF_A8R8G8B8), Driver(driver), Image(0), MipImage(0),
 	TextureName(0), InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT),
 	PixelType(GL_UNSIGNED_BYTE),
 	IsRenderTarget(false), AutomaticMipmapUpdate(false),
@@ -33,19 +33,22 @@ COpenGLTexture::COpenGLTexture(IImage* origImage, const io::path& name, COpenGLD
 	#endif
 
 	HasMipMaps = Driver->getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
-	getImageData(origImage);
+	getImageValues(origImage);
 
 	glGenTextures(1, &TextureName);
 
 	if (ImageSize==TextureSize)
-		Image = new CImage(ColorFormat, origImage);
+	{
+		Image = new CImage(ColorFormat, ImageSize);
+		origImage->copyTo(Image);
+	}
 	else
 	{
 		Image = new CImage(ColorFormat, TextureSize);
 		// scale texture
 		origImage->copyToScaling(Image);
 	}
-	copyTexture();
+	uploadTexture(true, mipmapData);
 	if (!KeepImage)
 	{
 		Image->drop();
@@ -53,9 +56,10 @@ COpenGLTexture::COpenGLTexture(IImage* origImage, const io::path& name, COpenGLD
 	}
 }
 
+
 //! constructor for basic setup (only for derived classes)
 COpenGLTexture::COpenGLTexture(const io::path& name, COpenGLDriver* driver)
-	: ITexture(name), ColorFormat(ECF_A8R8G8B8), Driver(driver), Image(0),
+	: ITexture(name), ColorFormat(ECF_A8R8G8B8), Driver(driver), Image(0), MipImage(0),
 	TextureName(0), InternalFormat(GL_RGBA), PixelFormat(GL_BGRA_EXT),
 	PixelType(GL_UNSIGNED_BYTE),
 	HasMipMaps(true), IsRenderTarget(false), AutomaticMipmapUpdate(false),
@@ -77,6 +81,7 @@ COpenGLTexture::~COpenGLTexture()
 }
 
 
+//! Choose best matching color format, based on texture creation flags
 ECOLOR_FORMAT COpenGLTexture::getBestColorFormat(ECOLOR_FORMAT format)
 {
 	ECOLOR_FORMAT destFormat = ECF_A8R8G8B8;
@@ -120,379 +125,8 @@ ECOLOR_FORMAT COpenGLTexture::getBestColorFormat(ECOLOR_FORMAT format)
 }
 
 
-void COpenGLTexture::getImageData(IImage* image)
-{
-	if (!image)
-	{
-		os::Printer::log("No image for OpenGL texture.", ELL_ERROR);
-		return;
-	}
-
-	ImageSize = image->getDimension();
-
-	if ( !ImageSize.Width || !ImageSize.Height)
-	{
-		os::Printer::log("Invalid size of image for OpenGL Texture.", ELL_ERROR);
-		return;
-	}
-
-	const f32 ratio = (f32)ImageSize.Width/(f32)ImageSize.Height;
-	if ((ImageSize.Width>Driver->MaxTextureSize) && (ratio >= 1.0f))
-	{
-		ImageSize.Width = Driver->MaxTextureSize;
-		ImageSize.Height = (u32)(Driver->MaxTextureSize/ratio);
-	}
-	else if (ImageSize.Height>Driver->MaxTextureSize)
-	{
-		ImageSize.Height = Driver->MaxTextureSize;
-		ImageSize.Width = (u32)(Driver->MaxTextureSize*ratio);
-	}
-	TextureSize=ImageSize.getOptimalSize(!Driver->queryFeature(EVDF_TEXTURE_NPOT));
-
-	ColorFormat = getBestColorFormat(image->getColorFormat());
-}
-
-
-//! copies the the texture into an open gl texture.
-void COpenGLTexture::copyTexture(bool newTexture)
-{
-	if (!Image)
-	{
-		os::Printer::log("No image for OpenGL texture to upload", ELL_ERROR);
-		return;
-	}
-
-	switch (ColorFormat)
-	{
-		case ECF_A1R5G5B5:
-			InternalFormat=GL_RGBA;
-			PixelFormat=GL_BGRA_EXT;
-			PixelType=GL_UNSIGNED_SHORT_1_5_5_5_REV;
-			break;
-		case ECF_R5G6B5:
-			InternalFormat=GL_RGB;
-			PixelFormat=GL_BGR;
-			PixelType=GL_UNSIGNED_SHORT_5_6_5_REV;
-			break;
-		case ECF_R8G8B8:
-			InternalFormat=GL_RGB;
-			PixelFormat=GL_BGR;
-			PixelType=GL_UNSIGNED_BYTE;
-			break;
-		case ECF_A8R8G8B8:
-			InternalFormat=GL_RGBA;
-			PixelFormat=GL_BGRA_EXT;
-			if (Driver->Version > 101)
-				PixelType=GL_UNSIGNED_INT_8_8_8_8_REV;
-			break;
-		default:
-			os::Printer::log("Unsupported texture format", ELL_ERROR);
-			break;
-	}
-
-	Driver->setActiveTexture(0, this);
-	if (Driver->testGLError())
-		os::Printer::log("Could not bind Texture", ELL_ERROR);
-
-	if (newTexture)
-	{
-#ifndef DISABLE_MIPMAPPING
-#ifdef GL_SGIS_generate_mipmap
-		if (HasMipMaps && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
-		{
-			if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_SPEED))
-				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_FASTEST);
-			else if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_QUALITY))
-				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_NICEST);
-			else
-				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_DONT_CARE);
-			// automatically generate and update mipmaps
-			glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
-			AutomaticMipmapUpdate=true;
-		}
-		else
-#endif
-		{
-			AutomaticMipmapUpdate=false;
-			regenerateMipMapLevels();
-		}
-		if (HasMipMaps) // might have changed in regenerateMipMapLevels
-		{
-			// enable bilinear mipmap filter
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		else
-		#else
-			HasMipMaps=false;
-			os::Printer::log("Did not create OpenGL texture mip maps.", ELL_ERROR);
-		#endif
-		{
-			// enable bilinear filter without mipmaps
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-	}
-
-	void* source = Image->lock();
-	if (newTexture)
-		glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, Image->getDimension().Width,
-			Image->getDimension().Height, 0, PixelFormat, PixelType, source);
-	else
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Image->getDimension().Width,
-			Image->getDimension().Height, PixelFormat, PixelType, source);
-	Image->unlock();
-
-	if (Driver->testGLError())
-		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
-}
-
-
-//! lock function
-void* COpenGLTexture::lock(bool readOnly)
-{
-	ReadOnlyLock |= readOnly;
-
-	if (!Image || IsRenderTarget)
-	{
-		// prepare the data storage if necessary
-		if (!Image)
-			Image = new CImage(ECF_A8R8G8B8, ImageSize);
-		if (!Image)
-			return 0;
-
-		u8* pPixels = static_cast<u8*>(Image->lock());
-		if (!pPixels)
-		{
-			return 0;
-		}
-		// we need to keep the correct texture bound...
-		GLint tmpTexture;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &tmpTexture);
-		glBindTexture(GL_TEXTURE_2D, TextureName);
-
-		// allows to read pixels in top-to-bottom order
-#ifdef GL_MESA_pack_invert
-		if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_MESA_pack_invert))
-			glPixelStorei(GL_PACK_INVERT_MESA, GL_TRUE);
-#endif
-
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pPixels);
-
-#ifdef GL_MESA_pack_invert
-		if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_MESA_pack_invert))
-			glPixelStorei(GL_PACK_INVERT_MESA, GL_FALSE);
-		else
-#endif
-		{
-			// opengl images are horizontally flipped, so we have to fix that here.
-			const s32 pitch=Image->getPitch();
-			u8* p2 = pPixels + (ImageSize.Height - 1) * pitch;
-			u8* tmpBuffer = new u8[pitch];
-			for (u32 i=0; i < ImageSize.Height; i += 2)
-			{
-				memcpy(tmpBuffer, pPixels, pitch);
-				memcpy(pPixels, p2, pitch);
-				memcpy(p2, tmpBuffer, pitch);
-				pPixels += pitch;
-				p2 -= pitch;
-			}
-			delete [] tmpBuffer;
-		}
-		Image->unlock();
-
-		//reset old bound texture
-		glBindTexture(GL_TEXTURE_2D, tmpTexture);
-	}
-	return Image->lock();
-}
-
-
-//! unlock function
-void COpenGLTexture::unlock()
-{
-	if (!Image)
-		return;
-	Image->unlock();
-	if (!ReadOnlyLock)
-		copyTexture(false);
-	ReadOnlyLock = false;
-	if (!KeepImage)
-	{
-		Image->drop();
-		Image=0;
-	}
-}
-
-
-//! Returns size of the original image.
-const core::dimension2d<u32>& COpenGLTexture::getOriginalSize() const
-{
-	return ImageSize;
-}
-
-
-//! Returns size of the texture.
-const core::dimension2d<u32>& COpenGLTexture::getSize() const
-{
-	return TextureSize;
-}
-
-
-//! returns driver type of texture, i.e. the driver, which created the texture
-E_DRIVER_TYPE COpenGLTexture::getDriverType() const
-{
-	return EDT_OPENGL;
-}
-
-
-//! returns color format of texture
-ECOLOR_FORMAT COpenGLTexture::getColorFormat() const
-{
-	return ColorFormat;
-}
-
-
-//! returns pitch of texture (in bytes)
-u32 COpenGLTexture::getPitch() const
-{
-	if (Image)
-		return Image->getPitch();
-	else
-		return 0;
-}
-
-
-//! return open gl texture name
-GLuint COpenGLTexture::getOpenGLTextureName() const
-{
-	return TextureName;
-}
-
-
-//! Returns whether this texture has mipmaps
-//! return true if texture has mipmaps
-bool COpenGLTexture::hasMipMaps() const
-{
-	return HasMipMaps;
-}
-
-
-//! Regenerates the mip map levels of the texture. Useful after locking and
-//! modifying the texture
-void COpenGLTexture::regenerateMipMapLevels()
-{
-	if (AutomaticMipmapUpdate || !HasMipMaps || !Image)
-		return;
-	if ((Image->getDimension().Width==1) && (Image->getDimension().Height==1))
-		return;
-
-	// Manually create mipmaps
-	u32 width=Image->getDimension().Width;
-	u32 height=Image->getDimension().Height;
-	u32 i=0;
-	u8* target = new u8[Image->getImageDataSizeInBytes()];
-	do
-	{
-		if (width>1)
-			width>>=1;
-		if (height>1)
-			height>>=1;
-		++i;
-		Image->copyToScaling(target, width, height, Image->getColorFormat());
-		glTexImage2D(GL_TEXTURE_2D, i, InternalFormat, width, height,
-				0, PixelFormat, PixelType, target);
-	}
-	while (width!=1 || height!=1);
-	delete [] target;
-	Image->unlock();
-}
-
-
-bool COpenGLTexture::isRenderTarget() const
-{
-	 return IsRenderTarget;
-}
-
-
-void COpenGLTexture::setIsRenderTarget(bool isTarget)
-{
-	 IsRenderTarget = isTarget;
-}
-
-
-bool COpenGLTexture::isFrameBufferObject() const
-{
-	return false;
-}
-
-
-//! Bind Render Target Texture
-void COpenGLTexture::bindRTT()
-{
-}
-
-
-//! Unbind Render Target Texture
-void COpenGLTexture::unbindRTT()
-{
-	Driver->setActiveTexture(0, this);
-
-	// Copy Our ViewPort To The Texture
-	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, getSize().Width, getSize().Height);
-}
-
-
-/* FBO Textures */
-
-// helper function for render to texture
-static bool checkFBOStatus(COpenGLDriver* Driver);
-
-//! RTT ColorFrameBuffer constructor
-COpenGLFBOTexture::COpenGLFBOTexture(const core::dimension2d<u32>& size,
-										  const io::path& name,
-										  COpenGLDriver* driver,
-								const ECOLOR_FORMAT format)
-	: COpenGLTexture(name, driver), DepthTexture(0), ColorFrameBuffer(0)
-{
-	#ifdef _DEBUG
-	setDebugName("COpenGLTexture_FBO");
-	#endif
-
-	ImageSize = size;
-	TextureSize = size;
-
-	GLint FilteringType;
-	InternalFormat = getOpenGLFormatAndParametersFromColorFormat(format, FilteringType, PixelFormat, PixelType);
-
-	HasMipMaps = false;
-	IsRenderTarget = true;
-
-#ifdef GL_EXT_framebuffer_object
-	// generate frame buffer
-	Driver->extGlGenFramebuffers(1, &ColorFrameBuffer);
-	Driver->extGlBindFramebuffer(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
-
-	// generate color texture
-	glGenTextures(1, &TextureName);
-	Driver->setActiveTexture(0, this);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, FilteringType);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
-		ImageSize.Height, 0, PixelFormat, PixelType, 0);
-
-	// attach color texture to frame buffer
-	Driver->extGlFramebufferTexture2D(GL_FRAMEBUFFER_EXT,
-						GL_COLOR_ATTACHMENT0_EXT,
-						GL_TEXTURE_2D,
-						TextureName,
-						0);
-#endif
-	unbindRTT();
-}
-
-GLint COpenGLFBOTexture::getOpenGLFormatAndParametersFromColorFormat(ECOLOR_FORMAT format,
+//! Get opengl values for the GPU texture storage
+GLint COpenGLTexture::getOpenGLFormatAndParametersFromColorFormat(ECOLOR_FORMAT format,
 				GLint& filtering,
 				GLenum& colorformat,
 				GLenum& type)
@@ -504,6 +138,23 @@ GLint COpenGLFBOTexture::getOpenGLFormatAndParametersFromColorFormat(ECOLOR_FORM
 
 	switch(format)
 	{
+		case ECF_A1R5G5B5:
+			colorformat=GL_BGRA_EXT;
+			type=GL_UNSIGNED_SHORT_1_5_5_5_REV;
+			return GL_RGBA;
+		case ECF_R5G6B5:
+			colorformat=GL_BGR;
+			type=GL_UNSIGNED_SHORT_5_6_5_REV;
+			return GL_RGB;
+		case ECF_R8G8B8:
+			colorformat=GL_BGR;
+			type=GL_UNSIGNED_BYTE;
+			return GL_RGB;
+		case ECF_A8R8G8B8:
+			colorformat=GL_BGRA_EXT;
+			if (Driver->Version > 101)
+				type=GL_UNSIGNED_INT_8_8_8_8_REV;
+			return GL_RGBA;
 		// Floating Point texture formats. Thanks to Patryk "Nadro" Nadrowski.
 		case ECF_R16F:
 		{
@@ -579,9 +230,419 @@ GLint COpenGLFBOTexture::getOpenGLFormatAndParametersFromColorFormat(ECOLOR_FORM
 		}
 		default:
 		{
+			os::Printer::log("Unsupported texture format", ELL_ERROR);
 			return GL_RGBA8;
 		}
 	}
+}
+
+
+// prepare values ImageSize, TextureSize, and ColorFormat based on image
+void COpenGLTexture::getImageValues(IImage* image)
+{
+	if (!image)
+	{
+		os::Printer::log("No image for OpenGL texture.", ELL_ERROR);
+		return;
+	}
+
+	ImageSize = image->getDimension();
+
+	if ( !ImageSize.Width || !ImageSize.Height)
+	{
+		os::Printer::log("Invalid size of image for OpenGL Texture.", ELL_ERROR);
+		return;
+	}
+
+	const f32 ratio = (f32)ImageSize.Width/(f32)ImageSize.Height;
+	if ((ImageSize.Width>Driver->MaxTextureSize) && (ratio >= 1.0f))
+	{
+		ImageSize.Width = Driver->MaxTextureSize;
+		ImageSize.Height = (u32)(Driver->MaxTextureSize/ratio);
+	}
+	else if (ImageSize.Height>Driver->MaxTextureSize)
+	{
+		ImageSize.Height = Driver->MaxTextureSize;
+		ImageSize.Width = (u32)(Driver->MaxTextureSize*ratio);
+	}
+	TextureSize=ImageSize.getOptimalSize(!Driver->queryFeature(EVDF_TEXTURE_NPOT));
+
+	ColorFormat = getBestColorFormat(image->getColorFormat());
+}
+
+
+//! copies the the texture into an open gl texture.
+void COpenGLTexture::uploadTexture(bool newTexture, void* mipmapData, u32 level)
+{
+	// check which image needs to be uploaded
+	IImage* image = level?MipImage:Image;
+	if (!image)
+	{
+		os::Printer::log("No image for OpenGL texture to upload", ELL_ERROR);
+		return;
+	}
+
+	// get correct opengl color data values
+	GLenum oldInternalFormat = InternalFormat;
+	GLint filtering;
+	InternalFormat = getOpenGLFormatAndParametersFromColorFormat(ColorFormat, filtering, PixelFormat, PixelType);
+	// make sure we don't change the internal format of existing images
+	if (!newTexture)
+		InternalFormat=oldInternalFormat;
+
+	Driver->setActiveTexture(0, this);
+	if (Driver->testGLError())
+		os::Printer::log("Could not bind Texture", ELL_ERROR);
+
+	// mipmap handling for main texture
+	if (!level && newTexture)
+	{
+#ifndef DISABLE_MIPMAPPING
+#ifdef GL_SGIS_generate_mipmap
+		// auto generate if possible and no mipmap data is given
+		if (HasMipMaps && !mipmapData && Driver->queryFeature(EVDF_MIP_MAP_AUTO_UPDATE))
+		{
+			if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_SPEED))
+				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_FASTEST);
+			else if (Driver->getTextureCreationFlag(ETCF_OPTIMIZED_FOR_QUALITY))
+				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_NICEST);
+			else
+				glHint(GL_GENERATE_MIPMAP_HINT_SGIS, GL_DONT_CARE);
+			// automatically generate and update mipmaps
+			glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE );
+			AutomaticMipmapUpdate=true;
+		}
+		else
+#endif
+		{
+			// Either generate manually due to missing capability
+			// or use predefined mipmap data
+			AutomaticMipmapUpdate=false;
+			regenerateMipMapLevels(mipmapData);
+		}
+		if (HasMipMaps) // might have changed in regenerateMipMapLevels
+		{
+			// enable bilinear mipmap filter
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+#else
+			HasMipMaps=false;
+			os::Printer::log("Did not create OpenGL texture mip maps.", ELL_INFORMATION);
+#endif
+		{
+			// enable bilinear filter without mipmaps
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+	}
+
+	// now get image data and upload to GPU
+	void* source = image->lock();
+	if (newTexture)
+		glTexImage2D(GL_TEXTURE_2D, level, InternalFormat, image->getDimension().Width,
+			image->getDimension().Height, 0, PixelFormat, PixelType, source);
+	else
+		glTexSubImage2D(GL_TEXTURE_2D, level, 0, 0, image->getDimension().Width,
+			image->getDimension().Height, PixelFormat, PixelType, source);
+	image->unlock();
+
+	if (Driver->testGLError())
+		os::Printer::log("Could not glTexImage2D", ELL_ERROR);
+}
+
+
+//! lock function
+void* COpenGLTexture::lock(bool readOnly, u32 mipmapLevel)
+{
+	// store info about which image is locked
+	IImage* image = (mipmapLevel==0)?Image:MipImage;
+	ReadOnlyLock |= readOnly;
+	MipLevelStored = mipmapLevel;
+
+	// if data not available or might have changed on GPU download it
+	if (!image || IsRenderTarget)
+	{
+		// prepare the data storage if necessary
+		if (!image)
+		{
+			if (mipmapLevel)
+			{
+				u32 i=0;
+				u32 width = TextureSize.Width;
+				u32 height = TextureSize.Height;
+				do
+				{
+					if (width>1)
+						width>>=1;
+					if (height>1)
+						height>>=1;
+					++i;
+				}
+				while (i != mipmapLevel);
+				MipImage = image = new CImage(ECF_A8R8G8B8, core::dimension2du(width,height));
+			}
+			else
+				Image = image = new CImage(ECF_A8R8G8B8, ImageSize);
+			ColorFormat = ECF_A8R8G8B8;
+		}
+		if (!image)
+			return 0;
+
+		u8* pixels = static_cast<u8*>(image->lock());
+		if (!pixels)
+			return 0;
+
+		// we need to keep the correct texture bound later on
+		GLint tmpTexture;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &tmpTexture);
+		glBindTexture(GL_TEXTURE_2D, TextureName);
+
+		// allows to read pixels in top-to-bottom order
+#ifdef GL_MESA_pack_invert
+		if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_MESA_pack_invert))
+			glPixelStorei(GL_PACK_INVERT_MESA, GL_TRUE);
+#endif
+
+		// download GPU data as ARGB8 to pixels;
+		glGetTexImage(GL_TEXTURE_2D, mipmapLevel, GL_BGRA_EXT, GL_UNSIGNED_BYTE, pixels);
+
+#ifdef GL_MESA_pack_invert
+		if (Driver->queryOpenGLFeature(COpenGLExtensionHandler::IRR_MESA_pack_invert))
+			glPixelStorei(GL_PACK_INVERT_MESA, GL_FALSE);
+		else
+#endif
+		{
+			// opengl images are horizontally flipped, so we have to fix that here.
+			const s32 pitch=image->getPitch();
+			u8* p2 = pixels + (image->getDimension().Height - 1) * pitch;
+			u8* tmpBuffer = new u8[pitch];
+			for (u32 i=0; i < image->getDimension().Height; i += 2)
+			{
+				memcpy(tmpBuffer, pixels, pitch);
+				memcpy(pixels, p2, pitch);
+				memcpy(p2, tmpBuffer, pitch);
+				pixels += pitch;
+				p2 -= pitch;
+			}
+			delete [] tmpBuffer;
+		}
+		image->unlock();
+
+		//reset old bound texture
+		glBindTexture(GL_TEXTURE_2D, tmpTexture);
+	}
+	return image->lock();
+}
+
+
+//! unlock function
+void COpenGLTexture::unlock()
+{
+	// test if miplevel or main texture was locked
+	IImage* image = MipImage?MipImage:Image;
+	if (!image)
+		return;
+	// unlock image to see changes
+	image->unlock();
+	// copy texture data to GPU
+	if (!ReadOnlyLock)
+		uploadTexture(false, 0, MipLevelStored);
+	ReadOnlyLock = false;
+	// cleanup local image
+	if (MipImage)
+	{
+		MipImage->drop();
+		MipImage=0;
+	}
+	else if (!KeepImage)
+	{
+		Image->drop();
+		Image=0;
+	}
+	// update information
+	if (Image)
+		ColorFormat=Image->getColorFormat();
+	else
+		ColorFormat=ECF_A8R8G8B8;
+}
+
+
+//! Returns size of the original image.
+const core::dimension2d<u32>& COpenGLTexture::getOriginalSize() const
+{
+	return ImageSize;
+}
+
+
+//! Returns size of the texture.
+const core::dimension2d<u32>& COpenGLTexture::getSize() const
+{
+	return TextureSize;
+}
+
+
+//! returns driver type of texture, i.e. the driver, which created the texture
+E_DRIVER_TYPE COpenGLTexture::getDriverType() const
+{
+	return EDT_OPENGL;
+}
+
+
+//! returns color format of texture
+ECOLOR_FORMAT COpenGLTexture::getColorFormat() const
+{
+	return ColorFormat;
+}
+
+
+//! returns pitch of texture (in bytes)
+u32 COpenGLTexture::getPitch() const
+{
+	if (Image)
+		return Image->getPitch();
+	else
+		return 0;
+}
+
+
+//! return open gl texture name
+GLuint COpenGLTexture::getOpenGLTextureName() const
+{
+	return TextureName;
+}
+
+
+//! Returns whether this texture has mipmaps
+bool COpenGLTexture::hasMipMaps() const
+{
+	return HasMipMaps;
+}
+
+
+//! Regenerates the mip map levels of the texture. Useful after locking and
+//! modifying the texture
+void COpenGLTexture::regenerateMipMapLevels(void* mipmapData)
+{
+	if (AutomaticMipmapUpdate || !HasMipMaps || !Image)
+		return;
+	if ((Image->getDimension().Width==1) && (Image->getDimension().Height==1))
+		return;
+
+	// Manually create mipmaps or use prepared version
+	u32 width=Image->getDimension().Width;
+	u32 height=Image->getDimension().Height;
+	u32 i=0;
+	u8* target = static_cast<u8*>(mipmapData);
+	do
+	{
+		if (width>1)
+			width>>=1;
+		if (height>1)
+			height>>=1;
+		++i;
+		if (!target)
+			target = new u8[width*height*Image->getBytesPerPixel()];
+		// create scaled version if no mipdata available
+		if (!mipmapData)
+			Image->copyToScaling(target, width, height, Image->getColorFormat());
+		glTexImage2D(GL_TEXTURE_2D, i, InternalFormat, width, height,
+				0, PixelFormat, PixelType, target);
+		// get next prepared mipmap data if available
+		if (mipmapData)
+		{
+			mipmapData = static_cast<u8*>(mipmapData)+width*height*Image->getBytesPerPixel();
+			target = static_cast<u8*>(mipmapData);
+		}
+	}
+	while (width!=1 || height!=1);
+	// cleanup
+	if (!mipmapData)
+		delete [] target;
+}
+
+
+bool COpenGLTexture::isRenderTarget() const
+{
+	 return IsRenderTarget;
+}
+
+
+void COpenGLTexture::setIsRenderTarget(bool isTarget)
+{
+	 IsRenderTarget = isTarget;
+}
+
+
+bool COpenGLTexture::isFrameBufferObject() const
+{
+	return false;
+}
+
+
+//! Bind Render Target Texture
+void COpenGLTexture::bindRTT()
+{
+}
+
+
+//! Unbind Render Target Texture
+void COpenGLTexture::unbindRTT()
+{
+	Driver->setActiveTexture(0, this);
+
+	// Copy Our ViewPort To The Texture
+	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, getSize().Width, getSize().Height);
+}
+
+
+/* FBO Textures */
+
+// helper function for render to texture
+static bool checkFBOStatus(COpenGLDriver* Driver);
+
+//! RTT ColorFrameBuffer constructor
+COpenGLFBOTexture::COpenGLFBOTexture(const core::dimension2d<u32>& size,
+					const io::path& name, COpenGLDriver* driver,
+					const ECOLOR_FORMAT format)
+	: COpenGLTexture(name, driver), DepthTexture(0), ColorFrameBuffer(0)
+{
+	#ifdef _DEBUG
+	setDebugName("COpenGLTexture_FBO");
+	#endif
+
+	ImageSize = size;
+	TextureSize = size;
+
+	GLint FilteringType;
+	InternalFormat = getOpenGLFormatAndParametersFromColorFormat(format, FilteringType, PixelFormat, PixelType);
+
+	HasMipMaps = false;
+	IsRenderTarget = true;
+
+#ifdef GL_EXT_framebuffer_object
+	// generate frame buffer
+	Driver->extGlGenFramebuffers(1, &ColorFrameBuffer);
+	Driver->extGlBindFramebuffer(GL_FRAMEBUFFER_EXT, ColorFrameBuffer);
+
+	// generate color texture
+	glGenTextures(1, &TextureName);
+	Driver->setActiveTexture(0, this);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, FilteringType);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, ImageSize.Width,
+		ImageSize.Height, 0, PixelFormat, PixelType, 0);
+
+	// attach color texture to frame buffer
+	Driver->extGlFramebufferTexture2D(GL_FRAMEBUFFER_EXT,
+						GL_COLOR_ATTACHMENT0_EXT,
+						GL_TEXTURE_2D,
+						TextureName,
+						0);
+#endif
+	unbindRTT();
 }
 
 
@@ -806,6 +867,12 @@ bool checkFBOStatus(COpenGLDriver* Driver)
 		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
 			os::Printer::log("FBO missing an image attachment", ELL_ERROR);
 			break;
+
+#ifdef GL_EXT_framebuffer_multisample
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT:
+			os::Printer::log("FBO wrong multisample setup", ELL_ERROR);
+			break;
+#endif
 
 		case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
 			os::Printer::log("FBO format unsupported", ELL_ERROR);

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 //
@@ -245,8 +245,6 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 	}
 
 	// loading meshes
-
-	SMesh* mesh = new SMesh();
 
 	if (id!=MY3D_MESH_LIST_ID)
 	{
@@ -637,6 +635,7 @@ IAnimatedMesh* CMY3DMeshFileLoader::createMesh(io::IReadFile* file)
 	}
 
 	// creating mesh
+	SMesh* mesh = new SMesh();
 
 	for (u32 num=0; num<MeshBufferEntry.size(); ++num)
 	{

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -17,7 +17,7 @@ namespace gui
 
 //! constructor
 CGUIModalScreen::CGUIModalScreen(IGUIEnvironment* environment, IGUIElement* parent, s32 id)
-: IGUIElement(EGUIET_MODAL_SCREEN, environment, parent, id, parent->getAbsolutePosition()),
+: IGUIElement(EGUIET_MODAL_SCREEN, environment, parent, id, core::recti(0, 0, parent->getAbsolutePosition().getWidth(), parent->getAbsolutePosition().getHeight()) ),
 	MouseDownTime(0)
 {
 	#ifdef _DEBUG
@@ -31,7 +31,7 @@ CGUIModalScreen::CGUIModalScreen(IGUIEnvironment* environment, IGUIElement* pare
 
 bool CGUIModalScreen::canTakeFocus(IGUIElement* target) const
 {
-    return (target && (target == this // this element can take it
+    return (target && ((const IGUIElement*)target == this // this element can take it
                         || isMyChild(target)    // own childs also
                         || (target->getType() == EGUIET_MODAL_SCREEN )// other modals also fine
                         || (target->getParent() && target->getParent()->getType() == EGUIET_MODAL_SCREEN )))   // childs of other modals will do
@@ -90,6 +90,7 @@ bool CGUIModalScreen::OnEvent(const SEvent& event)
 			{
 				Environment->setFocus(this);
 			}
+			IGUIElement::OnEvent(event);
 			return false;
 		case EGET_ELEMENT_FOCUS_LOST:
 			if ( !canTakeFocus(event.GUIEvent.Element))

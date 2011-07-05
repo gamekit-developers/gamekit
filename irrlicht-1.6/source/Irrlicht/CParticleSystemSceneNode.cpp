@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -450,6 +450,7 @@ void CParticleSystemSceneNode::doParticleSystem(u32 time)
 
 	for (u32 i=0; i<Particles.size();)
 	{
+		// erase is pretty expensive!
 		if (now > Particles[i].endTime)
 			Particles.erase(i);
 		else
@@ -606,8 +607,23 @@ void CParticleSystemSceneNode::deserializeAttributes(io::IAttributes* in, io::SA
 	case EPET_POINT:
 		Emitter = createPointEmitter();
 		break;
+	case EPET_ANIMATED_MESH:
+		Emitter = createAnimatedMeshSceneNodeEmitter(NULL); // we can't set the node - the user will have to do this
+		break;
 	case EPET_BOX:
 		Emitter = createBoxEmitter();
+		break;
+	case EPET_CYLINDER:
+		Emitter = createCylinderEmitter(core::vector3df(0,0,0), 10.f, core::vector3df(0,1,0), 10.f);	// (values here don't matter)
+		break;
+	case EPET_MESH:
+		Emitter = createMeshEmitter(NULL);	// we can't set the mesh - the user will have to do this
+		break;
+	case EPET_RING:
+		Emitter = createRingEmitter(core::vector3df(0,0,0), 10.f, 10.f);	// (values here don't matter)
+		break;
+	case EPET_SPHERE:
+		Emitter = createSphereEmitter(core::vector3df(0,0,0), 10.f);	// (values here don't matter)
 		break;
 	default:
 		break;
@@ -644,11 +660,17 @@ void CParticleSystemSceneNode::deserializeAttributes(io::IAttributes* in, io::SA
 
 		switch(atype)
 		{
+		case EPAT_ATTRACT:
+			aff = createAttractionAffector(core::vector3df(0,0,0));
+			break;
 		case EPAT_FADE_OUT:
 			aff = createFadeOutParticleAffector();
 			break;
 		case EPAT_GRAVITY:
 			aff = createGravityAffector();
+			break;
+		case EPAT_ROTATE:
+			aff = createRotationAffector();
 			break;
 		case EPAT_SCALE:
 			aff = createScaleParticleAffector();

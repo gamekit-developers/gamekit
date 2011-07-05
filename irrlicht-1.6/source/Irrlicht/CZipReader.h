@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -95,6 +95,20 @@ namespace io
 		u32 offset;			// offset of start of centraldirectory with respect to the starting disk number
 		u16 comment_length;	// zipfile comment length
 		// zipfile comment (variable size)
+	} PACK_STRUCT;
+
+	struct SZipFileExtraHeader
+	{
+		s16 ID;
+		s16 Size;
+	} PACK_STRUCT;
+
+	struct SZipFileAESExtraData
+	{
+		s16 Version;
+		u8 Vendor[2];
+		u8 EncryptionStrength;
+		s16 CompressionMode;
 	} PACK_STRUCT;
 
 	enum E_GZIP_FLAGS
@@ -217,3 +231,4 @@ namespace io
 
 #endif // __IRR_COMPILE_WITH_ZIP_ARCHIVE_LOADER_
 #endif // __C_ZIP_READER_H_INCLUDED__
+

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -29,7 +29,7 @@ public:
 
 	//! Check if the file might be loaded by this class
 	/** Check is based on the file extension (e.g. ".tga")
-	\param fileName Name of file to check.
+	\param filename Name of file to check.
 	\return True if file seems to be loadable. */
 	virtual bool isALoadableFileExtension(const io::path& filename) const = 0;
 

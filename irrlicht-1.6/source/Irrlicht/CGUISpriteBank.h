@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -39,6 +39,12 @@ public:
 	virtual video::ITexture* getTexture(u32 index) const;
 	virtual void addTexture(video::ITexture* texture);
 	virtual void setTexture(u32 index, video::ITexture* texture);
+
+	//! Add the texture and use it for a single non-animated sprite.
+	virtual s32 addTextureAsSprite(video::ITexture* texture);
+
+	//! clears sprites, rectangles and textures
+	virtual void clear();
 
 	//! Draws a sprite in 2d with position and color
 	virtual void draw2DSprite(u32 index, const core::position2di& pos, const core::rect<s32>* clip=0,

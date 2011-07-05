@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -64,11 +64,33 @@ public:
 	vector2d<T> operator/(const T v) const { return vector2d<T>(X / v, Y / v); }
 	vector2d<T>& operator/=(const T v) { X/=v; Y/=v; return *this; }
 
-	bool operator<=(const vector2d<T>&other) const { return X<=other.X && Y<=other.Y; }
-	bool operator>=(const vector2d<T>&other) const { return X>=other.X && Y>=other.Y; }
+	//! sort in order X, Y. Equality with rounding tolerance.
+	bool operator<=(const vector2d<T>&other) const
+	{
+		return 	(X<other.X || core::equals(X, other.X)) ||
+				(core::equals(X, other.X) && (Y<other.Y || core::equals(Y, other.Y)));
+	}
 
-	bool operator<(const vector2d<T>&other) const { return X<other.X && Y<other.Y; }
-	bool operator>(const vector2d<T>&other) const { return X>other.X && Y>other.Y; }
+	//! sort in order X, Y. Equality with rounding tolerance.
+	bool operator>=(const vector2d<T>&other) const
+	{
+		return 	(X>other.X || core::equals(X, other.X)) ||
+				(core::equals(X, other.X) && (Y>other.Y || core::equals(Y, other.Y)));
+	}
+
+	//! sort in order X, Y. Difference must be above rounding tolerance.
+	bool operator<(const vector2d<T>&other) const
+	{
+		return 	(X<other.X && !core::equals(X, other.X)) ||
+				(core::equals(X, other.X) && Y<other.Y && !core::equals(Y, other.Y));
+	}
+
+	//! sort in order X, Y. Difference must be above rounding tolerance.
+	bool operator>(const vector2d<T>&other) const
+	{
+		return 	(X>other.X && !core::equals(X, other.X)) ||
+				(core::equals(X, other.X) && Y>other.Y && !core::equals(Y, other.Y));
+	}
 
 	bool operator==(const vector2d<T>& other) const { return equals(other); }
 	bool operator!=(const vector2d<T>& other) const { return !equals(other); }
@@ -170,14 +192,14 @@ public:
 
 		if ( Y > 0)
 			if (X > 0)
-				return atan(Y/X) * RADTODEG64;
+				return atan((irr::f64)Y/(irr::f64)X) * RADTODEG64;
 			else
-				return 180.0-atan(Y/-X) * RADTODEG64;
+				return 180.0-atan((irr::f64)Y/-(irr::f64)X) * RADTODEG64;
 		else
 			if (X > 0)
-				return 360.0-atan(-Y/X) * RADTODEG64;
+				return 360.0-atan(-(irr::f64)Y/(irr::f64)X) * RADTODEG64;
 			else
-				return 180.0+atan(-Y/-X) * RADTODEG64;
+				return 180.0+atan(-(irr::f64)Y/-(irr::f64)X) * RADTODEG64;
 	}
 
 	//! Calculates the angle of this vector in degrees in the counter trigonometric sense.

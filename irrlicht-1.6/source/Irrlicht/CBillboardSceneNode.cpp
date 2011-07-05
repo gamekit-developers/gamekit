@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -225,13 +225,14 @@ ISceneNode* CBillboardSceneNode::clone(ISceneNode* newParent, ISceneManager* new
 	if (!newManager)
 		newManager = SceneManager;
 
-	CBillboardSceneNode* nb = new CBillboardSceneNode(newParent, 
+	CBillboardSceneNode* nb = new CBillboardSceneNode(newParent,
 		newManager, ID, RelativeTranslation, Size);
 
 	nb->cloneMembers(this, newManager);
 	nb->Material = Material;
 
-	nb->drop();
+	if ( newParent )
+		nb->drop();
 	return nb;
 }
 

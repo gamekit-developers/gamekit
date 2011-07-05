@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -64,7 +64,7 @@ CGUIComboBox::CGUIComboBox(IGUIEnvironment* environment, IGUIElement* parent,
 	SelectedText->setAlignment(EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT, EGUIA_UPPERLEFT, EGUIA_LOWERRIGHT);
 	SelectedText->setTextAlignment(EGUIA_UPPERLEFT, EGUIA_CENTER);
 	if (skin)
-		SelectedText->setOverrideColor(skin->getColor(EGDC_BUTTON_TEXT)); 
+		SelectedText->setOverrideColor(skin->getColor(EGDC_BUTTON_TEXT));
 	SelectedText->enableOverrideColor(true);
 
 	// this element can be tabbed to
@@ -198,7 +198,9 @@ bool CGUIComboBox::OnEvent(const SEvent& event)
 			if (event.KeyInput.Key == KEY_RETURN || event.KeyInput.Key == KEY_SPACE)
 			{
 				if (!event.KeyInput.PressedDown)
+				{
 					openCloseMenu();
+				}
 
 				ListButton->setPressed(ListBox == 0);
 
@@ -251,8 +253,7 @@ bool CGUIComboBox::OnEvent(const SEvent& event)
 				if (ListBox &&
 					(Environment->hasFocus(ListBox) || ListBox->isMyChild(event.GUIEvent.Caller) ) &&
 					event.GUIEvent.Element != this &&
-					event.GUIEvent.Element != ListButton &&
-					event.GUIEvent.Element != ListBox &&
+					!isMyChild(event.GUIEvent.Element) &&
 					!ListBox->isMyChild(event.GUIEvent.Element))
 				{
 					openCloseMenu();
@@ -303,7 +304,9 @@ bool CGUIComboBox::OnEvent(const SEvent& event)
 					if (!(ListBox &&
 							ListBox->getAbsolutePosition().isPointInside(p) &&
 							ListBox->OnEvent(event)))
+					{
 						openCloseMenu();
+					}
 					return true;
 				}
 			case EMIE_MOUSE_WHEEL:
@@ -360,20 +363,23 @@ void CGUIComboBox::draw()
 	{
 		HasFocus = currentFocus == this || isMyChild(currentFocus);
 		LastFocus = currentFocus;
-
-		SelectedText->setBackgroundColor(skin->getColor(EGDC_HIGH_LIGHT));
-
-		if(isEnabled())
-		{
-			SelectedText->setDrawBackground(HasFocus);
-			SelectedText->setOverrideColor(skin->getColor(HasFocus ? EGDC_HIGH_LIGHT_TEXT : EGDC_BUTTON_TEXT));
-		}
-		else
-		{
-			SelectedText->setDrawBackground(false);
-			SelectedText->setOverrideColor(skin->getColor(EGDC_GRAY_TEXT)); 
-		}
 	}
+
+	// set colors each time as skin-colors can be changed
+	SelectedText->setBackgroundColor(skin->getColor(EGDC_HIGH_LIGHT));
+	if(isEnabled())
+	{
+		SelectedText->setDrawBackground(HasFocus);
+		SelectedText->setOverrideColor(skin->getColor(HasFocus ? EGDC_HIGH_LIGHT_TEXT : EGDC_BUTTON_TEXT));
+	}
+	else
+	{
+		SelectedText->setDrawBackground(false);
+		SelectedText->setOverrideColor(skin->getColor(EGDC_GRAY_TEXT));
+	}
+	ListButton->setSprite(EGBS_BUTTON_UP, skin->getIcon(EGDI_CURSOR_DOWN), skin->getColor(EGDC_WINDOW_SYMBOL));
+	ListButton->setSprite(EGBS_BUTTON_DOWN, skin->getIcon(EGDI_CURSOR_DOWN), skin->getColor(EGDC_WINDOW_SYMBOL));
+
 
 	core::rect<s32> frameRect(AbsoluteRect);
 

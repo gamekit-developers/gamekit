@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -194,6 +194,7 @@ bool CGUIFileOpenDialog::OnEvent(const SEvent& event)
 							FileDirectory = L"";
 							FileName = FileList->getFullFileName(selected);
 						}
+						return true;
 					}
 				}
 				break;
@@ -213,8 +214,8 @@ bool CGUIFileOpenDialog::OnEvent(const SEvent& event)
 						else
 						{
 							FileName = FileList->getFullFileName(selected);
-							return true;
 						}
+						return true;
 					}
 				}
 				break;
@@ -327,7 +328,9 @@ void CGUIFileOpenDialog::fillListBox()
 	FileList = FileSystem->createFileList();
 	core::stringw s;
 
+#if !defined(_IRR_WINDOWS_CE_PLATFORM_)
 	setlocale(LC_ALL,"");
+#endif
 
 	if (FileList)
 	{
@@ -355,7 +358,7 @@ void CGUIFileOpenDialog::fillListBox()
 		int len = mbstowcs(ws,cs,strlen(cs));
 		ws[len] = 0;
 		s = ws;
-		delete ws;
+		delete [] ws;
 		#else
 		s = FileSystem->getWorkingDirectory();
 		#endif

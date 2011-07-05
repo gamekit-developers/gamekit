@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -165,7 +165,7 @@ void CSceneNodeAnimatorCollisionResponse::animateNode(ISceneNode* node, u32 time
 		FirstUpdate = false;
 	}
 
-	u32 diff = timeMs - LastTime;
+	const u32 diff = timeMs - LastTime;
 	LastTime = timeMs;
 
 	CollisionResultPosition = Object->getPosition();

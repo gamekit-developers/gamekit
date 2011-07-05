@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -75,8 +75,12 @@ bool CSceneNodeAnimatorCameraMaya::OnEvent(const SEvent& event)
 		MousePos = CursorControl->getRelativePosition();
 		break;
 	case EMIE_MOUSE_WHEEL:
-	case EMIE_MOUSE_DOUBLE_CLICK:
-	case EMIE_MOUSE_TRIPLE_CLICK:
+	case EMIE_LMOUSE_DOUBLE_CLICK:
+	case EMIE_RMOUSE_DOUBLE_CLICK:
+	case EMIE_MMOUSE_DOUBLE_CLICK:
+	case EMIE_LMOUSE_TRIPLE_CLICK:
+	case EMIE_RMOUSE_TRIPLE_CLICK:
+	case EMIE_MMOUSE_TRIPLE_CLICK:
 	case EMIE_COUNT:
 		return false;
 	}
@@ -110,6 +114,11 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	{
 		OldTarget = camera->getTarget();
 		OldCamera = camera;
+		LastCameraTarget = OldTarget;
+	}
+	else
+	{
+		OldTarget += camera->getTarget() - LastCameraTarget;
 	}
 
 	core::vector3df target = camera->getTarget();
@@ -227,6 +236,7 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	camera->setPosition(Pos);
 	camera->setTarget(target);
 	camera->setUpVector(upVector);
+	LastCameraTarget = camera->getTarget();
 }
 
 

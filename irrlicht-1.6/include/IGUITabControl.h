@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -13,7 +13,8 @@ namespace irr
 {
 namespace gui
 {
-	//! A tab, onto which other gui elements could be added.
+	//! A tab-page, onto which other gui elements could be added.
+	/** IGUITab refers to the page itself, not to the tab in the tabbar of an IGUITabControl. */
 	class IGUITab : public IGUIElement
 	{
 	public:
@@ -88,10 +89,10 @@ namespace gui
 
 		//! set the maximal width of a tab. Per default width is 0 which means "no width restriction".
 		virtual void setTabMaxWidth(s32 width ) = 0;
-			
+
 		//! get the maximal width of a tab
 		virtual s32 getTabMaxWidth() const = 0;
-		
+
 		//! Set the alignment of the tabs
 		/** Use EGUIA_UPPERLEFT or EGUIA_LOWERRIGHT */
 		virtual void setTabVerticalAlignment( gui::EGUI_ALIGNMENT alignment ) = 0;

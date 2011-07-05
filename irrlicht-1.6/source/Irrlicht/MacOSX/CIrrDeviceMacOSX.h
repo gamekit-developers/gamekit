@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2009 Etienne Petitjean
+// Copyright (C) 2005-2010 Etienne Petitjean
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
@@ -161,7 +161,7 @@ namespace irr
 			}
 
 			//! Returns the current position of the mouse cursor.
-			virtual core::position2d<s32> getPosition()
+			virtual const core::position2d<s32>& getPosition()
 			{
 				return CursorPos;
 			}

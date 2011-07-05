@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -174,10 +174,18 @@ s32 CParticleAnimatedMeshSceneNodeEmitter::emitt(u32 now, u32 timeSinceLastCall,
 void CParticleAnimatedMeshSceneNodeEmitter::setAnimatedMeshSceneNode( IAnimatedMeshSceneNode* node )
 {
 	Node = node;
+	AnimatedMesh = 0;
+	BaseMesh = 0;
+	TotalVertices = 0;
+	VertexPerMeshBufferList.clear();
+	if ( !node )
+	{
+		return;
+	}
+
 	AnimatedMesh = node->getMesh();
 	BaseMesh = AnimatedMesh->getMesh(0);
 
-	TotalVertices = 0;
 	MBCount = BaseMesh->getMeshBufferCount();
 	VertexPerMeshBufferList.reallocate(MBCount);
 	for( u32 i = 0; i < MBCount; ++i )

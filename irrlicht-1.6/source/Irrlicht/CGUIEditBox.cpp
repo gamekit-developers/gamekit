@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -807,9 +807,9 @@ void CGUIEditBox::draw()
 						mbegin = font->getDimension(s.c_str()).Width;
 
 						// deal with kerning
-						mbegin += font->getKerningWidth( 
-							&((*txtLine)[realmbgn - startPos]), 
-							realmbgn - startPos > 0 ? &((*txtLine)[realmbgn - startPos - 1]) : 0);   
+						mbegin += font->getKerningWidth(
+							&((*txtLine)[realmbgn - startPos]),
+							realmbgn - startPos > 0 ? &((*txtLine)[realmbgn - startPos - 1]) : 0);
 
 						lineStartPos = realmbgn - startPos;
 					}
@@ -854,7 +854,7 @@ void CGUIEditBox::draw()
 			startPos = BrokenTextPositions[cursorLine];
 		}
 		s = txtLine->subString(0,CursorPos-startPos);
-		charcursorpos = font->getDimension(s.c_str()).Width + 
+		charcursorpos = font->getDimension(s.c_str()).Width +
 			font->getKerningWidth(L"_", CursorPos-startPos > 0 ? &((*txtLine)[CursorPos-startPos-1]) : 0);
 
 		if (focus && (os::Timer::getTime() - BlinkStartTime) % 700 < 350)
@@ -877,7 +877,8 @@ void CGUIEditBox::draw()
 void CGUIEditBox::setText(const wchar_t* text)
 {
 	Text = text;
-	CursorPos = 0;
+	if (u32(CursorPos) > Text.size())
+		CursorPos = Text.size();
 	HScrollPos = 0;
 	breakText();
 }

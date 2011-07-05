@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -141,13 +141,14 @@ ISceneNode* CSphereSceneNode::clone(ISceneNode* newParent, ISceneManager* newMan
 	if (!newManager)
 		newManager = SceneManager;
 
-	CSphereSceneNode* nb = new CSphereSceneNode(Radius, PolyCountX, PolyCountY, newParent, 
+	CSphereSceneNode* nb = new CSphereSceneNode(Radius, PolyCountX, PolyCountY, newParent,
 		newManager, ID, RelativeTranslation);
 
 	nb->cloneMembers(this, newManager);
 	nb->getMaterial(0) = Mesh->getMeshBuffer(0)->getMaterial();
 
-	nb->drop();
+	if ( newParent )
+		nb->drop();
 	return nb;
 }
 

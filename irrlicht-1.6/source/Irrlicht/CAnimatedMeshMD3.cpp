@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt / Fabio Concas / Thomas Alten
+// Copyright (C) 2002-2010 Nikolaus Gebhardt / Fabio Concas / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -381,7 +381,7 @@ bool CAnimatedMeshMD3::loadModelFile( u32 modelIndex, io::IReadFile* file,
 		{
 			file->read( &skin, sizeof(skin) );
 
-			core::stringc name;
+			io::path name;
 			cutFilenameExtension ( name, skin.name );
 			name.replace ( '\\', '/' );
 			buf->Shader = name;

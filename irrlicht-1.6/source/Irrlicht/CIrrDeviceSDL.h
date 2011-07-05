@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 // This device code is based on the original SDL device implementation
@@ -143,7 +143,7 @@ namespace irr
 			}
 
 			//! Returns the current position of the mouse cursor.
-			virtual core::position2d<s32> getPosition()
+			virtual const core::position2d<s32>& getPosition()
 			{
 				updateCursorPos();
 				return CursorPos;
@@ -203,7 +203,6 @@ namespace irr
 
 		u32 Width, Height;
 
-		bool Close;
 		bool Resizable;
 		bool WindowHasFocus;
 		bool WindowMinimized;

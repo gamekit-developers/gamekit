@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -99,6 +99,7 @@ namespace scene
 		f32 CurrentZoom;
 		f32 RotX, RotY;
 		core::vector3df OldTarget;
+		core::vector3df LastCameraTarget;	// to find out if the camera target was moved outside this animator
 		scene::ICameraSceneNode* OldCamera;
 
 		core::position2df MousePos;

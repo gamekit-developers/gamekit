@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -229,8 +229,8 @@ void CSceneNodeAnimatorCameraFPS::animateNode(ISceneNode* node, u32 timeMs)
 	// and if it's not falling, we tell it to jump.
 	if (CursorKeys[EKA_JUMP_UP])
 	{
-		const core::list<ISceneNodeAnimator*> & animators = camera->getAnimators();
-		core::list<ISceneNodeAnimator*>::ConstIterator it = animators.begin();
+		const ISceneNodeAnimatorList& animators = camera->getAnimators();
+		ISceneNodeAnimatorList::ConstIterator it = animators.begin();
 		while(it != animators.end())
 		{
 			if(ESNAT_COLLISION_RESPONSE == (*it)->getType())

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -57,7 +57,7 @@ namespace gui
 		//! Returns the current position of the mouse cursor.
 		/** \return Returns the current position of the cursor. The returned position
 		is the position of the mouse cursor in pixel units. */
-		virtual core::position2d<s32> getPosition() = 0;
+		virtual const core::position2d<s32>& getPosition() = 0;
 
 		//! Returns the current position of the mouse cursor.
 		/** \return Returns the current position of the cursor. The returned position

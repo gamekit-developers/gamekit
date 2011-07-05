@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -44,14 +44,14 @@ namespace gui
 		/** In the beginning the whole rect is drawn by the set color
 		(black by default) and at the end of the overgiven time the
 		color has faded out.
-		\param time: Time specifing how long it should need to fade in,
+		\param time: Time specifying how long it should need to fade in,
 		in milliseconds. */
 		virtual void fadeIn(u32 time) = 0;
 
 		//! Starts the fade out process.
 		/** In the beginning everything is visible, and at the end of
 		the time only the set color (black by the fault) will be drawn.
-		\param time: Time specifing how long it should need to fade out,
+		\param time: Time specifying how long it should need to fade out,
 		in milliseconds. */
 		virtual void fadeOut(u32 time) = 0;
 

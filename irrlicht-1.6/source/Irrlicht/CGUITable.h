@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -158,9 +158,10 @@ namespace gui
 
 		struct Cell
 		{
-			Cell() : Data(0) {}
+			Cell() : IsOverrideColor(false), Data(0)  {}
 			core::stringw Text;
 			core::stringw BrokenText;
+			bool IsOverrideColor;
 			video::SColor Color;
 			void *Data;
 		};
@@ -175,7 +176,6 @@ namespace gui
 		{
 			Column() : Width(0), OrderingMode(EGCO_NONE) {}
 			core::stringw Name;
-			video::SColor TextColor;
 			u32 Width;
 			EGUI_COLUMN_ORDERING OrderingMode;
 		};

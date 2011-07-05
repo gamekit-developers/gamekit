@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt/ Thomas Alten
+// Copyright (C) 2002-2010 Nikolaus Gebhardt/ Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -18,7 +18,7 @@ namespace io
 enum EFileSystemType
 {
 	FILESYSTEM_NATIVE = 0,	// Native OS FileSystem
-	FILESYSTEM_VIRTUAL,	// Virtual FileSystem
+	FILESYSTEM_VIRTUAL	// Virtual FileSystem
 };
 
 //! Contains the different types of archives
@@ -35,6 +35,9 @@ enum E_FILE_ARCHIVE_TYPE
 
 	//! An ID Software PAK archive
 	EFAT_PAK     = MAKE_IRR_ID('P','A','K', 0),
+
+	//! A Nebula Device archive
+	EFAT_NPK     = MAKE_IRR_ID('N','P','K', 0),
 
 	//! A Tape ARchive
 	EFAT_TAR     = MAKE_IRR_ID('T','A','R', 0),
@@ -55,7 +58,7 @@ public:
 	or 0 on failure. */
 	virtual IReadFile* createAndOpenFile(const path& filename) =0;
 
-	//! Opens a file based on its position.
+	//! Opens a file based on its position in the file list.
 	/** Creates and returns
 	\param index The zero based index of the file.
 	\return Returns a pointer to the created file on success, or 0 on failure. */
@@ -68,6 +71,13 @@ public:
 
 	//! get the archive type
 	virtual E_FILE_ARCHIVE_TYPE getType() const { return EFAT_UNKNOWN; }
+
+	//! An optionally used password string
+	/** This variable is publicly accessible from the interface in order to
+	avoid single access patterns to this place, and hence allow some more
+	obscurity.
+	*/
+	core::stringc Password;
 };
 
 //! Class which is able to create an archive from a file.
@@ -80,7 +90,7 @@ class IArchiveLoader : public virtual IReferenceCounted
 public:
 	//! Check if the file might be loaded by this class
 	/** Check based on the file extension (e.g. ".zip")
-	\param fileName Name of file to check.
+	\param filename Name of file to check.
 	\return True if file seems to be loadable. */
 	virtual bool isALoadableFileFormat(const path& filename) const =0;
 
@@ -97,12 +107,16 @@ public:
 	virtual bool isALoadableFileFormat(E_FILE_ARCHIVE_TYPE fileType) const =0;
 
 	//! Creates an archive from the filename
-	/** \param file File handle to check.
+	/** \param filename File to use.
+	\param ignoreCase Searching is performed without regarding the case
+	\param ignorePaths Files are searched for without checking for the directories
 	\return Pointer to newly created archive, or 0 upon error. */
 	virtual IFileArchive* createArchive(const path& filename, bool ignoreCase, bool ignorePaths) const =0;
 
 	//! Creates an archive from the file
-	/** \param file File handle to check.
+	/** \param file File handle to use.
+	\param ignoreCase Searching is performed without regarding the case
+	\param ignorePaths Files are searched for without checking for the directories
 	\return Pointer to newly created archive, or 0 upon error. */
 	virtual IFileArchive* createArchive(io::IReadFile* file, bool ignoreCase, bool ignorePaths) const =0;
 };

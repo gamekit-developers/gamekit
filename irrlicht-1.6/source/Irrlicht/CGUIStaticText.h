@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -94,6 +94,7 @@ namespace gui
 		EGUI_ALIGNMENT HAlign, VAlign;
 		bool Border;
 		bool OverrideColorEnabled;
+		bool OverrideBGColorEnabled;
 		bool WordWrap;
 		bool Background;
 

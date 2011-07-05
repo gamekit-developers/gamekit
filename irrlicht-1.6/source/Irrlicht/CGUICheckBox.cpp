@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -154,7 +154,7 @@ void CGUICheckBox::draw()
 		IGUIFont* font = skin->getFont();
 		if (font)
 			font->draw(Text.c_str(), checkRect,
-			skin->getColor(EGDC_BUTTON_TEXT), false, true, &AbsoluteClippingRect);
+					skin->getColor(IsEnabled ? EGDC_BUTTON_TEXT : EGDC_GRAY_TEXT), false, true, &AbsoluteClippingRect);
 	}
 
 	IGUIElement::draw();

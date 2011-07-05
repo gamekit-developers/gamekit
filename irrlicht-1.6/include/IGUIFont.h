@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -44,7 +44,7 @@ public:
 	/** \param text: Text to draw
 	\param position: Rectangle specifying position where to draw the text.
 	\param color: Color of the text
-	\param hcenter: Specifiies if the text should be centered horizontally into the rectangle.
+	\param hcenter: Specifies if the text should be centered horizontally into the rectangle.
 	\param vcenter: Specifies if the text should be centered vertically into the rectangle.
 	\param clip: Optional pointer to a rectangle against which the text will be clipped.
 	If the pointer is null, no clipping will be done. */
@@ -92,7 +92,7 @@ public:
 	//! Define which characters should not be drawn by the font.
 	/** For example " " would not draw any space which is usually blank in
 	most fonts.
-	\param invisible: string of symbols, which are not send down to the videodriver
+	\param s String of symbols which are not send down to the videodriver
 	*/
 	virtual void setInvisibleCharacters( const wchar_t *s ) = 0;
 };

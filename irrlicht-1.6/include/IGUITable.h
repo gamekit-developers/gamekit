@@ -1,4 +1,4 @@
-// Copyright (C) 2003-2009 Nikolaus Gebhardt
+// Copyright (C) 2003-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -139,7 +139,7 @@ namespace gui
 		will be placed after it. If the row is larger than the actual
 		number of row by more than one, it won't be created.  Note that
 		if you create a row that's not at the end, there might be
-		performance issues. 
+		performance issues.
 		\return index of inserted row. */
 		virtual u32 addRow(u32 rowIndex) = 0;
 
@@ -149,7 +149,7 @@ namespace gui
 		//! clears the table rows, but keeps the columns intact
 		virtual void clearRows() = 0;
 
-		//! Swap two row positions. This is useful for a custom ordering algo.
+		//! Swap two row positions.
 		virtual void swapRows(u32 rowIndexA, u32 rowIndexB) = 0;
 
 		//! This tells the table to start ordering all the rows.

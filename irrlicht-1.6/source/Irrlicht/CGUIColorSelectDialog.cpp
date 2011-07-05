@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -15,7 +15,6 @@
 #include "IGUISpriteBank.h"
 #include "IFileList.h"
 #include "os.h"
-#include "SoftwareDriver2_helper.h"
 #include "CImage.h"
 
 namespace irr
@@ -131,6 +130,8 @@ CGUIColorSelectDialog::CGUIColorSelectDialog(const wchar_t* title, IGUIEnvironme
 		}
 
 		SBatteryItem item;
+		item.Incoming=0.f;
+		item.Outgoing=0.f;
 
 		r.UpperLeftCorner.X = Template[i].x + 15;
 		r.UpperLeftCorner.Y = Template[i].y;
@@ -218,7 +219,7 @@ void CGUIColorSelectDialog::buildColorRing( const core::dimension2d<u32> & dim, 
 				const f32 r = sqrtf((f32) r2);
 
 				// normalize, dotproduct = xnorm
-				const f32 xn = -p.X * core::reciprocal(r);
+				const f32 xn = r == 0.f ? 0.f : -p.X * core::reciprocal(r);
 
 				hsl.Hue = acosf(xn);
 				if ( p.Y > 0 )

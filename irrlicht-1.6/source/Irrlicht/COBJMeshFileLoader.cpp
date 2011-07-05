@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -423,13 +423,28 @@ const c8* COBJMeshFileLoader::readTextures(const c8* bufPtr, const c8* const buf
 	texname.replace('\\', '/');
 
 	video::ITexture * texture = 0;
+	bool newTexture=false;
 	if (texname.size())
 	{
-		if (FileSystem->existFile(texname))
+ 		io::path texnameWithUserPath( SceneManager->getParameters()->getAttributeAsString(OBJ_TEXTURE_PATH) );
+ 		if ( texnameWithUserPath.size() )
+ 		{
+ 			texnameWithUserPath += '/';
+ 			texnameWithUserPath += texname;
+ 		}
+ 		if (FileSystem->existFile(texnameWithUserPath))
+ 			texture = SceneManager->getVideoDriver()->getTexture(texnameWithUserPath);
+		else if (FileSystem->existFile(texname))
+		{
+			newTexture = SceneManager->getVideoDriver()->findTexture(texname) == 0;
 			texture = SceneManager->getVideoDriver()->getTexture(texname);
+		}
 		else
+		{
+			newTexture = SceneManager->getVideoDriver()->findTexture(relPath + texname) == 0;
 			// try to read in the relative path, the .obj is loaded from
 			texture = SceneManager->getVideoDriver()->getTexture( relPath + texname );
+		}
 	}
 	if ( texture )
 	{
@@ -437,7 +452,8 @@ const c8* COBJMeshFileLoader::readTextures(const c8* bufPtr, const c8* const buf
 			currMaterial->Meshbuffer->Material.setTexture(0, texture);
 		else if (type==1)
 		{
-			SceneManager->getVideoDriver()->makeNormalMapTexture(texture, bumpiness);
+			if (newTexture)
+				SceneManager->getVideoDriver()->makeNormalMapTexture(texture, bumpiness);
 			currMaterial->Meshbuffer->Material.setTexture(1, texture);
 			currMaterial->Meshbuffer->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
 			currMaterial->Meshbuffer->Material.MaterialTypeParam=0.035f;
@@ -470,17 +486,11 @@ void COBJMeshFileLoader::readMTL(const c8* fileName, const io::path& relPath)
 	if (FileSystem->existFile(realFile))
 		mtlReader = FileSystem->createAndOpenFile(realFile);
 	else if (FileSystem->existFile(relPath + realFile))
-	{
 		mtlReader = FileSystem->createAndOpenFile(relPath + realFile);
-	}
 	else if (FileSystem->existFile(FileSystem->getFileBasename(realFile)))
-	{
 		mtlReader = FileSystem->createAndOpenFile(FileSystem->getFileBasename(realFile));
-	}
 	else
-	{
 		mtlReader = FileSystem->createAndOpenFile(relPath + FileSystem->getFileBasename(realFile));
-	}
 	if (!mtlReader)	// fail to open and read file
 	{
 		os::Printer::log("Could not open material file", realFile, ELL_WARNING);
@@ -491,6 +501,7 @@ void COBJMeshFileLoader::readMTL(const c8* fileName, const io::path& relPath)
 	if (!filesize)
 	{
 		os::Printer::log("Skipping empty material file", realFile, ELL_WARNING);
+		mtlReader->drop();
 		return;
 	}
 
@@ -802,7 +813,7 @@ u32 COBJMeshFileLoader::copyWord(c8* outBuf, const c8* const inBuf, u32 outBufLe
 	for (u32 j=0; j<length; ++j)
 		outBuf[j] = inBuf[j];
 
-	outBuf[i] = 0;
+	outBuf[length] = 0;
 	return length;
 }
 

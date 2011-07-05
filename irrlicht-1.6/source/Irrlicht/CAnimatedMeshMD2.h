@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -121,9 +121,6 @@ namespace scene
 
 		//! named animations
 		core::array< SAnimationData > AnimationData;
-
-		//! calculates the bounding box
-		virtual void calculateBoundingBox();
 
 		u32 FrameCount;
 

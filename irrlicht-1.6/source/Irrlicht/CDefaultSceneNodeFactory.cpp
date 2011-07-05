@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -38,7 +38,9 @@ CDefaultSceneNodeFactory::CDefaultSceneNodeFactory(ISceneManager* mgr)
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_SKY_BOX, "skyBox"));
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_SKY_DOME, "skyDome"));
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_SHADOW_VOLUME, "shadowVolume"));
-	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_OCT_TREE, "octTree"));
+	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_OCTREE, "octree"));
+	// Legacy support
+	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_OCTREE, "octTree"));
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_MESH, "mesh"));
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_LIGHT, "light"));
 	SupportedSceneNodeTypes.push_back(SSceneNodeTypePair(ESNT_EMPTY, "empty"));
@@ -82,8 +84,8 @@ ISceneNode* CDefaultSceneNodeFactory::addSceneNode(ESCENE_NODE_TYPE type, IScene
 		return Manager->addSkyDomeSceneNode(0, 16, 8, 0.9f, 2.0f, 1000.0f, parent);
 	case ESNT_SHADOW_VOLUME:
 		return 0;
-	case ESNT_OCT_TREE:
-		return Manager->addOctTreeSceneNode((IMesh*)0, parent, -1, 128, true);
+	case ESNT_OCTREE:
+		return Manager->addOctreeSceneNode((IMesh*)0, parent, -1, 128, true);
 	case ESNT_MESH:
 		return Manager->addMeshSceneNode(0, parent, -1, core::vector3df(),
 										 core::vector3df(), core::vector3df(1,1,1), true);

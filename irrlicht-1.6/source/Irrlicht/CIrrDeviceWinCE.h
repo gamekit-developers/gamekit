@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -90,8 +90,9 @@ namespace irr
 		public:
 
 			CCursorControl(const core::dimension2d<u32>& wsize, HWND hwnd, bool fullscreen)
-				: WindowSize(wsize), InvWindowSize(0.0f, 0.0f), IsVisible(true),
-					HWnd(hwnd), BorderX(0), BorderY(0), UseReferenceRect(false)
+				: WindowSize(wsize), InvWindowSize(0.0f, 0.0f),
+					HWnd(hwnd), BorderX(0), BorderY(0),
+					UseReferenceRect(false), IsVisible(true)
 			{
 				if (WindowSize.Width!=0)
 					InvWindowSize.Width = 1.0f / WindowSize.Width;
@@ -129,9 +130,9 @@ namespace irr
 			virtual void setPosition(f32 x, f32 y)
 			{
 				if (!UseReferenceRect)
-					setPosition((s32)(x*WindowSize.Width), (s32)(y*WindowSize.Height));
+					setPosition(core::round32(x*WindowSize.Width), core::round32(y*WindowSize.Height));
 				else
-					setPosition((s32)(x*ReferenceRect.getWidth()), (s32)(y*ReferenceRect.getHeight()));
+					setPosition(core::round32(x*ReferenceRect.getWidth()), core::round32(y*ReferenceRect.getHeight()));
 			}
 
 			//! Sets the new position of the cursor.
@@ -161,7 +162,7 @@ namespace irr
 			}
 
 			//! Returns the current position of the mouse cursor.
-			virtual core::position2d<s32> getPosition()
+			virtual const core::position2d<s32>& getPosition()
 			{
 				updateInternalCursorPosition();
 				return CursorPos;
@@ -205,6 +206,7 @@ namespace irr
 			/** Used to notify the cursor that the window was resized. */
 			virtual void OnResize(const core::dimension2d<u32>& size)
 			{
+				WindowSize = size;
 				if (size.Width!=0)
 					InvWindowSize.Width = 1.0f / size.Width;
 				else 
@@ -255,12 +257,12 @@ namespace irr
 			core::position2d<s32> CursorPos;
 			core::dimension2d<s32> WindowSize;
 			core::dimension2d<f32> InvWindowSize;
-			bool IsVisible;
 			HWND HWnd;
 
 			s32 BorderX, BorderY;
-			bool UseReferenceRect;
 			core::rect<s32> ReferenceRect;
+			bool UseReferenceRect;
+			bool IsVisible;
 		};
 
 

@@ -1,6 +1,6 @@
 /* irrlicht.h -- interface of the 'Irrlicht Engine'
 
-  Copyright (C) 2002-2009 Nikolaus Gebhardt
+  Copyright (C) 2002-2010 Nikolaus Gebhardt
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -184,7 +184,7 @@
 #include "vector2d.h"
 #include "vector3d.h"
 
-/*! \mainpage Irrlicht Engine 1.5 API documentation
+/*! \mainpage Irrlicht Engine 1.7.2 API documentation
  *
  * <div align="center"><img src="logobig.png" ></div>
  *
@@ -263,15 +263,15 @@
  *
  * Irrlicht can load a lot of file formats automaticly, see irr::scene::ISceneManager::getMesh()
  * for a detailed list. So if you would like to replace the simple blue screen background by
- * a cool Quake 3 Map, optimized by an octtree, just insert this code
+ * a cool Quake 3 Map, optimized by an octree, just insert this code
  * somewhere before the while loop:
  *
  * \code
  *	// add .pk3 archive to the file system
  *	device->getFileSystem()->addZipFileArchive("quake3map.pk3");
  *
- *	// load .bsp file and show it using an octtree
- *	scenemgr->addOctTreeSceneNode(
+ *	// load .bsp file and show it using an octree
+ *	scenemgr->addOctreeSceneNode(
  *		scenemgr->getMesh("quake3map.bsp"));
  * \endcode
  *
@@ -357,7 +357,7 @@ namespace irr
 	// THE FOLLOWING IS AN EMPTY LIST OF ALL SUB NAMESPACES
 	// EXISTING ONLY FOR THE DOCUMENTATION SOFTWARE DOXYGEN.
 
-	//! In this namespace can be found basic classes like vectors, planes, arrays, lists and so on.
+	//! Basic classes such as vectors, planes, arrays, lists, and so on can be found in this namespace.
 	namespace core
 	{
 	}
@@ -367,14 +367,12 @@ namespace irr
 	{
 	}
 
-	//! This namespace provides interfaces for input/output: Reading and
-	//! writing files, accessing zip archives, xml files, ...
+	//! This namespace provides interfaces for input/output: Reading and writing files, accessing zip archives, xml files, ...
 	namespace io
 	{
 	}
 
-	//! All scene management can be found in this namespace: Mesh loading,
-	//! special scene nodes like octrees and billboards, ...
+	//! All scene management can be found in this namespace: Mesh loading, special scene nodes like octrees and billboards, ...
 	namespace scene
 	{
 	}
@@ -390,5 +388,4 @@ namespace irr
 */
 
 #endif
-
 

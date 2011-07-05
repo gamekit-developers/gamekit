@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -109,6 +109,12 @@ public:
 
 	//! Gets the minimum starting size for particles
 	virtual const core::dimension2df& getMinStartSize() const { return MinStartSize; };
+
+	//! Writes attributes of the object.
+	virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options) const;
+
+	//! Reads attributes of the object.
+	virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options);
 
 private:
 

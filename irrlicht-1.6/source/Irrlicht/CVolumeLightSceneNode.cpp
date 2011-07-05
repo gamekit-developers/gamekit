@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2009 Dean Wadsworth
+// Copyright (C) 2007-2010 Dean Wadsworth
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -191,7 +191,8 @@ ISceneNode* CVolumeLightSceneNode::clone(ISceneNode* newParent, ISceneManager* n
 	nb->cloneMembers(this, newManager);
 	nb->getMaterial(0) = Mesh->getMeshBuffer(0)->getMaterial();
 
-	nb->drop();
+	if ( newParent )
+		nb->drop();
 	return nb;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2006-2009 Luke Hoschke
+// Copyright (C) 2006-2010 Luke Hoschke
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -119,14 +119,12 @@ private:
 
 	core::array<video::S3DVertex2TCoords> BaseVertices;
 
-	core::array<scene::SSkinMeshBuffer*> *Buffers;
-	core::array<CSkinnedMesh::SJoint*> *AllJoints;
-
 	ISceneManager*	SceneManager;
 	CSkinnedMesh*	AnimatedMesh;
 	io::IReadFile*	B3DFile;
 
 	bool NormalsInFile;
+	bool HasVertexColors;
 	bool ShowWarning;
 };
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Gaz Davidson
+// Copyright (C) 2009-2010 Gaz Davidson
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -10,7 +10,9 @@
 #include "CLimitReadFile.h"
 #include "os.h"
 #include "coreutil.h"
+#if !defined(_IRR_WINDOWS_CE_PLATFORM_)
 #include "errno.h"
+#endif
 
 namespace irr
 {
@@ -108,7 +110,7 @@ bool CArchiveLoaderTAR::isALoadableFileFormat(io::IReadFile* file) const
 		checksum2 += c8(*p);
 	}
 
-	if (!strcmp(fHead.Magic, "star"))
+	if (!strncmp(fHead.Magic, "ustar", 5))
 	{
 		for (u8* p = (u8*)(&fHead.Magic[0]); p < (u8*)(&fHead) + sizeof(fHead); ++p)
 		{
@@ -123,7 +125,7 @@ bool CArchiveLoaderTAR::isALoadableFileFormat(io::IReadFile* file) const
 	TAR Archive
 */
 CTarReader::CTarReader(IReadFile* file, bool ignoreCase, bool ignorePaths)
- : CFileList(file ? file->getFileName() : "", ignoreCase, ignorePaths), File(file)
+ : CFileList((file ? file->getFileName() : io::path("")), ignoreCase, ignorePaths), File(file)
 {
 	#ifdef _DEBUG
 	setDebugName("CTarReader");
@@ -175,7 +177,7 @@ u32 CTarReader::populateFileList()
 
 			// USTAR archives have a filename prefix
 			// may not be null terminated, copy carefully!
-			if (!strcmp(fHead.Magic, "ustar"))
+			if (!strncmp(fHead.Magic, "ustar", 5))
 			{
 				c8* np = fHead.FileNamePrefix;
 				while(*np && (np - fHead.FileNamePrefix) < 155)
@@ -202,8 +204,10 @@ u32 CTarReader::populateFileList()
 			}
 
 			u32 size = strtoul(sSize.c_str(), NULL, 8);
+#if !defined(_IRR_WINDOWS_CE_PLATFORM_)
 			if (errno == ERANGE)
 				os::Printer::log("File too large", fullPath, ELL_WARNING);
+#endif
 
 			// save start position
 			u32 offset = pos + 512;

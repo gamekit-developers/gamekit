@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2010 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -343,10 +343,11 @@ void CBurningVideoDriver::setTransform(E_TRANSFORMATION_STATE state, const core:
 
 //! clears the zbuffer
 bool CBurningVideoDriver::beginScene(bool backBuffer, bool zBuffer,
-		SColor color, void* windowId, core::rect<s32>* sourceRect)
+		SColor color, const SExposedVideoData& videoData,
+		core::rect<s32>* sourceRect)
 {
-	CNullDriver::beginScene(backBuffer, zBuffer, color, windowId, sourceRect);
-	WindowId = windowId;
+	CNullDriver::beginScene(backBuffer, zBuffer, color, videoData, sourceRect);
+	WindowId = videoData.D3D9.HWnd;
 	SceneSourceRect = sourceRect;
 
 	if (backBuffer && BackBuffer)
@@ -956,21 +957,55 @@ void CBurningVideoDriver::VertexCache_fill(const u32 sourceIndex,
 					sizeof ( f32 ) * 2 );
 			}
 
-			switch ( Material.org.TextureLayer[t].TextureWrap )
+			switch ( Material.org.TextureLayer[t].TextureWrapU )
 			{
+				case ETC_CLAMP:
+				case ETC_CLAMP_TO_EDGE:
+				case ETC_CLAMP_TO_BORDER:
+					dest->Tex[t].x = core::clamp ( (f32) ( M[0] * srcT.x + M[4] * srcT.y + M[8] ), 0.f, 1.f );
+					break;
+				case ETC_MIRROR:
+					dest->Tex[t].x = M[0] * srcT.x + M[4] * srcT.y + M[8];
+					if (core::fract(dest->Tex[t].x)>0.5f)
+						dest->Tex[t].x=1.f-dest->Tex[t].x;
+				break;
+				case ETC_MIRROR_CLAMP:
+				case ETC_MIRROR_CLAMP_TO_EDGE:
+				case ETC_MIRROR_CLAMP_TO_BORDER:
+					dest->Tex[t].x = core::clamp ( (f32) ( M[0] * srcT.x + M[4] * srcT.y + M[8] ), 0.f, 1.f );
+					if (core::fract(dest->Tex[t].x)>0.5f)
+						dest->Tex[t].x=1.f-dest->Tex[t].x;
+				break;
 				case ETC_REPEAT:
 				default:
 					dest->Tex[t].x = M[0] * srcT.x + M[4] * srcT.y + M[8];
-					dest->Tex[t].y = M[1] * srcT.x + M[5] * srcT.y + M[9];
 					break;
+			}
+			switch ( Material.org.TextureLayer[t].TextureWrapV )
+			{
 				case ETC_CLAMP:
 				case ETC_CLAMP_TO_EDGE:
-					dest->Tex[t].x = core::clamp ( (f32) ( M[0] * srcT.x + M[4] * srcT.y + M[8] ), 0.f, 1.f );
+				case ETC_CLAMP_TO_BORDER:
 					dest->Tex[t].y = core::clamp ( (f32) ( M[1] * srcT.x + M[5] * srcT.y + M[9] ), 0.f, 1.f );
+					break;
+				case ETC_MIRROR:
+					dest->Tex[t].y = M[1] * srcT.x + M[5] * srcT.y + M[9];
+					if (core::fract(dest->Tex[t].y)>0.5f)
+						dest->Tex[t].y=1.f-dest->Tex[t].y;
+				break;
+				case ETC_MIRROR_CLAMP:
+				case ETC_MIRROR_CLAMP_TO_EDGE:
+				case ETC_MIRROR_CLAMP_TO_BORDER:
+					dest->Tex[t].y = core::clamp ( (f32) ( M[1] * srcT.x + M[5] * srcT.y + M[9] ), 0.f, 1.f );
+					if (core::fract(dest->Tex[t].y)>0.5f)
+						dest->Tex[t].y=1.f-dest->Tex[t].y;
+				break;
+				case ETC_REPEAT:
+				default:
+					dest->Tex[t].y = M[1] * srcT.x + M[5] * srcT.y + M[9];
 					break;
 			}
 		}
-
 	}
 #endif
 
@@ -1965,7 +2000,7 @@ const wchar_t* CBurningVideoDriver::getName() const
 //! Returns the graphics card vendor name.
 core::stringc CBurningVideoDriver::getVendorInfo()
 {
-	return "Burning's Video: Ing. Thomas Alten (c) 2006-2009";
+	return "Burning's Video: Ing. Thomas Alten (c) 2006-2010";
 }
 
 
@@ -2015,7 +2050,11 @@ void CBurningVideoDriver::clearZBuffer()
 IImage* CBurningVideoDriver::createScreenShot()
 {
 	if (BackBuffer)
-		return new CImage(BackBuffer->getColorFormat(), BackBuffer);
+	{
+		CImage* tmp = new CImage(BackBuffer->getColorFormat(), BackBuffer->getDimension());
+		BackBuffer->copyTo(tmp);
+		return tmp;
+	}
 	else
 		return 0;
 
@@ -2024,13 +2063,12 @@ IImage* CBurningVideoDriver::createScreenShot()
 
 //! returns a device dependent texture from a software surface (IImage)
 //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
-ITexture* CBurningVideoDriver::createDeviceDependentTexture(IImage* surface, const io::path& name)
+ITexture* CBurningVideoDriver::createDeviceDependentTexture(IImage* surface, const io::path& name, void* mipmapData)
 {
 	return new CSoftwareTexture2(
 		surface, name,
 		(getTextureCreationFlag(ETCF_CREATE_MIP_MAPS) ? CSoftwareTexture2::GEN_MIPMAP : 0 ) |
-		(getTextureCreationFlag(ETCF_ALLOW_NON_POWER_2) ? 0 : CSoftwareTexture2::NP2_SIZE )
-	);
+		(getTextureCreationFlag(ETCF_ALLOW_NON_POWER_2) ? 0 : CSoftwareTexture2::NP2_SIZE ), mipmapData);
 
 }
 
@@ -2125,6 +2163,12 @@ void CBurningVideoDriver::drawStencilShadow(bool clearStencilBuffer, video::SCol
 }
 
 
+core::dimension2du CBurningVideoDriver::getMaxTextureSize() const
+{
+	return core::dimension2du(SOFTWARE_DRIVER_2_TEXTURE_MAXSIZE, SOFTWARE_DRIVER_2_TEXTURE_MAXSIZE);
+}
+
+
 } // end namespace video
 } // end namespace irr
 
@@ -2149,3 +2193,4 @@ IVideoDriver* createSoftwareDriver2(const core::dimension2d<u32>& windowSize, bo
 
 } // end namespace video
 } // end namespace irr
+

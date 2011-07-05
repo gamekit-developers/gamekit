@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2010 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -44,7 +44,7 @@ namespace video
 		//! clears the zbuffer
 		virtual bool beginScene(bool backBuffer=true, bool zBuffer=true,
 				SColor color=SColor(255,0,0,0),
-				void* windowId=0,
+				const SExposedVideoData& videoData=SExposedVideoData(),
 				core::rect<s32>* sourceRect=0);
 
 		//! presents the rendered scene on the screen, returns false if failed
@@ -154,6 +154,9 @@ namespace video
 		//! Returns the graphics card vendor name.
 		virtual core::stringc getVendorInfo();
 
+		//! Returns the maximum texture size supported.
+		virtual core::dimension2du getMaxTextureSize() const;
+
 	protected:
 
 
@@ -165,7 +168,7 @@ namespace video
 
 		//! returns a device dependent texture from a software surface (IImage)
 		//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
-		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const io::path& name);
+		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const io::path& name, void* mipmapData=0);
 
 		video::CImage* BackBuffer;
 		video::IImagePresenter* Presenter;

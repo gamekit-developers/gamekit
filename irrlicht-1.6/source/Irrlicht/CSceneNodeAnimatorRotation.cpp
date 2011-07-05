@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -33,11 +33,11 @@ void CSceneNodeAnimatorRotation::animateNode(ISceneNode* node, u32 timeMs)
 			// precision problems with huge floats.
 			core::vector3df rot = node->getRotation() + Rotation*(diffTime*0.1f);
 			if (rot.X>360.f)
-				fmodf(rot.X, 360.f);
+				rot.X=fmodf(rot.X, 360.f);
 			if (rot.Y>360.f)
-				fmodf(rot.Y, 360.f);
+				rot.Y=fmodf(rot.Y, 360.f);
 			if (rot.Z>360.f)
-				fmodf(rot.Z, 360.f);
+				rot.Z=fmodf(rot.Z, 360.f);
 			node->setRotation(rot);
 			StartTime=timeMs; 
 		}

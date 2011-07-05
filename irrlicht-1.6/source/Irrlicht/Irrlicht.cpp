@@ -1,10 +1,10 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "IrrCompileConfig.h"
 
-static const char* const copyright = "Irrlicht Engine (c) 2002-2009 Nikolaus Gebhardt";
+static const char* const copyright = "Irrlicht Engine (c) 2002-2010 Nikolaus Gebhardt";
 
 #ifdef _IRR_WINDOWS_
 	#include <windows.h>
@@ -32,6 +32,10 @@ static const char* const copyright = "Irrlicht Engine (c) 2002-2009 Nikolaus Geb
 
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 #include "CIrrDeviceSDL.h"
+#endif
+
+#ifdef _IRR_COMPILE_WITH_FB_DEVICE_
+#include "CIrrDeviceFB.h"
 #endif
 
 #ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_
@@ -86,6 +90,11 @@ namespace irr
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 		if (params.DeviceType == EIDT_SDL || (!dev && params.DeviceType == EIDT_BEST))
 		dev = new CIrrDeviceSDL(params);
+#endif
+
+#ifdef _IRR_COMPILE_WITH_FB_DEVICE_
+		if (params.DeviceType == EIDT_FRAMEBUFFER || (!dev && params.DeviceType == EIDT_BEST))
+		dev = new CIrrDeviceFB(params);
 #endif
 
 #ifdef _IRR_COMPILE_WITH_CONSOLE_DEVICE_

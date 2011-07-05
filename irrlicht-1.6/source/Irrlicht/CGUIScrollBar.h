@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -47,7 +47,7 @@ namespace gui
 		virtual s32 getMin() const;
 
 		//! sets the minimum value of the scrollbar.
-		virtual void setMin(s32 max);
+		virtual void setMin(s32 min);
 
 		//! gets the small step value
 		virtual s32 getSmallStep() const;
@@ -99,6 +99,7 @@ namespace gui
 		s32 LargeStep;
 		s32 DesiredPos;
 		u32 LastChange;
+		video::SColor CurrentIconColor;
 
 		f32 range () const { return (f32) ( Max - Min ); }
 	};

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -141,6 +141,9 @@ namespace scene
 
 		//! Queries if the camera scene node's rotation and its target position are bound together.
 		virtual bool getTargetAndRotationBinding(void) const;
+
+		//! Creates a clone of this scene node and its children.
+		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
 
 	protected:
 

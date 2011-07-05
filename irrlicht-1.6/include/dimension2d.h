@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -190,8 +190,8 @@ namespace core
 			\return Interpolated dimension. */
 			dimension2d<T> getInterpolated(const dimension2d<T>& other, f32 d) const
 			{
-				T inv = (T) (1.0f - d);
-				return dimension2d<T>(other.Width*inv + Width*d, other.Height*inv + Height*d);
+				f32 inv = (1.0f - d);
+				return dimension2d<T>( (T)(other.Width*inv + Width*d), (T)(other.Height*inv + Height*d));
 			}
 
 

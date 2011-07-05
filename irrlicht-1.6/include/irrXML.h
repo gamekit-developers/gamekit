@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine" and the "irrXML" project.
 // For conditions of distribution and use, see copyright notice in irrlicht.h and/or irrXML.h
 
@@ -17,7 +17,7 @@
   Here you'll find any information you'll need to develop applications with
   irrXML. If you look for a tutorial on how to start, take a look at the \ref irrxmlexample,
   at the homepage of irrXML at <A HREF="http://www.ambiera.com/irrxml/">www.ambiera.com/irrxml/</A>
-  or into the SDK in the directory \example.
+  or into the SDK in the directory example.
 
   irrXML is intended to be a high speed and easy-to-use XML Parser for C++, and
   this documentation is an important part of it. If you have any questions or
@@ -120,7 +120,7 @@
 	The irrXML license is based on the zlib license. Basicly, this means you can do with
 	irrXML whatever you want:
 
-	Copyright (C) 2002-2009 Nikolaus Gebhardt
+	Copyright (C) 2002-2010 Nikolaus Gebhardt
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -522,7 +522,7 @@ namespace io
 																		bool deleteCallback = false);
 
 
-	/*! \file irrxml.h
+	/*! \file irrXML.h
 	\brief Header file of the irrXML, the Irrlicht XML parser.
 
 	This file includes everything needed for using irrXML,
@@ -534,7 +534,7 @@ namespace io
 	\endcode
 
 	It is also common to use the two namespaces in which irrXML is included,
-	directly after #including irrXML.h:
+	directly after including irrXML.h:
 
 	\code
 	#include <irrXML.h>

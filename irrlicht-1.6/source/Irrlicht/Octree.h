@@ -1,9 +1,9 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_OCT_TREE_H_INCLUDED__
-#define __C_OCT_TREE_H_INCLUDED__
+#ifndef __C_OCTREE_H_INCLUDED__
+#define __C_OCTREE_H_INCLUDED__
 
 #include "SViewFrustum.h"
 #include "S3DVertex.h"
@@ -11,25 +11,29 @@
 #include "irrArray.h"
 #include "CMeshBuffer.h"
 
-/*!
-	Flags for Octtree
+/**
+	Flags for Octree
 */
-#define OCTTREE_USE_HARDWARE	// use meshbuffer for drawing, enables hardware acceleration
-#define OCTTREE_PARENTTEST	// bypass full invisible/visible test
-#define OCTTREE_BOX_BASED	// use bounding box or frustum for calculate polys
+//! use meshbuffer for drawing, enables VBO usage
+#define OCTREE_USE_HARDWARE	false
+//! use visibility information together with VBOs
+#define OCTREE_USE_VISIBILITY true
+//! use bounding box or frustum for calculate polys
+#define OCTREE_BOX_BASED true
+//! bypass full invisible/visible test
+#define OCTREE_PARENTTEST
 
 namespace irr
 {
 
-//! template octtree.
+//! template octree.
 /** T must be a vertex type which has a member
 called .Pos, which is a core::vertex3df position. */
 template <class T>
-class OctTree
+class Octree
 {
 public:
 
-#if defined (OCTTREE_USE_HARDWARE)
 	struct SMeshChunk : public scene::CMeshBuffer<T>
 	{
 		SMeshChunk ()
@@ -45,14 +49,6 @@ public:
 
 		s32 MaterialId;
 	};
-#else
-	struct SMeshChunk
-	{
-		core::array<T> Vertices;
-		core::array<u16> Indices;
-		s32 MaterialId;
-	};
-#endif
 
 	struct SIndexChunk
 	{
@@ -69,7 +65,7 @@ public:
 
 
 	//! Constructor
-	OctTree(const core::array<SMeshChunk>& meshes, s32 minimalPolysPerNode=128) :
+	Octree(const core::array<SMeshChunk>& meshes, s32 minimalPolysPerNode=128) :
 		IndexData(0), IndexDataCount(meshes.size()), NodeCount(0)
 	{
 		IndexData = new SIndexData[IndexDataCount];
@@ -92,10 +88,10 @@ public:
 		}
 
 		// create tree
-		Root = new OctTreeNode(NodeCount, 0, meshes, indexChunks, minimalPolysPerNode);
+		Root = new OctreeNode(NodeCount, 0, meshes, indexChunks, minimalPolysPerNode);
 	}
 
-	//! returns all ids of polygons partially or fully enclosed 
+	//! returns all ids of polygons partially or fully enclosed
 	//! by this bounding box.
 	void calculatePolys(const core::aabbox3d<f32>& box)
 	{
@@ -105,7 +101,7 @@ public:
 		Root->getPolys(box, IndexData, 0);
 	}
 
-	//! returns all ids of polygons partially or fully enclosed 
+	//! returns all ids of polygons partially or fully enclosed
 	//! by a view frustum.
 	void calculatePolys(const scene::SViewFrustum& frustum)
 	{
@@ -131,14 +127,14 @@ public:
 	}
 
 	//! for debug purposes only, collects the bounding boxes of the tree
-	void getBoundingBoxes(const core::aabbox3d<f32>& box, 
+	void getBoundingBoxes(const core::aabbox3d<f32>& box,
 		core::array< const core::aabbox3d<f32>* >&outBoxes) const
 	{
 		Root->getBoundingBoxes(box, outBoxes);
 	}
 
 	//! destructor
-	~OctTree()
+	~Octree()
 	{
 		for (u32 i=0; i<IndexDataCount; ++i)
 			delete [] IndexData[i].Indices;
@@ -149,19 +145,19 @@ public:
 
 private:
 	// private inner class
-	class OctTreeNode
+	class OctreeNode
 	{
 	public:
 
 		// constructor
-		OctTreeNode(u32& nodeCount, u32 currentdepth,
+		OctreeNode(u32& nodeCount, u32 currentdepth,
 			const core::array<SMeshChunk>& allmeshdata,
 			core::array<SIndexChunk>* indices,
 			s32 minimalPolysPerNode) : IndexData(0),
 			Depth(currentdepth+1)
 		{
 			++nodeCount;
-			
+
 			u32 i; // new ISO for scoping problem with different compilers
 
 			for (i=0; i!=8; ++i)
@@ -206,7 +202,7 @@ private:
 			core::vector3df middle = Box.getCenter();
 			core::vector3df edges[8];
 			Box.getEdges(edges);
-			
+
 			// calculate all children
 			core::aabbox3d<f32> box;
 			core::array<u16> keepIndices;
@@ -246,14 +242,14 @@ private:
 							keepIndices.push_back((*indices)[i].Indices[t+2]);
 						}
 					}
-					
-					memcpy( (*indices)[i].Indices.pointer(), keepIndices.pointer(), keepIndices.size()*sizeof(u16));
+
 					(*indices)[i].Indices.set_used(keepIndices.size());
+					memcpy( (*indices)[i].Indices.pointer(), keepIndices.pointer(), keepIndices.size()*sizeof(u16));
 					keepIndices.set_used(0);
 				}
 
 				if (added)
-					Children[ch] = new OctTreeNode(nodeCount, Depth, 
+					Children[ch] = new OctreeNode(nodeCount, Depth,
 						allmeshdata, cindexChunks, minimalPolysPerNode);
 				else
 					delete cindexChunks;
@@ -264,7 +260,7 @@ private:
 		}
 
 		// destructor
-		~OctTreeNode()
+		~OctreeNode()
 		{
 			delete IndexData;
 
@@ -272,11 +268,11 @@ private:
 				delete Children[i];
 		}
 
-		// returns all ids of polygons partially or full enclosed 
+		// returns all ids of polygons partially or full enclosed
 		// by this bounding box.
 		void getPolys(const core::aabbox3d<f32>& box, SIndexData* idxdata, u32 parentTest ) const
 		{
-#if defined (OCTTREE_PARENTTEST )
+#if defined (OCTREE_PARENTTEST )
 			// if not full inside
 			if ( parentTest != 2 )
 			{
@@ -293,14 +289,14 @@ private:
 			{
 				const u32 cnt = IndexData->size();
 				u32 i; // new ISO for scoping problem in some compilers
-				
+
 				for (i=0; i<cnt; ++i)
 				{
 					const s32 idxcnt = (*IndexData)[i].Indices.size();
 
 					if (idxcnt)
 					{
-						memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize], 
+						memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize],
 							&(*IndexData)[i].Indices[0], idxcnt * sizeof(s16));
 						idxdata[i].CurrentSize += idxcnt;
 					}
@@ -312,54 +308,42 @@ private:
 			}
 		}
 
-		// returns all ids of polygons partially or full enclosed 
+		// returns all ids of polygons partially or full enclosed
 		// by the view frustum.
 		void getPolys(const scene::SViewFrustum& frustum, SIndexData* idxdata,u32 parentTest) const
 		{
 			u32 i; // new ISO for scoping problem in some compilers
-			
+
 			// if parent is fully inside, no further check for the children is needed
-#if defined (OCTTREE_PARENTTEST )
+#if defined (OCTREE_PARENTTEST )
 			if ( parentTest != 2 )
 #endif
 			{
-				core::vector3df edges[8];
-				Box.getEdges(edges);
-
+#if defined (OCTREE_PARENTTEST )
+				parentTest = 2;
+#endif
 				for (i=0; i!=scene::SViewFrustum::VF_PLANE_COUNT; ++i)
 				{
-					u32 boxInFrustum=0;
-
-					for (u32 j=0; j!=8; ++j)
-					{
-						if (frustum.planes[i].classifyPointRelation(edges[j]) != core::ISREL3D_FRONT)
-						{
-							boxInFrustum += 1;
-#if !defined (OCTTREE_PARENTTEST )
-							break;
-#endif
-						}
-					}
-
-					if ( 0  == boxInFrustum) // all edges outside
+					core::EIntersectionRelation3D r = Box.classifyPlaneRelation(frustum.planes[i]);
+					if ( r == core::ISREL3D_FRONT )
 						return;
-
-#if defined (OCTTREE_PARENTTEST )
-					if ( 8  == boxInFrustum) // all edges in, all children in
-						parentTest = 2;
+#if defined (OCTREE_PARENTTEST )
+					if ( r == core::ISREL3D_CLIPPED )
+						parentTest = 1;	// must still check childs
 #endif
 				}
 			}
 
+
 			const u32 cnt = IndexData->size();
-			
+
 			for (i=0; i!=cnt; ++i)
 			{
 				s32 idxcnt = (*IndexData)[i].Indices.size();
 
 				if (idxcnt)
 				{
-					memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize], 
+					memcpy(&idxdata[i].Indices[idxdata[i].CurrentSize],
 						&(*IndexData)[i].Indices[0], idxcnt * sizeof(s16));
 					idxdata[i].CurrentSize += idxcnt;
 				}
@@ -377,7 +361,7 @@ private:
 			if (Box.intersectsWithBox(box))
 			{
 				outBoxes.push_back(&Box);
-				
+
 				for (u32 i=0; i!=8; ++i)
 					if (Children[i])
 						Children[i]->getBoundingBoxes(box, outBoxes);
@@ -388,11 +372,11 @@ private:
 
 		core::aabbox3df Box;
 		core::array<SIndexChunk>* IndexData;
-		OctTreeNode* Children[8];
+		OctreeNode* Children[8];
 		u32 Depth;
 	};
 
-	OctTreeNode* Root;
+	OctreeNode* Root;
 	SIndexData* IndexData;
 	u32 IndexDataCount;
 	u32 NodeCount;

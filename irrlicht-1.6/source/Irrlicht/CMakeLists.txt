@@ -205,7 +205,7 @@ CMeshManipulator.cpp
 CMeshManipulator.h
 CSceneManager.cpp
 CSceneManager.h
-OctTree.h
+Octree.h
 C3DSMeshFileLoader.cpp
 C3DSMeshFileLoader.h
 CAnimatedMeshMD2.cpp
@@ -271,8 +271,8 @@ CLightSceneNode.cpp
 CLightSceneNode.h
 CMeshSceneNode.cpp
 CMeshSceneNode.h
-COctTreeSceneNode.cpp
-COctTreeSceneNode.h
+COctreeSceneNode.cpp
+COctreeSceneNode.h
 CQuake3ShaderSceneNode.cpp
 CQuake3ShaderSceneNode.h
 CShadowVolumeSceneNode.cpp
@@ -314,8 +314,8 @@ CMountPointReader.cpp
 CMountPointReader.h
 CPLYMeshFileLoader.cpp
 CPLYMeshFileLoader.h
-COctTreeTriangleSelector.cpp
-COctTreeTriangleSelector.h
+COctreeTriangleSelector.cpp
+COctreeTriangleSelector.h
 CSceneCollisionManager.cpp
 CSceneCollisionManager.h
 CTarReader.cpp
@@ -439,8 +439,10 @@ SET(jpeg_SRCS
 jpeglib/cderror.h
 jpeglib/cdjpeg.c
 jpeglib/cdjpeg.h
+jpeglib/jaricom.c
 jpeglib/jcapimin.c
 jpeglib/jcapistd.c
+jpeglib/jcarith.c
 jpeglib/jccoefct.c
 jpeglib/jccolor.c
 jpeglib/jcdctmgr.c
@@ -458,6 +460,7 @@ jpeglib/jcprepct.c
 jpeglib/jcsample.c
 jpeglib/jctrans.c
 jpeglib/jdapimin.c
+jpeglib/jdarith.c
 jpeglib/jdapistd.c
 jpeglib/jdatadst.c
 jpeglib/jdatasrc.c

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -203,6 +203,7 @@ bool CMD2MeshFileLoader::loadFile(io::IReadFile* file, CAnimatedMeshMD2* mesh)
 
 	if (!file->read(textureCoords, sizeof(SMD2TextureCoordinate)*header.numTexcoords))
 	{
+		delete[] textureCoords;
 		os::Printer::log("MD2 Loader: Error reading TextureCoords.", file->getFileName(), ELL_ERROR);
 		return false;
 	}
@@ -222,6 +223,9 @@ bool CMD2MeshFileLoader::loadFile(io::IReadFile* file, CAnimatedMeshMD2* mesh)
 	SMD2Triangle *triangles = new SMD2Triangle[header.numTriangles];
 	if (!file->read(triangles, header.numTriangles *sizeof(SMD2Triangle)))
 	{
+		delete[] triangles;
+		delete[] textureCoords;
+
 		os::Printer::log("MD2 Loader: Error reading triangles.", file->getFileName(), ELL_ERROR);
 		return false;
 	}
@@ -359,10 +363,8 @@ bool CMD2MeshFileLoader::loadFile(io::IReadFile* file, CAnimatedMeshMD2* mesh)
 	delete [] triangles;
 	delete [] textureCoords;
 
-	// return
-
-	mesh->calculateBoundingBox();
-
+	// init buffer with start frame.
+	mesh->getMesh(0);
 	return true;
 }
 

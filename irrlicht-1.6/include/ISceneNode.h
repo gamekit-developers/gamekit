@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -23,6 +23,11 @@ namespace irr
 namespace scene
 {
 	class ISceneManager;
+
+	//! Typedef for list of scene nodes
+	typedef core::list<ISceneNode*> ISceneNodeList;
+	//! Typedef for list of scene node animators
+	typedef core::list<ISceneNodeAnimator*> ISceneNodeAnimatorList;
 
 	//! Scene node interface.
 	/** A scene node is a node in the hierarchical scene graph. Every scene
@@ -60,7 +65,7 @@ namespace scene
 			removeAll();
 
 			// delete all animators
-			core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
+			ISceneNodeAnimatorList::Iterator ait = Animators.begin();
 			for (; ait != Animators.end(); ++ait)
 				(*ait)->drop();
 
@@ -87,7 +92,7 @@ namespace scene
 		{
 			if (IsVisible)
 			{
-				core::list<ISceneNode*>::Iterator it = Children.begin();
+				ISceneNodeList::Iterator it = Children.begin();
 				for (; it != Children.end(); ++it)
 					(*it)->OnRegisterSceneNode();
 			}
@@ -106,7 +111,7 @@ namespace scene
 			{
 				// animate this node with all animators
 
-				core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
+				ISceneNodeAnimatorList::Iterator ait = Animators.begin();
 				while (ait != Animators.end())
 					{
 					// continue to the next node before calling animateNode()
@@ -115,14 +120,14 @@ namespace scene
 					ISceneNodeAnimator* anim = *ait;
 					++ait;
 					anim->animateNode(this, timeMs);
-				} 
+				}
 
 				// update absolute position
 				updateAbsolutePosition();
 
 				// perform the post render process on all children
 
-				core::list<ISceneNode*>::Iterator it = Children.begin();
+				ISceneNodeList::Iterator it = Children.begin();
 				for (; it != Children.end(); ++it)
 					(*it)->OnAnimate(timeMs);
 			}
@@ -284,12 +289,14 @@ namespace scene
 
 
 		//! Removes a child from this scene node.
-		/** \param child A pointer to the new child.
+		/** If found in the children list, the child pointer is also
+		dropped and might be deleted if no other grab exists.
+		\param child A pointer to the child which shall be removed.
 		\return True if the child was removed, and false if not,
 		e.g. because it couldn't be found in the children list. */
 		virtual bool removeChild(ISceneNode* child)
 		{
-			core::list<ISceneNode*>::Iterator it = Children.begin();
+			ISceneNodeList::Iterator it = Children.begin();
 			for (; it != Children.end(); ++it)
 				if ((*it) == child)
 				{
@@ -305,9 +312,12 @@ namespace scene
 
 
 		//! Removes all children of this scene node
+		/** The scene nodes found in the children list are also dropped
+		and might be deleted if no other grab exists on them.
+		*/
 		virtual void removeAll()
 		{
-			core::list<ISceneNode*>::Iterator it = Children.begin();
+			ISceneNodeList::Iterator it = Children.begin();
 			for (; it != Children.end(); ++it)
 			{
 				(*it)->Parent = 0;
@@ -318,7 +328,9 @@ namespace scene
 		}
 
 
-		//! Removes this scene node from the scene, deleting it.
+		//! Removes this scene node from the scene
+		/** If no other grab exists for this node, it will be deleted.
+		*/
 		virtual void remove()
 		{
 			if (Parent)
@@ -347,24 +359,30 @@ namespace scene
 
 
 		//! Removes an animator from this scene node.
-		/** \param animator A pointer to the animator to be deleted. */
+		/** If the animator is found, it is also dropped and might be
+		deleted if not other grab exists for it.
+		\param animator A pointer to the animator to be deleted. */
 		virtual void removeAnimator(ISceneNodeAnimator* animator)
 		{
-			core::list<ISceneNodeAnimator*>::Iterator it = Animators.begin();
+			ISceneNodeAnimatorList::Iterator it = Animators.begin();
 			for (; it != Animators.end(); ++it)
+			{
 				if ((*it) == animator)
 				{
 					(*it)->drop();
 					Animators.erase(it);
 					return;
 				}
+			}
 		}
 
 
 		//! Removes all animators from this scene node.
+		/** The animators might also be deleted if no other grab exists
+		for them. */
 		virtual void removeAnimators()
 		{
-			core::list<ISceneNodeAnimator*>::Iterator it = Animators.begin();
+			ISceneNodeAnimatorList::Iterator it = Animators.begin();
 			for (; it != Animators.end(); ++it)
 				(*it)->drop();
 
@@ -430,8 +448,8 @@ namespace scene
 
 
 		//! Gets the scale of the scene node relative to its parent.
-		/** This is the scale of this node relative to its parent. 
-		If you want the absolute scale, use 
+		/** This is the scale of this node relative to its parent.
+		If you want the absolute scale, use
 		getAbsoluteTransformation().getScale()
 		\return The scale of the scene node. */
 		virtual const core::vector3df& getScale() const
@@ -519,7 +537,7 @@ namespace scene
 
 
 		//! Sets if debug data like bounding boxes should be drawn.
-		/** A bitwise OR of the types from @ref irr::scene::E_DEBUG_SCENE_TYPE. 
+		/** A bitwise OR of the types from @ref irr::scene::E_DEBUG_SCENE_TYPE.
 		Please note that not all scene nodes support all debug data types.
 		\param state The debug data visibility state to be used. */
 		virtual void setDebugDataVisible(s32 state)
@@ -528,7 +546,7 @@ namespace scene
 		}
 
 		//! Returns if debug data like bounding boxes are drawn.
-		/** \return A bitwise OR of the debug data values from 
+		/** \return A bitwise OR of the debug data values from
 		@ref irr::scene::E_DEBUG_SCENE_TYPE that are currently visible. */
 		s32 isDebugDataVisible() const
 		{
@@ -584,7 +602,7 @@ namespace scene
 		/** The Selector can be used by the engine for doing collision
 		detection. You can create a TriangleSelector with
 		ISceneManager::createTriangleSelector() or
-		ISceneManager::createOctTreeTriangleSelector and set it with
+		ISceneManager::createOctreeTriangleSelector and set it with
 		ISceneNode::setTriangleSelector(). If a scene node got no triangle
 		selector, but collision tests should be done with it, a triangle
 		selector is created using the bounding box of the scene node.
@@ -600,7 +618,7 @@ namespace scene
 		/** The Selector can be used by the engine for doing collision
 		detection. You can create a TriangleSelector with
 		ISceneManager::createTriangleSelector() or
-		ISceneManager::createOctTreeTriangleSelector(). Some nodes may
+		ISceneManager::createOctreeTriangleSelector(). Some nodes may
 		create their own selector by default, so it would be good to
 		check if there is already a selector in this node by calling
 		ISceneNode::getTriangleSelector().
@@ -620,7 +638,7 @@ namespace scene
 
 
 		//! Updates the absolute position based on the relative and the parents position
-		/** Note: This does not recursively update the parents absolute positions, so if you have a deeper 
+		/** Note: This does not recursively update the parents absolute positions, so if you have a deeper
 			hierarchy you might want to update the parents first.*/
 		virtual void updateAbsolutePosition()
 		{
@@ -744,13 +762,13 @@ namespace scene
 
 			// clone children
 
-			core::list<ISceneNode*>::Iterator it = toCopyFrom->Children.begin();
+			ISceneNodeList::Iterator it = toCopyFrom->Children.begin();
 			for (; it != toCopyFrom->Children.end(); ++it)
 				(*it)->clone(this, newManager);
 
 			// clone animators
 
-			core::list<ISceneNodeAnimator*>::Iterator ait = toCopyFrom->Animators.begin();
+			ISceneNodeAnimatorList::Iterator ait = toCopyFrom->Animators.begin();
 			for (; ait != toCopyFrom->Animators.end(); ++ait)
 			{
 				ISceneNodeAnimator* anim = (*ait)->createClone(this, SceneManager);
@@ -768,7 +786,7 @@ namespace scene
 		{
 			SceneManager = newManager;
 
-			core::list<ISceneNode*>::Iterator it = Children.begin();
+			ISceneNodeList::Iterator it = Children.begin();
 			for (; it != Children.end(); ++it)
 				(*it)->setSceneManager(newManager);
 		}
@@ -818,6 +836,7 @@ namespace scene
 		//! Is debug object?
 		bool IsDebugObject;
 	};
+
 
 } // end namespace scene
 } // end namespace irr

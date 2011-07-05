@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -50,7 +50,10 @@ namespace video
 		//! OpenGL device, available on most platforms.
 		/** Performs hardware accelerated rendering of 3D and 2D
 		primitives. */
-		EDT_OPENGL
+		EDT_OPENGL,
+
+		//! No driver, just for counting the elements
+		EDT_COUNT
 	};
 
 } // end namespace video

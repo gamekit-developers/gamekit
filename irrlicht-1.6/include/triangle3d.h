@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -46,6 +46,20 @@ namespace core
 			return (box.isPointInside(pointA) &&
 				box.isPointInside(pointB) &&
 				box.isPointInside(pointC));
+		}
+
+		//! Determines if the triangle is totally outside a bounding box.
+		/** \param box Box to check.
+		\return True if triangle is outside the box, otherwise false. */
+		bool isTotalOutsideBox(const aabbox3d<T>& box) const
+		{
+			return ((pointA.X > box.MaxEdge.X && pointB.X > box.MaxEdge.X && pointC.X > box.MaxEdge.X) ||
+
+				(pointA.Y > box.MaxEdge.Y && pointB.Y > box.MaxEdge.Y && pointC.Y > box.MaxEdge.Y) ||
+				(pointA.Z > box.MaxEdge.Z && pointB.Z > box.MaxEdge.Z && pointC.Z > box.MaxEdge.Z) ||
+				(pointA.X < box.MinEdge.X && pointB.X < box.MinEdge.X && pointC.X < box.MinEdge.X) ||
+				(pointA.Y < box.MinEdge.Y && pointB.Y < box.MinEdge.Y && pointC.Y < box.MinEdge.Y) ||
+				(pointA.Z < box.MinEdge.Z && pointB.Z < box.MinEdge.Z && pointC.Z < box.MinEdge.Z));
 		}
 
 		//! Get the closest point on a triangle to a point on the same plane.
@@ -190,7 +204,7 @@ namespace core
 		//! Get the area of the triangle
 		T getArea() const
 		{
-			return (pointB - pointA).crossProduct(pointC - pointA).getLength() * 0.5;
+			return (pointB - pointA).crossProduct(pointC - pointA).getLength() * 0.5f;
 
 		}
 

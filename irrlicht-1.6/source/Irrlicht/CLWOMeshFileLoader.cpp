@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2009 Nikolaus Gebhardt
+// Copyright (C) 2007-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -217,6 +217,7 @@ IAnimatedMesh* CLWOMeshFileLoader::createMesh(io::IReadFile* file)
 		const u16 uvTag = Materials[tag]->Texture[0].UVTag;
 		const u16 duvTag = Materials[tag]->Texture[0].DUVTag;
 		video::S3DVertex vertex;
+		vertex.Color=0xffffffff;
 		const u32 vertCount=mb->Vertices.size();
 		for (u32 i=0; i<polySize; ++i)
 		{
@@ -613,6 +614,7 @@ void CLWOMeshFileLoader::readObj1(u32 size)
 	u16 numVerts, vertIndex;
 	s16 material;
 	video::S3DVertex vertex;
+	vertex.Color=0xffffffff;
 
 	while (size!=0)
 	{

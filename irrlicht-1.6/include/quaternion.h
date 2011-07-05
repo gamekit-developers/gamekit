@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -40,6 +40,9 @@ class quaternion
 		//! Equalilty operator
 		bool operator==(const quaternion& other) const;
 
+		//! inequality operator
+		bool operator!=(const quaternion& other) const;
+
 		//! Assignment operator
 		inline quaternion& operator=(const quaternion& other);
 
@@ -76,6 +79,13 @@ class quaternion
 		//! Sets new quaternion based on euler angles (radians)
 		inline quaternion& set(const core::vector3df& vec);
 
+		//! Sets new quaternion from other quaternion
+		inline quaternion& set(const core::quaternion& quat);
+
+		//! returns if this quaternion equals the other one, taking floating point rounding errors into account
+		inline bool equals(const quaternion& other,
+				const f32 tolerance = ROUNDING_ERROR_f32 ) const;
+
 		//! Normalizes the quaternion
 		inline quaternion& normalize();
 
@@ -83,7 +93,7 @@ class quaternion
 		matrix4 getMatrix() const;
 
 		//! Creates a matrix from this quaternion
-		void getMatrix( matrix4 &dest, const vector3df &translation ) const;
+		void getMatrix( matrix4 &dest, const core::vector3df &translation ) const;
 
 		/*!
 			Creates a matrix from this quaternion
@@ -102,7 +112,7 @@ class quaternion
 			lookat *= m3;
 
 		*/
-		void getMatrixCenter( matrix4 &dest, const vector3df &center, const vector3df &translation ) const;
+		void getMatrixCenter( matrix4 &dest, const core::vector3df &center, const core::vector3df &translation ) const;
 
 		//! Creates a matrix from this quaternion
 		inline void getMatrix_transposed( matrix4 &dest ) const;
@@ -171,6 +181,11 @@ inline bool quaternion::operator==(const quaternion& other) const
 		(W == other.W));
 }
 
+// inequality operator
+inline bool quaternion::operator!=(const quaternion& other) const
+{
+	return !(*this == other);
+}
 
 // assignment operator
 inline quaternion& quaternion::operator=(const quaternion& other)
@@ -339,10 +354,9 @@ inline void quaternion::getMatrix( matrix4 &dest, const core::vector3df &center 
 	m2.setInverseTranslation ( center );
 	lookat *= m2;
 */
-inline void quaternion::getMatrixCenter(	matrix4 &dest, 
-											const core::vector3df &center,
-											const core::vector3df &translation
-											) const
+inline void quaternion::getMatrixCenter(matrix4 &dest,
+					const core::vector3df &center,
+					const core::vector3df &translation) const
 {
 	f32 * m = dest.pointer();
 
@@ -445,6 +459,23 @@ inline quaternion& quaternion::set(const core::vector3df& vec)
 {
 	return set(vec.X, vec.Y, vec.Z);
 }
+
+// sets new quaternion based on other quaternion
+inline quaternion& quaternion::set(const core::quaternion& quat)
+{
+	return (*this=quat);
+}
+
+
+//! returns if this quaternion equals the other one, taking floating point rounding errors into account
+inline bool quaternion::equals(const quaternion& other, const f32 tolerance) const
+{
+	return core::equals(X, other.X, tolerance) &&
+		core::equals(Y, other.Y, tolerance) &&
+		core::equals(Z, other.Z, tolerance) &&
+		core::equals(W, other.W, tolerance);
+}
+
 
 // normalizes the quaternion
 inline quaternion& quaternion::normalize()
@@ -596,6 +627,17 @@ inline core::quaternion& quaternion::rotationFromTo(const vector3df& from, const
 	if (d >= 1.0f) // If dot == 1, vectors are the same
 	{
 		return makeIdentity();
+	}
+	else if (d <= -1.0f) // exactly opposite
+	{
+		core::vector3df axis(1.0f, 0.f, 0.f);
+		axis = axis.crossProduct(core::vector3df(X,Y,Z));
+		if (axis.getLength()==0)
+		{
+			axis.set(0.f,1.f,0.f);
+			axis.crossProduct(core::vector3df(X,Y,Z));
+		}
+		return this->fromAngleAxis(core::PI, axis);
 	}
 
 	const f32 s = sqrtf( (1+d)*2 ); // optimize inv_sqrt

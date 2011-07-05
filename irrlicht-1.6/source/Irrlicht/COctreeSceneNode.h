@@ -1,28 +1,28 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_OCT_TREE_SCENE_NODE_H_INCLUDED__
-#define __C_OCT_TREE_SCENE_NODE_H_INCLUDED__
+#ifndef __C_OCTREE_SCENE_NODE_H_INCLUDED__
+#define __C_OCTREE_SCENE_NODE_H_INCLUDED__
 
 #include "IMeshSceneNode.h"
-#include "OctTree.h"
+#include "Octree.h"
 
 namespace irr
 {
 namespace scene
 {
 	//! implementation of the IBspTreeSceneNode
-	class COctTreeSceneNode : public IMeshSceneNode
+	class COctreeSceneNode : public IMeshSceneNode
 	{
 	public:
 
 		//! constructor
-		COctTreeSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id, 
+		COctreeSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 			s32 minimalPolysPerNode=512);
 
 		//! destructor
-		virtual ~COctTreeSceneNode();
+		virtual ~COctreeSceneNode();
 
 		virtual void OnRegisterSceneNode();
 
@@ -41,7 +41,7 @@ namespace scene
 		//! optimal position for minimizing renderstate changes, but can also be used
 		//! to directly modify the material of a scene node.
 		virtual video::SMaterial& getMaterial(u32 i);
-		
+
 		//! returns amount of materials used by this scene node.
 		virtual u32 getMaterialCount() const;
 
@@ -52,7 +52,7 @@ namespace scene
 		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
 
 		//! Returns type of the scene node
-		virtual ESCENE_NODE_TYPE getType() const { return ESNT_OCT_TREE; }
+		virtual ESCENE_NODE_TYPE getType() const { return ESNT_OCTREE; }
 
 		//! Sets a new mesh to display
 		virtual void setMesh(IMesh* mesh);
@@ -72,16 +72,16 @@ namespace scene
 
 		core::aabbox3d<f32> Box;
 
-		OctTree<video::S3DVertex>* StdOctTree;
-		core::array< OctTree<video::S3DVertex>::SMeshChunk > StdMeshes;
+		Octree<video::S3DVertex>* StdOctree;
+		core::array< Octree<video::S3DVertex>::SMeshChunk > StdMeshes;
 
-		OctTree<video::S3DVertex2TCoords>* LightMapOctTree;
-		core::array< OctTree<video::S3DVertex2TCoords>::SMeshChunk > LightMapMeshes;
+		Octree<video::S3DVertex2TCoords>* LightMapOctree;
+		core::array< Octree<video::S3DVertex2TCoords>::SMeshChunk > LightMapMeshes;
 
-		OctTree<video::S3DVertexTangents>* TangentsOctTree;
-		core::array< OctTree<video::S3DVertexTangents>::SMeshChunk > TangentsMeshes;
+		Octree<video::S3DVertexTangents>* TangentsOctree;
+		core::array< Octree<video::S3DVertexTangents>::SMeshChunk > TangentsMeshes;
 
-		video::E_VERTEX_TYPE vertexType;
+		video::E_VERTEX_TYPE VertexType;
 		core::array< video::SMaterial > Materials;
 
 		core::stringc MeshName;
@@ -89,6 +89,12 @@ namespace scene
 		s32 PassCount;
 
 		IMesh * Mesh;
+		//! use VBOs for rendering where possible
+		bool UseVBOs;
+		//! use visibility information together with VBOs
+		bool UseVisibilityAndVBOs;
+		//! use bounding box or frustum for calculate polys
+		bool BoxBased;
 	};
 
 } // end namespace scene

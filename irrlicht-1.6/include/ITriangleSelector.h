@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -60,8 +60,8 @@ public:
 	an IMetaTriangleSelector) this this function may be called multiple
 	times to retrieve all triangles.
 
-	Please note that unoptimized triangle selectors also may return
-	triangles which are not in the specified box at all.
+	This method will return at least the triangles that intersect the box,
+	but may return other triangles as well.
 	\param triangles: Array where the resulting triangles will be written
 	to.
 	\param arraySize: Size of the target array.

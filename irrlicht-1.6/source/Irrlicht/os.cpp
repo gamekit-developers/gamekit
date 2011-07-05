@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -19,7 +19,7 @@
 	#include <libkern/OSByteOrder.h>
 	#define bswap_16(X) OSReadSwapInt16(&X,0)
 	#define bswap_32(X) OSReadSwapInt32(&X,0)
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__OpenBSD__)
 	#include <sys/endian.h>
 	#define bswap_16(X) bswap16(X)
 	#define bswap_32(X) bswap32(X)
@@ -38,7 +38,7 @@ namespace os
 	s16 Byteswap::byteswap(s16 num) {return bswap_16(num);}
 	u32 Byteswap::byteswap(u32 num) {return bswap_32(num);}
 	s32 Byteswap::byteswap(s32 num) {return bswap_32(num);}
-	f32 Byteswap::byteswap(f32 num) {u32 tmp=bswap_32(*((u32*)&num)); return *((f32*)&tmp);}
+	f32 Byteswap::byteswap(f32 num) {u32 tmp=IR(num); tmp=bswap_32(tmp); return (FR(tmp));}
 	// prevent accidental byte swapping of chars
 	u8  Byteswap::byteswap(u8 num)  {return num;}
 	c8  Byteswap::byteswap(c8 num)  {return num;}
@@ -69,8 +69,8 @@ namespace os
 		tmp += L"\n";
 		OutputDebugStringW(tmp.c_str());
 #else
-		OutputDebugString(message);
-		OutputDebugString("\n");
+		OutputDebugStringA(message);
+		OutputDebugStringA("\n");
 		printf("%s\n", message);
 #endif
 	}
@@ -289,7 +289,7 @@ namespace os
 	//! returns if the timer currently is stopped
 	bool Timer::isStopped()
 	{
-		return VirtualTimerStopCounter != 0;
+		return VirtualTimerStopCounter < 0;
 	}
 
 	void Timer::initVirtualTimer()

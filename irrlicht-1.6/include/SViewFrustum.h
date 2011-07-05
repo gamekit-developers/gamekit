@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -78,14 +78,14 @@ namespace scene
 		//! recalculates the bounding box member based on the planes
 		inline void recalculateBoundingBox();
 
-		//! update the given state's matrix based on video::E_TRANSFORMATION_STATE
+		//! get the given state's matrix based on frustum E_TRANSFORMATION_STATE
 		core::matrix4& getTransform( video::E_TRANSFORMATION_STATE state);
 
-		//! get the given state's matrix based on frustum E_TRANSFORMATION_STATE_FRUSTUM
+		//! get the given state's matrix based on frustum E_TRANSFORMATION_STATE
 		const core::matrix4& getTransform( video::E_TRANSFORMATION_STATE state) const;
 
 		//! clips a line to the view frustum.
-		//! \Return: Returns true if the line was clipped, false if not
+		/** \return True if the line was clipped, false if not */
 		bool clipLine(core::line3d<f32>& line) const;
 
 		//! the position of the camera

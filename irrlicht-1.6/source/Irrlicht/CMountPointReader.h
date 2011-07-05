@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -24,9 +24,6 @@ namespace io
 
 		//! Constructor
 		CArchiveLoaderMount(io::IFileSystem* fs);
-
-		//! destructor
-		virtual ~CArchiveLoaderMount();
 
 		//! returns true if the file maybe is able to be loaded by this class
 		//! based on the file extension (e.g. ".zip")
@@ -65,9 +62,6 @@ namespace io
 		//! Constructor
 		CMountPointReader(IFileSystem *parent, const io::path& basename,
 				bool ignoreCase, bool ignorePaths);
-
-		//! Destructor
-		virtual ~CMountPointReader();
 
 		//! opens a file by index
 		virtual IReadFile* createAndOpenFile(u32 index);

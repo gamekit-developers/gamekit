@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -108,21 +108,21 @@ namespace scene
 		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 
 		//! registers a node for rendering it at a specific time.
-		virtual u32 registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_RENDER_PASS = ESNRP_AUTOMATIC);
+		virtual u32 registerNodeForRendering(ISceneNode* node, E_SCENE_NODE_RENDER_PASS pass = ESNRP_AUTOMATIC);
 
 		//! draws all scene nodes
 		virtual void drawAll();
 
-		//! Adds a scene node for rendering using a octtree to the scene graph. This a good method for rendering
+		//! Adds a scene node for rendering using a octree to the scene graph. This a good method for rendering
 		//! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 		//! faster then a bsp tree.
-		virtual IMeshSceneNode* addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0,
+		virtual IMeshSceneNode* addOctreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0,
 			s32 id=-1, s32 minimalPolysPerNode=512, bool alsoAddIfMeshPointerZero=false);
 
-		//! Adss a scene node for rendering using a octtree. This a good method for rendering
+		//! Adss a scene node for rendering using a octree. This a good method for rendering
 		//! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 		//! faster then a bsp tree.
-		virtual IMeshSceneNode* addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent=0,
+		virtual IMeshSceneNode* addOctreeSceneNode(IMesh* mesh, ISceneNode* parent=0,
 			s32 id=-1, s32 minimalPolysPerNode=128, bool alsoAddIfMeshPointerZero=false);
 
 		//! Adds a camera scene node to the tree and sets it as active camera.
@@ -133,20 +133,24 @@ namespace scene
 		//! \return Pointer to interface to camera
 		virtual ICameraSceneNode* addCameraSceneNode(ISceneNode* parent = 0,
 			const core::vector3df& position = core::vector3df(0,0,0),
-			const core::vector3df& lookat = core::vector3df(0,0,100), s32 id=-1);
+			const core::vector3df& lookat = core::vector3df(0,0,100),
+			s32 id=-1, bool makeActive=true);
 
 		//! Adds a camera scene node which is able to be controlle with the mouse similar
 		//! like in the 3D Software Maya by Alias Wavefront.
 		//! The returned pointer must not be dropped.
 		virtual ICameraSceneNode* addCameraSceneNodeMaya(ISceneNode* parent = 0,
-			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f, f32 translationSpeed = 1500.0f, s32 id=-1);
+			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f,
+			f32 translationSpeed = 1500.0f, s32 id=-1,
+			bool makeActive=true);
 
 		//! Adds a camera scene node which is able to be controled with the mouse and keys
 		//! like in most first person shooters (FPS):
 		virtual ICameraSceneNode* addCameraSceneNodeFPS(ISceneNode* parent = 0,
 			f32 rotateSpeed = 100.0f, f32 moveSpeed = .5f, s32 id=-1,
-			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
-			f32 jumpSpeed = 0.f, bool invertMouseY=false);
+			SKeyMap* keyMapArray=0, s32 keyMapSize=0,
+			bool noVerticalMovement=false, f32 jumpSpeed = 0.f,
+			bool invertMouseY=false, bool makeActive=true);
 
 		//! Adds a dynamic light scene node. The light will cast dynamic light on all
 		//! other scene nodes in the scene, which have the material flag video::MTF_LIGHTING
@@ -192,7 +196,7 @@ namespace scene
 			video::SColor colorTop = 0xFFFFFFFF, video::SColor colorBottom = 0xFFFFFFFF);
 
 		//! Adds a scene node, which can render a quake3 shader
-		virtual IMeshSceneNode* addQuake3SceneNode(IMeshBuffer* meshBuffer, const quake3::IShader * shader,
+		virtual IMeshSceneNode* addQuake3SceneNode(const IMeshBuffer* meshBuffer, const quake3::IShader * shader,
 												ISceneNode* parent=0, s32 id=-1
 												);
 
@@ -333,7 +337,7 @@ namespace scene
 		//! Creates a follow spline animator.
 		virtual ISceneNodeAnimator* createFollowSplineAnimator(s32 startTime,
 			const core::array< core::vector3df >& points,
-			f32 speed = 1.0f, f32 tightness = 0.5f);
+			f32 speed, f32 tightness, bool loop, bool pingpong);
 
 
 		//! Creates a simple ITriangleSelector, based on a mesh.
@@ -347,7 +351,7 @@ namespace scene
 		virtual ITriangleSelector* createTriangleSelector(IAnimatedMeshSceneNode* node);
 
 		//! Creates a simple ITriangleSelector, based on a mesh.
-		virtual ITriangleSelector* createOctTreeTriangleSelector(IMesh* mesh,
+		virtual ITriangleSelector* createOctreeTriangleSelector(IMesh* mesh,
 			ISceneNode* node, s32 minimalPolysPerNode);
 
 		//! Creates a simple dynamic ITriangleSelector, based on a axis aligned bounding box.
@@ -552,9 +556,6 @@ namespace scene
 		//! sort on distance (sphere) to camera
 		struct DistanceNodeEntry
 		{
-			DistanceNodeEntry(ISceneNode* n, f32 d)
-				: Node(n), Distance(d) {}
-
 			DistanceNodeEntry(ISceneNode* n, const core::vector3df& cameraPos)
 				: Node(n)
 			{

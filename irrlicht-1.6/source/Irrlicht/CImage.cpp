@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2010 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -16,9 +16,6 @@ namespace video
 CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<u32>& size)
 :Data(0), Size(size), Format(format), DeleteMemory(true)
 {
-	#ifdef _DEBUG
-	setDebugName("CImage");
-	#endif
 	initData();
 }
 
@@ -43,42 +40,12 @@ CImage::CImage(ECOLOR_FORMAT format, const core::dimension2d<u32>& size, void* d
 }
 
 
-//! Constructor from other image, with color conversion
-CImage::CImage(ECOLOR_FORMAT format, IImage* imageToCopy)
-: Data(0), Format(format), DeleteMemory(true)
-{
-	if (!imageToCopy)
-		return;
-
-	Size = imageToCopy->getDimension();
-	initData();
-
-	// now copy data from other image
-	Blit ( BLITTER_TEXTURE, this, 0, 0, imageToCopy, 0,0 );
-}
-
-
-//! Constructor from other image, partially
-CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
-		const core::dimension2d<u32>& size)
-	: Data(0), Size(0,0), DeleteMemory(true)
-{
-	if (!imageToCopy)
-		return;
-
-	Format = imageToCopy->getColorFormat();
-	Size = size;
-
-	initData();
-
-	core::rect<s32> sClip( pos.X, pos.Y, pos.X + size.Width,pos.Y + size.Height );
-	Blit (BLITTER_TEXTURE, this, 0, 0, imageToCopy, &sClip, 0);
-}
-
-
 //! assumes format and size has been set and creates the rest
 void CImage::initData()
 {
+#ifdef _DEBUG
+	setDebugName("CImage");
+#endif
 	BytesPerPixel = getBitsPerPixelFromFormat(Format) / 8;
 
 	// Pitch should be aligned...

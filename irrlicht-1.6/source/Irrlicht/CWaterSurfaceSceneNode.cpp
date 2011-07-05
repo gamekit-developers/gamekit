@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -100,7 +100,7 @@ void CWaterSurfaceSceneNode::serializeAttributes(io::IAttributes* out, io::SAttr
 
 	CMeshSceneNode::serializeAttributes(out, options);
 	// serialize original mesh
-	out->setAttribute("Mesh", SceneManager->getMeshCache()->getMeshFilename(OriginalMesh).c_str());
+	out->setAttribute("Mesh", SceneManager->getMeshCache()->getMeshName(OriginalMesh).getPath().c_str());
 }
 
 

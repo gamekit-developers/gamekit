@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 // Code for this scene node has been contributed by Anders la Cour-Harbo (alc)
@@ -33,7 +33,7 @@ namespace scene
 CSkyDomeSceneNode::CSkyDomeSceneNode(video::ITexture* sky, u32 horiRes, u32 vertRes,
 		f32 texturePercentage, f32 spherePercentage, f32 radius,
 		ISceneNode* parent, ISceneManager* mgr, s32 id)
-	: ISceneNode(parent, mgr, id), Buffer(0), 
+	: ISceneNode(parent, mgr, id), Buffer(0),
 	  HorizontalResolution(horiRes), VerticalResolution(vertRes),
 	  TexturePercentage(texturePercentage),
 	  SpherePercentage(spherePercentage), Radius(radius)
@@ -126,6 +126,7 @@ void CSkyDomeSceneNode::generateMesh()
 			Buffer->Indices.push_back(0 + (VerticalResolution + 1)*k + j);
 		}
 	}
+	Buffer->setHardwareMappingHint(scene::EHM_STATIC);
 }
 
 
@@ -263,7 +264,7 @@ void CSkyDomeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttribut
 	Radius               = in->getAttributeAsFloat("Radius");
 
 	ISceneNode::deserializeAttributes(in, options);
-	
+
 	// regenerate the mesh
 	generateMesh();
 }
@@ -271,21 +272,21 @@ void CSkyDomeSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttribut
 //! Creates a clone of this scene node and its children.
 ISceneNode* CSkyDomeSceneNode::clone(ISceneNode* newParent, ISceneManager* newManager)
 {
-	if (!newParent) 
+	if (!newParent)
 		newParent = Parent;
-	if (!newManager) 
+	if (!newManager)
 		newManager = SceneManager;
 
-	CSkyDomeSceneNode* nb = new CSkyDomeSceneNode(Buffer->Material.TextureLayer[0].Texture, HorizontalResolution, VerticalResolution, TexturePercentage, 
+	CSkyDomeSceneNode* nb = new CSkyDomeSceneNode(Buffer->Material.TextureLayer[0].Texture, HorizontalResolution, VerticalResolution, TexturePercentage,
 		SpherePercentage, Radius, newParent, newManager, ID);
 
 	nb->cloneMembers(this, newManager);
-	
-	nb->drop();
+
+	if ( newParent )
+		nb->drop();
 	return nb;
 }
 
 
 } // namespace scene
 } // namespace irr
-

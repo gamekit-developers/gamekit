@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -154,6 +154,9 @@ CBillboardTextSceneNode::~CBillboardTextSceneNode()
 //! sets the text string
 void CBillboardTextSceneNode::setText(const wchar_t* text)
 {
+	if ( !Mesh )
+		return;
+
 	Text = text;
 
 	Symbol.clear();
@@ -325,6 +328,9 @@ void CBillboardTextSceneNode::OnRegisterSceneNode()
 //! render
 void CBillboardTextSceneNode::render()
 {
+	if ( !Mesh )
+		return;
+
 	video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
 	// draw
@@ -408,6 +414,9 @@ void CBillboardTextSceneNode::setTextColor(video::SColor color)
 //! \param overallColor: the color to set
 void CBillboardTextSceneNode::setColor(const video::SColor & overallColor)
 {
+	if ( !Mesh )
+		return;
+
 	for ( u32 i = 0; i != Text.size (); ++i )
 	{
 		const SSymbolInfo &info = Symbol[i];
@@ -425,6 +434,9 @@ void CBillboardTextSceneNode::setColor(const video::SColor & overallColor)
 //! \param bottomColor: the color to set the bottom vertices
 void CBillboardTextSceneNode::setColor(const video::SColor & topColor, const video::SColor & bottomColor)
 {
+	if ( !Mesh )
+		return;
+
 	ColorBottom = bottomColor;
 	ColorTop = topColor;
 	for ( u32 i = 0; i != Text.size (); ++i )

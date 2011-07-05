@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -76,7 +76,7 @@ namespace gui
 		//! skin through getIcon
 		virtual void setSpriteBank(IGUISpriteBank* bank);
 
-		//! sets if automatic scrolling is enabled or not. Default is true.
+		//! set whether the listbox should scroll to newly selected items
 		virtual void setAutoScrollEnabled(bool scroll);
 
 		//! returns true if automatic scrolling is enabled, false if not.

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -9,7 +9,6 @@
 #include "IGUISpriteBank.h"
 #include "IVideoDriver.h"
 #include "IAttributes.h"
-#include "SoftwareDriver2_helper.h"
 
 namespace irr
 {
@@ -31,14 +30,14 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_3D_HIGH_LIGHT]    = video::SColor(101,255,255,255);
 		Colors[EGDC_3D_LIGHT]         =	video::SColor(101,210,210,210);
 		Colors[EGDC_ACTIVE_BORDER]    = video::SColor(101,16,14,115);
-		Colors[EGDC_ACTIVE_CAPTION]   = video::SColor(200,255,255,255);
+		Colors[EGDC_ACTIVE_CAPTION]   = video::SColor(255,255,255,255);
 		Colors[EGDC_APP_WORKSPACE]    = video::SColor(101,100,100,100);
 		Colors[EGDC_BUTTON_TEXT]      = video::SColor(240,10,10,10);
 		Colors[EGDC_GRAY_TEXT]        = video::SColor(240,130,130,130);
 		Colors[EGDC_HIGH_LIGHT]       = video::SColor(101,8,36,107);
 		Colors[EGDC_HIGH_LIGHT_TEXT]  = video::SColor(240,255,255,255);
 		Colors[EGDC_INACTIVE_BORDER]  = video::SColor(101,165,165,165);
-		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(101,210,210,210);
+		Colors[EGDC_INACTIVE_CAPTION] = video::SColor(255,30,30,30);
 		Colors[EGDC_TOOLTIP]          = video::SColor(200,0,0,0);
 		Colors[EGDC_TOOLTIP_BACKGROUND]= video::SColor(200,255,255,225);
 		Colors[EGDC_SCROLLBAR]        = video::SColor(101,230,230,230);
@@ -72,14 +71,14 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Colors[EGDC_3D_HIGH_LIGHT]	=	0x40c7ccdc;
 		Colors[EGDC_3D_LIGHT]		=	0x802e313a;
 		Colors[EGDC_ACTIVE_BORDER]	=	0x80404040;		// window title
-		Colors[EGDC_ACTIVE_CAPTION] =	0xf0d0d0d0;
+		Colors[EGDC_ACTIVE_CAPTION] =	0xffd0d0d0;
 		Colors[EGDC_APP_WORKSPACE]	=	0xc0646464;		// unused
 		Colors[EGDC_BUTTON_TEXT]	=	0xd0161616;
 		Colors[EGDC_GRAY_TEXT]		=	0x3c141414;
 		Colors[EGDC_HIGH_LIGHT]		=	0x6c606060;
 		Colors[EGDC_HIGH_LIGHT_TEXT]=	0xd0e0e0e0;
 		Colors[EGDC_INACTIVE_BORDER]=	0xf0a5a5a5;
-		Colors[EGDC_INACTIVE_CAPTION]=	0xf0d2d2d2;
+		Colors[EGDC_INACTIVE_CAPTION]=	0xffd2d2d2;
 		Colors[EGDC_TOOLTIP]		=	0xf00f2033;
 		Colors[EGDC_TOOLTIP_BACKGROUND]=0xc0cbd2d9;
 		Colors[EGDC_SCROLLBAR]		=	0xf0e0e0e0;
@@ -103,6 +102,12 @@ CGUISkin::CGUISkin(EGUI_SKIN_TYPE type, video::IVideoDriver* driver)
 		Sizes[EGDS_TITLEBARTEXT_DISTANCE_X] = 3;
 		Sizes[EGDS_TITLEBARTEXT_DISTANCE_Y] = 2;
 	}
+
+	Sizes[EGDS_MESSAGE_BOX_GAP_SPACE] = 15;
+	Sizes[EGDS_MESSAGE_BOX_MIN_TEXT_WIDTH] = 0;
+	Sizes[EGDS_MESSAGE_BOX_MAX_TEXT_WIDTH] = 500;
+	Sizes[EGDS_MESSAGE_BOX_MIN_TEXT_HEIGHT] = 0;
+	Sizes[EGDS_MESSAGE_BOX_MAX_TEXT_HEIGHT] = 99999;
 
 	Texts[EGDT_MSG_BOX_OK] = L"OK";
 	Texts[EGDT_MSG_BOX_CANCEL] = L"Cancel";
@@ -198,7 +203,7 @@ void CGUISkin::setSize(EGUI_DEFAULT_SIZE which, s32 size)
 //! returns the default font
 IGUIFont* CGUISkin::getFont(EGUI_DEFAULT_FONT which) const
 {
-	if (((u32)which < EGDS_COUNT) && Fonts[which])
+	if (((u32)which < EGDF_COUNT) && Fonts[which])
 		return Fonts[which];
 	else
 		return Fonts[EGDF_DEFAULT];
@@ -208,7 +213,7 @@ IGUIFont* CGUISkin::getFont(EGUI_DEFAULT_FONT which) const
 //! sets a default font
 void CGUISkin::setFont(IGUIFont* font, EGUI_DEFAULT_FONT which)
 {
-	if ((u32)which >= EGDS_COUNT)
+	if ((u32)which >= EGDF_COUNT)
 		return;
 
 	if (font)
@@ -447,102 +452,140 @@ void CGUISkin::draw3DSunkenPane(IGUIElement* element, video::SColor bgcolor,
 
 
 //! draws a window background
-/** Used for drawing the background of dialogs and windows.
-\param element: Pointer to the element which wishes to draw this. This parameter
-is usually not used by ISkin, but can be used for example by more complex
-implementations to find out how to draw the part exactly.
-\param titleBarColor: Title color.
-\param drawTitleBar: True to enable title drawing.
-\param rect: Defining area where to draw.
-\param clip: Clip area.
-\return Returns rect where to draw title bar text. */
+// return where to draw title bar text.
 core::rect<s32> CGUISkin::draw3DWindowBackground(IGUIElement* element,
 				bool drawTitleBar, video::SColor titleBarColor,
 				const core::rect<s32>& r,
-				const core::rect<s32>* cl)
+				const core::rect<s32>* clip,
+				core::rect<s32>* checkClientArea)
 {
 	if (!Driver)
+	{
+		if ( checkClientArea )
+		{
+			*checkClientArea = r;
+		}
 		return r;
+	}
 
 	core::rect<s32> rect = r;
 
+	// top border
 	rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + 1;
-	Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, clip);
+	}
 
+	// left border
 	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
 	rect.LowerRightCorner.X = rect.UpperLeftCorner.X + 1;
-	Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_HIGH_LIGHT), rect, clip);
+	}
 
+	// right border dark outer line
 	rect.UpperLeftCorner.X = r.LowerRightCorner.X - 1;
 	rect.LowerRightCorner.X = r.LowerRightCorner.X;
 	rect.UpperLeftCorner.Y = r.UpperLeftCorner.Y;
 	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
-	Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, clip);
+	}
 
+	// right border bright innner line
 	rect.UpperLeftCorner.X -= 1;
 	rect.LowerRightCorner.X -= 1;
 	rect.UpperLeftCorner.Y += 1;
 	rect.LowerRightCorner.Y -= 1;
-	Driver->draw2DRectangle(getColor(EGDC_3D_SHADOW), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_SHADOW), rect, clip);
+	}
 
+	// bottom border dark outer line
 	rect.UpperLeftCorner.X = r.UpperLeftCorner.X;
 	rect.UpperLeftCorner.Y = r.LowerRightCorner.Y - 1;
 	rect.LowerRightCorner.Y = r.LowerRightCorner.Y;
 	rect.LowerRightCorner.X = r.LowerRightCorner.X;
-	Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_DARK_SHADOW), rect, clip);
+	}
 
+	// bottom border bright inner line
 	rect.UpperLeftCorner.X += 1;
 	rect.LowerRightCorner.X -= 1;
 	rect.UpperLeftCorner.Y -= 1;
 	rect.LowerRightCorner.Y -= 1;
-	Driver->draw2DRectangle(getColor(EGDC_3D_SHADOW), rect, cl);
+	if ( !checkClientArea )
+	{
+		Driver->draw2DRectangle(getColor(EGDC_3D_SHADOW), rect, clip);
+	}
 
+	// client area for background
 	rect = r;
 	rect.UpperLeftCorner.X +=1;
 	rect.UpperLeftCorner.Y +=1;
 	rect.LowerRightCorner.X -= 2;
 	rect.LowerRightCorner.Y -= 2;
-
-	if (!UseGradient)
+	if (checkClientArea)
 	{
-		Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, cl);
-	}
-	else
-	if ( Type == EGST_BURNING_SKIN )
-	{
-		const video::SColor c1 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.9f );
-		const video::SColor c2 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.8f );
-
-		Driver->draw2DRectangle(rect, c1, c1, c2, c2, cl);
-	}
-	else
-	{
-		const video::SColor c2 = getColor(EGDC_3D_SHADOW);
-		const video::SColor c1 = getColor(EGDC_3D_FACE);
-		Driver->draw2DRectangle(rect, c1, c1, c1, c2, cl);
+		*checkClientArea = rect;
 	}
 
+	if ( !checkClientArea )
+	{
+		if (!UseGradient)
+		{
+			Driver->draw2DRectangle(getColor(EGDC_3D_FACE), rect, clip);
+		}
+		else if ( Type == EGST_BURNING_SKIN )
+		{
+			const video::SColor c1 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.9f );
+			const video::SColor c2 = getColor(EGDC_WINDOW).getInterpolated ( 0xFFFFFFFF, 0.8f );
+
+			Driver->draw2DRectangle(rect, c1, c1, c2, c2, clip);
+		}
+		else
+		{
+			const video::SColor c2 = getColor(EGDC_3D_SHADOW);
+			const video::SColor c1 = getColor(EGDC_3D_FACE);
+			Driver->draw2DRectangle(rect, c1, c1, c1, c2, clip);
+		}
+	}
+
+	// title bar
 	rect = r;
 	rect.UpperLeftCorner.X += 2;
 	rect.UpperLeftCorner.Y += 2;
 	rect.LowerRightCorner.X -= 2;
 	rect.LowerRightCorner.Y = rect.UpperLeftCorner.Y + getSize(EGDS_WINDOW_BUTTON_WIDTH) + 2;
 
-	if (drawTitleBar)
+	if (drawTitleBar )
 	{
-		// draw title bar
-		//if (!UseGradient)
-		//	Driver->draw2DRectangle(titleBarColor, rect, cl);
-		//else
-		if ( Type == EGST_BURNING_SKIN )
+		if (checkClientArea)
 		{
-			const video::SColor c = titleBarColor.getInterpolated( 0xffffffff, 0.8f);
-			Driver->draw2DRectangle(rect, titleBarColor, titleBarColor, c, c, cl);
+			(*checkClientArea).UpperLeftCorner.Y = rect.LowerRightCorner.Y;
 		}
 		else
 		{
-			const video::SColor c = titleBarColor.getInterpolated(video::SColor(255,0,0,0), 0.2f);
-			Driver->draw2DRectangle(rect, titleBarColor, c, titleBarColor, c, cl);
+			// draw title bar
+			//if (!UseGradient)
+			//	Driver->draw2DRectangle(titleBarColor, rect, clip);
+			//else
+			if ( Type == EGST_BURNING_SKIN )
+			{
+				const video::SColor c = titleBarColor.getInterpolated( video::SColor(titleBarColor.getAlpha(),255,255,255), 0.8f);
+				Driver->draw2DRectangle(rect, titleBarColor, titleBarColor, c, c, clip);
+			}
+			else
+			{
+				const video::SColor c = titleBarColor.getInterpolated(video::SColor(titleBarColor.getAlpha(),0,0,0), 0.2f);
+				Driver->draw2DRectangle(rect, titleBarColor, c, titleBarColor, c, clip);
+			}
 		}
 	}
 
@@ -866,8 +909,9 @@ void CGUISkin::drawIcon(IGUIElement* element, EGUI_DEFAULT_ICON icon,
 	if (!SpriteBank)
 		return;
 
+	// TODO: we need another state for disabled elements (can't add now because it's an interface change)
 	SpriteBank->draw2DSprite(Icons[icon], position, clip,
-			video::SColor(255,0,0,0), starttime, currenttime, loop, true);
+			Colors[EGDC_WINDOW_SYMBOL], starttime, currenttime, loop, true);
 }
 
 

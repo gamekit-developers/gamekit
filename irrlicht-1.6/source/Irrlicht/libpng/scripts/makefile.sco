@@ -4,12 +4,15 @@
 # Copyright (C) 2002, 2006 Glenn Randers-Pehrson
 # Copyright (C) 1998 Greg Roelofs
 # Copyright (C) 1996, 1997 Andreas Dilger
-# For conditions of distribution and use, see copyright notice in png.h
+
+# This code is released under the libpng license.
+# For conditions of distribution and use, see the disclaimer
+# and license in png.h
 
 # Library name:
 LIBNAME = libpng12
 PNGMAJ = 0
-PNGMIN = 1.2.18
+PNGMIN = 1.2.39
 PNGVER = $(PNGMAJ).$(PNGMIN)
 
 # Shared library names:
@@ -38,7 +41,7 @@ exec_prefix=$(prefix)
 ZLIBLIB=../zlib
 ZLIBINC=../zlib
 
-CFLAGS= -dy -belf -I$(ZLIBINC) -O3
+CFLAGS= -dy -belf -I$(ZLIBINC) -O3 -DPNG_NO_MMX_CODE
 LDFLAGS=-L. -L$(ZLIBLIB) -lpng12 -lz -lm
 
 INCPATH=$(prefix)/include/libpng
@@ -79,7 +82,11 @@ libpng.a: $(OBJS)
 	$(RANLIB) $@
 
 libpng.pc:
-	cat scripts/libpng.pc.in | sed -e s\!@PREFIX@!$(prefix)! > libpng.pc
+	cat scripts/libpng.pc.in | sed -e s!@prefix@!$(prefix)! \
+	-e s!@exec_prefix@!$(exec_prefix)! \
+	-e s!@libdir@!$(LIBPATH)! \
+	-e s!@includedir@!$(INCPATH)! \
+	-e s!-lpng12!-lpng12\ -lz\ -lm! > libpng.pc
 
 libpng-config:
 	( cat scripts/libpng-config-head.in; \

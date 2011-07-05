@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -69,7 +69,7 @@ void CBoneSceneNode::OnAnimate(u32 timeMs)
 	{
 		// animate this node with all animators
 
-		core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
+		ISceneNodeAnimatorList::Iterator ait = Animators.begin();
 		for (; ait != Animators.end(); ++ait)
 			(*ait)->animateNode(this, timeMs);
 
@@ -77,7 +77,7 @@ void CBoneSceneNode::OnAnimate(u32 timeMs)
 		//updateAbsolutePosition();
 
 		// perform the post render process on all children
-		core::list<ISceneNode*>::Iterator it = Children.begin();
+		ISceneNodeList::Iterator it = Children.begin();
 		for (; it != Children.end(); ++it)
 			(*it)->OnAnimate(timeMs);
 	}
@@ -88,7 +88,7 @@ void CBoneSceneNode::helper_updateAbsolutePositionOfAllChildren(ISceneNode *Node
 {
 	Node->updateAbsolutePosition();
 
-	core::list<ISceneNode*>::ConstIterator it = Node->getChildren().begin();
+	ISceneNodeList::ConstIterator it = Node->getChildren().begin();
 	for (; it != Node->getChildren().end(); ++it)
 	{
 		helper_updateAbsolutePositionOfAllChildren( (*it) );

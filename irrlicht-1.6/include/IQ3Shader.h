@@ -1,4 +1,4 @@
-// Copyright (C) 2006-2009 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2006-2010 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -782,7 +782,7 @@ namespace quake3
 
 		textures.clear();
 
-		core::stringc loadFile;
+		io::path loadFile;
 		for ( u32 i = 0; i!= stringList.size (); ++i )
 		{
 			video::ITexture* texture = 0;

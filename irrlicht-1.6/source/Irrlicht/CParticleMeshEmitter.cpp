@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2009 Nikolaus Gebhardt
+// Copyright (C) 2002-2010 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -178,6 +178,12 @@ void CParticleMeshEmitter::setMesh(IMesh* mesh)
 	Mesh = mesh;
 
 	TotalVertices = 0;
+	MBCount = 0;
+	VertexPerMeshBufferList.clear();
+
+	if ( !Mesh )
+		return;
+
 	MBCount = Mesh->getMeshBufferCount();
 	VertexPerMeshBufferList.reallocate(MBCount);
 	for( u32 i = 0; i < MBCount; ++i )
