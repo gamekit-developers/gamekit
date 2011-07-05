@@ -69,6 +69,8 @@ LINK_LIBRARIES(
 	 BlenderSerialize BulletSerialize bParse BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY} 
 )
 
+
+
 IF (APPLE)
 	SET (NibFile MainMenu.nib)
 	SET (RESOURCS $(NibFile))
@@ -87,3 +89,10 @@ ELSE (APPLE)
 	)
 ENDIF (APPLE)
 
+IF(WIN32)
+				ADD_CUSTOM_COMMAND(
+					TARGET IrrKit
+					POST_BUILD
+					COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different "${GAMEKIT_SOURCE_DIR}/IrrKit/clubsilo_packed.blend" ${CMAKE_CURRENT_BINARY_DIR}
+				)
+ENDIF(WIN32)
