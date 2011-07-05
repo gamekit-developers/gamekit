@@ -48,6 +48,6 @@ ENDIF (UNIX AND NOT APPLE)
 
    
 SUBDIRS(bullet)
-SUBDIRS(irrlicht-1.6)
+SUBDIRS(irrlicht-1.7.2)
 SUBDIRS(IrrKit)
 SUBDIRS(Serialize)
