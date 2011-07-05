@@ -28,21 +28,21 @@
 #include "akMathUtils.h"
 
 
-akVector3 akMathUtils::getScale(const akMatrix3 m)
+akVector3 akMathUtils::getScale(const akMatrix3& m)
 {
 	return akVector3(length(m[0]),
 					 length(m[1]),
 					 length(m[2]));
 }
 
-akVector3 akMathUtils::getScale(const akMatrix4 m)
+akVector3 akMathUtils::getScale(const akMatrix4& m)
 {
 	return akVector3(length(m[0]),
 					 length(m[1]),
 					 length(m[2]));
 }
 
-akMatrix4 akMathUtils::setScale(const akMatrix4 m, akVector3 scale)
+akMatrix4 akMathUtils::setScale(const akMatrix4& m, const akVector3& scale)
 {
 	akMatrix4 ret = normalizeUpper3x3(m);
 	ret[0] *= scale.getX();
@@ -51,14 +51,14 @@ akMatrix4 akMathUtils::setScale(const akMatrix4 m, akVector3 scale)
 	return ret;
 }
 
-akMatrix3 akMathUtils::normalize(const akMatrix3 m)
+akMatrix3 akMathUtils::normalize(const akMatrix3& m)
 {
 	return akMatrix3(m[0]/length(m[0]),
 					 m[1]/length(m[1]),
 					 m[2]/length(m[2]));
 }
 
-akMatrix4 akMathUtils::normalizeUpper3x3(const akMatrix4 m)
+akMatrix4 akMathUtils::normalizeUpper3x3(const akMatrix4& m)
 {
 	return akMatrix4(m[0]/length(m[0]),
 					 m[1]/length(m[1]),
@@ -66,7 +66,7 @@ akMatrix4 akMathUtils::normalizeUpper3x3(const akMatrix4 m)
 					 m[3]);
 }
 
-akMatrix3 akMathUtils::orthoNormalize(const akMatrix3 m)
+akMatrix3 akMathUtils::orthoNormalize(const akMatrix3& m)
 {
 	//Gram-Schmidt orthogonalization.
 	akMatrix3 q;

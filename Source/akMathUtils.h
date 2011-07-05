@@ -129,13 +129,13 @@ UT_INLINE static T* akOffsetPointer(T* ptr, UTsize offset)
 class akMathUtils
 {
 public:
-	static akVector3 getScale(const akMatrix3 m);
-	static akVector3 getScale(const akMatrix4 m);
-	static akMatrix4 setScale(const akMatrix4 m, akVector3 scale);
-	static akMatrix3 normalize(const akMatrix3 m);
-	static akMatrix4 normalizeUpper3x3(const akMatrix4 m);
-	static akMatrix3 orthoNormalize(const akMatrix3 m);
-	static void extractTransform(const akMatrix4 &mat, akVector3 &loc, akQuat &rot, akVector3 &scale);
+	static akVector3 getScale(const akMatrix3& m);
+	static akVector3 getScale(const akMatrix4& m);
+	static akMatrix4 setScale(const akMatrix4& m, const akVector3& scale);
+	static akMatrix3 normalize(const akMatrix3& m);
+	static akMatrix4 normalizeUpper3x3(const akMatrix4& m);
+	static akMatrix3 orthoNormalize(const akMatrix3& m);
+	static void extractTransform(const akMatrix4& mat, akVector3 &loc, akQuat &rot, akVector3 &scale);
 };
 
 #endif // AKMATHUTILS_H

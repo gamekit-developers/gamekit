@@ -49,7 +49,7 @@ akBLoader::akBLoader(akDemoBase* demo)
 	m_demo = demo;
 }
 
-int buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blender::Bone* bone, UTuint8 parent)
+void buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blender::Bone* bone, UTuint8 parent)
 {
 	//if(!(bone->flag & BONE_NO_DEFORM) || parent == AK_JOINT_NO_PARENT)
 	{
