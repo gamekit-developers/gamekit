@@ -359,7 +359,12 @@ void gkDynamicsWorld::localDrawObject(gkPhysicsController* phyCon)
 void gkDynamicsWorld::step(gkScalar tick)
 {
 	GK_ASSERT(m_dynamicsWorld);
+
+	//uncomment this for better simulation quality (but a little bit less performance)
+	//	m_dynamicsWorld->stepSimulation(tick,10,1./240.);
 	m_dynamicsWorld->stepSimulation(tick);
+
+	m_dynamicsWorld->debugDrawWorld();
 
 	// uncomment this to print bullet profiling information
 	//CProfileManager::dumpAll();
