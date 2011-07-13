@@ -132,9 +132,15 @@ public:
 	static akVector3 getScale(const akMatrix3& m);
 	static akVector3 getScale(const akMatrix4& m);
 	static akMatrix4 setScale(const akMatrix4& m, const akVector3& scale);
-	static akMatrix3 normalize(const akMatrix3& m);
-	static akMatrix4 normalizeUpper3x3(const akMatrix4& m);
-	static akMatrix3 orthoNormalize(const akMatrix3& m);
+	
+	static akMatrix3 normalized(const akMatrix3& m);
+	static akMatrix4 normalizedUpper3x3(const akMatrix4& m);
+	static akMatrix3 orthoNormalized(const akMatrix3& m);
+	
+	static void normalize(akMatrix3& m);
+	static void normalizeUpper3x3(akMatrix4& m);
+	static void orthoNormalize(akMatrix3& m);
+	
 	static void extractTransform(const akMatrix4& mat, akVector3 &loc, akQuat &rot, akVector3 &scale);
 };
 

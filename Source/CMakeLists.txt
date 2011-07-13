@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-project(AnimKit)
+project(LibAnimKit)
 SET(${PROJECT_NAME} 1.0)
 
 set(ANIMKIT_SRC 

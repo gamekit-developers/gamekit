@@ -44,21 +44,21 @@ akVector3 akMathUtils::getScale(const akMatrix4& m)
 
 akMatrix4 akMathUtils::setScale(const akMatrix4& m, const akVector3& scale)
 {
-	akMatrix4 ret = normalizeUpper3x3(m);
+	akMatrix4 ret = normalizedUpper3x3(m);
 	ret[0] *= scale.getX();
 	ret[1] *= scale.getY();
 	ret[2] *= scale.getZ();
 	return ret;
 }
 
-akMatrix3 akMathUtils::normalize(const akMatrix3& m)
+akMatrix3 akMathUtils::normalized(const akMatrix3& m)
 {
 	return akMatrix3(m[0]/length(m[0]),
 					 m[1]/length(m[1]),
 					 m[2]/length(m[2]));
 }
 
-akMatrix4 akMathUtils::normalizeUpper3x3(const akMatrix4& m)
+akMatrix4 akMathUtils::normalizedUpper3x3(const akMatrix4& m)
 {
 	return akMatrix4(m[0]/length(m[0]),
 					 m[1]/length(m[1]),
@@ -66,7 +66,7 @@ akMatrix4 akMathUtils::normalizeUpper3x3(const akMatrix4& m)
 					 m[3]);
 }
 
-akMatrix3 akMathUtils::orthoNormalize(const akMatrix3& m)
+akMatrix3 akMathUtils::orthoNormalized(const akMatrix3& m)
 {
 	//Gram-Schmidt orthogonalization.
 	akMatrix3 q;
@@ -78,6 +78,30 @@ akMatrix3 akMathUtils::orthoNormalize(const akMatrix3& m)
 	return q;
 }
 
+
+void akMathUtils::normalize(akMatrix3& m)
+{
+	m[0] /= length(m[0]);
+	m[1] /= length(m[1]),
+	m[2] /= length(m[2]);
+}
+
+void akMathUtils::normalizeUpper3x3(akMatrix4& m)
+{
+	m[0] /= length(m[0]);
+	m[1] /= length(m[1]);
+	m[2] /= length(m[2]);
+}
+
+void akMathUtils::orthoNormalize(akMatrix3& m)
+{
+	//Gram-Schmidt orthogonalization.
+	m[0] = m[0]/length(m[0]);
+	m[1] = m[1] - dot(m[0],m[1])*m[0];
+	m[1] /= length(m[1]);
+	m[2] = m[2] - dot(m[0],m[2])*m[0] - dot(m[1],m[2])*m[1];
+	m[2] /= length(m[2]);
+}
 
 void akMathUtils::extractTransform(const akMatrix4& mat, akVector3& loc, akQuat& rot, akVector3& scale)
 {

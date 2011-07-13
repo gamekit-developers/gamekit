@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-project(AK)
+project(AnimKit)
 SET(${PROJECT_NAME} 1.0)
 
 # ---------------------------------------------------------
@@ -23,7 +23,7 @@ set(ZLIB_SOURCE_DIR			${PROJECT_SOURCE_DIR}/Dependencies/ZLib)
 set(ANIMKIT_ANIMKIT_PATH	${PROJECT_SOURCE_DIR}/Source/)
 set(ANIMKIT_SAMPLES_DIR		${PROJECT_SOURCE_DIR}/Samples/)
 
-set(ANIMKIT_ANIMKIT_TARGET	AnimKit)
+set(ANIMKIT_ANIMKIT_TARGET	LibAnimKit)
 set(GAMEKIT_UTILS_TARGET	GameKitUtils)
 set(OGREKIT_ZLIB_TARGET		ZLib)
 
