@@ -45,9 +45,11 @@ gkRigidBody::gkRigidBody(gkGameObject* object, gkDynamicsWorld* owner)
 
 gkRigidBody::~gkRigidBody()
 {
-	UTsize i;
+	UTsize i;	
 	for (i = 0; i < m_constraints.size(); i++)
+	{		
 		delete m_constraints[i];
+	}
 	m_constraints.clear();
 
 	delete m_body;
@@ -133,9 +135,7 @@ void gkRigidBody::create(void)
 	dyn->addRigidBody(m_body);
 }
 
-
-
-void gkRigidBody::destroy(void)
+void gkRigidBody::removeConstaints(void)
 {
 	btDynamicsWorld* dyn = getOwner();
 
@@ -146,6 +146,13 @@ void gkRigidBody::destroy(void)
 		delete m_constraints[i];
 	}
 	m_constraints.clear();
+}
+
+void gkRigidBody::destroy(void)
+{
+	btDynamicsWorld* dyn = getOwner();
+
+	removeConstaints();
 
 	if (m_body)
 	{

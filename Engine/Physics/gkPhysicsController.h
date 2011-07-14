@@ -112,7 +112,6 @@ public:
 	virtual void create(void)  {}
 	virtual void destroy(void) {}
 
-
 	void _handleManifold(btPersistentManifold* manifold);
 	void _resetContactInfo(void);
 	bool _markDbvt(bool v);

@@ -78,6 +78,7 @@ public:
 	void destroy(void);
 
 	void createConstraints(void);
+	void removeConstaints(void);
 
 	void recalLocalInertia(void);
 

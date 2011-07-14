@@ -64,6 +64,8 @@ private:
 	void addObject(void);
 	void endObject(void);
 
+    void trackToObject(void);
+
 public:
 
 	gkEditObjectActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);

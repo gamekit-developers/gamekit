@@ -99,6 +99,12 @@ void gkDynamicsWorld::createInstanceImpl(void)
 
 void gkDynamicsWorld::destroyInstanceImpl(void)
 {
+	int i;
+	for (i = m_dynamicsWorld->getNumConstraints() - 1; i >= 0; i--)
+	{
+		m_dynamicsWorld->removeConstraint(m_dynamicsWorld->getConstraint(i));
+	}
+
 	delete m_dynamicsWorld;
 	m_dynamicsWorld = 0;
 
@@ -125,7 +131,7 @@ void gkDynamicsWorld::destroyInstanceImpl(void)
 
 	if (!m_objects.empty())
 	{
-		gkPhysicsControllers::Iterator iter = m_objects.iterator();
+		gkPhysicsControllers::Iterator iter = m_objects.iterator();		
 		while (iter.hasMoreElements())
 			delete iter.getNext();
 

@@ -29,6 +29,9 @@
 #include "gkParticleObject.h"
 #include "gkGameObjectInstance.h"
 #include "gkEditObjectActuator.h"
+#include "gkCamera.h"
+#include "OgreCamera.h"
+#include "OgreSceneNode.h"
 
 
 
@@ -126,6 +129,44 @@ void gkEditObjectActuator::endObject(void)
 		m_object->getOwner()->endObject(m_object);
 }
 
+void gkEditObjectActuator::trackToObject(void)
+{
+    if (m_obj.empty())
+        return;
+
+    gkGameObject* trackTarget = m_scene->findInstancedObject(m_obj);
+    if (!trackTarget)
+    {
+        // TODO: Log warning message
+        return;
+    }
+
+    gkGameObjectTypes type = m_object->getType();
+
+    if (GK_CAMERA==type)
+    {
+        gkCamera* camera = m_object->getCamera();
+        if (!camera)
+        {
+            // TODO: Log warning message
+            return;
+        }
+
+        camera->getCamera()->setAutoTracking(true, trackTarget->getNode());
+        camera->getCamera()->setFixedYawAxis(true, Ogre::Vector3::UNIT_Z);
+    }
+    else
+    {
+        Ogre::SceneNode* sceneNode = m_object->getNode();
+        if (!sceneNode)
+        {
+            // TODO: log warning message
+            return;
+        }
+
+        sceneNode->setAutoTracking(true, trackTarget->getNode(), Ogre::Vector3::UNIT_Y);
+    }
+}
 
 
 void gkEditObjectActuator::execute(void)
@@ -141,6 +182,12 @@ void gkEditObjectActuator::execute(void)
 	case EO_ENDOBJ:
 		endObject();
 		break;
+    case EO_TRACKTO:
+        trackToObject();
+        break;
+    default:
+        // TODO: Log some warning message
+        break;
 	}
 
 	setPulse(BM_OFF);
