@@ -254,8 +254,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				la = aa;
 				Blender::bIpoActuator* bia = (Blender::bIpoActuator*)bact->data;
 				
-				aa->setStart(bia->sta);
-				aa->setEnd(bia->end);
+				aa->setStart(bia->sta / animFps);
+				aa->setEnd(bia->end / animFps);
 				aa->setBlend(0);
 
 				int mode = 0;
