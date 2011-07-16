@@ -41,7 +41,7 @@
 akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTime(0),
 	m_lastfps(0), m_canUseVbo(false), m_drawNormals(false), m_wireframe(false), m_textured(true),
 	m_shaded(true), m_drawColor(true), m_useVbo(true), m_dualQuatUse(0), m_normalMethod(2),
-	m_drawSkeleton(true)
+	m_drawSkeleton(true), m_windowx(800), m_windowy(800)
 {
 	m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
 }

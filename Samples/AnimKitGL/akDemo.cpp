@@ -95,6 +95,8 @@ int main(int argc, char** argv)
 	akDemo* demo = new akDemo();
 	
 	startGlutDemo(argc, argv, demo,"AnimKit OpenGL Demo");
+	
+	delete demo;
 	return 0;
 }
 

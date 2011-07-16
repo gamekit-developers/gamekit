@@ -66,12 +66,12 @@ void special(int key,int x,int y)
 
 int startGlutDemo(int argc, char** argv, akDemoBase* d, const char* title)
 {
-	demo =d;
+	demo = d;
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100,30);
-	glutInitWindowSize(800,800);
+	//glutInitWindowPosition(100,30);
+	glutInitWindowSize(demo->getWindowWidth(), demo->getWindowHeigth());
 	glutCreateWindow(title);
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);

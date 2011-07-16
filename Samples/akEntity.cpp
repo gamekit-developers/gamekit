@@ -44,6 +44,12 @@ akEntity::~akEntity()
 	
 	m_matrixPalette.clear();
 	m_dualquatPalette.clear();
+	
+	m_posnoVertexVboIds.clear();
+	m_staticVertexVboIds.clear();
+	m_staticIndexVboIds.clear();
+	
+	m_textures.clear();
 }
 
 bool akEntity::isMeshDeformedByMorphing(void)

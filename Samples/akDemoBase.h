@@ -104,6 +104,16 @@ public:
                 return m_camera;
 	}
 	
+	UT_INLINE int getWindowWidth(void)
+	{
+		return m_windowx;
+	}
+	
+	UT_INLINE int getWindowHeigth(void)
+	{
+		return m_windowy;
+	}
+	
 	void start(void);
 	void step(akScalar seconds);
 	virtual void init(void) =0;

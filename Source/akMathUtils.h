@@ -115,16 +115,17 @@ UT_INLINE bool akEq(const akScalar& v)
 }
 
 template <class T>
-UT_INLINE static void akAdvancePointer(T*& ptr, UTsize offset)
-{
-	ptr = (T*)((char*)(ptr) + offset);
-}
-
-template <class T>
 UT_INLINE static T* akOffsetPointer(T* ptr, UTsize offset)
 {
 	return (T*)((char*)(ptr) + offset);
 }
+
+template <class T>
+UT_INLINE static void akAdvancePointer(T*& ptr, UTsize offset)
+{
+	ptr = akOffsetPointer(ptr, offset);
+}
+
 
 class akMathUtils
 {
