@@ -90,7 +90,7 @@ enum gsMouseButton
 };
 
 
-typedef enum gsCompositorOp 
+enum gsCompositorOp 
 { 
 	COP_ADD = 0, 
 	COP_DEL, 

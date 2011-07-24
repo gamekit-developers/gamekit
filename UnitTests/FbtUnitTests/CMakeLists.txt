@@ -28,17 +28,20 @@ set(ALL
 include_directories(
 	.
 	./TestCase
+	./CustomFileFormat
 	${GTEST_INCLUDE}
 	${FBT_SOURCE_DIR}/File
 	${FBT_SOURCE_DIR}/FileFormats/Blend
 	${FBT_SOURCE_DIR}/FileFormats/Bullet
 )
 
+
 link_libraries(
 	${GTEST_LIB}
 	fbtFile
 	bfBlend
 	btBulletFile
+	cstmFileFormat
 )
 
 if (UNIX)
@@ -61,3 +64,5 @@ IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
 	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${TESTCMD} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 		
 ENDIF ()
+
+subdirs(CustomFileFormat)
