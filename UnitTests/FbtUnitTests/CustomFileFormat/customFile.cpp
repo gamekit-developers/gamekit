@@ -56,7 +56,8 @@ cstmFile::cstmFile() : fbtFile(cstmFile_Header)
 	m_memory = new fbtBinTables();
 	initializeTables(m_memory);
 	
-	m_global = (Custom::cstmGlobal*) malloc(sizeof(Custom::cstmGlobal));
+	//m_global = (Custom::cstmGlobal*) malloc(sizeof(Custom::cstmGlobal));
+	m_global = new Custom::cstmGlobal();
 }
 
 cstmFile::~cstmFile()
