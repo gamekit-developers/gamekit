@@ -65,47 +65,15 @@ fbtInspectorFile::~fbtInspectorFile()
 }
 
 
-
-void fbtInspectorFile::writeStruct(fbtStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
+int fbtInspectorFile::writeData(fbtStream* stream)
 {
-	Chunk ch;
-	ch.m_code   = code;
-	ch.m_len    = len;
-	ch.m_nr     = 1;
-	ch.m_old    = (FBTsize)writeData;
-	ch.m_typeid = index;
-
-	stream->write(&ch, sizeof(Chunk));
-	stream->write(writeData, ch.m_len);
-}
-
-
-void fbtInspectorFile::writeData(fbtStream* stream, FBTsize len, void* writeData)
-{
-	Chunk ch;
-	ch.m_code   = fbtIdCodes::DATA;
-	ch.m_len    = len;
-	ch.m_nr     = 1;
-	ch.m_old    = (FBTsize)writeData;
-	ch.m_typeid = m_memory->findTypeId("Link");
-
-
-	stream->write(&ch, sizeof(Chunk));
-	stream->write(writeData, ch.m_len);
-}
-
-
-void fbtInspectorFile::writeGlobal(fbtStream* stream)
-{
-	m_project->m_version = INSPECTOR_VERSION_FILE;
-
 	writeStruct(stream, m_memory->findTypeId("fbtProjectFile"), fbtIdCodes::GLOB, sizeof(fbtProjectFile), m_project);
 	if (m_project->m_windowLayout)
 	{
 		char *data = m_project->m_windowLayout;
 		FBTsize len = strlen(data);
 		data[len] = 0;
-		writeData(stream, len+1, data);
+		writeBuffer(stream, len+1, data);
 	}
 
 
@@ -124,51 +92,24 @@ void fbtInspectorFile::writeGlobal(fbtStream* stream)
 
 			writeStruct(stream, code, fbtIdCodes::FP, sizeof(fbtText), fp);
 			if (fp->m_data)
-				writeData(stream, fp->m_size, fp->m_data);
+				writeBuffer(stream, fp->m_size, fp->m_data);
 
 
 			fp->m_textFile = tfd;
 			fp->m_flag = tf;
 		}
 	}
+	
+	return FS_OK;
 }
 
 
 
 void fbtInspectorFile::save(const char* path)
 {
-	Chunk ch;
-	fbtFileStream fs;
-	fs.open(path, fbtStream::SM_WRITE);
+	m_project->m_version = INSPECTOR_VERSION_FILE;
 
-
-
-	FBTuint8 cp = FBT_VOID8 ? FM_64_BIT : FM_32_BIT;
-	FBTuint8 ce = ((FBTuint8)fbtGetEndian()) == FBT_ENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
-
-
-	// put magic
-	fs.writef("INSPECT%c%c%1i%1i%1i", cp, ce, INSP_VERSION_MAJOR, INSP_VERSION_MINOR, INSP_VERSION_SUB);
-
-	writeGlobal(&fs);
-
-	// write DNA1
-	ch.m_code   = fbtIdCodes::FBT1;
-	ch.m_len    = getFBTlength();
-	ch.m_nr     = 1;
-	ch.m_old    = 0;
-	ch.m_typeid = 0;
-	fs.write(&ch, sizeof(Chunk));
-	fs.write(getFBT(), ch.m_len);
-
-
-	// write ENDB (End Byte | EOF )
-	ch.m_code   = fbtIdCodes::ENDB;
-	ch.m_len    = 0;
-	ch.m_nr     = 0;
-	ch.m_old    = 0;
-	ch.m_typeid = 0;
-	fs.write(&ch, sizeof(Chunk));
+	reflect(path);
 }
 
 

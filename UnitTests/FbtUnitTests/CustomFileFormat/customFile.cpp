@@ -30,22 +30,42 @@
 #include "fbtTables.h"
 #include "fbtStreams.h"
 
-static char cstmFile_Header[8] = {'C', 'U', 'S', 'T', 'F', 'B', 'T', '\0'};
+#include <malloc.h>
+
 extern unsigned char cstmFileFBT[];
 extern int cstmFileLen;
+
+static char cstmFile_Header[8] = {'C', 'U', 'S', 'T', 'F', 'B', 'T', '\0'};
+
+namespace cstmIdCodes
+{
+const FBTuint32 GLOB = FBT_ID('G', 'L', 'O', 'B');
+const FBTuint32 ENDB = FBT_ID('E', 'N', 'D', 'B');
+const FBTuint32 FBT1 = FBT_ID('D', 'N', 'A', '1');
+const FBTuint32 DATA = FBT_ID('D', 'A', 'T', 'A');
+const FBTuint16 CSTR = FBT_ID2('S', 'T');
+
+}
+
 
 
 cstmFile::cstmFile() : fbtFile(cstmFile_Header)
 {
+	m_version = 1;
+	
+	m_memory = new fbtBinTables();
+	initializeTables(m_memory);
+	
+	m_global = (Custom::cstmGlobal*) malloc(sizeof(Custom::cstmGlobal));
 }
 
 cstmFile::~cstmFile()
 {
-}
-
-int cstmFile::notifyData(void* p, const Chunk& id)
-{
-	return FS_OK;
+	if(m_global)
+	{
+		delete m_global;
+		m_global = 0;
+	}
 }
 
 int cstmFile::initializeTables(fbtBinTables* tables)
@@ -65,6 +85,26 @@ FBTsize cstmFile::getFBTlength(void)
 
 int cstmFile::writeData(fbtStream* stream)
 {
+	writeStruct(stream, m_memory->findTypeId("cstmGlobal"), cstmIdCodes::GLOB, sizeof(Custom::cstmGlobal), m_global);
+	
+	Custom::cstmStruct* s = m_global->main.structList.m_first;
+	while(s)
+	{
+		writeStruct(stream, m_memory->findTypeId("cstmStruct"), cstmIdCodes::CSTR, sizeof(Custom::cstmStruct), s);
+		s = s->m_next;
+	}
+	
+	return FS_OK;
+}
+
+int cstmFile::notifyData(void* p, const Chunk& id)
+{
+	if (id.m_code == cstmIdCodes::GLOB)
+	{
+		if (m_global)
+			memcpy(m_global, p, sizeof(Custom::cstmGlobal));
+	}
+	
 	return FS_OK;
 }
 
@@ -72,3 +112,4 @@ bool cstmFile::skip(const FBTuint32& id)
 {
 	return false;
 }
+

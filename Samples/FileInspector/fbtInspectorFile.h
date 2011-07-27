@@ -46,20 +46,14 @@ public:
 
 
 protected:
-
-	void writeGlobal(fbtStream* stream);
-
-	void writeStruct(fbtStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
-	void writeData(fbtStream* stream, FBTsize len, void* writeData);
-
 	fbtProjectFile* m_project;
 
 	virtual int notifyData(void* p, const Chunk& id);
 
+	virtual int writeData(fbtStream* stream);
 
 	// load memory tables
 	virtual int initializeTables(fbtBinTables* tables);
-
 
 	virtual void*   getFBT(void);
 	virtual FBTsize getFBTlength(void);

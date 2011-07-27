@@ -137,12 +137,12 @@ public:
 	int parse(const char* path, int mode = PM_UNCOMPRESSED);
 	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
 
-
-	int reflect(const char* path, const fbtEndian& endian = FBT_ENDIAN_NATIVE);
+	/// Saving in non native endianness is not implemented yet.
+	int reflect(const char* path, const int mode = PM_UNCOMPRESSED, const fbtEndian& endian = FBT_ENDIAN_NATIVE);
 
 
 	const fbtFixedString<12>&   getHeader(void)     const {return m_header;}
-	const int&                  getVersion(void)    const {return m_version;}
+	const int&                  getVersion(void)    const {return m_fileVersion;}
 	const char*                 getPath(void)       const {return m_curFile; }
 
 
@@ -160,13 +160,14 @@ protected:
 
 	int parseMagic(const char* cp);
 
+	void writeStruct(fbtStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData);
+	void writeBuffer(fbtStream* stream, FBTsize len, void* writeData);
+
 
 	virtual int initializeTables(fbtBinTables* tables) = 0;
 	virtual int notifyData(void* p, const Chunk& id) {return FS_OK;}
-	virtual int writeData(fbtStream* stream) {return FS_OK;};
-
-
-
+	virtual int writeData(fbtStream* stream) {return FS_OK;}
+	
 	virtual void*   getFBT(void) = 0;
 	virtual FBTsize getFBTlength(void) = 0;
 
@@ -177,7 +178,7 @@ protected:
 	fbtFixedString<12> m_header;
 
 
-	int m_version, m_fileHeader;
+	int m_version, m_fileVersion, m_fileHeader;
 	char* m_curFile;
 
 	typedef fbtHashTable<fbtSizeHashKey, MemoryChunk*> ChunkMap;

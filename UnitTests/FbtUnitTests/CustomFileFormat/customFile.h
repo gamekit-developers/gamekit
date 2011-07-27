@@ -30,21 +30,25 @@
 
 #include "fbtFile.h"
 
+#include "Custom.h"
+
 class cstmFile : public fbtFile
 {
 public:
-	fbtList m_list;
+	Custom::cstmGlobal* m_global;
 	
 	cstmFile();
 	virtual ~cstmFile();
-
+	
 protected:
-	virtual int notifyData(void* p, const Chunk& id);
-	virtual int initializeTables(fbtBinTables* tables);
-	virtual bool skip(const FBTuint32& id);
-	virtual int writeData(fbtStream* stream);
+	virtual int     notifyData(void* p, const Chunk& id);
+	virtual int     initializeTables(fbtBinTables* tables);
+	virtual bool    skip(const FBTuint32& id);
+	virtual int     writeData(fbtStream* stream);
 	virtual void*   getFBT(void);
 	virtual FBTsize getFBTlength(void);
+
+private:
 };
 
 #endif // CSTMFILE_H

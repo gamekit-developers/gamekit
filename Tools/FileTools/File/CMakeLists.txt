@@ -41,6 +41,7 @@ set(File_HDR
     fbtTypes.h
     fbtConfig.h
     fbtStreams.h
+    fbtPlatformHeaders.h
 )
 
 # only for updating scanner 

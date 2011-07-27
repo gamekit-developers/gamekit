@@ -541,7 +541,7 @@ void fbtMainFrame::openProject(const wxString& projPath)
 
 
 	fbtInspectorFile* newFile = new fbtInspectorFile();
-	if (newFile->parse(projPath, fbtFile::PM_COMPRESSED) == fbtFile::FS_OK)
+	if (newFile->parse(projPath, fbtFile::PM_UNCOMPRESSED) == fbtFile::FS_OK)
 	{
 		clearProject();
 		m_curProject = newFile;

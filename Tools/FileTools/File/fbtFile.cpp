@@ -64,13 +64,14 @@ struct fbtChunk
 	};
 
 	static int read(fbtFile::Chunk* dest, fbtStream* stream, int flags);
+	static int write(fbtFile::Chunk* src, fbtStream* stream);
 };
 
 
 
 
 fbtFile::fbtFile(const char* uid)
-	:   m_version(-1), m_fileHeader(0), m_uhid(uid), m_aluhid(0),
+	:   m_version(-1), m_fileVersion(0), m_fileHeader(0), m_uhid(uid), m_aluhid(0),
 	    m_memory(0), m_file(0), m_curFile(0)
 {
 }
@@ -179,7 +180,7 @@ int fbtFile::parseHeader(fbtStream* stream)
 	char* headerMagic = (m_header.ptr() + 7);
 
 	m_fileHeader = 0;
-	m_version = 0;
+	m_fileVersion = 0;
 
 	if (*(headerMagic++) == FM_64_BIT)
 	{
@@ -200,7 +201,7 @@ int fbtFile::parseHeader(fbtStream* stream)
 		m_fileHeader |= FH_ENDIAN_SWAP;
 
 
-	m_version = atoi(headerMagic);
+	m_fileVersion = atoi(headerMagic);
 
 	return FS_OK;
 }
@@ -257,7 +258,6 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 
 		if (chunk.m_code == SDNA)
 		{
-
 			chunk.m_code = DNA1;
 			stream->seek(-status, SEEK_CUR);
 			chunk.m_len = stream->size() - stream->position();
@@ -802,33 +802,48 @@ bool fbtFile::_setuid(const char* uid)
 	return true;
 }
 
-int fbtFile::reflect(const char* path, const fbtEndian& endian)
+int fbtFile::reflect(const char* path, const int mode, const fbtEndian& endian)
 {
+	fbtStream* fs;
+	
 #if FBT_USE_GZ_FILE == 1
-	fbtGzStream fs;
-#else
-	fbtFileStream fs;
+	if (mode == PM_COMPRESSED)
+		fs = new fbtGzStream();
+	else
 #endif
-	fs.open(path, fbtStream::SM_WRITE);
-
+	{
+		fs = new fbtFileStream();
+	}
+	
+	fs->open(path, fbtStream::SM_WRITE);
 
 
 	FBTuint8 cp = FBT_VOID8 ? FM_64_BIT : FM_32_BIT;
 	FBTuint8 ce = ((FBTuint8)fbtGetEndian()) == FBT_ENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
 
-
-	if (endian != FBT_ENDIAN_NATIVE)
-	{
-		if (endian == FBT_ENDIAN_IS_BIG)
-			ce = FM_BIG_ENDIAN;
-		else
-			ce = FM_LITTLE_ENDIAN;
-	}
+//	Commented for now since the rest of the code does not care
+//	if (endian != FBT_ENDIAN_NATIVE)
+//	{
+//		if (endian == FBT_ENDIAN_IS_BIG)
+//			ce = FM_BIG_ENDIAN;
+//		else
+//			ce = FM_LITTLE_ENDIAN;
+//	}
 
 	// put magic
-	fs.writef("%s%c%c%i", m_uhid, cp, ce, m_version);
-
-	writeData(&fs);
+	//fs->writef("%s%c%c%i", m_uhid, cp, ce, m_version);
+	char header[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+	char version[33];
+	sprintf(version, "%i",m_version);
+	
+	strncpy(&header[0], m_uhid, 7); // 7 first bytes of header
+	header[7] = cp;					// 8th byte = pointer size
+	header[8] = ce;					// 9th byte = endianness
+	strncpy(&header[9], version, 3);// last 3 bytes vor 3 version char
+	
+	fs->write(header, 12);
+	
+	writeData(fs);
 
 	// write DNA1
 	Chunk ch;
@@ -837,8 +852,8 @@ int fbtFile::reflect(const char* path, const fbtEndian& endian)
 	ch.m_nr     = 1;
 	ch.m_old    = 0;
 	ch.m_typeid = 0;
-	fs.write(&ch, fbtChunk::BlockSize);
-	fs.write(getFBT(), ch.m_len);
+	fs->write(&ch, fbtChunk::BlockSize);
+	fs->write(getFBT(), ch.m_len);
 
 
 	// write ENDB (End Byte | EOF )
@@ -847,11 +862,42 @@ int fbtFile::reflect(const char* path, const fbtEndian& endian)
 	ch.m_nr     = 0;
 	ch.m_old    = 0;
 	ch.m_typeid = 0;
-	fs.write(&ch, fbtChunk::BlockSize);
+	fs->write(&ch, fbtChunk::BlockSize);
+	
+	delete fs;
 	return FS_OK;
 
 }
 
+void fbtFile::writeStruct(fbtStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
+{
+	Chunk ch;
+	ch.m_code   = code;
+	ch.m_len    = len;
+	ch.m_nr     = 1;
+	ch.m_old    = (FBTsize)writeData;
+	ch.m_typeid = index;
+
+	fbtChunk::write(&ch, stream);
+}
+
+void fbtFile::writeBuffer(fbtStream* stream, FBTsize len, void* writeData)
+{
+	Chunk ch;
+	ch.m_code   = DATA;
+	ch.m_len    = len;
+	ch.m_nr     = 1;
+	ch.m_old    = (FBTsize)writeData;
+	ch.m_typeid = m_memory->findTypeId("Link");
+
+	fbtChunk::write(&ch, stream);
+}
+
+int fbtChunk::write(fbtFile::Chunk* src, fbtStream* stream)
+{
+	stream->write(src, BlockSize);
+	stream->write((void*)src->m_old, src->m_len);
+}
 
 int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 {
