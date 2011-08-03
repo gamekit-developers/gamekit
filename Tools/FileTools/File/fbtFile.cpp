@@ -894,9 +894,11 @@ void fbtFile::writeBuffer(fbtStream* stream, FBTsize len, void* writeData)
 }
 
 int fbtChunk::write(fbtFile::Chunk* src, fbtStream* stream)
-{
-	stream->write(src, BlockSize);
-	stream->write((void*)src->m_old, src->m_len);
+{	
+	int size = 0;
+	size += stream->write(src, BlockSize);
+	size += stream->write((void*)src->m_old, src->m_len);
+	return size;
 }
 
 int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
