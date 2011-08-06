@@ -100,8 +100,8 @@ bool OgreKit::init(int width, int height)
 	// iPhone
 	//960x640, 480x320
 
-	//m_prefs.winsize.x        = 320;
-    //m_prefs.winsize.y        = 480;
+	m_prefs.winsize.x        = 320;
+    m_prefs.winsize.y        = 480;
 
 	
 #if USE_VIEWPORT_LANDSCAPE
