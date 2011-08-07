@@ -425,6 +425,26 @@ void gkEngine::requestExit(void)
 
 
 
+void gkEngine::saveTimestampedScreenShot(const gkString& filenamePrefix, const gkString& filenameSuffix)
+{
+	gkWindowSystem* sys = m_private->windowsystem;
+	if (!sys)
+	{
+		gkLogMessage("Engine: Can't take screenshot without a window system. error\n");
+		return;
+	}
+
+	gkWindow* rwin = sys->getMainWindow();
+	if (!rwin)
+	{
+		gkLogMessage("Engine: Can't take screenshot without a render window. error\n");
+		return;
+	}
+	rwin->writeContentsToTimestampedFile(filenamePrefix, filenameSuffix);
+}
+
+
+
 gkBlendFile* gkEngine::loadBlendFile(const gkString& blend, int options, const gkString& group)
 {
 	// This function is not really needed any more.

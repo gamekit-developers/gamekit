@@ -638,6 +638,15 @@ void gsEngine::requestExit(void)
 
 
 
+void gsEngine::saveTimestampedScreenShot(const gkString& filenamePrefix, const gkString& filenameSuffix)
+{
+	if (m_engine)
+		m_engine->saveTimestampedScreenShot(filenamePrefix, filenameSuffix);
+}
+
+
+
+
 gsUserDefs& gsEngine::getUserDefs(void)
 {
 	if (m_defs == 0)

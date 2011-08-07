@@ -614,6 +614,25 @@ gkScene* gkWindow::getRenderScene(void)
 	return m_scene ? m_scene : gkEngine::getSingleton().getActiveScene(); 
 }
 
+gkString gkWindow::writeContentsToTimestampedFile(const gkString& filenamePrefix, const gkString& filenameSuffix)
+{
+	gkString suffix;
+	if (filenameSuffix.find(".") != gkString::npos)
+		suffix = filenameSuffix;
+	else
+		suffix = gkString(".") + filenameSuffix;
+		
+	try
+	{
+		return m_rwindow->writeContentsToTimestampedFile(filenamePrefix, suffix);
+	}
+	catch (Ogre::Exception& e)
+	{
+		gkLogMessage("Screenshot: " << e.what());
+		return "";
+	}
+}
+
 int gkWindow::getKeyModifier()
 {
 	if (!m_ikeyboard) return 0;

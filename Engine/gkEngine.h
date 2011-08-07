@@ -64,6 +64,7 @@ public:
 
 	gkUserDefs& getUserDefs(void);
 	void requestExit(void);
+	void saveTimestampedScreenShot(const gkString& filenamePrefix, const gkString& filenameSuffix);
 
 	gkBlendFile* loadBlendFile(const gkString& blend, int options = 0, const gkString& group = "");
 	void loadResources(const gkString& name);

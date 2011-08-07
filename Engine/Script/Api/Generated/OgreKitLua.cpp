@@ -6289,6 +6289,43 @@ fail:
 }
 
 
+static int _wrap_Engine_saveTimestampedScreenShot(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString *arg3 = 0 ;
+  gkString temp2 ;
+  gkString temp3 ;
+  
+  SWIG_check_num_args("saveTimestampedScreenShot",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("saveTimestampedScreenShot",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("saveTimestampedScreenShot",2,"gkString const &");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("saveTimestampedScreenShot",3,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_saveTimestampedScreenShot",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  temp3 = gkString((const char*)lua_tostring(L, 3));
+  arg3 = &temp3;
+  
+  (arg1)->saveTimestampedScreenShot((gkString const &)*arg2,(gkString const &)*arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Engine_connect__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
@@ -6553,6 +6590,7 @@ static swig_lua_method swig_gsEngine_methods[] = {
     {"initialize", _wrap_Engine_initialize}, 
     {"run", _wrap_Engine_run}, 
     {"requestExit", _wrap_Engine_requestExit}, 
+    {"saveTimestampedScreenShot", _wrap_Engine_saveTimestampedScreenShot}, 
     {"connect", _wrap_Engine_connect}, 
     {"loadBlendFile", _wrap_Engine_loadBlendFile}, 
     {"getActiveScene", _wrap_Engine_getActiveScene}, 

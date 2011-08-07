@@ -140,6 +140,8 @@ public:
 
 	gkScene* getRenderScene(void);
 	void setRenderScene(gkScene* scene);
+
+	gkString writeContentsToTimestampedFile(const gkString& filenamePrefix, const gkString& filenameSuffix);
 };
 
 #endif //_gkWindow_h_

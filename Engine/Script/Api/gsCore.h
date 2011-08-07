@@ -235,6 +235,7 @@ public:
 	void initialize(void);
 	void run(void);
 	void requestExit(void);
+	void saveTimestampedScreenShot(const gkString& filenamePrefix, const gkString& filenameSuffix);
 
 	// connect global function
 	void connect(int evt, gsFunction func);
