@@ -936,6 +936,7 @@ function Keyboard:isKeyDown(code)
 \LuaMethodMenu{Engine,unloadAllBlendFiles}
 \LuaMethodMenu{Engine,getActiveScene}
 \LuaMethodMenu{Engine,getUserDefs}
+\LuaMethodMenu{Engine,saveTimestampedScreenShot}
 \endmenu
 
 \endpage
@@ -1110,6 +1111,22 @@ function Engine:getUserDefs()
 
 \endpage
 
+<!-- ======================================== -->
+\LuaMethod{Engine,saveTimestampedScreenShot}
+
+Save a time stamped screenshot file.
+
+\code
+function Engine:saveTimestampedScreenShot(filenamePrefix,filenameSuffix)
+\endcode
+
+\param filenamePrefix Prefix of the screenshot file name.
+\param filenameSuffix Suffix of the screenshot file name with file extention. (ex, '.png')
+\returns 
+
+\endpage
+
+
 <!-- ============================================ Object ============================================ -->
 \LuaClass{Object}
 
@@ -1190,7 +1207,7 @@ function Object:getName()
 \LuaMethodMenu{Scene,getObject}
 \LuaMethodMenu{Scene,getObjectList}
 \LuaMethodMenu{Scene,hasObject}
-
+\LuaMethodMenu{Scene,cloneObject}
 \endmenu
 
 
@@ -1258,6 +1275,23 @@ function Scene:createEmpty(name)
 \endcode
 
 \param name Unique name of the empty node.
+\return \LuaClassRef{GameObject}
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{Scene,cloneObject}
+
+
+Clone a object.
+
+\code
+function Scene:cloneObject(object,lifeSpan,instantiate)
+\endcode
+
+\param object The template object to be cloned.
+\param lifeSpan Life span of a cloned object. (0: permanet)
+\param instantiate Instantiate a cloned object.
 \return \LuaClassRef{GameObject}
 
 \endpage

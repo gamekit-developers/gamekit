@@ -48,6 +48,7 @@
 %newobject gsScene::getSkeleton;
 %newobject gsScene::getParticles;
 %newobject gsScene::createEmpty;
+%newobject gsScene::cloneObject;
 %newobject gsScene::getDynamicsWorld;
 
 

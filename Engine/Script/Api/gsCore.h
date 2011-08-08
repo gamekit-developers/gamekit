@@ -291,6 +291,7 @@ public:
 
 	gsGameObject* getObject(const gkString& name);
 	gsGameObject* createEmpty(const gkString& name);
+	gsGameObject* cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate);
 
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);

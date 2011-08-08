@@ -604,6 +604,10 @@ function OgreKitApp:constructor()
 	
 	self.player = Player(self.scene)
 
+	self.cubeTemplate = self.scene:getObject("Cube.001")
+	self.cubeClone    = self.scene:cloneObject(self.cubeTemplate, 0, true)
+	self.cubeClone:setPosition(0, 2, 5);
+
 end
 
 

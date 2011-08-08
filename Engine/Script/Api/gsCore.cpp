@@ -868,6 +868,26 @@ gsGameObject* gsScene::createEmpty(const gkString& name)
 }
 
 
+gsGameObject* gsScene::cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate)
+{
+	if (m_object && obj)
+	{
+		gkScene*      scene   = cast<gkScene>();
+		gkGameObject* gameObj = obj->cast<gkGameObject>();
+		if (gameObj)
+		{
+			gkGameObject* newGameObj = scene->cloneObject(gameObj, lifeSpan, instantiate);
+			if (newGameObj)
+			{
+				return new gsGameObject(newGameObj);
+			}
+		}
+	}
+
+	return 0;    
+}
+
+
 gsDynamicsWorld* gsScene::getDynamicsWorld(void)
 {
 	if (m_object)
