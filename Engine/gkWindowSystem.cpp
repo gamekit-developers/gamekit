@@ -71,7 +71,6 @@ gkWindowSystem::~gkWindowSystem()
 // Creates the render window, and sets up the OIS input system
 gkWindow* gkWindowSystem::createWindow(const gkUserDefs& prefs)
 {
-	_LOG_FOOT_
 #ifdef OGREKIT_BUILD_IPHONE
 	gkWindow* window = new gkWindowIOS();
 #elif defined(OGREKIT_BUILD_ANDROID)
@@ -79,14 +78,14 @@ gkWindow* gkWindowSystem::createWindow(const gkUserDefs& prefs)
 #else
 	gkWindow* window = new gkWindow();
 #endif
-	_LOG_FOOT_
+
 	if (!window->createWindow(this, prefs))
 	{
 		delete window;
 		gkPrintf("Unable setup gkWindow object.");
 		return 0;
 	}
-	_LOG_FOOT_
+
 	m_windows.push_back(window);
 
 	return window;

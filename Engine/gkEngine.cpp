@@ -196,31 +196,22 @@ gkEngine::~gkEngine()
 
 void gkEngine::initialize()
 {
-	_LOG_FOOT_
-
 	if (m_initialized) return;
-
-	_LOG_FOOT_
 
 	gkUserDefs& defs = getUserDefs();
 	gkLogger::enable(defs.log, defs.verbose);
-	_LOG_FOOT_
 
 	if (defs.rendersystem == OGRE_RS_UNKNOWN)
 	{
 		gkPrintf("Unknown rendersystem!\n");
 		return;
 	}
-	_LOG_FOOT_
-
 
 	Ogre::Root* root = new Ogre::Root("", "");
 	m_private->root = root;
 	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(root);
 	m_private->archive_factory->addArchiveFactory();	
-	_LOG_FOOT_
-
 
 	const Ogre::RenderSystemList& renderers = root->getAvailableRenderers();
 	if (renderers.empty())
@@ -228,20 +219,15 @@ void gkEngine::initialize()
 		gkPrintf("No rendersystems present\n");
 		return;
 	}
-	_LOG_FOOT_
 
 	root->setRenderSystem(renderers[0]);
 #if defined(_MSC_VER) && defined(OGRE_BUILD_RENDERSYSTEM_GLES2)
 	renderers[0]->setConfigOption("RTT Preferred Mode", "Copy"); //angleproject gles2
 #endif
-	_LOG_FOOT_
 
 	root->initialise(false);
-	_LOG_FOOT_
 
 	m_private->windowsystem = new gkWindowSystem();
-	_LOG_FOOT_
-
 
 	// gk Managers
 	new gkResourceGroupManager();
@@ -279,9 +265,8 @@ void gkEngine::initialize()
 #ifdef OGREKIT_USE_COMPOSITOR
 	new gkCompositorManager();
 #endif
-	_LOG_FOOT_
+
 	initializeWindow();
-	_LOG_FOOT_
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM	
 	defs.hasFixedCapability = renderers[0]->getCapabilities()->hasCapability(Ogre::RSC_FIXED_FUNCTION);

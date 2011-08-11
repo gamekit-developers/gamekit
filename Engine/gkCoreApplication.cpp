@@ -53,15 +53,12 @@ void gkCoreApplication::run(void)
 // Internal startup
 bool gkCoreApplication::initialize(void)
 {
-	_LOG_FOOT_
 	m_engine = new gkEngine(&m_prefs);
-	_LOG_FOOT_
 	m_engine->initialize();
-	_LOG_FOOT_
 
 	if (!m_engine->isInitialized())
 		return false;
-	_LOG_FOOT_
+
 	// Setup scene information
 	if (!setup())
 	{
@@ -70,7 +67,7 @@ bool gkCoreApplication::initialize(void)
 		m_engine = 0;
 		return false;
 	}
-	_LOG_FOOT_
+
 	// add update
 	m_engine->addListener(this);
 	return true;

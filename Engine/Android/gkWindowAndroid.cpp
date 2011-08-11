@@ -62,46 +62,35 @@ bool gkWindowAndroid::setupInput(const gkUserDefs& prefs)
 	// OIS
 	try
 	{
-		_LOG_FOOT_
 #if 0
 		size_t handle = getWindowHandle();
-		_LOG_FOOT_
 		if (handle == 0) 
 		{
 			gkPrintf("Window handle is null.");
 			return false;
 		}
-		_LOG_FOOT_
 #else
 		size_t handle = 0;
 #endif
 		OIS::ParamList params;
-		_LOG_FOOT_
 
 		params.insert(std::make_pair("WINDOW", Ogre::StringConverter::toString(handle)));
 
-		_LOG_FOOT_
 		m_input = OIS::InputManager::createInputSystem(params);
-		_LOG_FOOT_
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
-		_LOG_FOOT_
 
-		_LOG_FOOT_
 		m_ikeyboard = (OIS::Keyboard*)m_input->createInputObject(OIS::OISKeyboard, true);  GK_ASSERT(m_ikeyboard);
 		m_ikeyboard->setEventCallback(this);
-		_LOG_FOOT_
 
 		m_itouch = (OIS::MultiTouch*)m_input->createInputObject(OIS::OISMultiTouch, true); GK_ASSERT(m_itouch);
 		m_itouch->setEventCallback(this);
-		_LOG_FOOT_
 	}
 	catch (OIS::Exception& e)
 	{
-		_LOG_FOOT_
 		gkPrintf("%s", e.what());
 		return false;
 	}
-	_LOG_FOOT_
+
 	return true;
 }
 
