@@ -25,9 +25,8 @@
 -------------------------------------------------------------------------------
 */
 
-
 package org.gamekit.jni;
-
+ 
 import com.nvidia.devtech.NvGLES2Activity;
 import com.nvidia.devtech.NvGLESActivity;
 
@@ -40,8 +39,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-
-
+    
 public class Main //extends Activity { 
 	//extends NvGLESActivity {
 	extends NvGLES2Activity {
@@ -63,7 +61,6 @@ public class Main //extends Activity {
       setContentView(tv);
       */
   }
-
 
   @Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -100,6 +97,5 @@ public class Main //extends Activity {
 		//System.loadLibrary("dummy_ogrekit");		
 		System.loadLibrary("ogrekit");
 	}
-
 }
 

@@ -111,6 +111,8 @@ size_t gkWindow::getWindowHandle()
 
 	if (m_rwindow)
 		m_rwindow->getCustomAttribute("WINDOW", &handle);
+	
+	gkPrintf("WINDOW handle: 0x%x", handle);
 
 	return handle;
 }
@@ -120,6 +122,7 @@ bool gkWindow::setupInput(const gkUserDefs& prefs)
 	// OIS
 	try
 	{		
+		_LOG_FOOT_
 		size_t handle = getWindowHandle();
 		if (handle == 0) return false;
 
@@ -190,6 +193,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 {
 	try
 	{
+		_LOG_FOOT_
 		if (!sys || m_rwindow) 
 			return false;
 
@@ -213,7 +217,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			params["externalWindowHandle"] = prefs.extWinhandle;
 			m_useExternalWindow = true;
 		}
-
+		_LOG_FOOT_
 		if (prefs.fullscreen)
 		{
 			Ogre::RenderSystem* rsys = Ogre::Root::getSingleton().getRenderSystem();
@@ -257,23 +261,23 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			winsizex = m_requestedWidth;
 			winsizey = m_requestedHeight;
 		}
-
+		_LOG_FOOT_ //error
 		m_rwindow = Ogre::Root::getSingleton().createRenderWindow(prefs.wintitle,
 				   winsizex, winsizey, prefs.fullscreen, &params);
 		m_rwindow->setActive(true);
-
+		_LOG_FOOT_
 		// copy window size (used later for hit testing)
 		m_mouse.winsize.x = winsizex;
 		m_mouse.winsize.y = winsizey;	
-
+		_LOG_FOOT_
 		if (!setupInput(prefs))
 		{
 			gkPrintf("Unable setup gkWindow input objects.");
 			return false;
 		}
-
+		_LOG_FOOT_
 		Ogre::WindowEventUtilities::addWindowEventListener(m_rwindow, this);
-
+		_LOG_FOOT_
 	}
 	catch (OIS::Exception& e)
 	{

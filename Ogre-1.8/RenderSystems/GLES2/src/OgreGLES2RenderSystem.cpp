@@ -193,6 +193,7 @@ namespace Ogre {
         // Multitexturing support and set number of texture units
         GLint units;
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &units);
+        GL_CHECK_ERROR;
         rsc->setNumTextureUnits(units);
 
         // Check for hardware stencil support and set bit depth
@@ -246,7 +247,10 @@ namespace Ogre {
         rsc->setVertexTextureUnitsShared(true);
 
         // Hardware support mipmapping
+
+#if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
         rsc->setCapability(RSC_AUTOMIPMAP);
+#endif
 
         // Blending support
         rsc->setCapability(RSC_BLENDING);

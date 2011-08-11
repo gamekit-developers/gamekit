@@ -26,7 +26,7 @@
 */
 #include <jni.h>
 #include <stdlib.h>
-//#include "AndroidLogListener.h"
+#include "../Shared/AndroidLogListener.h"
 #include <android/log.h>
 #include <string>
 #include <assert.h>
@@ -37,22 +37,22 @@
 
 //#include "OgreKit.h"
 
-//#include <Ogre.h>
+#include "Ogre.h"
 //#include "OgreRTShaderSystem.h"
 
-#define  LOG_TAG    "ogrekit"
+#define  LOG_TAG    "OgreKitDemo"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define  LOG_FOOT   LOGI("%s %d", __FUNCTION__, __LINE__)
+#define LOG_FOOT   LOGI("%s %s %d", __FILE__, __FUNCTION__, __LINE__)
 
-typedef std::string gkString;
+//typedef std::string gkString;
 
 const gkString gkDefaultBlend   = "/sdcard/momo_ogre_i.blend";
 
 
 
 #if 0
-class OgreKit // : public gkCoreApplication
+class OgreKit  : public gkCoreApplication
 {
 public:
 	gkString    m_blend;
@@ -99,12 +99,16 @@ int OgreKit::init(void)
 
 bool OgreKit::setup(void)
 {
+    LOG_FOOT;
+
 	gkBlendFile* blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
 	if (!blend)
 	{
 		LOGI("File loading failed.\n");
 		return false;
 	}
+
+    LOG_FOOT;
 
 	m_scene = blend->getMainScene();
 	if (!m_scene)
@@ -113,8 +117,11 @@ bool OgreKit::setup(void)
 		return false;
 	}
 
+    LOG_FOOT;
 
 	m_scene->createInstance();
+
+	LOG_FOOT;
 
 	// add input hooks
 	//gkWindowSystem::getSingleton().addListener(this);
@@ -122,11 +129,13 @@ bool OgreKit::setup(void)
 }
 
 
+
 OgreKit okit;
+
 #endif
 
-//AndroidLogListener *g_ll = 0;
-//Ogre::Log* gLog;
+
+AndroidLogListener gLogListener;
 
 
 class EventListener : 
@@ -212,7 +221,19 @@ public:
 jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 {
 	LOG_FOOT;
+	gkLogger::enable("OgreKitDemo.log", true);
+	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&gLogListener);
+
+	printf("kkkkkkkkkk\n");
+	gkPrintf("-----------******-------------------");
+	Ogre::LogManager::getSingleton().stream() << "ffffffffffffffff";
+    LOG_FOOT;
 		
+	//Ogre::LogManager *lm = OGRE_NEW Ogre::LogManager();
+	//gLog = lm->createLog("AndroidLog", true, true, true);
+	//g_ll = new AndroidLogListener();
+	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&gLogListener);
+	
 	
 	gkString file = gkDefaultBlend;
 	const char* str = env->GetStringUTFChars(arg, 0);

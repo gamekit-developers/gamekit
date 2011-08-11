@@ -152,13 +152,14 @@ bool OgreKit::setup(void)
 
 
 OgreKit okit;
-AndroidLogListener *g_ll = 0;
-Ogre::Log* gLog;
+AndroidLogListener gLogListener;
+
 
 jboolean init(JNIEnv* env, jobject thiz, jstring arg)
-{
+{	
 	LOG_FOOT;
-	
+	gkLogger::enable("AndroidDemo.log", true);
+	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&gLogListener);
 
 	gkString file = gkDefaultBlend;
 #if 0
@@ -172,10 +173,14 @@ jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 
 	LOGI("****** %s ******", file.c_str());
 
-	Ogre::LogManager *lm = new Ogre::LogManager();
-	gLog = lm->createLog("AndroidLog", true, true, true);
-	g_ll = new AndroidLogListener();
-	gLog->addListener(g_ll);
+	//Ogre::LogManager *lm = new Ogre::LogManager();
+	//gLog = lm->createLog("AndroidLog", true, true, true);
+	//g_ll = new AndroidLogListener();
+
+		printf("kkkkkkkkkk\n");
+	gkPrintf("-----------******-------------------");
+	Ogre::LogManager::getSingleton().stream() << "ffffffffffffffff";
+ 
 
 	LOG_FOOT;
 	

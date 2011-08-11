@@ -33,10 +33,10 @@
 #include "Ogre.h"
 #include "android/AndroidInputManager.h"
 
-#define LOG_TAG    "ogrekit"
+#define LOG_TAG    "OgreKitDemo"
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define LOG_FOOT   LOGI("%s %d", __FUNCTION__, __LINE__)
+#define LOG_FOOT   LOGI("%s %s %d", __FILE__, __FUNCTION__, __LINE__)
 
 
 const gkString gkDefaultBlend   = "/sdcard/momo_ogre_i.blend";
@@ -75,7 +75,8 @@ OgreKit::OgreKit()
 }
 
 bool OgreKit::init(const gkString& blend)
-{
+{	
+	gkPrintf("----------- OgreKit Android Demo init -----------------");
     LOG_FOOT;
 
 	gkString cfgfname;
@@ -144,13 +145,17 @@ bool OgreKit::setup(void)
 
 
 OgreKit okit;
-AndroidLogListener *g_ll = 0;
-Ogre::Log* gLog;
+//Ogre::LogManager gLogManager;
+AndroidLogListener gLogListener;
 
 jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 {
 	LOG_FOOT;
 	
+	gkLogger::enable("OgreKitDemo.log", true);
+	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&gLogListener);
+
+    LOG_FOOT;		
 
 	gkString file = gkDefaultBlend;
 	const char* str = env->GetStringUTFChars(arg, 0);
@@ -162,10 +167,6 @@ jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 
 	LOGI("****** %s ******", file.c_str());
 
-	Ogre::LogManager *lm = new Ogre::LogManager();
-	gLog = lm->createLog("AndroidLog", true, true, true);
-	g_ll = new AndroidLogListener();
-	gLog->addListener(g_ll);
 
 	LOG_FOOT;
 	

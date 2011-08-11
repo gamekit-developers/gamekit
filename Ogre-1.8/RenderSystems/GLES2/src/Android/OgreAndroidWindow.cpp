@@ -101,6 +101,9 @@ namespace Ogre {
 				ctxHandle = Ogre::StringConverter::parseInt(opt->second);
 			}
 			
+			mHandle = 0;
+			ctxHandle = 0;
+			
 			if(ctxHandle != -1)
 			{
 				mContext = new AndroidGLContext(mGLSupport, ctxHandle);
@@ -117,16 +120,24 @@ namespace Ogre {
 	void AndroidWindow::createNativeWindow( int &left, int &top, uint &width, uint &height, String &title )
 	{
 		LogManager::getSingleton().logMessage("\tcreateNativeWindow called");
+        mLeft = left;
+        mTop = top;
+        mWidth = width;
+        mHeight = height;
 	}
 
 	void AndroidWindow::reposition( int left, int top )
 	{
 		LogManager::getSingleton().logMessage("\treposition called");
+        mLeft = left;
+        mTop = top;
 	}
 
 	void AndroidWindow::resize(uint width, uint height)
 	{
 		LogManager::getSingleton().logMessage("\tresize called");
+        mWidth = width;
+        mHeight = height;
 	}
 
 	void AndroidWindow::windowMovedOrResized()

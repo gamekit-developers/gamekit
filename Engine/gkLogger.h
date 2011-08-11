@@ -58,6 +58,17 @@ extern void gkPrintf(const char* fmt, ...);
 #define gkPrintSTD(x) std::cout << x << std::endl
 
 #define gkPrintSLM(src, line, msg)  gkPrint(src << '(' << line << "): " << msg)
+#define gkPrintSLF(src, line, func)  gkPrint(src << '(' << line << "): " << func)
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define _LOGI_(...)  __android_log_print(ANDROID_LOG_INFO,  "OgreKit", __VA_ARGS__);
+#define _LOGE_(...)  __android_log_print(ANDROID_LOG_ERROR, "OgreKit", __VA_ARGS__);
+#define _LOG_FOOT_   _LOGI_("%s (%d): %s", __FILE__, __LINE__, __FUNCTION__);
+#else
+#define _LOGI_(...)
+#define _LOGE_(...)
+#define _LOG_FOOT_
+#endif
 
 #endif//_gkLogger_h_

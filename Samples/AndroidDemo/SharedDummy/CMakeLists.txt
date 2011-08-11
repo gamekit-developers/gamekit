@@ -8,8 +8,8 @@ include_directories(
 )
 
 link_libraries(
-	#${OGREKIT_LIB}
-	OIS
+	${OGREKIT_LIB}
+	#OIS
 	log
 )
 
@@ -20,8 +20,8 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 ADD_LIBRARY(${PROJECT_NAME}
 	SHARED
 	Main.cpp
-	#AndroidLogListener.h
-	#AndroidLogListener.cpp
+	../Shared/AndroidLogListener.h
+	../Shared/AndroidLogListener.cpp
 )
 
 #message(STATUS ${CMAKE_CURRENT_BINARY_DIR})

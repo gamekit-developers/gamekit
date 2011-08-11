@@ -40,8 +40,10 @@ AndroidLogListener::AndroidLogListener()
 {
 }
 
-void AndroidLogListener::messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String &logName)
+void AndroidLogListener::messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String &logName, bool& skipThisMessage)
 {
+	if (skipThisMessage) return;
+
 	if(lml < Ogre::LML_CRITICAL)
 	{
 		LOGI(message.c_str());
