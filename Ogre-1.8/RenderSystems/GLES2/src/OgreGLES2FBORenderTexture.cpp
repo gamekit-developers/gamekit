@@ -261,7 +261,7 @@ namespace Ogre {
         GLuint fb, tid;
         GLenum target = GL_TEXTURE_2D;
 
-        for(size_t x=0; x<PF_COUNT; ++x)
+        for(size_t x=1; x<PF_COUNT; ++x) //0: PF_UNKNOWN don't working with Galaxy A device.
         {
             mProps[x].valid = false;
 
