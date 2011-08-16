@@ -1418,7 +1418,7 @@ public:
 
 
 	UT_INLINE UTsize size(void) const       { return m_size; }
-	UT_INLINE UTsize capacity(void) const   { return capacity; }
+	UT_INLINE UTsize capacity(void) const   { return m_capacity; }
 	UT_INLINE bool empty(void) const        { return m_size == 0; }
 
 

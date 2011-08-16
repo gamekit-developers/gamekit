@@ -159,12 +159,15 @@ void gkPath::getAsString(gkString& dest) const
 	FILE* fp = fopen(m_path.c_str(), "rb");  // always in binary
 	GK_ASSERT(fp);
 
-	fread(data, fileSize, 1, fp);
-	fclose(fp);
+	if (fp)
+	{
+		fread(data, fileSize, 1, fp);
+		fclose(fp);
+		// term
+		data[fileSize] = 0;
+		dest = data;
+	}
 
-	// term
-	data[fileSize] = 0;
-	dest = data;
 	delete [] data;
 }
 

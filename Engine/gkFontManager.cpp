@@ -100,7 +100,7 @@ void gkFontManager::parseScript(utMemoryStream* buffer)
 		gkFont* gkf = (gkFont*)getByName(src);
 
 
-		int size, res;
+		int size = 0, res = UT_NPOS;
 
 		if (tree->hasAttribute("size"))
 			gkFromString(tree->getAttribute("size")->getValue(), size);
