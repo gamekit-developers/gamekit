@@ -21,6 +21,7 @@ bool parseBlendFile(const char *fname)
 	fbtBlend fp;
 
 	return fp.parse(fname, fbtFile::PM_READTOMEMORY) == fbtFile::FS_OK;	
+	//return fp.parse(fname, fbtFile::PM_COMPRESSED) == fbtFile::FS_OK;	
 }
 
 
@@ -107,7 +108,6 @@ bool parse_Ptr_PtrPtr_PtrArray(const char *fname,
 	return true;
 }
 
-
 TEST(TEST_CASE_NAME, parsePointer32BitLinks)
 {
 	int ptrPtrCount;
@@ -117,7 +117,6 @@ TEST(TEST_CASE_NAME, parsePointer32BitLinks)
 	ASSERT_EQ(ptrPtrCount, 4);
 	ASSERT_EQ(ptrArrayCount, 24);
 }
-
 
 TEST(TEST_CASE_NAME, parsePointer64BitLinks)
 {
@@ -129,10 +128,10 @@ TEST(TEST_CASE_NAME, parsePointer64BitLinks)
 	ASSERT_EQ(ptrArrayCount, 24);
 }
 
-
 TEST(TEST_CASE_NAME, parseBlend32bit)
 {	
 	EXPECT_TRUE(parseBlendFile("TestData/be32bit.blend"));
+	EXPECT_TRUE(parseBlendFile("TestData/le32bit.blend"));	
 	EXPECT_TRUE(parseBlendFile("TestData/le32bitLink.blend"));
 	EXPECT_TRUE(parseBlendFile("TestData/le32_bv225.blend"));
 	EXPECT_TRUE(parseBlendFile("TestData/Refl_le32bitLink.blend"));
@@ -147,7 +146,7 @@ TEST(TEST_CASE_NAME, findCameraObj)
 {
 	fbtBlend fp;
 
-	const char *fname = "TestData/be32bit.blend";
+	const char *fname = "TestData/be32bit.blend";	
 	ASSERT_EQ(fp.parse(fname, fbtFile::PM_READTOMEMORY), fbtFile::FS_OK);
 
 	bool findCameraObj = 0;
@@ -156,6 +155,7 @@ TEST(TEST_CASE_NAME, findCameraObj)
 	fbtList& objects = fp.m_object;
 	for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
 	{
+		//printf("%d %s\n", ob->type, GKB_IDNAME(ob));
 		if (cameraName == GKB_IDNAME(ob) && ob->type == OB_CAMERA)
 		{
 			findCameraObj = true;
