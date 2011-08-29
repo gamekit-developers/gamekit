@@ -352,3 +352,30 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 	}
 #endif
 }
+
+
+void gkMaterialLoader::setAlphaRejectSettings(const gkString& materialName, gkCompareFunction func, 
+	unsigned char value, bool alphaToCoverageEnabled)
+{
+	if (!Ogre::MaterialManager::getSingleton().resourceExists(materialName))
+		return;
+
+	Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName(materialName);
+	GK_ASSERT(!mat.isNull() && mat->getTechnique(0) && mat->getTechnique(0)->getPass(0));
+
+	mat->getTechnique(0)->getPass(0)->setAlphaRejectSettings((Ogre::CompareFunction)func, value, alphaToCoverageEnabled);	
+}
+
+
+
+void gkMaterialLoader::setAlphaRejectValue(const gkString& materialName, unsigned char value)
+{
+	if (!Ogre::MaterialManager::getSingleton().resourceExists(materialName))
+		return;
+
+	Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName(materialName);
+	GK_ASSERT(!mat.isNull() && mat->getTechnique(0) && mat->getTechnique(0)->getPass(0));
+
+	mat->getTechnique(0)->getPass(0)->setAlphaRejectValue(value);	
+}
+

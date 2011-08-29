@@ -214,6 +214,10 @@
 #include "Sound/gkWaveform.h"
 #endif
 
+#include "Graphics/gkHUD.h"
+#include "Graphics/gkHUDElement.h"
+#include "Graphics/gkHUDManager.h"
+
 #ifdef OGREKIT_USE_COMPOSITOR
 #include "External/Ogre/gkOgreCompositorManager.h"
 #endif

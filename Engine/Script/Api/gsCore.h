@@ -99,6 +99,19 @@ enum gsCompositorOp
 };
 
 
+enum gsCompareFunction
+{
+	CMPF_ALWAYS_FAIL,
+	CMPF_ALWAYS_PASS,
+	CMPF_LESS,
+	CMPF_LESS_EQUAL,
+	CMPF_EQUAL,
+	CMPF_NOT_EQUAL,
+	CMPF_GREATER_EQUAL,
+	CMPF_GREATER
+};
+
+
 class gsProperty
 {
 private:
@@ -275,7 +288,46 @@ public:
 	OGRE_KIT_INTERNAL_CAST(m_object);
 };
 
+class gsHUD
+{
+public:
+	gsHUD();
 
+	void show(bool v);
+
+	gsHUDElement* getChild(const gkString& child);
+
+	// internal wrap
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUD, gkHUD, m_object);
+	OGRE_KIT_INTERNAL_CAST(m_object);
+	OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUD, gkHUD);
+};
+
+class gsHUDElement
+{
+public:
+	gsHUDElement();
+
+	void show(bool v);
+
+	gkString getValue();
+	void setValue(const gkString& value);
+
+	void setUvCoords(float u1, float v1, float u2, float v2);
+	
+	gkString getParameter(const gkString& name);
+	void setParameter(const gkString& name, const gkString& value);
+
+	gkString getMaterialName();
+	void setMaterialName(const gkString& material);
+
+	// internal wrap
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUDElement, gkHUDElement, m_object);
+	OGRE_KIT_INTERNAL_CAST(m_object);
+	OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUDElement, gkHUDElement);
+};
+
+extern gsHUD* getHUD(const gkString& name);
 
 class gsScene : public gsObject
 {
@@ -293,7 +345,6 @@ public:
 	gsGameObject* createEmpty(const gkString& name);
 	gsGameObject* cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate);
 
-
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
 	gsDynamicsWorld* getDynamicsWorld(void);
@@ -303,7 +354,6 @@ public:
 };
 
 extern gsScene* getActiveScene(void);
-
 
 class gsGameObject : public gsObject
 {

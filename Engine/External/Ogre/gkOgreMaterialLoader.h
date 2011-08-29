@@ -31,6 +31,9 @@
 #include "utSingleton.h"
 #include "OgreMaterialManager.h"
 
+
+typedef Ogre::CompareFunction gkCompareFunction;
+
 class gkMaterialLoader : public Ogre::MaterialManager::Listener
 {
 public:
@@ -44,6 +47,12 @@ public:
 
 	virtual Ogre::Technique* handleSchemeNotFound(unsigned short schemeIndex, const Ogre::String& schemeName, 
 				Ogre::Material* originalMaterial, unsigned short lodIndex, const Ogre::Renderable* rend);
+
+	static void setAlphaRejectSettings(const gkString& materialName, gkCompareFunction func, 
+		unsigned char value, bool alphaToCoverageEnabled=false);
+
+	static void setAlphaRejectValue(const gkString& materialName, unsigned char value);
+
 };
 
 #endif//_gkOgreMaterialLoader_h_

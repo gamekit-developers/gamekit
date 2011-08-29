@@ -757,6 +757,89 @@ gsGameObject* gsGameObject::createNew(gkGameObject* ob)
 	return 0;
 }
 
+gsHUD::gsHUD() : m_object(0)
+{
+}
+
+gsHUD::gsHUD(gkHUD* ob) : m_object(ob)
+{
+}
+
+void gsHUD::show(bool v)
+{
+	if (m_object)
+		m_object->show(v);
+}
+
+gsHUDElement* gsHUD::getChild(const gkString& child)
+{
+	if (m_object)
+	{
+		gkHUDElement* ob = m_object->getChild(child);
+		if (ob)
+			return gsHUDElement::createNew(ob);
+	}
+
+	return 0;
+}
+
+gsHUDElement::gsHUDElement() : m_object(0)
+{
+}
+
+gsHUDElement::gsHUDElement(gkHUDElement* ob) : m_object(ob)
+{
+}
+
+void gsHUDElement::show(bool v)
+{
+	if (m_object)
+		m_object->show(v);
+}
+
+gkString gsHUDElement::getValue()
+{	
+	return m_object ? m_object->getValue() : "";
+}
+
+void gsHUDElement::setValue(const gkString& value)
+{
+	if (m_object)
+		m_object->setValue(value);
+}
+
+void gsHUDElement::setUvCoords(float u1, float v1, float u2, float v2)
+{
+	if (m_object)
+		m_object->setUvCoords(u1, v1, u2, v2);
+}
+
+gkString gsHUDElement::getMaterialName()
+{
+	if (m_object)
+		return m_object->getMaterialName();
+	
+	return "";
+}
+
+void gsHUDElement::setMaterialName(const gkString& material)
+{
+	if (m_object)
+		m_object->setMaterialName(material);
+}
+	
+gkString gsHUDElement::getParameter(const gkString& name)
+{
+	if (m_object)
+		return m_object->getParameter(name);
+}
+
+void gsHUDElement::setParameter(const gkString& name, const gkString& value)
+{
+	if (m_object)
+		return m_object->setParameter(name, value);
+}
+
 
 
 gsObject::gsObject() : m_object(0)
@@ -909,7 +992,13 @@ gsScene* getActiveScene(void)
 	return 0;
 }
 
-
+gsHUD* getHUD(const gkString& name)
+{
+	gkHUD* hud = gkHUDManager::getSingleton().getOrCreate(name);
+	if (hud)
+		return gsHUD::createNew(hud);
+	return 0;
+}
 
 gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
 {

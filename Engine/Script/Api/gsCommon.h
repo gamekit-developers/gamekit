@@ -112,6 +112,8 @@ class gsRayTest;
 class gsSweptTest;
 class gsConstraint;
 class gsDynamicsWorld;
+class gsHUD;
+class gsHUDElement;
 
 class gsLogicManager;
 class gsLogicObject;

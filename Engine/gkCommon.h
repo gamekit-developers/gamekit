@@ -145,6 +145,10 @@ class gkParticleManager;
 class gkOgreParticleAffector;
 class gkOgreParticleEmitter;
 
+class gkHUD;
+class gkHUDElement;
+class gkHUDManager;
+
 // Common types
 typedef utHashTable<gkHashedString, gkGameObject*>	gkGameObjectHashMap;
 typedef utArray<gkGameObject*>						gkGameObjectArray;

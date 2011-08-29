@@ -30,19 +30,6 @@ set(CPP_CONT_HDR
 )
 
 
-
-set(CPP_GRAPH_SRC
-	Graphics/gkHUD.cpp
-	Graphics/gkHUDElement.cpp
-	Graphics/gkHUDManager.cpp
-)
-
-set(CPP_GRAPH_HDR
-	Graphics/gkHUD.h
-	Graphics/gkHUDElement.h
-	Graphics/gkHUDManager.h
-)
-
 set(CPP_MAIN_SRC
 	gkApplication.cpp
 	gkCollisionCameraConstraint.cpp
@@ -73,10 +60,6 @@ if(WIN32)
 
 	source_group(Main\\Source FILES ${CPP_MAIN_SRC})
 	source_group(Main\\Header FILES ${CPP_MAIN_HDR})
-
-	source_group(HUD\\Source FILES ${CPP_GRAPH_SRC})
-	source_group(HUD\\Header FILES ${CPP_GRAPH_HDR})
-
 
 	source_group(Controllers\\Source FILES ${CPP_CONT_SRC})
 	source_group(Controllers\\Header FILES ${CPP_CONT_HDR})

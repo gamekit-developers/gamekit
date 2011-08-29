@@ -48,16 +48,13 @@ set(Core_SOURCE
 	gkStats.cpp
 	gkUserDefs.cpp
 	gkUtils.cpp
-	#gkWindowSystem.cpp
 	gkWindow.cpp
 	gkViewport.cpp
 	gkVariable.cpp
 )
 
 set(Core_SOURCE_2
-	gkWindowSystem.cpp
-	#gkWindow.cpp
-	#gkViewport.cpp
+	gkWindowSystem.cpp	
 )	
 
 set(Core_HEADER
@@ -607,7 +604,7 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsAnimation.i
 		Script/Api/gsBricks.i
 		Script/Api/gsConstraints.i
-		Script/Api/gsCore.i
+		Script/Api/gsCore.i		
 		Script/Api/gsMacros.i
 		Script/Api/gsMath.i
 		Script/Api/gsNetwork.i
@@ -667,7 +664,7 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsAnimation.cpp
 		Script/Api/gsBricks.cpp
 		Script/Api/gsConstraints.cpp
-		Script/Api/gsCore.cpp
+		Script/Api/gsCore.cpp		
 		Script/Api/gsMath.cpp
 		Script/Api/gsNetwork.cpp
 		Script/Api/gsNodes.cpp
@@ -710,6 +707,8 @@ else()
 		Script/Api/gsBricks.i
 		Script/Api/gsConstraints.i
 		Script/Api/gsCore.i
+		Script/Api/gsHUD.i
+		Script/Api/gsMaterial.i
 		Script/Api/gsMacros.i
 		Script/Api/gsMath.i
 		Script/Api/gsNetwork.i
@@ -735,6 +734,8 @@ else()
 		Script/Api/gsCommon.h
 		Script/Api/gsConstraints.h
 		Script/Api/gsCore.h
+		Script/Api/gsHUD.h
+		Script/Api/gsMaterial.h
 		Script/Api/gsMath.h
 		Script/Api/gsNetwork.h
 		Script/Api/gsNodes.h
@@ -762,6 +763,8 @@ else()
 		Script/Api/gsBricks.cpp
 		Script/Api/gsConstraints.cpp
 		Script/Api/gsCore.cpp
+		Script/Api/gsHUD.cpp
+		Script/Api/gsMaterial.cpp
 		Script/Api/gsMath.cpp
 		Script/Api/gsNetwork.cpp
 		Script/Api/gsNodes.cpp
@@ -852,6 +855,32 @@ else()
 	source_group(Network\\Source FILES ${Network_SOURCE})
 endif()
 
+# ---------------------------------------------------------
+# Graphics Files
+# ---------------------------------------------------------
+set(Graphics_SOURCE
+	# ----- Source -----
+	Graphics/gkHUD.cpp
+	Graphics/gkHUDElement.cpp
+	Graphics/gkHUDManager.cpp
+)
+
+set(Graphics_HEADER
+	# ----- Header -----
+	Graphics/gkHUD.h
+	Graphics/gkHUDElement.h
+	Graphics/gkHUDManager.h
+)
+
+if(APPLE)
+	source_group(Graphics FILES ${Graphics_HEADER} ${Network_SOURCE})
+
+else()
+	source_group(Graphics\\Header FILES ${Graphics_HEADER})
+	source_group(Graphics\\Source FILES ${Graphics_SOURCE})
+endif()
+
+
 
 
 # ---------------------------------------------------------
@@ -863,7 +892,7 @@ set(External_SOURCE
 	External/Ogre/gkOgreMeshLoader.cpp
 	External/Ogre/gkOgreSkeletonLoader.cpp
 	External/Ogre/gkOgreSkyBoxGradient.cpp
-	External/Ogre/gkOgreBlendArchive.cpp	
+	External/Ogre/gkOgreBlendArchive.cpp		
 )
 
 set(External_HEADER
@@ -872,7 +901,7 @@ set(External_HEADER
 	External/Ogre/gkOgreMeshLoader.h
 	External/Ogre/gkOgreSkeletonLoader.h
 	External/Ogre/gkOgreSkyBoxGradient.h
-	External/Ogre/gkOgreBlendArchive.h	
+	External/Ogre/gkOgreBlendArchive.h		
 )
 
 if (OGREKIT_USE_COMPOSITOR)
@@ -968,6 +997,7 @@ include_directories(
 	./Physics
 	./Thread
 	./Particles
+	./Graphics
 	)
 
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
@@ -1011,8 +1041,9 @@ ogrekit_add_library(OgreKitCore STATIC
 			${AI_SOURCE}         ${AI_HEADER}
 			${Animation_SOURCE}  ${Animation_HEADER}
 			${Constraint_SOURCE} ${Constraint_HEADER}
-			${Physics_SOURCE}    ${Physics_HEADER}			
+			${Physics_SOURCE}    ${Physics_HEADER}
 			${Network_SOURCE}    ${Network_HEADER}
+			${Graphics_SOURCE}    ${Graphics_HEADER}
 			${NLogic_SOURCE}     ${NLogic_HEADER}
 			${Thread_SOURCE}     ${Thread_HEADER}
 			${Particles_SOURCE}  ${Particles_HEADER}

@@ -52,6 +52,7 @@
 #include "gkResourceGroupManager.h"
 #include "gkAnimationManager.h"
 #include "gkParticleManager.h"
+#include "gkHUDManager.h"
 
 #ifdef OGREKIT_USE_NNODE
 #include "gkNodeManager.h"
@@ -244,6 +245,7 @@ void gkEngine::initialize()
 #ifdef OGREKIT_USE_PARTICLE
 	new gkParticleManager();
 #endif
+	new gkHUDManager();
 	new gkGroupManager();
 	new gkGameObjectManager();
 
@@ -365,6 +367,7 @@ void gkEngine::finalize()
 #ifdef OGREKIT_USE_PARTICLE
 	delete gkParticleManager::getSingletonPtr();
 #endif
+	delete gkHUDManager::getSingletonPtr();
 	delete gkAnimationManager::getSingletonPtr();
 
 

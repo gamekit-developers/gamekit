@@ -33,6 +33,8 @@
 
 // New Objects
 %newobject getActiveScene;
+%newobject getHUD;
+%newobject gsHUD::getChild;
 %newobject gsEngine::loadBlendFile;
 %newobject gsGameObject::getEntity;
 %newobject gsGameObject::getLight;

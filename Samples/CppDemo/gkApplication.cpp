@@ -67,8 +67,6 @@ int main(int argc, char** argv)
 	}
 
 	{
-		gkHUDManager* mgr = new gkHUDManager();
-
 		gkGameLevel game;
 		game.loadLevel(GK_LEVEL_PICKUP);
 
@@ -94,8 +92,6 @@ int main(int argc, char** argv)
 				break;
 			}
 		}
-
-		delete mgr;
 	}
 
 	eng.finalize();
