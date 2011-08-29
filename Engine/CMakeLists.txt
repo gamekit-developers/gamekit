@@ -706,9 +706,7 @@ else()
 		Script/Api/gsAnimation.i
 		Script/Api/gsBricks.i
 		Script/Api/gsConstraints.i
-		Script/Api/gsCore.i
-		Script/Api/gsHUD.i
-		Script/Api/gsMaterial.i
+		Script/Api/gsCore.i		
 		Script/Api/gsMacros.i
 		Script/Api/gsMath.i
 		Script/Api/gsNetwork.i
@@ -734,8 +732,6 @@ else()
 		Script/Api/gsCommon.h
 		Script/Api/gsConstraints.h
 		Script/Api/gsCore.h
-		Script/Api/gsHUD.h
-		Script/Api/gsMaterial.h
 		Script/Api/gsMath.h
 		Script/Api/gsNetwork.h
 		Script/Api/gsNodes.h
@@ -762,9 +758,7 @@ else()
 		Script/Api/gsAnimation.cpp
 		Script/Api/gsBricks.cpp
 		Script/Api/gsConstraints.cpp
-		Script/Api/gsCore.cpp
-		Script/Api/gsHUD.cpp
-		Script/Api/gsMaterial.cpp
+		Script/Api/gsCore.cpp		
 		Script/Api/gsMath.cpp
 		Script/Api/gsNetwork.cpp
 		Script/Api/gsNodes.cpp
