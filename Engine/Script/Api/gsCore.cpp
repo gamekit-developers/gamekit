@@ -827,11 +827,27 @@ void gsHUDElement::setMaterialName(const gkString& material)
 	if (m_object)
 		m_object->setMaterialName(material);
 }
+
+float gsHUDElement::getMaterialAlpha()
+{
+	if (m_object)
+		return m_object->getMaterialAlpha();
+
+	return 1.f;
+}
+
+void gsHUDElement::setMaterialAlpha(float factor)
+{
+	if (m_object)
+		m_object->setMaterialAlpha(factor);
+}
 	
 gkString gsHUDElement::getParameter(const gkString& name)
 {
 	if (m_object)
 		return m_object->getParameter(name);
+
+	return "";
 }
 
 void gsHUDElement::setParameter(const gkString& name, const gkString& value)

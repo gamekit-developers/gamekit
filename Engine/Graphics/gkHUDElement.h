@@ -60,6 +60,9 @@ public:
 	gkString getMaterialName(void);
 	void setMaterialName(const gkString& material);
 
+	void setMaterialAlpha(float factor);
+	float getMaterialAlpha();
+
 	Ogre::OverlayElement* _getElement(void);
 	void _setElement(Ogre::OverlayElement* ele);
 
@@ -68,6 +71,7 @@ protected:
 	const gkString m_name;
 	Ogre::OverlayElement* m_element;
 	gkHUD* m_parent;
+	float m_alphaBlend;
 };
 
 #endif//_gkHUDElement_h_

@@ -29,15 +29,15 @@
     - abstracted for external GameKit external rendering.
 */
 #include "gkHUDElement.h"
+#include "gkLogger.h"
 #include "OgreOverlay.h"
 #include "OgreOverlayElement.h"
 #include "OgreOverlayManager.h"
 #include "OgrePanelOverlayElement.h"
-
-
+#include "OgreTechnique.h"
 
 gkHUDElement::gkHUDElement(const gkString& name)
-	:    m_name(name), m_element(0), m_parent(0)
+	:    m_name(name), m_element(0), m_parent(0), m_alphaBlend(2.f)
 {
 	if (Ogre::OverlayManager::getSingleton().hasOverlayElement(name))
 		m_element = Ogre::OverlayManager::getSingleton().getOverlayElement(name);
@@ -90,8 +90,50 @@ gkString gkHUDElement::getMaterialName(void)
 
 void gkHUDElement::setMaterialName(const gkString& material)
 {
-	if (m_element)
-		return m_element->setMaterialName(material);
+	try
+	{
+		if (m_element)
+		{
+			m_alphaBlend = false;
+			return m_element->setMaterialName(material);
+		}
+	}
+	catch (Ogre::Exception& e)
+	{
+		gkPrintf("HUD Error: %s", e.what());
+	}
+}
+
+void gkHUDElement::setMaterialAlpha(float factor)
+{
+	if (!m_element) return;
+
+	try
+	{
+		Ogre::MaterialPtr material = m_element->getMaterial();
+		Ogre::Pass* pass = material->getTechnique(0)->getPass(0);		
+		if (m_alphaBlend > 1.f)
+		{
+			pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);				
+			m_alphaBlend = 1.f;
+		}
+		Ogre::TextureUnitState* tu = pass->getTextureUnitState(0);
+		if (tu)
+		{
+			factor = gkClamp(factor, 0.f, 1.f);
+			tu->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_CURRENT, factor);
+			m_alphaBlend = factor;
+		}
+	}
+	catch (Ogre::Exception& e)
+	{
+		gkPrintf("HUD Error: %s", e.what());
+	}
+}
+
+float gkHUDElement::getMaterialAlpha()
+{
+	return m_alphaBlend > 1.f ? 1.f : m_alphaBlend;
 }
 
 void gkHUDElement::setParameter(const gkString& name, const gkString& value)

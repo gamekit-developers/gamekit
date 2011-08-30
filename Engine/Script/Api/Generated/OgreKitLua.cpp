@@ -7088,6 +7088,56 @@ fail:
 }
 
 
+static int _wrap_gsHUDElement_getMaterialAlpha(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("gsHUDElement::getMaterialAlpha",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::getMaterialAlpha",1,"gsHUDElement *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("gsHUDElement_getMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  result = (float)(arg1)->getMaterialAlpha();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsHUDElement_setMaterialAlpha(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("gsHUDElement::setMaterialAlpha",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::setMaterialAlpha",1,"gsHUDElement *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsHUDElement::setMaterialAlpha",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("gsHUDElement_setMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setMaterialAlpha(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_gsHUDElement(void *obj) {
 gsHUDElement *arg1 = (gsHUDElement *) obj;
 delete arg1;
@@ -7101,6 +7151,8 @@ static swig_lua_method swig_gsHUDElement_methods[] = {
     {"setParameter", _wrap_gsHUDElement_setParameter}, 
     {"getMaterialName", _wrap_gsHUDElement_getMaterialName}, 
     {"setMaterialName", _wrap_gsHUDElement_setMaterialName}, 
+    {"getMaterialAlpha", _wrap_gsHUDElement_getMaterialAlpha}, 
+    {"setMaterialAlpha", _wrap_gsHUDElement_setMaterialAlpha}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsHUDElement_attributes[] = {
