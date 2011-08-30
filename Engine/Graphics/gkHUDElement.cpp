@@ -94,7 +94,7 @@ void gkHUDElement::setMaterialName(const gkString& material)
 	{
 		if (m_element)
 		{
-			m_alphaBlend = false;
+			m_alphaBlend = 2.f;
 			return m_element->setMaterialName(material);
 		}
 	}
