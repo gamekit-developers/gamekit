@@ -43,7 +43,11 @@ void luLog::log(const wxString &msg)
 	m_logBox->Select(m_logBox->Append(msg));
 }
 
-void luLog::messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName)
+#if OGRE_VERSION >= 0x10800
+void luLog::messageLogged(const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName, bool& skipThisMessage)
+#else
+void luLog::messageLogged(const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName)
+#endif
 {
 	log(message.c_str());
 }

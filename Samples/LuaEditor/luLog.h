@@ -36,7 +36,11 @@ public:
 
 	void log(const wxString &msg);
 
-	virtual void messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName);
+#if OGRE_VERSION >= 0x10800
+	virtual void messageLogged (const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName, bool& skipThisMessage);
+#else
+	virtual void messageLogged (const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName);
+#endif
 	virtual void DoLogText(const wxString &msg); //wxlog
 };
 

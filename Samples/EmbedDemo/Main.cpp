@@ -66,7 +66,11 @@ public:
 		m_logBox->Select(m_logBox->Append(msg));
 	}
 
+#if OGRE_VERSION >= 0x10800
+	virtual void messageLogged (const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName, bool& skipThisMessage)
+#else
 	virtual void messageLogged (const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName)
+#endif
 	{
 		log(message.c_str());
 	}
