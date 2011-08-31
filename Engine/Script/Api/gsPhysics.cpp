@@ -72,9 +72,9 @@ gsVector3 gsRayTest::getHitNormal(void)
 }
 
 
-gsGameObject* gsRayTest::getObject(void)
+gkGameObject* gsRayTest::getObject(void)
 {
-	return (new gsGameObject(m_ray->getObject()));
+	return m_ray->getObject();
 }
 
 
@@ -147,16 +147,15 @@ gsVector3 gsSweptTest::getSliding(void)
 }
 
 
-gsGameObject* gsSweptTest::getObject(void)
+gkGameObject* gsSweptTest::getObject(void)
 {
-	return (new gsGameObject(m_test->getObject()));
+	return m_test->getObject();
 }
 
 
-gsCharacter::gsCharacter(gsGameObject* object)
+gsCharacter::gsCharacter(gkCharacter* object)
 {
-	gkGameObject* obj = object->cast<gkGameObject>();
-	m_character = obj->getAttachedCharacter();
+	m_character = object;
 	GK_ASSERT(m_character);
 } 
 
@@ -164,9 +163,9 @@ gsCharacter::~gsCharacter(void)
 {
 } 
 
-gsGameObject* gsCharacter::getObject(void)
+gkGameObject* gsCharacter::getObject(void)
 {
-	return (new gsGameObject(m_character->getObject()));
+	return m_character->getObject();
 } 
 
 void gsCharacter::setLinearVelocity(float forward, float backward, float rightward, float leftward, float timeInterval)

@@ -70,7 +70,8 @@ GS_SCRIPT_NAME(Scene)
 GS_SCRIPT_NAME(Skeleton)
 GS_SCRIPT_NAME(Particles)
 GS_SCRIPT_NAME(UserDefs)
-
+GS_SCRIPT_NAME(HUD)
+GS_SCRIPT_NAME(HUDElement)
 
 
 // Enums

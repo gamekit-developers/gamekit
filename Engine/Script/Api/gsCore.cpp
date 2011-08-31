@@ -654,7 +654,7 @@ gsUserDefs& gsEngine::getUserDefs(void)
 	return *m_defs;
 }
 
-gsScene* gsEngine::loadBlendFile(const gkString& name)
+gkScene* gsEngine::loadBlendFile(const gkString& name)
 {
 	if (m_engine) // && m_ctxOwner) // && !m_running
 	{
@@ -682,7 +682,7 @@ gsScene* gsEngine::loadBlendFile(const gkString& name)
 			else
 				activeScene = scene;
 		
-			return new gsScene(activeScene);
+			return activeScene;
 		}
 		else
 			gkLogMessage("gsEngine: no usable scenes found in blend.");
@@ -714,10 +714,10 @@ void gsEngine::unloadAllBlendFiles()
 }
 
 
-gsScene* gsEngine::getActiveScene(void)
+gkScene* gsEngine::getActiveScene(void)
 {
 	if (m_engine && m_engine->isInitialized())
-		return new gsScene(m_engine->getActiveScene());
+		return m_engine->getActiveScene();
 	return 0;
 }
 
@@ -733,29 +733,6 @@ void gsEngine::run(void)
 }
 
 
-gsGameObject* gsGameObject::createNew(gkGameObject* ob)
-{
-	if (!ob) return 0;
-
-	switch (ob->getType())
-	{
-	case GK_CAMERA:
-		return new gsCamera(ob);
-	case GK_LIGHT:
-		return new gsLight(ob);
-	case GK_ENTITY:
-		return new gsEntity(ob);
-	case GK_OBJECT:
-		return new gsGameObject(ob);
-	case GK_SKELETON:
-		return new gsSkeleton(ob);
-	case GK_PARTICLES:
-		return new gsParticles(ob);
-	default:
-		break;
-	}
-	return 0;
-}
 
 gsHUD::gsHUD() : m_object(0)
 {
@@ -771,13 +748,12 @@ void gsHUD::show(bool v)
 		m_object->show(v);
 }
 
-gsHUDElement* gsHUD::getChild(const gkString& child)
+gkHUDElement* gsHUD::getChild(const gkString& child)
 {
 	if (m_object)
 	{
 		gkHUDElement* ob = m_object->getChild(child);
-		if (ob)
-			return gsHUDElement::createNew(ob);
+		return ob;			
 	}
 
 	return 0;
@@ -939,19 +915,19 @@ bool gsScene::hasObject(const gkString& name)
 
 
 
-gsGameObject* gsScene::getObject(const gkString& name)
+gkGameObject* gsScene::getObject(const gkString& name)
 {
 	if (m_object)
 	{
 		gkGameObject* gobj = cast<gkScene>()->getObject(name);
 		if (gobj)
-			return gsGameObject::createNew(gobj);
+			return gobj;
 	}
 	return 0;
 }
 
 
-gsGameObject* gsScene::createEmpty(const gkString& name)
+gkGameObject* gsScene::createEmpty(const gkString& name)
 {
 	if (m_object)
 	{
@@ -959,7 +935,7 @@ gsGameObject* gsScene::createEmpty(const gkString& name)
 		if (!scene->hasObject(name))
 		{
 			gkGameObject* obj = scene->createObject(name);
-			return new gsGameObject(obj);
+			return obj;
 		}
 	}
 
@@ -967,22 +943,20 @@ gsGameObject* gsScene::createEmpty(const gkString& name)
 }
 
 
-gsGameObject* gsScene::cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate)
+gkGameObject* gsScene::cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate)
 {
 	if (m_object && obj)
 	{
-		gkScene*      scene   = cast<gkScene>();
+        gkScene*      scene   = cast<gkScene>();
 		gkGameObject* gameObj = obj->cast<gkGameObject>();
 		if (gameObj)
 		{
 			gkGameObject* newGameObj = scene->cloneObject(gameObj, lifeSpan, instantiate);
-			if (newGameObj)
-			{
-				return new gsGameObject(newGameObj);
-			}
+            if (newGameObj)
+                return newGameObj;
 		}
 	}
-
+    
 	return 0;    
 }
 
@@ -1000,19 +974,19 @@ gsDynamicsWorld* gsScene::getDynamicsWorld(void)
 }
 
 
-gsScene* getActiveScene(void)
+gkScene* getActiveScene(void)
 {
 	gkEngine* eng = gkEngine::getSingletonPtr();
 	if (eng && eng->isInitialized())
-		return new gsScene(eng->getActiveScene());
+		return eng->getActiveScene();
 	return 0;
 }
 
-gsHUD* getHUD(const gkString& name)
+gkHUD* getHUD(const gkString& name)
 {
 	gkHUD* hud = gkHUDManager::getSingleton().getOrCreate(name);
 	if (hud)
-		return gsHUD::createNew(hud);
+		return hud;
 	return 0;
 }
 
@@ -1419,10 +1393,10 @@ void gsGameObject::__setitem__(const gkString& prop, const char* v)
 
 
 
-gsScene* gsGameObject::getScene(void)
+gkScene* gsGameObject::getScene(void)
 {
 	if (m_object)
-		return new gsScene(cast<gkGameObject>()->getOwner());
+		return cast<gkGameObject>()->getOwner();
 	return 0;
 }
 
@@ -1553,10 +1527,10 @@ void gsGameObject::removeChild(gsGameObject* chi)
 
 
 
-gsGameObject* gsGameObject::getParent(void)
+gkGameObject* gsGameObject::getParent(void)
 {
 	return m_object && hasParent() ?
-	       gsGameObject::createNew(cast<gkGameObject>()->getParent()) : 0;
+	       cast<gkGameObject>()->getParent() : 0;
 }
 
 
@@ -1626,11 +1600,11 @@ bool gsEntity::hasCharacter(void)
 	return get()->getAttachedCharacter() != 0;
 }
 
-gsCharacter* gsEntity::getCharacter(void)
+gkCharacter* gsEntity::getCharacter(void)
 {
 	if (!hasCharacter()) return 0;
 
-	return new gsCharacter(this);
+	return get()->getAttachedCharacter();
 }
 
 

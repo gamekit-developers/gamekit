@@ -32,52 +32,6 @@
 #define GS_TYPE_RET(P, T)  if (GS_TYPEOF(P, gk##T)) { return new gs##T(P); }
 
 
-gsSensor* gsSensor::createNew(gkLogicSensor* ob)
-{
-	GS_TYPE_RET(ob, ActuatorSensor);
-	GS_TYPE_RET(ob, AlwaysSensor);
-	GS_TYPE_RET(ob, KeyboardSensor);
-	GS_TYPE_RET(ob, CollisionSensor);
-	GS_TYPE_RET(ob, DelaySensor);
-	GS_TYPE_RET(ob, MessageSensor);
-	GS_TYPE_RET(ob, MouseSensor);
-	GS_TYPE_RET(ob, NearSensor);
-	GS_TYPE_RET(ob, PropertySensor);
-	GS_TYPE_RET(ob, RaySensor);
-	GS_TYPE_RET(ob, RadarSensor);
-	GS_TYPE_RET(ob, RandomSensor);
-	return new gsSensor(ob);
-}
-
-
-
-gsController* gsController::createNew(gkLogicController* ob)
-{
-	GS_TYPE_RET(ob, LogicOpController);
-	GS_TYPE_RET(ob, ScriptController);
-	GS_TYPE_RET(ob, ExpressionController);
-	return new gsController(ob);
-}
-
-
-gsActuator* gsActuator::createNew(gkLogicActuator* ob)
-{
-	GS_TYPE_RET(ob, ActionActuator);
-	GS_TYPE_RET(ob, EditObjectActuator);
-	GS_TYPE_RET(ob, GameActuator);
-	GS_TYPE_RET(ob, MessageActuator);
-	GS_TYPE_RET(ob, MotionActuator);
-	GS_TYPE_RET(ob, ParentActuator);
-	GS_TYPE_RET(ob, PropertyActuator);
-	GS_TYPE_RET(ob, RandomActuator);
-	GS_TYPE_RET(ob, SceneActuator);
-	GS_TYPE_RET(ob, SoundActuator);
-	GS_TYPE_RET(ob, StateActuator);
-	GS_TYPE_RET(ob, VisibilityActuator);
-	return new gsActuator(ob);
-}
-
-
 
 gsLogicManager::gsLogicManager()
 {
@@ -90,7 +44,7 @@ gsLogicManager::~gsLogicManager()
 
 
 
-gsLogicObject* gsLogicManager::newObject(gsGameObject* obj)
+gkLogicLink* gsLogicManager::newObject(gsGameObject* obj)
 {
 	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 
@@ -100,16 +54,15 @@ gsLogicObject* gsLogicManager::newObject(gsGameObject* obj)
 
 		lnk->setObject(obj->get());
 		lnk->setState(1);
-		gsLogicObject* ob = new gsLogicObject(lnk);
-		ob->makeOwner(true);
-		return ob;
+        lnk->setExternalOwner(true);
+		return lnk;
 	}
 
 	return 0;
 }
 
 
-gsLogicObject* gsLogicManager::getObject(const gkString& name)
+gkLogicLink* gsLogicManager::getObject(const gkString& name)
 {
 	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 
@@ -126,7 +79,7 @@ gsLogicObject* gsLogicManager::getObject(const gkString& name)
 				gkGameObject* obj = lnk->getObject();
 
 				if (obj && obj->getName() == name)
-					return new gsLogicObject(lnk);
+					return lnk;
 			}
 		}
 	}
@@ -170,12 +123,12 @@ gsArray<gsLogicObject, gkLogicLink> gsLogicManager::getObjectList()
 
 
 
-gsLogicObject::gsLogicObject() : m_link(0), m_incr(0), m_owner(false)
+gsLogicObject::gsLogicObject() : m_link(0), m_incr(0)
 {
 }
 
 
-gsLogicObject::gsLogicObject(gkLogicLink* lnk)  : m_link(lnk), m_incr(0), m_owner(false)
+gsLogicObject::gsLogicObject(gkLogicLink* lnk)  : m_link(lnk), m_incr(0)
 {
 }
 
@@ -183,7 +136,7 @@ gsLogicObject::gsLogicObject(gkLogicLink* lnk)  : m_link(lnk), m_incr(0), m_owne
 
 gsLogicObject::~gsLogicObject()
 {
-	if (m_owner && m_link)
+	if (m_link && m_link->getExternalOwner())
 	{
 		gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 		if (lptr)
@@ -239,38 +192,38 @@ gkString gsLogicObject::getName(void)
 }
 
 
-gsSensor* gsLogicObject::getSensor(const gkString& name)
+gkLogicSensor* gsLogicObject::getSensor(const gkString& name)
 {
 	if (m_link)
 	{
 		gkLogicSensor* brick = m_link->findSensor(name);
 		if (brick)
-			return gsSensor::createNew(brick);
+			return brick;
 	}
 	return 0;
 
 }
 
 
-gsController* gsLogicObject::getController(const gkString& name)
+gkLogicController* gsLogicObject::getController(const gkString& name)
 {
 	if (m_link)
 	{
 		gkLogicController* brick = m_link->findController(name);
 		if (brick)
-			return gsController::createNew(brick);
+			return brick;
 	}
 	return 0;
 }
 
 
-gsActuator* gsLogicObject::getActuator(const gkString& name)
+gkLogicActuator* gsLogicObject::getActuator(const gkString& name)
 {
 	if (m_link)
 	{
 		gkLogicActuator* brick = m_link->findActuator(name);
 		if (brick)
-			return gsActuator::createNew(brick);
+			return brick;
 	}
 	return 0;
 }

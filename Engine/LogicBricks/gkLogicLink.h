@@ -55,6 +55,7 @@ protected:
 
 	BrickFinder m_sfind, m_cfind, m_afind;
 	gkGameObject* m_object;
+    bool        m_externalOwner;
 
 public:
 
@@ -89,9 +90,11 @@ public:
 	GK_INLINE void          setDebug(int v)                   {m_debug = v;}
 	GK_INLINE void          setState(int v)                   {m_state = v;}
 	GK_INLINE void          setObject(gkGameObject* v)        {m_object = v;}
+    GK_INLINE void          setExternalOwner(bool b)          {m_externalOwner = b;}
 	GK_INLINE int           getState(void)              const {return m_state;}
 	GK_INLINE int           getDebug(void)              const {return m_debug;}
 	GK_INLINE gkGameObject* getObject(void)             const {return m_object;}
+	GK_INLINE bool          getExternalOwner(void)      const {return m_externalOwner;}
 };
 
 #endif//_gkLogicLink_h_

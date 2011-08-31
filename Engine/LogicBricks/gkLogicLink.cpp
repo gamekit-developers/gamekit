@@ -32,7 +32,7 @@
 #include "gkLogicManager.h"
 
 
-gkLogicLink::gkLogicLink() : m_state(0), m_debug(0), m_object(0)
+gkLogicLink::gkLogicLink() : m_state(0), m_debug(0), m_object(0), m_externalOwner(false)
 {
 }
 

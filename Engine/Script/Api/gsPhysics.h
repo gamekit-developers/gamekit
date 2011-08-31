@@ -61,7 +61,7 @@ public:
 
 	gsVector3 getHitPoint(void);
 	gsVector3 getHitNormal(void);
-	gsGameObject* getObject(void);
+	gkGameObject* getObject(void);
 	float getHitFraction(void);
 };
 
@@ -86,7 +86,7 @@ public:
 	gsVector3 getReflection(void);
 	gsVector3 getSliding(void);
 
-	gsGameObject* getObject(void);
+	gkGameObject* getObject(void);
 };
 
 class gsCharacter
@@ -95,10 +95,10 @@ private:
     gkCharacter* m_character;
 		
 public:
-    gsCharacter(gsGameObject* object);
+    gsCharacter(gkCharacter* object);
     ~gsCharacter(void);
 
-    gsGameObject* getObject(void);
+    gkGameObject* getObject(void);
 
     void setLinearVelocity(float forward, float backward, float rightward, float leftward, float timeInterval);    
 

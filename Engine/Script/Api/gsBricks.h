@@ -252,8 +252,8 @@ public:
 	~gsLogicManager();
 
 
-	gsLogicObject* newObject(gsGameObject* obj);
-	gsLogicObject* getObject(const gkString& name);
+	gkLogicLink* newObject(gsGameObject* obj);
+	gkLogicLink* getObject(const gkString& name);
 	gsArray<gsLogicObject, gkLogicLink> getObjectList();
 };
 
@@ -264,7 +264,6 @@ class gsLogicObject
 private:
 
 	int m_incr;
-	bool m_owner;
 
 public:
 	gsLogicObject();
@@ -275,9 +274,9 @@ public:
 	bool                 isDebug(void);
 
 
-	gsSensor*       getSensor(const gkString& name);
-	gsController*   getController(const gkString& name);
-	gsActuator*     getActuator(const gkString& name);
+	gkLogicSensor*      getSensor(const gkString& name);
+	gkLogicController*  getController(const gkString& name);
+	gkLogicActuator*    getActuator(const gkString& name);
 
 	gsArray<gsSensor, gkLogicSensor>         getSensors();
 	gsArray<gsController, gkLogicController> getControllers();
@@ -292,7 +291,7 @@ public:
 #ifndef SWIG
 	bool hasBrick(gkLogicLink* link, const gkString& name);
 	gkString getUniqueName(void);
-	void makeOwner(bool v) {m_owner = v;}
+	void makeOwner(bool v) {m_link->setExternalOwner(v);}
 #endif
 
 
@@ -392,7 +391,7 @@ public:
 
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Sensor);
-	OGRE_KIT_TEMPLATE_NEW(gsSensor, gkLogicSensor);
+//	OGRE_KIT_TEMPLATE_NEW(gsSensor, gkLogicSensor);
 };
 
 
@@ -663,7 +662,7 @@ public:
 
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Controller);
-	OGRE_KIT_TEMPLATE_NEW(gsController, gkLogicController);
+//	OGRE_KIT_TEMPLATE_NEW(gsController, gkLogicController);
 };
 
 
@@ -723,7 +722,7 @@ public:
 	~gsActuator();
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Actuator);
-	OGRE_KIT_TEMPLATE_NEW(gsActuator, gkLogicActuator);
+//	OGRE_KIT_TEMPLATE_NEW(gsActuator, gkLogicActuator);
 };
 
 

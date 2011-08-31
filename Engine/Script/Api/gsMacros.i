@@ -42,7 +42,7 @@
 	%newobject gsArray<wrapper, base>::at;
 	%newobject gsArray<wrapper, base>::__getitem__;
 	%template(name) gsArray<wrapper, base>;
-	%newobject gsArrayIterator<wrapper, base>::peekNext;
-	%newobject gsArrayIterator<wrapper, base>::getNext;
-	%template(iterName) gsArrayIterator<wrapper, base>;
+	%newobject gsArrayIterator<base>::peekNext;
+	%newobject gsArrayIterator<base>::getNext;
+	%template(iterName) gsArrayIterator<base>;
 %enddef

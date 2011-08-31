@@ -1508,87 +1508,88 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 #define SWIGTYPE_p_Array swig_types[0]
 #define SWIGTYPE_p_Iterator swig_types[1]
-#define SWIGTYPE_p_gkDynamicsWorld swig_types[2]
-#define SWIGTYPE_p_gkLuaCurState swig_types[3]
-#define SWIGTYPE_p_gsActionActuator swig_types[4]
-#define SWIGTYPE_p_gsActuator swig_types[5]
-#define SWIGTYPE_p_gsActuatorSensor swig_types[6]
-#define SWIGTYPE_p_gsAlwaysSensor swig_types[7]
-#define SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t swig_types[8]
-#define SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t swig_types[9]
-#define SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t swig_types[10]
-#define SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t swig_types[11]
-#define SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t swig_types[12]
-#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[13]
-#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[14]
-#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[15]
-#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[16]
-#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[17]
-#define SWIGTYPE_p_gsBrick swig_types[18]
-#define SWIGTYPE_p_gsCamera swig_types[19]
-#define SWIGTYPE_p_gsCharacter swig_types[20]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[21]
-#define SWIGTYPE_p_gsController swig_types[22]
-#define SWIGTYPE_p_gsDebugger swig_types[23]
-#define SWIGTYPE_p_gsDelaySensor swig_types[24]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[25]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[26]
-#define SWIGTYPE_p_gsEngine swig_types[27]
-#define SWIGTYPE_p_gsEntity swig_types[28]
-#define SWIGTYPE_p_gsExpressionController swig_types[29]
-#define SWIGTYPE_p_gsFSM swig_types[30]
-#define SWIGTYPE_p_gsGameActuator swig_types[31]
-#define SWIGTYPE_p_gsGameObject swig_types[32]
-#define SWIGTYPE_p_gsHUD swig_types[33]
-#define SWIGTYPE_p_gsHUDElement swig_types[34]
-#define SWIGTYPE_p_gsJoystick swig_types[35]
-#define SWIGTYPE_p_gsKeyboard swig_types[36]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[37]
-#define SWIGTYPE_p_gsLight swig_types[38]
-#define SWIGTYPE_p_gsLogicManager swig_types[39]
-#define SWIGTYPE_p_gsLogicObject swig_types[40]
-#define SWIGTYPE_p_gsLogicOpController swig_types[41]
-#define SWIGTYPE_p_gsLuaManager swig_types[42]
-#define SWIGTYPE_p_gsLuaScript swig_types[43]
-#define SWIGTYPE_p_gsMessageActuator swig_types[44]
-#define SWIGTYPE_p_gsMessageSensor swig_types[45]
-#define SWIGTYPE_p_gsMotionActuator swig_types[46]
-#define SWIGTYPE_p_gsMouse swig_types[47]
-#define SWIGTYPE_p_gsMouseSensor swig_types[48]
-#define SWIGTYPE_p_gsNearSensor swig_types[49]
-#define SWIGTYPE_p_gsObject swig_types[50]
-#define SWIGTYPE_p_gsParentActuator swig_types[51]
-#define SWIGTYPE_p_gsParticles swig_types[52]
-#define SWIGTYPE_p_gsProperty swig_types[53]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[54]
-#define SWIGTYPE_p_gsPropertySensor swig_types[55]
-#define SWIGTYPE_p_gsQuaternion swig_types[56]
-#define SWIGTYPE_p_gsRadarSensor swig_types[57]
-#define SWIGTYPE_p_gsRandomActuator swig_types[58]
-#define SWIGTYPE_p_gsRandomSensor swig_types[59]
-#define SWIGTYPE_p_gsRay swig_types[60]
-#define SWIGTYPE_p_gsRaySensor swig_types[61]
-#define SWIGTYPE_p_gsRayTest swig_types[62]
-#define SWIGTYPE_p_gsScene swig_types[63]
-#define SWIGTYPE_p_gsSceneActuator swig_types[64]
-#define SWIGTYPE_p_gsScriptController swig_types[65]
-#define SWIGTYPE_p_gsSensor swig_types[66]
-#define SWIGTYPE_p_gsSkeleton swig_types[67]
-#define SWIGTYPE_p_gsSoundActuator swig_types[68]
-#define SWIGTYPE_p_gsStateActuator swig_types[69]
-#define SWIGTYPE_p_gsSweptTest swig_types[70]
-#define SWIGTYPE_p_gsTouchSensor swig_types[71]
-#define SWIGTYPE_p_gsUserDefs swig_types[72]
-#define SWIGTYPE_p_gsVector3 swig_types[73]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[74]
-#define SWIGTYPE_p_gsWhenEvent swig_types[75]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[76]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[77]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[78]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[79]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[80]
-static swig_type_info *swig_types[82];
-static swig_module_info swig_module = {swig_types, 81, 0, 0, 0, 0};
+#define SWIGTYPE_p_gkCharacter swig_types[2]
+#define SWIGTYPE_p_gkDynamicsWorld swig_types[3]
+#define SWIGTYPE_p_gkLuaCurState swig_types[4]
+#define SWIGTYPE_p_gsActionActuator swig_types[5]
+#define SWIGTYPE_p_gsActuator swig_types[6]
+#define SWIGTYPE_p_gsActuatorSensor swig_types[7]
+#define SWIGTYPE_p_gsAlwaysSensor swig_types[8]
+#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[9]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[10]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[11]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[12]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[13]
+#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[14]
+#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[15]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[16]
+#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[17]
+#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[18]
+#define SWIGTYPE_p_gsBrick swig_types[19]
+#define SWIGTYPE_p_gsCamera swig_types[20]
+#define SWIGTYPE_p_gsCharacter swig_types[21]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[22]
+#define SWIGTYPE_p_gsController swig_types[23]
+#define SWIGTYPE_p_gsDebugger swig_types[24]
+#define SWIGTYPE_p_gsDelaySensor swig_types[25]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[26]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[27]
+#define SWIGTYPE_p_gsEngine swig_types[28]
+#define SWIGTYPE_p_gsEntity swig_types[29]
+#define SWIGTYPE_p_gsExpressionController swig_types[30]
+#define SWIGTYPE_p_gsFSM swig_types[31]
+#define SWIGTYPE_p_gsGameActuator swig_types[32]
+#define SWIGTYPE_p_gsGameObject swig_types[33]
+#define SWIGTYPE_p_gsHUD swig_types[34]
+#define SWIGTYPE_p_gsHUDElement swig_types[35]
+#define SWIGTYPE_p_gsJoystick swig_types[36]
+#define SWIGTYPE_p_gsKeyboard swig_types[37]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[38]
+#define SWIGTYPE_p_gsLight swig_types[39]
+#define SWIGTYPE_p_gsLogicManager swig_types[40]
+#define SWIGTYPE_p_gsLogicObject swig_types[41]
+#define SWIGTYPE_p_gsLogicOpController swig_types[42]
+#define SWIGTYPE_p_gsLuaManager swig_types[43]
+#define SWIGTYPE_p_gsLuaScript swig_types[44]
+#define SWIGTYPE_p_gsMessageActuator swig_types[45]
+#define SWIGTYPE_p_gsMessageSensor swig_types[46]
+#define SWIGTYPE_p_gsMotionActuator swig_types[47]
+#define SWIGTYPE_p_gsMouse swig_types[48]
+#define SWIGTYPE_p_gsMouseSensor swig_types[49]
+#define SWIGTYPE_p_gsNearSensor swig_types[50]
+#define SWIGTYPE_p_gsObject swig_types[51]
+#define SWIGTYPE_p_gsParentActuator swig_types[52]
+#define SWIGTYPE_p_gsParticles swig_types[53]
+#define SWIGTYPE_p_gsProperty swig_types[54]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[55]
+#define SWIGTYPE_p_gsPropertySensor swig_types[56]
+#define SWIGTYPE_p_gsQuaternion swig_types[57]
+#define SWIGTYPE_p_gsRadarSensor swig_types[58]
+#define SWIGTYPE_p_gsRandomActuator swig_types[59]
+#define SWIGTYPE_p_gsRandomSensor swig_types[60]
+#define SWIGTYPE_p_gsRay swig_types[61]
+#define SWIGTYPE_p_gsRaySensor swig_types[62]
+#define SWIGTYPE_p_gsRayTest swig_types[63]
+#define SWIGTYPE_p_gsScene swig_types[64]
+#define SWIGTYPE_p_gsSceneActuator swig_types[65]
+#define SWIGTYPE_p_gsScriptController swig_types[66]
+#define SWIGTYPE_p_gsSensor swig_types[67]
+#define SWIGTYPE_p_gsSkeleton swig_types[68]
+#define SWIGTYPE_p_gsSoundActuator swig_types[69]
+#define SWIGTYPE_p_gsStateActuator swig_types[70]
+#define SWIGTYPE_p_gsSweptTest swig_types[71]
+#define SWIGTYPE_p_gsTouchSensor swig_types[72]
+#define SWIGTYPE_p_gsUserDefs swig_types[73]
+#define SWIGTYPE_p_gsVector3 swig_types[74]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[75]
+#define SWIGTYPE_p_gsWhenEvent swig_types[76]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[77]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[78]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[79]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[80]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[81]
+static swig_type_info *swig_types[83];
+static swig_module_info swig_module = {swig_types, 82, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1662,74 +1663,135 @@ static int gsGetProperty(lua_State *L, const gsProperty& prop)
 #define GS_TYPEOF(a, b)   ((a) && typeid(*a) == typeid(b))
 #define GS_TYPE_RET(GK, GS, T) if (GS_TYPEOF(GK, gk##T)) { SWIG_NewPointerObj(L, GS, SWIGTYPE_p_##gs##T, 1); return 1; }
 
-
-static int gsCreateSensor(lua_State *L, gsSensor *obj)
+// ------------------------------------------------------------------------------
+// Convert & store gk<Class> objects as gs<Class> with consistent userdata values
+// ------------------------------------------------------------------------------
+template <class GKTYPE, class GSTYPE>
+static int gsLuaStoreAndReturnObject(lua_State *L, GKTYPE* obj, const char* className, swig_type_info* swigTypeInfo)
 {
-	gkLogicSensor *ob = obj->get();
-
-	GS_TYPE_RET(ob, obj,  ActuatorSensor);
-	GS_TYPE_RET(ob, obj,  AlwaysSensor);
-	GS_TYPE_RET(ob, obj,  KeyboardSensor);
-	GS_TYPE_RET(ob, obj,  CollisionSensor);
-	GS_TYPE_RET(ob, obj,  DelaySensor);
-	GS_TYPE_RET(ob, obj,  MessageSensor);
-	GS_TYPE_RET(ob, obj,  MouseSensor);
-	GS_TYPE_RET(ob, obj,  NearSensor);
-	GS_TYPE_RET(ob, obj,  PropertySensor);
-	GS_TYPE_RET(ob, obj,  RaySensor);
-	GS_TYPE_RET(ob, obj,  RadarSensor);
-	GS_TYPE_RET(ob, obj,  RandomSensor);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsSensor, 1); 
-	return 1;
+    // Early exit on nil
+    if (!obj)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+    
+    // Create the storage name
+    char tableName[256];
+    sprintf(tableName, ".gsCache{%s}", className);
+    
+    // Try to get the table in which the objects would be stored
+    lua_pushstring(L, tableName);
+    lua_rawget(L,     LUA_REGISTRYINDEX);
+    
+    // If that did not work - create it and put it on top
+    if (!lua_istable(L, -1))
+    {
+        lua_pushstring(L, tableName);
+        lua_newtable(L);
+        
+        lua_createtable(L,  0, 1);
+        lua_pushstring(L,   "v");
+        lua_setfield(L,     -2, "__mode");
+        lua_setmetatable(L, -2);
+        
+        lua_rawset(L, LUA_REGISTRYINDEX);
+        
+        // Try to get the table
+        lua_pushstring(L, tableName);
+        lua_rawget(L,     LUA_REGISTRYINDEX);
+    }
+    
+    // We now have a table to get the user data from - so check if it's there
+    lua_pushlightuserdata(L, obj);
+    lua_gettable(L, -2);
+    
+    if (lua_isnil(L, -1))
+    {
+        // We no longer need the nil value
+        lua_pop(L, 1);
+        
+        // Push the pointer value onto the stack (as the key)
+        lua_pushlightuserdata(L, obj);
+        
+        // Create and push the value
+        GSTYPE* wrappedObject = new GSTYPE(obj);
+        SWIG_NewPointerObj(L, wrappedObject, swigTypeInfo, 1);
+        
+        // Store it in the table
+        lua_settable(L, -3);
+        
+        // Reget the value from the table
+        lua_pushlightuserdata(L, obj);
+        lua_gettable(L, -2);
+    }
+    return 1;
 }
 
-static int gsCreateController(lua_State *L, gsController *obj)
-{
-	gkLogicController *ob = obj->get();
+#define GS_LUA_OBJECT_WRAP_STORE(OBJ, T, WT) gsLuaStoreAndReturnObject<gk##T, gs##WT>(L, (gk##T*)OBJ, #WT, SWIGTYPE_p_##gs##WT)
+#define GS_LUA_OBJECT_STORE(OBJ, T) GS_LUA_OBJECT_WRAP_STORE(OBJ, T, T)
+#define GS_LUA_OBJECT_RET(OBJ, T) if (GS_TYPEOF(OBJ, gk##T)) { return GS_LUA_OBJECT_STORE(OBJ, T); }
+#define GS_LUA_OBJECT_WRAP_RET(OBJ, T, WT) if (GS_TYPEOF(OBJ, gk##T)) { return GS_LUA_OBJECT_WRAP_STORE(OBJ, T, WT); }
 
-	GS_TYPE_RET(ob, obj,  LogicOpController);
-	GS_TYPE_RET(ob, obj,  ScriptController);
-	GS_TYPE_RET(ob, obj,  ExpressionController);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsController, 1); 
-	return 1;
+static int gsWrapGameObject(lua_State *L, gkGameObject *obj)
+{    
+    //gkPrintf("Object Size: %d\n", (int)sizeof(gsParticles));
+    GS_LUA_OBJECT_RET(obj, Camera);
+    GS_LUA_OBJECT_RET(obj, Entity);
+    GS_LUA_OBJECT_RET(obj, Light);
+    GS_LUA_OBJECT_RET(obj, Skeleton);
+    GS_LUA_OBJECT_WRAP_RET(obj, ParticleObject, Particles);
+    
+    return GS_LUA_OBJECT_STORE(obj, GameObject);
 }
 
-static int gsCreateActuator(lua_State *L, gsActuator *obj)
-{
-	gkLogicActuator *ob = obj->get();
-
-	GS_TYPE_RET(ob, obj,  ActionActuator);
-	GS_TYPE_RET(ob, obj,  EditObjectActuator);
-	GS_TYPE_RET(ob, obj,  GameActuator);
-	GS_TYPE_RET(ob, obj,  MessageActuator);
-	GS_TYPE_RET(ob, obj,  MotionActuator);
-	GS_TYPE_RET(ob, obj,  ParentActuator);
-	GS_TYPE_RET(ob, obj,  PropertyActuator);
-	GS_TYPE_RET(ob, obj,  RandomActuator);
-	GS_TYPE_RET(ob, obj,  SceneActuator);
-	GS_TYPE_RET(ob, obj,  SoundActuator);
-	GS_TYPE_RET(ob, obj,  StateActuator);
-	GS_TYPE_RET(ob, obj,  VisibilityActuator);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsActuator, 1); 
-	return 1;
+static int gsWrapSensor(lua_State *L, gkLogicSensor *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, ActuatorSensor);
+    GS_LUA_OBJECT_RET(obj, AlwaysSensor);
+    GS_LUA_OBJECT_RET(obj, KeyboardSensor);
+    GS_LUA_OBJECT_RET(obj, CollisionSensor);
+    GS_LUA_OBJECT_RET(obj, DelaySensor);
+    GS_LUA_OBJECT_RET(obj, MessageSensor);
+    GS_LUA_OBJECT_RET(obj, MouseSensor);
+    GS_LUA_OBJECT_RET(obj, NearSensor);
+    GS_LUA_OBJECT_RET(obj, PropertySensor);
+    GS_LUA_OBJECT_RET(obj, RaySensor);
+    GS_LUA_OBJECT_RET(obj, RadarSensor);
+    GS_LUA_OBJECT_RET(obj, RandomSensor);
+    
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicSensor, Sensor);
+}
+    
+static int gsWrapController(lua_State *L, gkLogicController *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, LogicOpController);
+    GS_LUA_OBJECT_RET(obj, ScriptController);
+    GS_LUA_OBJECT_RET(obj, ExpressionController);
+    
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicController, Controller);
 }
 
-static int gsCreateObject(lua_State *L, gsGameObject *obj)
-{
-	gkGameObject *ob = obj->get();
+static int gsWrapActuator(lua_State *L, gkLogicActuator *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, ActionActuator);
+    GS_LUA_OBJECT_RET(obj, EditObjectActuator);
+    GS_LUA_OBJECT_RET(obj, GameActuator);
+    GS_LUA_OBJECT_RET(obj, MessageActuator);
+    GS_LUA_OBJECT_RET(obj, MotionActuator);
+    GS_LUA_OBJECT_RET(obj, ParentActuator);
+    GS_LUA_OBJECT_RET(obj, PropertyActuator);
+    GS_LUA_OBJECT_RET(obj, RandomActuator);
+    GS_LUA_OBJECT_RET(obj, SceneActuator);
+    GS_LUA_OBJECT_RET(obj, SoundActuator);
+    GS_LUA_OBJECT_RET(obj, StateActuator);
+    GS_LUA_OBJECT_RET(obj, VisibilityActuator);
 
-	GS_TYPE_RET(ob, obj,  Camera);
-	GS_TYPE_RET(ob, obj,  Entity);
-	GS_TYPE_RET(ob, obj,  Light);
-	GS_TYPE_RET(ob, obj,  Skeleton);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsGameObject, 1); 
-	return 1;
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicActuator, Actuator);
 }
 
+
+// ------------------------------------------------------------------------------
 
 
 
@@ -4189,7 +4251,7 @@ static int _wrap_ObjectList___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
   int arg2 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsGameObject,gkGameObject >::__getitem__",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsGameObject,gkGameObject >::__getitem__",1,"gsArray< gsGameObject,gkGameObject > *");
@@ -4200,9 +4262,9 @@ static int _wrap_ObjectList___getitem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsGameObject *)(arg1)->__getitem__(arg2);
+  result = (gkGameObject *)(arg1)->__getitem__(arg2);
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -4218,7 +4280,7 @@ static int _wrap_ObjectList_at(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
   int arg2 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsGameObject,gkGameObject >::at",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsGameObject,gkGameObject >::at",1,"gsArray< gsGameObject,gkGameObject > *");
@@ -4229,9 +4291,9 @@ static int _wrap_ObjectList_at(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsGameObject *)(arg1)->at(arg2);
+  result = (gkGameObject *)(arg1)->at(arg2);
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -4307,7 +4369,7 @@ fail:
 static int _wrap_ObjectList_iterator(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
-  gsArrayIterator< gsGameObject,gkGameObject > result;
+  gsArrayIterator< gkGameObject > result;
   
   SWIG_check_num_args("gsArray< gsGameObject,gkGameObject >::iterator",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsGameObject,gkGameObject >::iterator",1,"gsArray< gsGameObject,gkGameObject > *");
@@ -4318,8 +4380,8 @@ static int _wrap_ObjectList_iterator(lua_State* L) {
   
   result = (arg1)->iterator();
   {
-    gsArrayIterator< gsGameObject,gkGameObject > * resultptr = new gsArrayIterator< gsGameObject,gkGameObject >((const gsArrayIterator< gsGameObject,gkGameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,1); SWIG_arg++;
+    gsArrayIterator< gkGameObject > * resultptr = new gsArrayIterator< gkGameObject >((const gsArrayIterator< gkGameObject > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -4355,11 +4417,11 @@ static swig_lua_class _wrap_class_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg_ = 
 
 static int _wrap_new_ObjectIterator(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsGameObject,gkGameObject > *result = 0 ;
+  gsArrayIterator< gkGameObject > *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsGameObject,gkGameObject >::gsArrayIterator",0,0)
-  result = (gsArrayIterator< gsGameObject,gkGameObject > *)new gsArrayIterator< gsGameObject,gkGameObject >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,1); SWIG_arg++; 
+  SWIG_check_num_args("gsArrayIterator< gkGameObject >::gsArrayIterator",0,0)
+  result = (gsArrayIterator< gkGameObject > *)new gsArrayIterator< gkGameObject >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4372,14 +4434,14 @@ fail:
 
 static int _wrap_ObjectIterator_hasMoreElements(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  gsArrayIterator< gkGameObject > *arg1 = (gsArrayIterator< gkGameObject > *) 0 ;
   bool result;
   
-  SWIG_check_num_args("gsArrayIterator< gsGameObject,gkGameObject >::hasMoreElements",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsGameObject,gkGameObject >::hasMoreElements",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  SWIG_check_num_args("gsArrayIterator< gkGameObject >::hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkGameObject >::hasMoreElements",1,"gsArrayIterator< gkGameObject > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
-    SWIG_fail_ptr("ObjectIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t);
   }
   
   result = (bool)(arg1)->hasMoreElements();
@@ -4396,13 +4458,13 @@ fail:
 
 static int _wrap_ObjectIterator_moveNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  gsArrayIterator< gkGameObject > *arg1 = (gsArrayIterator< gkGameObject > *) 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsGameObject,gkGameObject >::moveNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsGameObject,gkGameObject >::moveNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  SWIG_check_num_args("gsArrayIterator< gkGameObject >::moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkGameObject >::moveNext",1,"gsArrayIterator< gkGameObject > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
-    SWIG_fail_ptr("ObjectIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t);
   }
   
   (arg1)->moveNext();
@@ -4419,19 +4481,19 @@ fail:
 
 static int _wrap_ObjectIterator_peekNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
-  gsGameObject *result = 0 ;
+  gsArrayIterator< gkGameObject > *arg1 = (gsArrayIterator< gkGameObject > *) 0 ;
+  gkGameObject *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsGameObject,gkGameObject >::peekNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsGameObject,gkGameObject >::peekNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  SWIG_check_num_args("gsArrayIterator< gkGameObject >::peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkGameObject >::peekNext",1,"gsArrayIterator< gkGameObject > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
-    SWIG_fail_ptr("ObjectIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t);
   }
   
-  result = (gsGameObject *)(arg1)->peekNext();
+  result = (gkGameObject *)(arg1)->peekNext();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -4445,19 +4507,19 @@ fail:
 
 static int _wrap_ObjectIterator_getNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
-  gsGameObject *result = 0 ;
+  gsArrayIterator< gkGameObject > *arg1 = (gsArrayIterator< gkGameObject > *) 0 ;
+  gkGameObject *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsGameObject,gkGameObject >::getNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsGameObject,gkGameObject >::getNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  SWIG_check_num_args("gsArrayIterator< gkGameObject >::getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkGameObject >::getNext",1,"gsArrayIterator< gkGameObject > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
-    SWIG_fail_ptr("ObjectIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t);
   }
   
-  result = (gsGameObject *)(arg1)->getNext();
+  result = (gkGameObject *)(arg1)->getNext();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -4470,22 +4532,22 @@ fail:
 
 
 static void swig_delete_ObjectIterator(void *obj) {
-gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) obj;
+gsArrayIterator< gkGameObject > *arg1 = (gsArrayIterator< gkGameObject > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__methods[] = {
+static swig_lua_method swig_gsArrayIterator_Sl_gkGameObject_Sg__methods[] = {
     {"hasMoreElements", _wrap_ObjectIterator_hasMoreElements}, 
     {"moveNext", _wrap_ObjectIterator_moveNext}, 
     {"peekNext", _wrap_ObjectIterator_peekNext}, 
     {"getNext", _wrap_ObjectIterator_getNext}, 
     {0,0}
 };
-static swig_lua_attribute swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes[] = {
+static swig_lua_attribute swig_gsArrayIterator_Sl_gkGameObject_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__bases[] = {0};
-static const char *swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg_ = { "ObjectIterator", &SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,_wrap_new_ObjectIterator, swig_delete_ObjectIterator, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__methods, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__bases, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names };
+static swig_lua_class *swig_gsArrayIterator_Sl_gkGameObject_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gkGameObject_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gkGameObject_Sg_ = { "ObjectIterator", &SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t,_wrap_new_ObjectIterator, swig_delete_ObjectIterator, swig_gsArrayIterator_Sl_gkGameObject_Sg__methods, swig_gsArrayIterator_Sl_gkGameObject_Sg__attributes, swig_gsArrayIterator_Sl_gkGameObject_Sg__bases, swig_gsArrayIterator_Sl_gkGameObject_Sg__base_names };
 
 static int _wrap_new_Property__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -6457,7 +6519,7 @@ static int _wrap_Engine_loadBlendFile(lua_State* L) {
   gsEngine *arg1 = (gsEngine *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsScene *result = 0 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("gsEngine::loadBlendFile",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::loadBlendFile",1,"gsEngine *");
@@ -6471,8 +6533,10 @@ static int _wrap_Engine_loadBlendFile(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsScene *)(arg1)->loadBlendFile((gkString const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,1); SWIG_arg++; 
+  result = (gkScene *)(arg1)->loadBlendFile((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6486,7 +6550,7 @@ fail:
 static int _wrap_Engine_getActiveScene(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
-  gsScene *result = 0 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("gsEngine::getActiveScene",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::getActiveScene",1,"gsEngine *");
@@ -6495,8 +6559,10 @@ static int _wrap_Engine_getActiveScene(lua_State* L) {
     SWIG_fail_ptr("Engine_getActiveScene",1,SWIGTYPE_p_gsEngine);
   }
   
-  result = (gsScene *)(arg1)->getActiveScene();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,1); SWIG_arg++; 
+  result = (gkScene *)(arg1)->getActiveScene();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6738,7 +6804,7 @@ static swig_lua_class *swig_gsObject_bases[] = {0};
 static const char *swig_gsObject_base_names[] = {0};
 static swig_lua_class _wrap_class_gsObject = { "Object", &SWIGTYPE_p_gsObject,_wrap_new_Object, swig_delete_Object, swig_gsObject_methods, swig_gsObject_attributes, swig_gsObject_bases, swig_gsObject_base_names };
 
-static int _wrap_new_gsHUD(lua_State* L) {
+static int _wrap_new_HUD(lua_State* L) {
   int SWIG_arg = 0;
   gsHUD *result = 0 ;
   
@@ -6755,7 +6821,7 @@ fail:
 }
 
 
-static int _wrap_gsHUD_show(lua_State* L) {
+static int _wrap_HUD_show(lua_State* L) {
   int SWIG_arg = 0;
   gsHUD *arg1 = (gsHUD *) 0 ;
   bool arg2 ;
@@ -6765,7 +6831,7 @@ static int _wrap_gsHUD_show(lua_State* L) {
   if(!lua_isboolean(L,2)) SWIG_fail_arg("gsHUD::show",2,"bool");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUD,0))){
-    SWIG_fail_ptr("gsHUD_show",1,SWIGTYPE_p_gsHUD);
+    SWIG_fail_ptr("HUD_show",1,SWIGTYPE_p_gsHUD);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -6781,27 +6847,29 @@ fail:
 }
 
 
-static int _wrap_gsHUD_getChild(lua_State* L) {
+static int _wrap_HUD_getChild(lua_State* L) {
   int SWIG_arg = 0;
   gsHUD *arg1 = (gsHUD *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsHUDElement *result = 0 ;
+  gkHUDElement *result = 0 ;
   
   SWIG_check_num_args("gsHUD::getChild",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUD::getChild",1,"gsHUD *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("gsHUD::getChild",2,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUD,0))){
-    SWIG_fail_ptr("gsHUD_getChild",1,SWIGTYPE_p_gsHUD);
+    SWIG_fail_ptr("HUD_getChild",1,SWIGTYPE_p_gsHUD);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsHUDElement *)(arg1)->getChild((gkString const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsHUDElement,1); SWIG_arg++; 
+  result = (gkHUDElement *)(arg1)->getChild((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, HUDElement); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6812,13 +6880,13 @@ fail:
 }
 
 
-static void swig_delete_gsHUD(void *obj) {
+static void swig_delete_HUD(void *obj) {
 gsHUD *arg1 = (gsHUD *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsHUD_methods[] = {
-    {"show", _wrap_gsHUD_show}, 
-    {"getChild", _wrap_gsHUD_getChild}, 
+    {"show", _wrap_HUD_show}, 
+    {"getChild", _wrap_HUD_getChild}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsHUD_attributes[] = {
@@ -6826,9 +6894,9 @@ static swig_lua_attribute swig_gsHUD_attributes[] = {
 };
 static swig_lua_class *swig_gsHUD_bases[] = {0};
 static const char *swig_gsHUD_base_names[] = {0};
-static swig_lua_class _wrap_class_gsHUD = { "gsHUD", &SWIGTYPE_p_gsHUD,_wrap_new_gsHUD, swig_delete_gsHUD, swig_gsHUD_methods, swig_gsHUD_attributes, swig_gsHUD_bases, swig_gsHUD_base_names };
+static swig_lua_class _wrap_class_gsHUD = { "HUD", &SWIGTYPE_p_gsHUD,_wrap_new_HUD, swig_delete_HUD, swig_gsHUD_methods, swig_gsHUD_attributes, swig_gsHUD_bases, swig_gsHUD_base_names };
 
-static int _wrap_new_gsHUDElement(lua_State* L) {
+static int _wrap_new_HUDElement(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *result = 0 ;
   
@@ -6845,7 +6913,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_show(lua_State* L) {
+static int _wrap_HUDElement_show(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   bool arg2 ;
@@ -6855,7 +6923,7 @@ static int _wrap_gsHUDElement_show(lua_State* L) {
   if(!lua_isboolean(L,2)) SWIG_fail_arg("gsHUDElement::show",2,"bool");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_show",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_show",1,SWIGTYPE_p_gsHUDElement);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -6871,7 +6939,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_getValue(lua_State* L) {
+static int _wrap_HUDElement_getValue(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString result;
@@ -6880,7 +6948,7 @@ static int _wrap_gsHUDElement_getValue(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::getValue",1,"gsHUDElement *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_getValue",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_getValue",1,SWIGTYPE_p_gsHUDElement);
   }
   
   result = (arg1)->getValue();
@@ -6897,7 +6965,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_setValue(lua_State* L) {
+static int _wrap_HUDElement_setValue(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString *arg2 = 0 ;
@@ -6908,7 +6976,7 @@ static int _wrap_gsHUDElement_setValue(lua_State* L) {
   if(!lua_isstring(L,2)) SWIG_fail_arg("gsHUDElement::setValue",2,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_setValue",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_setValue",1,SWIGTYPE_p_gsHUDElement);
   }
   
   
@@ -6927,7 +6995,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_setUvCoords(lua_State* L) {
+static int _wrap_HUDElement_setUvCoords(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   float arg2 ;
@@ -6943,7 +7011,7 @@ static int _wrap_gsHUDElement_setUvCoords(lua_State* L) {
   if(!lua_isnumber(L,5)) SWIG_fail_arg("gsHUDElement::setUvCoords",5,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_setUvCoords",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_setUvCoords",1,SWIGTYPE_p_gsHUDElement);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6962,7 +7030,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_getParameter(lua_State* L) {
+static int _wrap_HUDElement_getParameter(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString *arg2 = 0 ;
@@ -6974,7 +7042,7 @@ static int _wrap_gsHUDElement_getParameter(lua_State* L) {
   if(!lua_isstring(L,2)) SWIG_fail_arg("gsHUDElement::getParameter",2,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_getParameter",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_getParameter",1,SWIGTYPE_p_gsHUDElement);
   }
   
   
@@ -6995,7 +7063,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_setParameter(lua_State* L) {
+static int _wrap_HUDElement_setParameter(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString *arg2 = 0 ;
@@ -7009,7 +7077,7 @@ static int _wrap_gsHUDElement_setParameter(lua_State* L) {
   if(!lua_isstring(L,3)) SWIG_fail_arg("gsHUDElement::setParameter",3,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_setParameter",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_setParameter",1,SWIGTYPE_p_gsHUDElement);
   }
   
   
@@ -7032,7 +7100,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_getMaterialName(lua_State* L) {
+static int _wrap_HUDElement_getMaterialName(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString result;
@@ -7041,7 +7109,7 @@ static int _wrap_gsHUDElement_getMaterialName(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::getMaterialName",1,"gsHUDElement *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_getMaterialName",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_getMaterialName",1,SWIGTYPE_p_gsHUDElement);
   }
   
   result = (arg1)->getMaterialName();
@@ -7058,7 +7126,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_setMaterialName(lua_State* L) {
+static int _wrap_HUDElement_setMaterialName(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   gkString *arg2 = 0 ;
@@ -7069,7 +7137,7 @@ static int _wrap_gsHUDElement_setMaterialName(lua_State* L) {
   if(!lua_isstring(L,2)) SWIG_fail_arg("gsHUDElement::setMaterialName",2,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_setMaterialName",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_setMaterialName",1,SWIGTYPE_p_gsHUDElement);
   }
   
   
@@ -7088,7 +7156,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_getMaterialAlpha(lua_State* L) {
+static int _wrap_HUDElement_getMaterialAlpha(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   float result;
@@ -7097,7 +7165,7 @@ static int _wrap_gsHUDElement_getMaterialAlpha(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::getMaterialAlpha",1,"gsHUDElement *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_getMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_getMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
   }
   
   result = (float)(arg1)->getMaterialAlpha();
@@ -7112,7 +7180,7 @@ fail:
 }
 
 
-static int _wrap_gsHUDElement_setMaterialAlpha(lua_State* L) {
+static int _wrap_HUDElement_setMaterialAlpha(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   float arg2 ;
@@ -7122,7 +7190,7 @@ static int _wrap_gsHUDElement_setMaterialAlpha(lua_State* L) {
   if(!lua_isnumber(L,2)) SWIG_fail_arg("gsHUDElement::setMaterialAlpha",2,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
-    SWIG_fail_ptr("gsHUDElement_setMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
+    SWIG_fail_ptr("HUDElement_setMaterialAlpha",1,SWIGTYPE_p_gsHUDElement);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7138,21 +7206,21 @@ fail:
 }
 
 
-static void swig_delete_gsHUDElement(void *obj) {
+static void swig_delete_HUDElement(void *obj) {
 gsHUDElement *arg1 = (gsHUDElement *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsHUDElement_methods[] = {
-    {"show", _wrap_gsHUDElement_show}, 
-    {"getValue", _wrap_gsHUDElement_getValue}, 
-    {"setValue", _wrap_gsHUDElement_setValue}, 
-    {"setUvCoords", _wrap_gsHUDElement_setUvCoords}, 
-    {"getParameter", _wrap_gsHUDElement_getParameter}, 
-    {"setParameter", _wrap_gsHUDElement_setParameter}, 
-    {"getMaterialName", _wrap_gsHUDElement_getMaterialName}, 
-    {"setMaterialName", _wrap_gsHUDElement_setMaterialName}, 
-    {"getMaterialAlpha", _wrap_gsHUDElement_getMaterialAlpha}, 
-    {"setMaterialAlpha", _wrap_gsHUDElement_setMaterialAlpha}, 
+    {"show", _wrap_HUDElement_show}, 
+    {"getValue", _wrap_HUDElement_getValue}, 
+    {"setValue", _wrap_HUDElement_setValue}, 
+    {"setUvCoords", _wrap_HUDElement_setUvCoords}, 
+    {"getParameter", _wrap_HUDElement_getParameter}, 
+    {"setParameter", _wrap_HUDElement_setParameter}, 
+    {"getMaterialName", _wrap_HUDElement_getMaterialName}, 
+    {"setMaterialName", _wrap_HUDElement_setMaterialName}, 
+    {"getMaterialAlpha", _wrap_HUDElement_getMaterialAlpha}, 
+    {"setMaterialAlpha", _wrap_HUDElement_setMaterialAlpha}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsHUDElement_attributes[] = {
@@ -7160,13 +7228,13 @@ static swig_lua_attribute swig_gsHUDElement_attributes[] = {
 };
 static swig_lua_class *swig_gsHUDElement_bases[] = {0};
 static const char *swig_gsHUDElement_base_names[] = {0};
-static swig_lua_class _wrap_class_gsHUDElement = { "gsHUDElement", &SWIGTYPE_p_gsHUDElement,_wrap_new_gsHUDElement, swig_delete_gsHUDElement, swig_gsHUDElement_methods, swig_gsHUDElement_attributes, swig_gsHUDElement_bases, swig_gsHUDElement_base_names };
+static swig_lua_class _wrap_class_gsHUDElement = { "HUDElement", &SWIGTYPE_p_gsHUDElement,_wrap_new_HUDElement, swig_delete_HUDElement, swig_gsHUDElement_methods, swig_gsHUDElement_attributes, swig_gsHUDElement_bases, swig_gsHUDElement_base_names };
 
 static int _wrap_getHUD(lua_State* L) {
   int SWIG_arg = 0;
   gkString *arg1 = 0 ;
   gkString temp1 ;
-  gsHUD *result = 0 ;
+  gkHUD *result = 0 ;
   
   SWIG_check_num_args("getHUD",1,1)
   if(!lua_isstring(L,1)) SWIG_fail_arg("getHUD",1,"gkString const &");
@@ -7174,8 +7242,10 @@ static int _wrap_getHUD(lua_State* L) {
   temp1 = gkString((const char*)lua_tostring(L, 1));
   arg1 = &temp1;
   
-  result = (gsHUD *)getHUD((gkString const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsHUD,1); SWIG_arg++; 
+  result = (gkHUD *)getHUD((gkString const &)*arg1);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, HUD); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -7239,7 +7309,7 @@ static int _wrap_Scene_getObject(lua_State* L) {
   gsScene *arg1 = (gsScene *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsScene::getObject",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::getObject",1,"gsScene *");
@@ -7253,9 +7323,9 @@ static int _wrap_Scene_getObject(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsGameObject *)(arg1)->getObject((gkString const &)*arg2);
+  result = (gkGameObject *)(arg1)->getObject((gkString const &)*arg2);
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -7272,7 +7342,7 @@ static int _wrap_Scene_createEmpty(lua_State* L) {
   gsScene *arg1 = (gsScene *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsScene::createEmpty",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::createEmpty",1,"gsScene *");
@@ -7286,9 +7356,9 @@ static int _wrap_Scene_createEmpty(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsGameObject *)(arg1)->createEmpty((gkString const &)*arg2);
+  result = (gkGameObject *)(arg1)->createEmpty((gkString const &)*arg2);
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -7306,7 +7376,7 @@ static int _wrap_Scene_cloneObject(lua_State* L) {
   gsGameObject *arg2 = (gsGameObject *) 0 ;
   int arg3 ;
   bool arg4 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsScene::cloneObject",4,4)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::cloneObject",1,"gsScene *");
@@ -7325,9 +7395,9 @@ static int _wrap_Scene_cloneObject(lua_State* L) {
   
   arg3 = (int)lua_tonumber(L, 3);
   arg4 = (lua_toboolean(L, 4)!=0);
-  result = (gsGameObject *)(arg1)->cloneObject(arg2,arg3,arg4);
+  result = (gkGameObject *)(arg1)->cloneObject(arg2,arg3,arg4);
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -7409,11 +7479,13 @@ static swig_lua_class _wrap_class_gsScene = { "Scene", &SWIGTYPE_p_gsScene,_wrap
 
 static int _wrap_getActiveScene(lua_State* L) {
   int SWIG_arg = 0;
-  gsScene *result = 0 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("getActiveScene",0,0)
-  result = (gsScene *)getActiveScene();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,1); SWIG_arg++; 
+  result = (gkScene *)getActiveScene();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -7430,9 +7502,7 @@ static int _wrap_new_GameObject(lua_State* L) {
   
   SWIG_check_num_args("gsGameObject::gsGameObject",0,0)
   result = (gsGameObject *)new gsGameObject();
-  if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
-  } 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9735,7 +9805,7 @@ fail:
 static int _wrap_GameObject_getParent(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsGameObject::getParent",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getParent",1,"gsGameObject *");
@@ -9744,9 +9814,9 @@ static int _wrap_GameObject_getParent(lua_State* L) {
     SWIG_fail_ptr("GameObject_getParent",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (gsGameObject *)(arg1)->getParent();
+  result = (gkGameObject *)(arg1)->getParent();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -9842,7 +9912,7 @@ fail:
 static int _wrap_GameObject_getScene(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
-  gsScene *result = 0 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("gsGameObject::getScene",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getScene",1,"gsGameObject *");
@@ -9851,8 +9921,10 @@ static int _wrap_GameObject_getScene(lua_State* L) {
     SWIG_fail_ptr("GameObject_getScene",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (gsScene *)(arg1)->getScene();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,0); SWIG_arg++; 
+  result = (gkScene *)(arg1)->getScene();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -10429,7 +10501,7 @@ fail:
 static int _wrap_Entity_getCharacter(lua_State* L) {
   int SWIG_arg = 0;
   gsEntity *arg1 = (gsEntity *) 0 ;
-  gsCharacter *result = 0 ;
+  gkCharacter *result = 0 ;
   
   SWIG_check_num_args("gsEntity::getCharacter",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEntity::getCharacter",1,"gsEntity *");
@@ -10438,8 +10510,10 @@ static int _wrap_Entity_getCharacter(lua_State* L) {
     SWIG_fail_ptr("Entity_getCharacter",1,SWIGTYPE_p_gsEntity);
   }
   
-  result = (gsCharacter *)(arg1)->getCharacter();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCharacter,1); SWIG_arg++; 
+  result = (gkCharacter *)(arg1)->getCharacter();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Character); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11324,7 +11398,7 @@ static int _wrap_LogicList___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsLogicObject,gkLogicLink > *arg1 = (gsArray< gsLogicObject,gkLogicLink > *) 0 ;
   int arg2 ;
-  gsLogicObject *result = 0 ;
+  gkLogicLink *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsLogicObject,gkLogicLink >::__getitem__",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsLogicObject,gkLogicLink >::__getitem__",1,"gsArray< gsLogicObject,gkLogicLink > *");
@@ -11335,8 +11409,10 @@ static int _wrap_LogicList___getitem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsLogicObject *)(arg1)->__getitem__(arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->__getitem__(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11351,7 +11427,7 @@ static int _wrap_LogicList_at(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsLogicObject,gkLogicLink > *arg1 = (gsArray< gsLogicObject,gkLogicLink > *) 0 ;
   int arg2 ;
-  gsLogicObject *result = 0 ;
+  gkLogicLink *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsLogicObject,gkLogicLink >::at",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsLogicObject,gkLogicLink >::at",1,"gsArray< gsLogicObject,gkLogicLink > *");
@@ -11362,8 +11438,10 @@ static int _wrap_LogicList_at(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsLogicObject *)(arg1)->at(arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->at(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11438,7 +11516,7 @@ fail:
 static int _wrap_LogicList_iterator(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsLogicObject,gkLogicLink > *arg1 = (gsArray< gsLogicObject,gkLogicLink > *) 0 ;
-  gsArrayIterator< gsLogicObject,gkLogicLink > result;
+  gsArrayIterator< gkLogicLink > result;
   
   SWIG_check_num_args("gsArray< gsLogicObject,gkLogicLink >::iterator",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsLogicObject,gkLogicLink >::iterator",1,"gsArray< gsLogicObject,gkLogicLink > *");
@@ -11449,8 +11527,8 @@ static int _wrap_LogicList_iterator(lua_State* L) {
   
   result = (arg1)->iterator();
   {
-    gsArrayIterator< gsLogicObject,gkLogicLink > * resultptr = new gsArrayIterator< gsLogicObject,gkLogicLink >((const gsArrayIterator< gsLogicObject,gkLogicLink > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,1); SWIG_arg++;
+    gsArrayIterator< gkLogicLink > * resultptr = new gsArrayIterator< gkLogicLink >((const gsArrayIterator< gkLogicLink > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -11486,11 +11564,11 @@ static swig_lua_class _wrap_class_gsArray_Sl_gsLogicObject_Sc_gkLogicLink_Sg_ = 
 
 static int _wrap_new_LogicIterator(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsLogicObject,gkLogicLink > *result = 0 ;
+  gsArrayIterator< gkLogicLink > *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsLogicObject,gkLogicLink >::gsArrayIterator",0,0)
-  result = (gsArrayIterator< gsLogicObject,gkLogicLink > *)new gsArrayIterator< gsLogicObject,gkLogicLink >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,1); SWIG_arg++; 
+  SWIG_check_num_args("gsArrayIterator< gkLogicLink >::gsArrayIterator",0,0)
+  result = (gsArrayIterator< gkLogicLink > *)new gsArrayIterator< gkLogicLink >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11503,14 +11581,14 @@ fail:
 
 static int _wrap_LogicIterator_hasMoreElements(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsLogicObject,gkLogicLink > *arg1 = (gsArrayIterator< gsLogicObject,gkLogicLink > *) 0 ;
+  gsArrayIterator< gkLogicLink > *arg1 = (gsArrayIterator< gkLogicLink > *) 0 ;
   bool result;
   
-  SWIG_check_num_args("gsArrayIterator< gsLogicObject,gkLogicLink >::hasMoreElements",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsLogicObject,gkLogicLink >::hasMoreElements",1,"gsArrayIterator< gsLogicObject,gkLogicLink > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicLink >::hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicLink >::hasMoreElements",1,"gsArrayIterator< gkLogicLink > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,0))){
-    SWIG_fail_ptr("LogicIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,0))){
+    SWIG_fail_ptr("LogicIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t);
   }
   
   result = (bool)(arg1)->hasMoreElements();
@@ -11527,13 +11605,13 @@ fail:
 
 static int _wrap_LogicIterator_moveNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsLogicObject,gkLogicLink > *arg1 = (gsArrayIterator< gsLogicObject,gkLogicLink > *) 0 ;
+  gsArrayIterator< gkLogicLink > *arg1 = (gsArrayIterator< gkLogicLink > *) 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsLogicObject,gkLogicLink >::moveNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsLogicObject,gkLogicLink >::moveNext",1,"gsArrayIterator< gsLogicObject,gkLogicLink > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicLink >::moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicLink >::moveNext",1,"gsArrayIterator< gkLogicLink > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,0))){
-    SWIG_fail_ptr("LogicIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,0))){
+    SWIG_fail_ptr("LogicIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t);
   }
   
   (arg1)->moveNext();
@@ -11550,18 +11628,20 @@ fail:
 
 static int _wrap_LogicIterator_peekNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsLogicObject,gkLogicLink > *arg1 = (gsArrayIterator< gsLogicObject,gkLogicLink > *) 0 ;
-  gsLogicObject *result = 0 ;
+  gsArrayIterator< gkLogicLink > *arg1 = (gsArrayIterator< gkLogicLink > *) 0 ;
+  gkLogicLink *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsLogicObject,gkLogicLink >::peekNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsLogicObject,gkLogicLink >::peekNext",1,"gsArrayIterator< gsLogicObject,gkLogicLink > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicLink >::peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicLink >::peekNext",1,"gsArrayIterator< gkLogicLink > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,0))){
-    SWIG_fail_ptr("LogicIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,0))){
+    SWIG_fail_ptr("LogicIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t);
   }
   
-  result = (gsLogicObject *)(arg1)->peekNext();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->peekNext();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11574,18 +11654,20 @@ fail:
 
 static int _wrap_LogicIterator_getNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsLogicObject,gkLogicLink > *arg1 = (gsArrayIterator< gsLogicObject,gkLogicLink > *) 0 ;
-  gsLogicObject *result = 0 ;
+  gsArrayIterator< gkLogicLink > *arg1 = (gsArrayIterator< gkLogicLink > *) 0 ;
+  gkLogicLink *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsLogicObject,gkLogicLink >::getNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsLogicObject,gkLogicLink >::getNext",1,"gsArrayIterator< gsLogicObject,gkLogicLink > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicLink >::getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicLink >::getNext",1,"gsArrayIterator< gkLogicLink > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,0))){
-    SWIG_fail_ptr("LogicIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,0))){
+    SWIG_fail_ptr("LogicIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t);
   }
   
-  result = (gsLogicObject *)(arg1)->getNext();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->getNext();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11597,22 +11679,22 @@ fail:
 
 
 static void swig_delete_LogicIterator(void *obj) {
-gsArrayIterator< gsLogicObject,gkLogicLink > *arg1 = (gsArrayIterator< gsLogicObject,gkLogicLink > *) obj;
+gsArrayIterator< gkLogicLink > *arg1 = (gsArrayIterator< gkLogicLink > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__methods[] = {
+static swig_lua_method swig_gsArrayIterator_Sl_gkLogicLink_Sg__methods[] = {
     {"hasMoreElements", _wrap_LogicIterator_hasMoreElements}, 
     {"moveNext", _wrap_LogicIterator_moveNext}, 
     {"peekNext", _wrap_LogicIterator_peekNext}, 
     {"getNext", _wrap_LogicIterator_getNext}, 
     {0,0}
 };
-static swig_lua_attribute swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__attributes[] = {
+static swig_lua_attribute swig_gsArrayIterator_Sl_gkLogicLink_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__bases[] = {0};
-static const char *swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg_ = { "LogicIterator", &SWIGTYPE_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,_wrap_new_LogicIterator, swig_delete_LogicIterator, swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__methods, swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__attributes, swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__bases, swig_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg__base_names };
+static swig_lua_class *swig_gsArrayIterator_Sl_gkLogicLink_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gkLogicLink_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gkLogicLink_Sg_ = { "LogicIterator", &SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t,_wrap_new_LogicIterator, swig_delete_LogicIterator, swig_gsArrayIterator_Sl_gkLogicLink_Sg__methods, swig_gsArrayIterator_Sl_gkLogicLink_Sg__attributes, swig_gsArrayIterator_Sl_gkLogicLink_Sg__bases, swig_gsArrayIterator_Sl_gkLogicLink_Sg__base_names };
 
 static int _wrap_new_Sensors__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -11763,7 +11845,7 @@ static int _wrap_Sensors___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsSensor,gkLogicSensor > *arg1 = (gsArray< gsSensor,gkLogicSensor > *) 0 ;
   int arg2 ;
-  gsSensor *result = 0 ;
+  gkLogicSensor *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsSensor,gkLogicSensor >::__getitem__",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsSensor,gkLogicSensor >::__getitem__",1,"gsArray< gsSensor,gkLogicSensor > *");
@@ -11774,9 +11856,9 @@ static int _wrap_Sensors___getitem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsSensor *)(arg1)->__getitem__(arg2);
+  result = (gkLogicSensor *)(arg1)->__getitem__(arg2);
   if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
+    SWIG_arg += gsWrapSensor(L, result); 
   } 
   return SWIG_arg;
   
@@ -11792,7 +11874,7 @@ static int _wrap_Sensors_at(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsSensor,gkLogicSensor > *arg1 = (gsArray< gsSensor,gkLogicSensor > *) 0 ;
   int arg2 ;
-  gsSensor *result = 0 ;
+  gkLogicSensor *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsSensor,gkLogicSensor >::at",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsSensor,gkLogicSensor >::at",1,"gsArray< gsSensor,gkLogicSensor > *");
@@ -11803,9 +11885,9 @@ static int _wrap_Sensors_at(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsSensor *)(arg1)->at(arg2);
+  result = (gkLogicSensor *)(arg1)->at(arg2);
   if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
+    SWIG_arg += gsWrapSensor(L, result); 
   } 
   return SWIG_arg;
   
@@ -11881,7 +11963,7 @@ fail:
 static int _wrap_Sensors_iterator(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsSensor,gkLogicSensor > *arg1 = (gsArray< gsSensor,gkLogicSensor > *) 0 ;
-  gsArrayIterator< gsSensor,gkLogicSensor > result;
+  gsArrayIterator< gkLogicSensor > result;
   
   SWIG_check_num_args("gsArray< gsSensor,gkLogicSensor >::iterator",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsSensor,gkLogicSensor >::iterator",1,"gsArray< gsSensor,gkLogicSensor > *");
@@ -11892,8 +11974,8 @@ static int _wrap_Sensors_iterator(lua_State* L) {
   
   result = (arg1)->iterator();
   {
-    gsArrayIterator< gsSensor,gkLogicSensor > * resultptr = new gsArrayIterator< gsSensor,gkLogicSensor >((const gsArrayIterator< gsSensor,gkLogicSensor > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,1); SWIG_arg++;
+    gsArrayIterator< gkLogicSensor > * resultptr = new gsArrayIterator< gkLogicSensor >((const gsArrayIterator< gkLogicSensor > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -11929,11 +12011,11 @@ static swig_lua_class _wrap_class_gsArray_Sl_gsSensor_Sc_gkLogicSensor_Sg_ = { "
 
 static int _wrap_new_SensorIterator(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsSensor,gkLogicSensor > *result = 0 ;
+  gsArrayIterator< gkLogicSensor > *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsSensor,gkLogicSensor >::gsArrayIterator",0,0)
-  result = (gsArrayIterator< gsSensor,gkLogicSensor > *)new gsArrayIterator< gsSensor,gkLogicSensor >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,1); SWIG_arg++; 
+  SWIG_check_num_args("gsArrayIterator< gkLogicSensor >::gsArrayIterator",0,0)
+  result = (gsArrayIterator< gkLogicSensor > *)new gsArrayIterator< gkLogicSensor >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11946,14 +12028,14 @@ fail:
 
 static int _wrap_SensorIterator_hasMoreElements(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsSensor,gkLogicSensor > *arg1 = (gsArrayIterator< gsSensor,gkLogicSensor > *) 0 ;
+  gsArrayIterator< gkLogicSensor > *arg1 = (gsArrayIterator< gkLogicSensor > *) 0 ;
   bool result;
   
-  SWIG_check_num_args("gsArrayIterator< gsSensor,gkLogicSensor >::hasMoreElements",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsSensor,gkLogicSensor >::hasMoreElements",1,"gsArrayIterator< gsSensor,gkLogicSensor > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicSensor >::hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicSensor >::hasMoreElements",1,"gsArrayIterator< gkLogicSensor > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,0))){
-    SWIG_fail_ptr("SensorIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,0))){
+    SWIG_fail_ptr("SensorIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t);
   }
   
   result = (bool)(arg1)->hasMoreElements();
@@ -11970,13 +12052,13 @@ fail:
 
 static int _wrap_SensorIterator_moveNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsSensor,gkLogicSensor > *arg1 = (gsArrayIterator< gsSensor,gkLogicSensor > *) 0 ;
+  gsArrayIterator< gkLogicSensor > *arg1 = (gsArrayIterator< gkLogicSensor > *) 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsSensor,gkLogicSensor >::moveNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsSensor,gkLogicSensor >::moveNext",1,"gsArrayIterator< gsSensor,gkLogicSensor > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicSensor >::moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicSensor >::moveNext",1,"gsArrayIterator< gkLogicSensor > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,0))){
-    SWIG_fail_ptr("SensorIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,0))){
+    SWIG_fail_ptr("SensorIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t);
   }
   
   (arg1)->moveNext();
@@ -11993,19 +12075,19 @@ fail:
 
 static int _wrap_SensorIterator_peekNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsSensor,gkLogicSensor > *arg1 = (gsArrayIterator< gsSensor,gkLogicSensor > *) 0 ;
-  gsSensor *result = 0 ;
+  gsArrayIterator< gkLogicSensor > *arg1 = (gsArrayIterator< gkLogicSensor > *) 0 ;
+  gkLogicSensor *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsSensor,gkLogicSensor >::peekNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsSensor,gkLogicSensor >::peekNext",1,"gsArrayIterator< gsSensor,gkLogicSensor > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicSensor >::peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicSensor >::peekNext",1,"gsArrayIterator< gkLogicSensor > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,0))){
-    SWIG_fail_ptr("SensorIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,0))){
+    SWIG_fail_ptr("SensorIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t);
   }
   
-  result = (gsSensor *)(arg1)->peekNext();
+  result = (gkLogicSensor *)(arg1)->peekNext();
   if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
+    SWIG_arg += gsWrapSensor(L, result); 
   } 
   return SWIG_arg;
   
@@ -12019,19 +12101,19 @@ fail:
 
 static int _wrap_SensorIterator_getNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsSensor,gkLogicSensor > *arg1 = (gsArrayIterator< gsSensor,gkLogicSensor > *) 0 ;
-  gsSensor *result = 0 ;
+  gsArrayIterator< gkLogicSensor > *arg1 = (gsArrayIterator< gkLogicSensor > *) 0 ;
+  gkLogicSensor *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsSensor,gkLogicSensor >::getNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsSensor,gkLogicSensor >::getNext",1,"gsArrayIterator< gsSensor,gkLogicSensor > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicSensor >::getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicSensor >::getNext",1,"gsArrayIterator< gkLogicSensor > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,0))){
-    SWIG_fail_ptr("SensorIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,0))){
+    SWIG_fail_ptr("SensorIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t);
   }
   
-  result = (gsSensor *)(arg1)->getNext();
+  result = (gkLogicSensor *)(arg1)->getNext();
   if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
+    SWIG_arg += gsWrapSensor(L, result); 
   } 
   return SWIG_arg;
   
@@ -12044,22 +12126,22 @@ fail:
 
 
 static void swig_delete_SensorIterator(void *obj) {
-gsArrayIterator< gsSensor,gkLogicSensor > *arg1 = (gsArrayIterator< gsSensor,gkLogicSensor > *) obj;
+gsArrayIterator< gkLogicSensor > *arg1 = (gsArrayIterator< gkLogicSensor > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__methods[] = {
+static swig_lua_method swig_gsArrayIterator_Sl_gkLogicSensor_Sg__methods[] = {
     {"hasMoreElements", _wrap_SensorIterator_hasMoreElements}, 
     {"moveNext", _wrap_SensorIterator_moveNext}, 
     {"peekNext", _wrap_SensorIterator_peekNext}, 
     {"getNext", _wrap_SensorIterator_getNext}, 
     {0,0}
 };
-static swig_lua_attribute swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__attributes[] = {
+static swig_lua_attribute swig_gsArrayIterator_Sl_gkLogicSensor_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__bases[] = {0};
-static const char *swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg_ = { "SensorIterator", &SWIGTYPE_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,_wrap_new_SensorIterator, swig_delete_SensorIterator, swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__methods, swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__attributes, swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__bases, swig_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg__base_names };
+static swig_lua_class *swig_gsArrayIterator_Sl_gkLogicSensor_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gkLogicSensor_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gkLogicSensor_Sg_ = { "SensorIterator", &SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t,_wrap_new_SensorIterator, swig_delete_SensorIterator, swig_gsArrayIterator_Sl_gkLogicSensor_Sg__methods, swig_gsArrayIterator_Sl_gkLogicSensor_Sg__attributes, swig_gsArrayIterator_Sl_gkLogicSensor_Sg__bases, swig_gsArrayIterator_Sl_gkLogicSensor_Sg__base_names };
 
 static int _wrap_new_Controllers__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -12210,7 +12292,7 @@ static int _wrap_Controllers___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsController,gkLogicController > *arg1 = (gsArray< gsController,gkLogicController > *) 0 ;
   int arg2 ;
-  gsController *result = 0 ;
+  gkLogicController *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsController,gkLogicController >::__getitem__",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsController,gkLogicController >::__getitem__",1,"gsArray< gsController,gkLogicController > *");
@@ -12221,9 +12303,9 @@ static int _wrap_Controllers___getitem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsController *)(arg1)->__getitem__(arg2);
+  result = (gkLogicController *)(arg1)->__getitem__(arg2);
   if (result) {
-    SWIG_arg += gsCreateController(L, result); 
+    SWIG_arg += gsWrapController(L, result); 
   } 
   return SWIG_arg;
   
@@ -12239,7 +12321,7 @@ static int _wrap_Controllers_at(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsController,gkLogicController > *arg1 = (gsArray< gsController,gkLogicController > *) 0 ;
   int arg2 ;
-  gsController *result = 0 ;
+  gkLogicController *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsController,gkLogicController >::at",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsController,gkLogicController >::at",1,"gsArray< gsController,gkLogicController > *");
@@ -12250,9 +12332,9 @@ static int _wrap_Controllers_at(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsController *)(arg1)->at(arg2);
+  result = (gkLogicController *)(arg1)->at(arg2);
   if (result) {
-    SWIG_arg += gsCreateController(L, result); 
+    SWIG_arg += gsWrapController(L, result); 
   } 
   return SWIG_arg;
   
@@ -12328,7 +12410,7 @@ fail:
 static int _wrap_Controllers_iterator(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsController,gkLogicController > *arg1 = (gsArray< gsController,gkLogicController > *) 0 ;
-  gsArrayIterator< gsController,gkLogicController > result;
+  gsArrayIterator< gkLogicController > result;
   
   SWIG_check_num_args("gsArray< gsController,gkLogicController >::iterator",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsController,gkLogicController >::iterator",1,"gsArray< gsController,gkLogicController > *");
@@ -12339,8 +12421,8 @@ static int _wrap_Controllers_iterator(lua_State* L) {
   
   result = (arg1)->iterator();
   {
-    gsArrayIterator< gsController,gkLogicController > * resultptr = new gsArrayIterator< gsController,gkLogicController >((const gsArrayIterator< gsController,gkLogicController > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,1); SWIG_arg++;
+    gsArrayIterator< gkLogicController > * resultptr = new gsArrayIterator< gkLogicController >((const gsArrayIterator< gkLogicController > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -12376,11 +12458,11 @@ static swig_lua_class _wrap_class_gsArray_Sl_gsController_Sc_gkLogicController_S
 
 static int _wrap_new_ControllerIterator(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsController,gkLogicController > *result = 0 ;
+  gsArrayIterator< gkLogicController > *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsController,gkLogicController >::gsArrayIterator",0,0)
-  result = (gsArrayIterator< gsController,gkLogicController > *)new gsArrayIterator< gsController,gkLogicController >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,1); SWIG_arg++; 
+  SWIG_check_num_args("gsArrayIterator< gkLogicController >::gsArrayIterator",0,0)
+  result = (gsArrayIterator< gkLogicController > *)new gsArrayIterator< gkLogicController >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -12393,14 +12475,14 @@ fail:
 
 static int _wrap_ControllerIterator_hasMoreElements(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsController,gkLogicController > *arg1 = (gsArrayIterator< gsController,gkLogicController > *) 0 ;
+  gsArrayIterator< gkLogicController > *arg1 = (gsArrayIterator< gkLogicController > *) 0 ;
   bool result;
   
-  SWIG_check_num_args("gsArrayIterator< gsController,gkLogicController >::hasMoreElements",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsController,gkLogicController >::hasMoreElements",1,"gsArrayIterator< gsController,gkLogicController > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicController >::hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicController >::hasMoreElements",1,"gsArrayIterator< gkLogicController > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,0))){
-    SWIG_fail_ptr("ControllerIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,0))){
+    SWIG_fail_ptr("ControllerIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t);
   }
   
   result = (bool)(arg1)->hasMoreElements();
@@ -12417,13 +12499,13 @@ fail:
 
 static int _wrap_ControllerIterator_moveNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsController,gkLogicController > *arg1 = (gsArrayIterator< gsController,gkLogicController > *) 0 ;
+  gsArrayIterator< gkLogicController > *arg1 = (gsArrayIterator< gkLogicController > *) 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsController,gkLogicController >::moveNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsController,gkLogicController >::moveNext",1,"gsArrayIterator< gsController,gkLogicController > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicController >::moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicController >::moveNext",1,"gsArrayIterator< gkLogicController > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,0))){
-    SWIG_fail_ptr("ControllerIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,0))){
+    SWIG_fail_ptr("ControllerIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t);
   }
   
   (arg1)->moveNext();
@@ -12440,19 +12522,19 @@ fail:
 
 static int _wrap_ControllerIterator_peekNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsController,gkLogicController > *arg1 = (gsArrayIterator< gsController,gkLogicController > *) 0 ;
-  gsController *result = 0 ;
+  gsArrayIterator< gkLogicController > *arg1 = (gsArrayIterator< gkLogicController > *) 0 ;
+  gkLogicController *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsController,gkLogicController >::peekNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsController,gkLogicController >::peekNext",1,"gsArrayIterator< gsController,gkLogicController > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicController >::peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicController >::peekNext",1,"gsArrayIterator< gkLogicController > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,0))){
-    SWIG_fail_ptr("ControllerIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,0))){
+    SWIG_fail_ptr("ControllerIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t);
   }
   
-  result = (gsController *)(arg1)->peekNext();
+  result = (gkLogicController *)(arg1)->peekNext();
   if (result) {
-    SWIG_arg += gsCreateController(L, result); 
+    SWIG_arg += gsWrapController(L, result); 
   } 
   return SWIG_arg;
   
@@ -12466,19 +12548,19 @@ fail:
 
 static int _wrap_ControllerIterator_getNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsController,gkLogicController > *arg1 = (gsArrayIterator< gsController,gkLogicController > *) 0 ;
-  gsController *result = 0 ;
+  gsArrayIterator< gkLogicController > *arg1 = (gsArrayIterator< gkLogicController > *) 0 ;
+  gkLogicController *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsController,gkLogicController >::getNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsController,gkLogicController >::getNext",1,"gsArrayIterator< gsController,gkLogicController > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicController >::getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicController >::getNext",1,"gsArrayIterator< gkLogicController > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,0))){
-    SWIG_fail_ptr("ControllerIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,0))){
+    SWIG_fail_ptr("ControllerIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t);
   }
   
-  result = (gsController *)(arg1)->getNext();
+  result = (gkLogicController *)(arg1)->getNext();
   if (result) {
-    SWIG_arg += gsCreateController(L, result); 
+    SWIG_arg += gsWrapController(L, result); 
   } 
   return SWIG_arg;
   
@@ -12491,22 +12573,22 @@ fail:
 
 
 static void swig_delete_ControllerIterator(void *obj) {
-gsArrayIterator< gsController,gkLogicController > *arg1 = (gsArrayIterator< gsController,gkLogicController > *) obj;
+gsArrayIterator< gkLogicController > *arg1 = (gsArrayIterator< gkLogicController > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__methods[] = {
+static swig_lua_method swig_gsArrayIterator_Sl_gkLogicController_Sg__methods[] = {
     {"hasMoreElements", _wrap_ControllerIterator_hasMoreElements}, 
     {"moveNext", _wrap_ControllerIterator_moveNext}, 
     {"peekNext", _wrap_ControllerIterator_peekNext}, 
     {"getNext", _wrap_ControllerIterator_getNext}, 
     {0,0}
 };
-static swig_lua_attribute swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__attributes[] = {
+static swig_lua_attribute swig_gsArrayIterator_Sl_gkLogicController_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__bases[] = {0};
-static const char *swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg_ = { "ControllerIterator", &SWIGTYPE_p_gsArrayIteratorT_gsController_gkLogicController_t,_wrap_new_ControllerIterator, swig_delete_ControllerIterator, swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__methods, swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__attributes, swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__bases, swig_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg__base_names };
+static swig_lua_class *swig_gsArrayIterator_Sl_gkLogicController_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gkLogicController_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gkLogicController_Sg_ = { "ControllerIterator", &SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t,_wrap_new_ControllerIterator, swig_delete_ControllerIterator, swig_gsArrayIterator_Sl_gkLogicController_Sg__methods, swig_gsArrayIterator_Sl_gkLogicController_Sg__attributes, swig_gsArrayIterator_Sl_gkLogicController_Sg__bases, swig_gsArrayIterator_Sl_gkLogicController_Sg__base_names };
 
 static int _wrap_new_Actuators__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -12657,7 +12739,7 @@ static int _wrap_Actuators___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsActuator,gkLogicActuator > *arg1 = (gsArray< gsActuator,gkLogicActuator > *) 0 ;
   int arg2 ;
-  gsActuator *result = 0 ;
+  gkLogicActuator *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsActuator,gkLogicActuator >::__getitem__",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsActuator,gkLogicActuator >::__getitem__",1,"gsArray< gsActuator,gkLogicActuator > *");
@@ -12668,9 +12750,9 @@ static int _wrap_Actuators___getitem(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsActuator *)(arg1)->__getitem__(arg2);
+  result = (gkLogicActuator *)(arg1)->__getitem__(arg2);
   if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
+    SWIG_arg += gsWrapActuator(L, result); 
   } 
   return SWIG_arg;
   
@@ -12686,7 +12768,7 @@ static int _wrap_Actuators_at(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsActuator,gkLogicActuator > *arg1 = (gsArray< gsActuator,gkLogicActuator > *) 0 ;
   int arg2 ;
-  gsActuator *result = 0 ;
+  gkLogicActuator *result = 0 ;
   
   SWIG_check_num_args("gsArray< gsActuator,gkLogicActuator >::at",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsActuator,gkLogicActuator >::at",1,"gsArray< gsActuator,gkLogicActuator > *");
@@ -12697,9 +12779,9 @@ static int _wrap_Actuators_at(lua_State* L) {
   }
   
   arg2 = (int)lua_tonumber(L, 2);
-  result = (gsActuator *)(arg1)->at(arg2);
+  result = (gkLogicActuator *)(arg1)->at(arg2);
   if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
+    SWIG_arg += gsWrapActuator(L, result); 
   } 
   return SWIG_arg;
   
@@ -12775,7 +12857,7 @@ fail:
 static int _wrap_Actuators_iterator(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsActuator,gkLogicActuator > *arg1 = (gsArray< gsActuator,gkLogicActuator > *) 0 ;
-  gsArrayIterator< gsActuator,gkLogicActuator > result;
+  gsArrayIterator< gkLogicActuator > result;
   
   SWIG_check_num_args("gsArray< gsActuator,gkLogicActuator >::iterator",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArray< gsActuator,gkLogicActuator >::iterator",1,"gsArray< gsActuator,gkLogicActuator > *");
@@ -12786,8 +12868,8 @@ static int _wrap_Actuators_iterator(lua_State* L) {
   
   result = (arg1)->iterator();
   {
-    gsArrayIterator< gsActuator,gkLogicActuator > * resultptr = new gsArrayIterator< gsActuator,gkLogicActuator >((const gsArrayIterator< gsActuator,gkLogicActuator > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,1); SWIG_arg++;
+    gsArrayIterator< gkLogicActuator > * resultptr = new gsArrayIterator< gkLogicActuator >((const gsArrayIterator< gkLogicActuator > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -12823,11 +12905,11 @@ static swig_lua_class _wrap_class_gsArray_Sl_gsActuator_Sc_gkLogicActuator_Sg_ =
 
 static int _wrap_new_ActuatorIterator(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsActuator,gkLogicActuator > *result = 0 ;
+  gsArrayIterator< gkLogicActuator > *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsActuator,gkLogicActuator >::gsArrayIterator",0,0)
-  result = (gsArrayIterator< gsActuator,gkLogicActuator > *)new gsArrayIterator< gsActuator,gkLogicActuator >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,1); SWIG_arg++; 
+  SWIG_check_num_args("gsArrayIterator< gkLogicActuator >::gsArrayIterator",0,0)
+  result = (gsArrayIterator< gkLogicActuator > *)new gsArrayIterator< gkLogicActuator >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -12840,14 +12922,14 @@ fail:
 
 static int _wrap_ActuatorIterator_hasMoreElements(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsActuator,gkLogicActuator > *arg1 = (gsArrayIterator< gsActuator,gkLogicActuator > *) 0 ;
+  gsArrayIterator< gkLogicActuator > *arg1 = (gsArrayIterator< gkLogicActuator > *) 0 ;
   bool result;
   
-  SWIG_check_num_args("gsArrayIterator< gsActuator,gkLogicActuator >::hasMoreElements",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsActuator,gkLogicActuator >::hasMoreElements",1,"gsArrayIterator< gsActuator,gkLogicActuator > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicActuator >::hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicActuator >::hasMoreElements",1,"gsArrayIterator< gkLogicActuator > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,0))){
-    SWIG_fail_ptr("ActuatorIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,0))){
+    SWIG_fail_ptr("ActuatorIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t);
   }
   
   result = (bool)(arg1)->hasMoreElements();
@@ -12864,13 +12946,13 @@ fail:
 
 static int _wrap_ActuatorIterator_moveNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsActuator,gkLogicActuator > *arg1 = (gsArrayIterator< gsActuator,gkLogicActuator > *) 0 ;
+  gsArrayIterator< gkLogicActuator > *arg1 = (gsArrayIterator< gkLogicActuator > *) 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsActuator,gkLogicActuator >::moveNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsActuator,gkLogicActuator >::moveNext",1,"gsArrayIterator< gsActuator,gkLogicActuator > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicActuator >::moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicActuator >::moveNext",1,"gsArrayIterator< gkLogicActuator > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,0))){
-    SWIG_fail_ptr("ActuatorIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,0))){
+    SWIG_fail_ptr("ActuatorIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t);
   }
   
   (arg1)->moveNext();
@@ -12887,19 +12969,19 @@ fail:
 
 static int _wrap_ActuatorIterator_peekNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsActuator,gkLogicActuator > *arg1 = (gsArrayIterator< gsActuator,gkLogicActuator > *) 0 ;
-  gsActuator *result = 0 ;
+  gsArrayIterator< gkLogicActuator > *arg1 = (gsArrayIterator< gkLogicActuator > *) 0 ;
+  gkLogicActuator *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsActuator,gkLogicActuator >::peekNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsActuator,gkLogicActuator >::peekNext",1,"gsArrayIterator< gsActuator,gkLogicActuator > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicActuator >::peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicActuator >::peekNext",1,"gsArrayIterator< gkLogicActuator > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,0))){
-    SWIG_fail_ptr("ActuatorIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,0))){
+    SWIG_fail_ptr("ActuatorIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t);
   }
   
-  result = (gsActuator *)(arg1)->peekNext();
+  result = (gkLogicActuator *)(arg1)->peekNext();
   if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
+    SWIG_arg += gsWrapActuator(L, result); 
   } 
   return SWIG_arg;
   
@@ -12913,19 +12995,19 @@ fail:
 
 static int _wrap_ActuatorIterator_getNext(lua_State* L) {
   int SWIG_arg = 0;
-  gsArrayIterator< gsActuator,gkLogicActuator > *arg1 = (gsArrayIterator< gsActuator,gkLogicActuator > *) 0 ;
-  gsActuator *result = 0 ;
+  gsArrayIterator< gkLogicActuator > *arg1 = (gsArrayIterator< gkLogicActuator > *) 0 ;
+  gkLogicActuator *result = 0 ;
   
-  SWIG_check_num_args("gsArrayIterator< gsActuator,gkLogicActuator >::getNext",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gsActuator,gkLogicActuator >::getNext",1,"gsArrayIterator< gsActuator,gkLogicActuator > *");
+  SWIG_check_num_args("gsArrayIterator< gkLogicActuator >::getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsArrayIterator< gkLogicActuator >::getNext",1,"gsArrayIterator< gkLogicActuator > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,0))){
-    SWIG_fail_ptr("ActuatorIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,0))){
+    SWIG_fail_ptr("ActuatorIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t);
   }
   
-  result = (gsActuator *)(arg1)->getNext();
+  result = (gkLogicActuator *)(arg1)->getNext();
   if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
+    SWIG_arg += gsWrapActuator(L, result); 
   } 
   return SWIG_arg;
   
@@ -12938,22 +13020,22 @@ fail:
 
 
 static void swig_delete_ActuatorIterator(void *obj) {
-gsArrayIterator< gsActuator,gkLogicActuator > *arg1 = (gsArrayIterator< gsActuator,gkLogicActuator > *) obj;
+gsArrayIterator< gkLogicActuator > *arg1 = (gsArrayIterator< gkLogicActuator > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__methods[] = {
+static swig_lua_method swig_gsArrayIterator_Sl_gkLogicActuator_Sg__methods[] = {
     {"hasMoreElements", _wrap_ActuatorIterator_hasMoreElements}, 
     {"moveNext", _wrap_ActuatorIterator_moveNext}, 
     {"peekNext", _wrap_ActuatorIterator_peekNext}, 
     {"getNext", _wrap_ActuatorIterator_getNext}, 
     {0,0}
 };
-static swig_lua_attribute swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__attributes[] = {
+static swig_lua_attribute swig_gsArrayIterator_Sl_gkLogicActuator_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__bases[] = {0};
-static const char *swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg_ = { "ActuatorIterator", &SWIGTYPE_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,_wrap_new_ActuatorIterator, swig_delete_ActuatorIterator, swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__methods, swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__attributes, swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__bases, swig_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg__base_names };
+static swig_lua_class *swig_gsArrayIterator_Sl_gkLogicActuator_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gkLogicActuator_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gkLogicActuator_Sg_ = { "ActuatorIterator", &SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t,_wrap_new_ActuatorIterator, swig_delete_ActuatorIterator, swig_gsArrayIterator_Sl_gkLogicActuator_Sg__methods, swig_gsArrayIterator_Sl_gkLogicActuator_Sg__attributes, swig_gsArrayIterator_Sl_gkLogicActuator_Sg__bases, swig_gsArrayIterator_Sl_gkLogicActuator_Sg__base_names };
 
 static int _wrap_new_LogicManager(lua_State* L) {
   int SWIG_arg = 0;
@@ -12976,7 +13058,7 @@ static int _wrap_LogicManager_newObject(lua_State* L) {
   int SWIG_arg = 0;
   gsLogicManager *arg1 = (gsLogicManager *) 0 ;
   gsGameObject *arg2 = (gsGameObject *) 0 ;
-  gsLogicObject *result = 0 ;
+  gkLogicLink *result = 0 ;
   
   SWIG_check_num_args("gsLogicManager::newObject",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLogicManager::newObject",1,"gsLogicManager *");
@@ -12991,8 +13073,10 @@ static int _wrap_LogicManager_newObject(lua_State* L) {
     SWIG_fail_ptr("LogicManager_newObject",2,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (gsLogicObject *)(arg1)->newObject(arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->newObject(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -13008,7 +13092,7 @@ static int _wrap_LogicManager_getObject(lua_State* L) {
   gsLogicManager *arg1 = (gsLogicManager *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsLogicObject *result = 0 ;
+  gkLogicLink *result = 0 ;
   
   SWIG_check_num_args("gsLogicManager::getObject",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLogicManager::getObject",1,"gsLogicManager *");
@@ -13022,8 +13106,10 @@ static int _wrap_LogicManager_getObject(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsLogicObject *)(arg1)->getObject((gkString const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLogicObject,1); SWIG_arg++; 
+  result = (gkLogicLink *)(arg1)->getObject((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_WRAP_STORE(result, LogicLink, LogicObject); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -13176,7 +13262,7 @@ static int _wrap_LogicObject_getSensor(lua_State* L) {
   gsLogicObject *arg1 = (gsLogicObject *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsSensor *result = 0 ;
+  gkLogicSensor *result = 0 ;
   
   SWIG_check_num_args("gsLogicObject::getSensor",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLogicObject::getSensor",1,"gsLogicObject *");
@@ -13190,9 +13276,9 @@ static int _wrap_LogicObject_getSensor(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsSensor *)(arg1)->getSensor((gkString const &)*arg2);
+  result = (gkLogicSensor *)(arg1)->getSensor((gkString const &)*arg2);
   if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
+    SWIG_arg += gsWrapSensor(L, result); 
   } 
   return SWIG_arg;
   
@@ -13209,7 +13295,7 @@ static int _wrap_LogicObject_getController(lua_State* L) {
   gsLogicObject *arg1 = (gsLogicObject *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsController *result = 0 ;
+  gkLogicController *result = 0 ;
   
   SWIG_check_num_args("gsLogicObject::getController",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLogicObject::getController",1,"gsLogicObject *");
@@ -13223,9 +13309,9 @@ static int _wrap_LogicObject_getController(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsController *)(arg1)->getController((gkString const &)*arg2);
+  result = (gkLogicController *)(arg1)->getController((gkString const &)*arg2);
   if (result) {
-    SWIG_arg += gsCreateController(L, result); 
+    SWIG_arg += gsWrapController(L, result); 
   } 
   return SWIG_arg;
   
@@ -13242,7 +13328,7 @@ static int _wrap_LogicObject_getActuator(lua_State* L) {
   gsLogicObject *arg1 = (gsLogicObject *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsActuator *result = 0 ;
+  gkLogicActuator *result = 0 ;
   
   SWIG_check_num_args("gsLogicObject::getActuator",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLogicObject::getActuator",1,"gsLogicObject *");
@@ -13256,9 +13342,9 @@ static int _wrap_LogicObject_getActuator(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsActuator *)(arg1)->getActuator((gkString const &)*arg2);
+  result = (gkLogicActuator *)(arg1)->getActuator((gkString const &)*arg2);
   if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
+    SWIG_arg += gsWrapActuator(L, result); 
   } 
   return SWIG_arg;
   
@@ -13546,9 +13632,7 @@ static int _wrap_new_Sensor(lua_State* L) {
   
   SWIG_check_num_args("gsSensor::gsSensor",0,0)
   result = (gsSensor *)new gsSensor();
-  if (result) {
-    SWIG_arg += gsCreateSensor(L, result); 
-  } 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSensor,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17345,9 +17429,7 @@ static int _wrap_new_Controller(lua_State* L) {
   
   SWIG_check_num_args("gsController::gsController",0,0)
   result = (gsController *)new gsController();
-  if (result) {
-    SWIG_arg += gsCreateController(L, result); 
-  } 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsController,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -18051,9 +18133,7 @@ static int _wrap_new_Actuator(lua_State* L) {
   
   SWIG_check_num_args("gsActuator::gsActuator",0,0)
   result = (gsActuator *)new gsActuator();
-  if (result) {
-    SWIG_arg += gsCreateActuator(L, result); 
-  } 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsActuator,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -24232,7 +24312,7 @@ fail:
 static int _wrap_RayTest_getObject(lua_State* L) {
   int SWIG_arg = 0;
   gsRayTest *arg1 = (gsRayTest *) 0 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsRayTest::getObject",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsRayTest::getObject",1,"gsRayTest *");
@@ -24241,9 +24321,9 @@ static int _wrap_RayTest_getObject(lua_State* L) {
     SWIG_fail_ptr("RayTest_getObject",1,SWIGTYPE_p_gsRayTest);
   }
   
-  result = (gsGameObject *)(arg1)->getObject();
+  result = (gkGameObject *)(arg1)->getObject();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -24517,7 +24597,7 @@ fail:
 static int _wrap_SweptTest_getObject(lua_State* L) {
   int SWIG_arg = 0;
   gsSweptTest *arg1 = (gsSweptTest *) 0 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsSweptTest::getObject",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSweptTest::getObject",1,"gsSweptTest *");
@@ -24526,9 +24606,9 @@ static int _wrap_SweptTest_getObject(lua_State* L) {
     SWIG_fail_ptr("SweptTest_getObject",1,SWIGTYPE_p_gsSweptTest);
   }
   
-  result = (gsGameObject *)(arg1)->getObject();
+  result = (gkGameObject *)(arg1)->getObject();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -24562,14 +24642,14 @@ static swig_lua_class _wrap_class_gsSweptTest = { "SweptTest", &SWIGTYPE_p_gsSwe
 
 static int _wrap_new_Character(lua_State* L) {
   int SWIG_arg = 0;
-  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkCharacter *arg1 = (gkCharacter *) 0 ;
   gsCharacter *result = 0 ;
   
   SWIG_check_num_args("gsCharacter::gsCharacter",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCharacter::gsCharacter",1,"gsGameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCharacter::gsCharacter",1,"gkCharacter *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("new_Character",1,SWIGTYPE_p_gsGameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCharacter,0))){
+    SWIG_fail_ptr("new_Character",1,SWIGTYPE_p_gkCharacter);
   }
   
   result = (gsCharacter *)new gsCharacter(arg1);
@@ -24587,7 +24667,7 @@ fail:
 static int _wrap_Character_getObject(lua_State* L) {
   int SWIG_arg = 0;
   gsCharacter *arg1 = (gsCharacter *) 0 ;
-  gsGameObject *result = 0 ;
+  gkGameObject *result = 0 ;
   
   SWIG_check_num_args("gsCharacter::getObject",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCharacter::getObject",1,"gsCharacter *");
@@ -24596,9 +24676,9 @@ static int _wrap_Character_getObject(lua_State* L) {
     SWIG_fail_ptr("Character_getObject",1,SWIGTYPE_p_gsCharacter);
   }
   
-  result = (gsGameObject *)(arg1)->getObject();
+  result = (gkGameObject *)(arg1)->getObject();
   if (result) {
-    SWIG_arg += gsCreateObject(L, result); 
+    SWIG_arg += gsWrapGameObject(L, result); 
   } 
   return SWIG_arg;
   
@@ -24889,7 +24969,7 @@ static int _wrap_LuaManager_getScript(lua_State* L) {
   gsLuaManager *arg1 = (gsLuaManager *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
-  gsLuaScript *result = 0 ;
+  gkLuaScript *result = 0 ;
   
   SWIG_check_num_args("gsLuaManager::getScript",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLuaManager::getScript",1,"gsLuaManager *");
@@ -24903,8 +24983,10 @@ static int _wrap_LuaManager_getScript(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (gsLuaScript *)(arg1)->getScript((gkString const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLuaScript,1); SWIG_arg++; 
+  result = (gkLuaScript *)(arg1)->getScript((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, LuaScript); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -24922,7 +25004,7 @@ static int _wrap_LuaManager_create(lua_State* L) {
   gkString *arg3 = 0 ;
   gkString temp2 ;
   gkString temp3 ;
-  gsLuaScript *result = 0 ;
+  gkLuaScript *result = 0 ;
   
   SWIG_check_num_args("gsLuaManager::create",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsLuaManager::create",1,"gsLuaManager *");
@@ -24941,8 +25023,10 @@ static int _wrap_LuaManager_create(lua_State* L) {
   temp3 = gkString((const char*)lua_tostring(L, 3));
   arg3 = &temp3;
   
-  result = (gsLuaScript *)(arg1)->create((gkString const &)*arg2,(gkString const &)*arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLuaScript,1); SWIG_arg++; 
+  result = (gkLuaScript *)(arg1)->create((gkString const &)*arg2,(gkString const &)*arg3);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, LuaScript); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -25028,14 +25112,6 @@ static swig_lua_const_info swig_constants[] = {
 { SWIG_LUA_INT,     (char *)"COP_DEL", (long) COP_DEL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"COP_REPLACE", (long) COP_REPLACE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"COP_RESET", (long) COP_RESET, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_ALWAYS_FAIL", (long) CMPF_ALWAYS_FAIL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_ALWAYS_PASS", (long) CMPF_ALWAYS_PASS, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_LESS", (long) CMPF_LESS, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_LESS_EQUAL", (long) CMPF_LESS_EQUAL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_EQUAL", (long) CMPF_EQUAL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_NOT_EQUAL", (long) CMPF_NOT_EQUAL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_GREATER_EQUAL", (long) CMPF_GREATER_EQUAL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CMPF_GREATER", (long) CMPF_GREATER, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_NONE", (long) KC_NONE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_AKEY", (long) KC_AKEY, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_BKEY", (long) KC_BKEY, 0, 0, 0},
@@ -25452,17 +25528,18 @@ static void *_p_gsScriptControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM
 }
 static swig_type_info _swigt__p_Array = {"_p_Array", "Array *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Iterator = {"_p_Iterator", "Iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkCharacter = {"_p_gkCharacter", "gkCharacter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkDynamicsWorld = {"_p_gkDynamicsWorld", "gkDynamicsWorld *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "gsSelf *|gsFunction *|gkLuaCurState *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gsActionActuator = {"_p_gsActionActuator", "gsActionActuator *", 0, 0, (void*)&_wrap_class_gsActionActuator, 0};
 static swig_type_info _swigt__p_gsActuator = {"_p_gsActuator", "gsActuator *", 0, 0, (void*)&_wrap_class_gsActuator, 0};
 static swig_type_info _swigt__p_gsActuatorSensor = {"_p_gsActuatorSensor", "gsActuatorSensor *", 0, 0, (void*)&_wrap_class_gsActuatorSensor, 0};
 static swig_type_info _swigt__p_gsAlwaysSensor = {"_p_gsAlwaysSensor", "gsAlwaysSensor *", 0, 0, (void*)&_wrap_class_gsAlwaysSensor, 0};
-static swig_type_info _swigt__p_gsArrayIteratorT_gsActuator_gkLogicActuator_t = {"_p_gsArrayIteratorT_gsActuator_gkLogicActuator_t", "gsArrayIterator< gsActuator,gkLogicActuator > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsActuator_Sc_gkLogicActuator_Sg_, 0};
-static swig_type_info _swigt__p_gsArrayIteratorT_gsController_gkLogicController_t = {"_p_gsArrayIteratorT_gsController_gkLogicController_t", "gsArrayIterator< gsController,gkLogicController > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsController_Sc_gkLogicController_Sg_, 0};
-static swig_type_info _swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t = {"_p_gsArrayIteratorT_gsGameObject_gkGameObject_t", "gsArrayIterator< gsGameObject,gkGameObject > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg_, 0};
-static swig_type_info _swigt__p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t = {"_p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t", "gsArrayIterator< gsLogicObject,gkLogicLink > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsLogicObject_Sc_gkLogicLink_Sg_, 0};
-static swig_type_info _swigt__p_gsArrayIteratorT_gsSensor_gkLogicSensor_t = {"_p_gsArrayIteratorT_gsSensor_gkLogicSensor_t", "gsArrayIterator< gsSensor,gkLogicSensor > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsSensor_Sc_gkLogicSensor_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gkGameObject_t = {"_p_gsArrayIteratorT_gkGameObject_t", "gsArrayIterator< gkGameObject > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gkGameObject_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gkLogicActuator_t = {"_p_gsArrayIteratorT_gkLogicActuator_t", "gsArrayIterator< gkLogicActuator > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gkLogicActuator_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gkLogicController_t = {"_p_gsArrayIteratorT_gkLogicController_t", "gsArrayIterator< gkLogicController > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gkLogicController_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gkLogicLink_t = {"_p_gsArrayIteratorT_gkLogicLink_t", "gsArrayIterator< gkLogicLink > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gkLogicLink_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gkLogicSensor_t = {"_p_gsArrayIteratorT_gkLogicSensor_t", "gsArrayIterator< gkLogicSensor > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gkLogicSensor_Sg_, 0};
 static swig_type_info _swigt__p_gsArrayT_gsActuator_gkLogicActuator_t = {"_p_gsArrayT_gsActuator_gkLogicActuator_t", "gsArray< gsActuator,gkLogicActuator > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsActuator_Sc_gkLogicActuator_Sg_, 0};
 static swig_type_info _swigt__p_gsArrayT_gsController_gkLogicController_t = {"_p_gsArrayT_gsController_gkLogicController_t", "gsArray< gsController,gkLogicController > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsController_Sc_gkLogicController_Sg_, 0};
 static swig_type_info _swigt__p_gsArrayT_gsGameObject_gkGameObject_t = {"_p_gsArrayT_gsGameObject_gkGameObject_t", "gsArray< gsGameObject,gkGameObject > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg_, 0};
@@ -25535,17 +25612,18 @@ static swig_type_info _swigt__p_utArrayT_gkLogicSensor_p_t = {"_p_utArrayT_gkLog
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Array,
   &_swigt__p_Iterator,
+  &_swigt__p_gkCharacter,
   &_swigt__p_gkDynamicsWorld,
   &_swigt__p_gkLuaCurState,
   &_swigt__p_gsActionActuator,
   &_swigt__p_gsActuator,
   &_swigt__p_gsActuatorSensor,
   &_swigt__p_gsAlwaysSensor,
-  &_swigt__p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,
-  &_swigt__p_gsArrayIteratorT_gsController_gkLogicController_t,
-  &_swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t,
-  &_swigt__p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,
-  &_swigt__p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,
+  &_swigt__p_gsArrayIteratorT_gkGameObject_t,
+  &_swigt__p_gsArrayIteratorT_gkLogicActuator_t,
+  &_swigt__p_gsArrayIteratorT_gkLogicController_t,
+  &_swigt__p_gsArrayIteratorT_gkLogicLink_t,
+  &_swigt__p_gsArrayIteratorT_gkLogicSensor_t,
   &_swigt__p_gsArrayT_gsActuator_gkLogicActuator_t,
   &_swigt__p_gsArrayT_gsController_gkLogicController_t,
   &_swigt__p_gsArrayT_gsGameObject_gkGameObject_t,
@@ -25618,17 +25696,18 @@ static swig_type_info *swig_type_initial[] = {
 
 static swig_cast_info _swigc__p_Array[] = {  {&_swigt__p_Array, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Iterator[] = {  {&_swigt__p_Iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkCharacter[] = {  {&_swigt__p_gkCharacter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkDynamicsWorld[] = {  {&_swigt__p_gkDynamicsWorld, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLuaCurState[] = {  {&_swigt__p_gkLuaCurState, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActionActuator[] = {  {&_swigt__p_gsActionActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuator[] = {  {&_swigt__p_gsActuator, 0, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsActuator, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuatorSensor[] = {  {&_swigt__p_gsActuatorSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsAlwaysSensor[] = {  {&_swigt__p_gsAlwaysSensor, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsArrayIteratorT_gsActuator_gkLogicActuator_t[] = {  {&_swigt__p_gsArrayIteratorT_gsActuator_gkLogicActuator_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsArrayIteratorT_gsController_gkLogicController_t[] = {  {&_swigt__p_gsArrayIteratorT_gsController_gkLogicController_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsArrayIteratorT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t[] = {  {&_swigt__p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsArrayIteratorT_gsSensor_gkLogicSensor_t[] = {  {&_swigt__p_gsArrayIteratorT_gsSensor_gkLogicSensor_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gkGameObject_t[] = {  {&_swigt__p_gsArrayIteratorT_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gkLogicActuator_t[] = {  {&_swigt__p_gsArrayIteratorT_gkLogicActuator_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gkLogicController_t[] = {  {&_swigt__p_gsArrayIteratorT_gkLogicController_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gkLogicLink_t[] = {  {&_swigt__p_gsArrayIteratorT_gkLogicLink_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gkLogicSensor_t[] = {  {&_swigt__p_gsArrayIteratorT_gkLogicSensor_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsActuator_gkLogicActuator_t[] = {  {&_swigt__p_gsArrayT_gsActuator_gkLogicActuator_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsController_gkLogicController_t[] = {  {&_swigt__p_gsArrayT_gsController_gkLogicController_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -25701,17 +25780,18 @@ static swig_cast_info _swigc__p_utArrayT_gkLogicSensor_p_t[] = {  {&_swigt__p_ut
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Array,
   _swigc__p_Iterator,
+  _swigc__p_gkCharacter,
   _swigc__p_gkDynamicsWorld,
   _swigc__p_gkLuaCurState,
   _swigc__p_gsActionActuator,
   _swigc__p_gsActuator,
   _swigc__p_gsActuatorSensor,
   _swigc__p_gsAlwaysSensor,
-  _swigc__p_gsArrayIteratorT_gsActuator_gkLogicActuator_t,
-  _swigc__p_gsArrayIteratorT_gsController_gkLogicController_t,
-  _swigc__p_gsArrayIteratorT_gsGameObject_gkGameObject_t,
-  _swigc__p_gsArrayIteratorT_gsLogicObject_gkLogicLink_t,
-  _swigc__p_gsArrayIteratorT_gsSensor_gkLogicSensor_t,
+  _swigc__p_gsArrayIteratorT_gkGameObject_t,
+  _swigc__p_gsArrayIteratorT_gkLogicActuator_t,
+  _swigc__p_gsArrayIteratorT_gkLogicController_t,
+  _swigc__p_gsArrayIteratorT_gkLogicLink_t,
+  _swigc__p_gsArrayIteratorT_gkLogicSensor_t,
   _swigc__p_gsArrayT_gsActuator_gkLogicActuator_t,
   _swigc__p_gsArrayT_gsController_gkLogicController_t,
   _swigc__p_gsArrayT_gsGameObject_gkGameObject_t,

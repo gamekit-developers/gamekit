@@ -34,7 +34,7 @@
 
 
 
-template <typename W, typename B>
+template <typename B>
 class gsArrayIterator
 {
 public:
@@ -61,22 +61,22 @@ public:
 	inline bool hasMoreElements(void) {return m_iter.hasMoreElements();}
 	inline void moveNext(void) { m_iter.next();}
 
-	inline W* peekNext(void)
+	inline B* peekNext(void)
 	{
 		if (m_iter.hasMoreElements())
 		{
 			B* base = m_iter.peekNext();
-			return W::createNew(base);
+			return base;
 		}
 		return 0;
 	}
 
-	inline W* getNext(void)
+	inline B* getNext(void)
 	{
 		if (m_iter.hasMoreElements())
 		{
 			B* base = m_iter.getNext();
-			return W::createNew(base);
+			return base;
 		}
 		return 0;
 	}
@@ -108,14 +108,14 @@ public:
 	inline int    size(void)  const { return (int)m_array.size(); }
 	inline bool empty(void) const { return size() == 0; }
 
-	inline W* __getitem__(int i) {return at(i);}
+	inline B* __getitem__(int i) {return at(i);}
 
-	inline W* at(int i)
+	inline B* at(int i)
 	{
 		if (i >= 0 && i < size())
 		{
 			B* base = m_array.at(i);
-			return W::createNew(base);
+			return base;
 		}
 		return 0;
 	}
@@ -149,9 +149,9 @@ public:
 		return false;
 	}
 
-	gsArrayIterator<W, B> iterator()
+	gsArrayIterator<B> iterator()
 	{
-		return gsArrayIterator<W, B>(m_array);
+		return gsArrayIterator<B>(m_array);
 	}
 
 

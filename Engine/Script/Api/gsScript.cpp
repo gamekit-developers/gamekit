@@ -59,7 +59,7 @@ gsLuaManager::~gsLuaManager()
 {
 }
 
-gsLuaScript* gsLuaManager::getScript(const gkString& name)
+gkLuaScript* gsLuaManager::getScript(const gkString& name)
 {
 	gkLuaManager* lptr = gkLuaManager::getSingletonPtr();
 
@@ -68,12 +68,12 @@ gsLuaScript* gsLuaManager::getScript(const gkString& name)
 		gkLuaScript* script = lptr->getByName<gkLuaScript>(name);
 		
 		if(script)
-			return new gsLuaScript(script);
+			return script;
 	}
 	return 0;
 }
 
-gsLuaScript* gsLuaManager::create(const gkString& name, const gkString& text)
+gkLuaScript* gsLuaManager::create(const gkString& name, const gkString& text)
 {
 
 	gkLuaManager* lptr = gkLuaManager::getSingletonPtr();
@@ -83,7 +83,7 @@ gsLuaScript* gsLuaManager::create(const gkString& name, const gkString& text)
 		gkLuaScript* script = lptr->createFromText(name, text);
 		
 		if(script)
-			return new gsLuaScript(script);
+			return script;
 	}
 	return 0;
 }

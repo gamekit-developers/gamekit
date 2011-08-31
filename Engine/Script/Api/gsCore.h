@@ -99,19 +99,6 @@ enum gsCompositorOp
 };
 
 
-enum gsCompareFunction
-{
-	CMPF_ALWAYS_FAIL,
-	CMPF_ALWAYS_PASS,
-	CMPF_LESS,
-	CMPF_LESS_EQUAL,
-	CMPF_EQUAL,
-	CMPF_NOT_EQUAL,
-	CMPF_GREATER_EQUAL,
-	CMPF_GREATER
-};
-
-
 class gsProperty
 {
 private:
@@ -257,8 +244,8 @@ public:
 	void connect(int evt, gsSelf self, gsFunction method);
 
 
-	gsScene* loadBlendFile(const gkString& name);
-	gsScene* getActiveScene(void);
+	gkScene* loadBlendFile(const gkString& name);
+	gkScene* getActiveScene(void);
 
 	void unloadBlendFile(const gkString& name);
 	void unloadAllBlendFiles();
@@ -295,12 +282,12 @@ public:
 
 	void show(bool v);
 
-	gsHUDElement* getChild(const gkString& child);
+	gkHUDElement* getChild(const gkString& child);
 
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUD, gkHUD, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
-	OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUD, gkHUD);
+	//OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUD, gkHUD);
 };
 
 class gsHUDElement
@@ -327,10 +314,10 @@ public:
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUDElement, gkHUDElement, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
-	OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUDElement, gkHUDElement);
+	//OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUDElement, gkHUDElement);
 };
 
-extern gsHUD* getHUD(const gkString& name);
+extern gkHUD* getHUD(const gkString& name);
 
 class gsScene : public gsObject
 {
@@ -344,9 +331,9 @@ public:
 
 	bool hasObject(const gkString& name);
 
-	gsGameObject* getObject(const gkString& name);
-	gsGameObject* createEmpty(const gkString& name);
-	gsGameObject* cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate);
+	gkGameObject* getObject(const gkString& name);
+	gkGameObject* createEmpty(const gkString& name);
+    gkGameObject* cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate);
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
@@ -356,7 +343,7 @@ public:
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
 };
 
-extern gsScene* getActiveScene(void);
+extern gkScene* getActiveScene(void);
 
 class gsGameObject : public gsObject
 {
@@ -431,13 +418,13 @@ public:
 	void removeChild(gsGameObject* chi);
 
 
-	gsGameObject* getParent(void);
+	gkGameObject* getParent(void);
 
 	void enableContacts(bool v);
 	bool hasContacts();
 	bool hasContact(const gkString& object);
 
-	gsScene* getScene(void);
+	gkScene* getScene(void);
 	
 	void playAnimation(const gkString& name, float blend);
 
@@ -450,7 +437,7 @@ public:
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkInstancedObject);
 	OGRE_KIT_TEMPLATE_CAST(gkGameObject, m_object);
-	OGRE_KIT_TEMPLATE_NEW(gsGameObject, gkGameObject);
+//	OGRE_KIT_TEMPLATE_NEW(gsGameObject, gkGameObject);
 };
 
 
@@ -495,7 +482,7 @@ public:
 	~gsEntity() {}
 
 	bool hasCharacter(void);
-	gsCharacter* getCharacter(void);
+	gkCharacter* getCharacter(void);
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);

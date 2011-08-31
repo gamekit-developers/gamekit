@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Benjamin Tolputt.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -54,73 +54,134 @@ static int gsGetProperty(lua_State *L, const gsProperty& prop)
 #define GS_TYPEOF(a, b)   ((a) && typeid(*a) == typeid(b))
 #define GS_TYPE_RET(GK, GS, T) if (GS_TYPEOF(GK, gk##T)) { SWIG_NewPointerObj(L, GS, SWIGTYPE_p_##gs##T, 1); return 1; }
 
-
-static int gsCreateSensor(lua_State *L, gsSensor *obj)
+// ------------------------------------------------------------------------------
+// Convert & store gk<Class> objects as gs<Class> with consistent userdata values
+// ------------------------------------------------------------------------------
+template <class GKTYPE, class GSTYPE>
+static int gsLuaStoreAndReturnObject(lua_State *L, GKTYPE* obj, const char* className, swig_type_info* swigTypeInfo)
 {
-	gkLogicSensor *ob = obj->get();
-
-	GS_TYPE_RET(ob, obj,  ActuatorSensor);
-	GS_TYPE_RET(ob, obj,  AlwaysSensor);
-	GS_TYPE_RET(ob, obj,  KeyboardSensor);
-	GS_TYPE_RET(ob, obj,  CollisionSensor);
-	GS_TYPE_RET(ob, obj,  DelaySensor);
-	GS_TYPE_RET(ob, obj,  MessageSensor);
-	GS_TYPE_RET(ob, obj,  MouseSensor);
-	GS_TYPE_RET(ob, obj,  NearSensor);
-	GS_TYPE_RET(ob, obj,  PropertySensor);
-	GS_TYPE_RET(ob, obj,  RaySensor);
-	GS_TYPE_RET(ob, obj,  RadarSensor);
-	GS_TYPE_RET(ob, obj,  RandomSensor);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsSensor, 1); 
-	return 1;
+    // Early exit on nil
+    if (!obj)
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+    
+    // Create the storage name
+    char tableName[256];
+    sprintf(tableName, ".gsCache{%s}", className);
+    
+    // Try to get the table in which the objects would be stored
+    lua_pushstring(L, tableName);
+    lua_rawget(L,     LUA_REGISTRYINDEX);
+    
+    // If that did not work - create it and put it on top
+    if (!lua_istable(L, -1))
+    {
+        lua_pushstring(L, tableName);
+        lua_newtable(L);
+        
+        lua_createtable(L,  0, 1);
+        lua_pushstring(L,   "v");
+        lua_setfield(L,     -2, "__mode");
+        lua_setmetatable(L, -2);
+        
+        lua_rawset(L, LUA_REGISTRYINDEX);
+        
+        // Try to get the table
+        lua_pushstring(L, tableName);
+        lua_rawget(L,     LUA_REGISTRYINDEX);
+    }
+    
+    // We now have a table to get the user data from - so check if it's there
+    lua_pushlightuserdata(L, obj);
+    lua_gettable(L, -2);
+    
+    if (lua_isnil(L, -1))
+    {
+        // We no longer need the nil value
+        lua_pop(L, 1);
+        
+        // Push the pointer value onto the stack (as the key)
+        lua_pushlightuserdata(L, obj);
+        
+        // Create and push the value
+        GSTYPE* wrappedObject = new GSTYPE(obj);
+        SWIG_NewPointerObj(L, wrappedObject, swigTypeInfo, 1);
+        
+        // Store it in the table
+        lua_settable(L, -3);
+        
+        // Reget the value from the table
+        lua_pushlightuserdata(L, obj);
+        lua_gettable(L, -2);
+    }
+    return 1;
 }
 
-static int gsCreateController(lua_State *L, gsController *obj)
-{
-	gkLogicController *ob = obj->get();
+#define GS_LUA_OBJECT_WRAP_STORE(OBJ, T, WT) gsLuaStoreAndReturnObject<gk##T, gs##WT>(L, (gk##T*)OBJ, #WT, SWIGTYPE_p_##gs##WT)
+#define GS_LUA_OBJECT_STORE(OBJ, T) GS_LUA_OBJECT_WRAP_STORE(OBJ, T, T)
+#define GS_LUA_OBJECT_RET(OBJ, T) if (GS_TYPEOF(OBJ, gk##T)) { return GS_LUA_OBJECT_STORE(OBJ, T); }
+#define GS_LUA_OBJECT_WRAP_RET(OBJ, T, WT) if (GS_TYPEOF(OBJ, gk##T)) { return GS_LUA_OBJECT_WRAP_STORE(OBJ, T, WT); }
 
-	GS_TYPE_RET(ob, obj,  LogicOpController);
-	GS_TYPE_RET(ob, obj,  ScriptController);
-	GS_TYPE_RET(ob, obj,  ExpressionController);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsController, 1); 
-	return 1;
+static int gsWrapGameObject(lua_State *L, gkGameObject *obj)
+{    
+    //gkPrintf("Object Size: %d\n", (int)sizeof(gsParticles));
+    GS_LUA_OBJECT_RET(obj, Camera);
+    GS_LUA_OBJECT_RET(obj, Entity);
+    GS_LUA_OBJECT_RET(obj, Light);
+    GS_LUA_OBJECT_RET(obj, Skeleton);
+    GS_LUA_OBJECT_WRAP_RET(obj, ParticleObject, Particles);
+    
+    return GS_LUA_OBJECT_STORE(obj, GameObject);
 }
 
-static int gsCreateActuator(lua_State *L, gsActuator *obj)
-{
-	gkLogicActuator *ob = obj->get();
-
-	GS_TYPE_RET(ob, obj,  ActionActuator);
-	GS_TYPE_RET(ob, obj,  EditObjectActuator);
-	GS_TYPE_RET(ob, obj,  GameActuator);
-	GS_TYPE_RET(ob, obj,  MessageActuator);
-	GS_TYPE_RET(ob, obj,  MotionActuator);
-	GS_TYPE_RET(ob, obj,  ParentActuator);
-	GS_TYPE_RET(ob, obj,  PropertyActuator);
-	GS_TYPE_RET(ob, obj,  RandomActuator);
-	GS_TYPE_RET(ob, obj,  SceneActuator);
-	GS_TYPE_RET(ob, obj,  SoundActuator);
-	GS_TYPE_RET(ob, obj,  StateActuator);
-	GS_TYPE_RET(ob, obj,  VisibilityActuator);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsActuator, 1); 
-	return 1;
+static int gsWrapSensor(lua_State *L, gkLogicSensor *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, ActuatorSensor);
+    GS_LUA_OBJECT_RET(obj, AlwaysSensor);
+    GS_LUA_OBJECT_RET(obj, KeyboardSensor);
+    GS_LUA_OBJECT_RET(obj, CollisionSensor);
+    GS_LUA_OBJECT_RET(obj, DelaySensor);
+    GS_LUA_OBJECT_RET(obj, MessageSensor);
+    GS_LUA_OBJECT_RET(obj, MouseSensor);
+    GS_LUA_OBJECT_RET(obj, NearSensor);
+    GS_LUA_OBJECT_RET(obj, PropertySensor);
+    GS_LUA_OBJECT_RET(obj, RaySensor);
+    GS_LUA_OBJECT_RET(obj, RadarSensor);
+    GS_LUA_OBJECT_RET(obj, RandomSensor);
+    
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicSensor, Sensor);
+}
+    
+static int gsWrapController(lua_State *L, gkLogicController *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, LogicOpController);
+    GS_LUA_OBJECT_RET(obj, ScriptController);
+    GS_LUA_OBJECT_RET(obj, ExpressionController);
+    
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicController, Controller);
 }
 
-static int gsCreateObject(lua_State *L, gsGameObject *obj)
-{
-	gkGameObject *ob = obj->get();
+static int gsWrapActuator(lua_State *L, gkLogicActuator *obj)
+{    
+    GS_LUA_OBJECT_RET(obj, ActionActuator);
+    GS_LUA_OBJECT_RET(obj, EditObjectActuator);
+    GS_LUA_OBJECT_RET(obj, GameActuator);
+    GS_LUA_OBJECT_RET(obj, MessageActuator);
+    GS_LUA_OBJECT_RET(obj, MotionActuator);
+    GS_LUA_OBJECT_RET(obj, ParentActuator);
+    GS_LUA_OBJECT_RET(obj, PropertyActuator);
+    GS_LUA_OBJECT_RET(obj, RandomActuator);
+    GS_LUA_OBJECT_RET(obj, SceneActuator);
+    GS_LUA_OBJECT_RET(obj, SoundActuator);
+    GS_LUA_OBJECT_RET(obj, StateActuator);
+    GS_LUA_OBJECT_RET(obj, VisibilityActuator);
 
-	GS_TYPE_RET(ob, obj,  Camera);
-	GS_TYPE_RET(ob, obj,  Entity);
-	GS_TYPE_RET(ob, obj,  Light);
-	GS_TYPE_RET(ob, obj,  Skeleton);
-
-	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsGameObject, 1); 
-	return 1;
+    return GS_LUA_OBJECT_WRAP_STORE(obj, LogicActuator, Actuator);
 }
 
+
+// ------------------------------------------------------------------------------
 
 %}

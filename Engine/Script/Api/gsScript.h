@@ -48,8 +48,8 @@ public:
 	gsLuaManager();
 	~gsLuaManager();
 
-	gsLuaScript* getScript(const gkString& name);
-	gsLuaScript* create(const gkString& name, const gkString& text);
+	gkLuaScript* getScript(const gkString& name);
+	gkLuaScript* create(const gkString& name, const gkString& text);
 	
 	// internal
 	OGRE_KIT_WRAP_CLASS(gkLuaManager, m_luaManager);

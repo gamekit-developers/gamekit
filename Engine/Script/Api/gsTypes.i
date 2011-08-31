@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Benjamin Tolputt.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -82,14 +82,27 @@
 // Brick -> derrived conversion.
 
 
-%typemap(out) gsController* 
-%{ if ($1) { SWIG_arg += gsCreateController(L, $1); } %}
-%typemap(out) gsActuator* 
-%{ if ($1) { SWIG_arg += gsCreateActuator(L, $1); } %}
-%typemap(out) gsSensor* 
-%{ if ($1) { SWIG_arg += gsCreateSensor(L, $1); } %}
-%typemap(out) gsGameObject* 
-%{ if ($1) { SWIG_arg += gsCreateObject(L, $1); } %}
+%typemap(out) gkLuaScript* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, LuaScript); } %}
+%typemap(out) gkCharacter* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Character); } %}
+%typemap(out) gkHUD* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, HUD); } %}
+%typemap(out) gkHUDElement* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, HUDElement); } %}
+%typemap(out) gkScene* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Scene); } %}
+%typemap(out) gkLogicLink* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_WRAP_STORE($1, LogicLink, LogicObject); } %}
+%typemap(out) gkGameObject* 
+%{ if ($1) { SWIG_arg += gsWrapGameObject(L, $1); } %}
+%typemap(out) gkLogicSensor* 
+%{ if ($1) { SWIG_arg += gsWrapSensor(L, $1); } %}
+%typemap(out) gkLogicController* 
+%{ if ($1) { SWIG_arg += gsWrapController(L, $1); } %}
+%typemap(out) gkLogicActuator* 
+%{ if ($1) { SWIG_arg += gsWrapActuator(L, $1); } %}
+
 
 
 #else
