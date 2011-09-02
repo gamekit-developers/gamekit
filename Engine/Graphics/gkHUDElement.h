@@ -60,8 +60,11 @@ public:
 	gkString getMaterialName(void);
 	void setMaterialName(const gkString& material);
 
-	void setMaterialAlpha(float factor);
+	void  setMaterialAlpha(float factor);
 	float getMaterialAlpha();
+
+	void setMaterialAlphaRejectValue(int val, bool isGreater);
+	int  getMaterialAlphaRejectValue();
 
 	Ogre::OverlayElement* _getElement(void);
 	void _setElement(Ogre::OverlayElement* ele);

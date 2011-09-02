@@ -2147,6 +2147,263 @@ Implement access.
 
 \endpage
 
+<!-- ============================================ HUD ============================================ -->
+\LuaClass{HUD}
+
+\beginmenu{Methods}
+\LuaMethodMenu{HUD,show}
+\LuaMethodMenu{HUD,getChild}
+\endmenu
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUD,show}
+\LuaClassUp{HUD}
+
+Show or hide all HUDElements in the HUD.
+
+\code
+function HUD:show(v)
+\endcode
+
+\param v bool.
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUD,getChild}
+\LuaClassUp{HUD}
+
+return a child \LuaClassRef{HUDElement} in the HUD.
+
+\code
+function HUD:getChild(name)
+\endcode
+
+\param name the string  identifier of child.
+
+\returns \LuaClassRef{HUDElement}
+
+\endpage
+
+<!-- ============================================ HUDElement ============================================ -->
+\LuaClass{HUDElement}
+
+\beginmenu{Methods}
+\LuaMethodMenu{HUDElement,show}
+\LuaMethodMenu{HUDElement,getValue}
+\LuaMethodMenu{HUDElement,setValue}
+\LuaMethodMenu{HUDElement,setUvCoords}
+\LuaMethodMenu{HUDElement,getParameter}
+\LuaMethodMenu{HUDElement,setParameter}
+\LuaMethodMenu{HUDElement,getMaterialName}
+\LuaMethodMenu{HUDElement,setMaterialName}
+\LuaMethodMenu{HUDElement,getMaterialAlpha}
+\LuaMethodMenu{HUDElement,setMaterialAlpha}
+\LuaMethodMenu{HUDElement,getMaterialAlphaRejectValue}
+\LuaMethodMenu{HUDElement,setMaterialAlphaRejectValue}
+\endmenu
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,show}
+\LuaClassUp{HUDElement}
+
+Show or hide the HUDElement.
+
+\code
+function HUDElement:show(v)
+\endcode
+
+\param v bool
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,getValue}
+\LuaClassUp{HUDElement}
+
+Gets the caption for this element, , if support. 
+
+\code
+function HUDElement:getValue()
+\endcode
+
+\returns the caption string.
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setValue}
+\LuaClassUp{HUDElement}
+
+Sets the caption for this element, if support. 
+
+\code
+function HUDElement:setValue(value)
+\endcode
+
+\param value the caption string
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setUvCoords}
+\LuaClassUp{HUDElement}
+
+Sets the texture coordinates for the HUDElement. 
+
+\code
+function HUDElement:setUvCoords(u1,v1,u2,v2)
+\endcode
+
+\param u1 number
+\param v1 number 
+\param u2 number 
+\param v2 number 
+
+\returns 
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,getParameter}
+\LuaClassUp{HUDElement}
+
+Generic parameter retrieval method. 
+
+\code
+function HUDElement:getParameter(name)
+\endcode
+
+\param name The name of the parameter to get 
+
+\returns String value of parameter, blank if not found 
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setParameter}
+\LuaClassUp{HUDElement}
+
+Generic parameter setting method. 
+
+\code
+function HUDElement:setParameter(name,value)
+\endcode
+
+\param name The name of the parameter to set 
+\param value string value
+
+\returns 
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,getMaterialName}
+\LuaClassUp{HUDElement}
+
+
+\code
+function HUDElement:getMaterialName()
+\endcode
+
+\returns Gets the name of the material this element uses
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setMaterialName}
+\LuaClassUp{HUDElement}
+
+Sets the name of the material this element will use. 
+
+\code
+function HUDElement:setMaterialName(materialName)
+\endcode
+
+\param materialName the name of the material 
+
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,getMaterialAlpha}
+\LuaClassUp{HUDElement}
+
+Gets the alpha of the texture this element's material.
+
+
+\code
+function HUDElement:getMaterialAlpha()
+\endcode
+
+\returns a number in [0-1]
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setMaterialAlpha}
+\LuaClassUp{HUDElement}
+
+Sets the alpha of the texture this element's material.
+
+
+\code
+function HUDElement:setMaterialAlpha(alpha)
+\endcode
+
+\param alpha a number in [0-1]
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,getMaterialAlphaRejectValue}
+\LuaClassUp{HUDElement}
+
+Gets the alpha reject value. 
+
+\code
+function HUDElement:getMaterialAlphaRejectValue()
+\endcode
+
+\returns a integer number in [0-255]
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{HUDElement,setMaterialAlphaRejectValue}
+\LuaClassUp{HUDElement}
+
+Sets the alpha reject value. 
+
+\code
+function HUDElement:setMaterialAlphaRejectValue(value, isGreater)
+\endcode
+
+\param value a integer number in [0-255]
+\param isGreater bool
+
+\endpage
+
+<!-- ============================================ getHUD ============================================ -->
+\LuaClass{getHUD}
+
+Retrieves the named \LuaClassRef{HUD}
+
+\code
+function OgreKit.getHUD(name)
+\endcode
+
+\param name the \LuaClassRef{HUD} name.
+
+\returns the named \LuaClassRef{HUD}
+
+\endpage
+
+
 <!-- ============================================ Debugger ============================================ -->
 \LuaClass{Debugger}
 

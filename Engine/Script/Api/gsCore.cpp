@@ -812,6 +812,20 @@ float gsHUDElement::getMaterialAlpha()
 	return 1.f;
 }
 
+int gsHUDElement::getMaterialAlphaRejectValue()
+{
+	if (m_object)
+		return m_object->getMaterialAlphaRejectValue();
+
+	return 0;
+}
+
+void gsHUDElement::setMaterialAlphaRejectValue(int val, bool isGreater)
+{
+	if (m_object)
+		m_object->setMaterialAlphaRejectValue(val, isGreater);
+}
+
 void gsHUDElement::setMaterialAlpha(float factor)
 {
 	if (m_object)

@@ -7206,6 +7206,59 @@ fail:
 }
 
 
+static int _wrap_HUDElement_getMaterialAlphaRejectValue(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsHUDElement::getMaterialAlphaRejectValue",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::getMaterialAlphaRejectValue",1,"gsHUDElement *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("HUDElement_getMaterialAlphaRejectValue",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  result = (int)(arg1)->getMaterialAlphaRejectValue();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_HUDElement_setMaterialAlphaRejectValue(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  int arg2 ;
+  bool arg3 ;
+  
+  SWIG_check_num_args("gsHUDElement::setMaterialAlphaRejectValue",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsHUDElement::setMaterialAlphaRejectValue",1,"gsHUDElement *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsHUDElement::setMaterialAlphaRejectValue",2,"int");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("gsHUDElement::setMaterialAlphaRejectValue",3,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("HUDElement_setMaterialAlphaRejectValue",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (lua_toboolean(L, 3)!=0);
+  (arg1)->setMaterialAlphaRejectValue(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_HUDElement(void *obj) {
 gsHUDElement *arg1 = (gsHUDElement *) obj;
 delete arg1;
@@ -7221,6 +7274,8 @@ static swig_lua_method swig_gsHUDElement_methods[] = {
     {"setMaterialName", _wrap_HUDElement_setMaterialName}, 
     {"getMaterialAlpha", _wrap_HUDElement_getMaterialAlpha}, 
     {"setMaterialAlpha", _wrap_HUDElement_setMaterialAlpha}, 
+    {"getMaterialAlphaRejectValue", _wrap_HUDElement_getMaterialAlphaRejectValue}, 
+    {"setMaterialAlphaRejectValue", _wrap_HUDElement_setMaterialAlphaRejectValue}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsHUDElement_attributes[] = {

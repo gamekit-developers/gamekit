@@ -131,6 +131,44 @@ void gkHUDElement::setMaterialAlpha(float factor)
 	}
 }
 
+void gkHUDElement::setMaterialAlphaRejectValue(int val, bool isGreater)
+{
+	if (!m_element) return;
+	int alpha = gkClamp(val, 0, 255);
+	try
+	{
+		Ogre::MaterialPtr material = m_element->getMaterial();
+		Ogre::Pass* pass = material->getTechnique(0)->getPass(0);
+		if (isGreater)
+			pass->setAlphaRejectSettings(Ogre::CMPF_GREATER, alpha);
+		else
+			pass->setAlphaRejectSettings(Ogre::CMPF_LESS_EQUAL, alpha);
+	}
+	catch (Ogre::Exception& e)
+	{
+		gkPrintf("HUD Error: %s", e.what());
+	}
+}
+
+int gkHUDElement::getMaterialAlphaRejectValue()
+{
+	if (!m_element) return 0;
+
+	try
+	{
+		Ogre::MaterialPtr material = m_element->getMaterial();
+		Ogre::Pass* pass = material->getTechnique(0)->getPass(0);
+		return pass->getAlphaRejectValue();
+	}
+	catch (Ogre::Exception& e)
+	{
+		gkPrintf("HUD Error: %s", e.what());
+	}
+
+	return 0;
+}
+
+
 float gkHUDElement::getMaterialAlpha()
 {
 	return m_alphaBlend > 1.f ? 1.f : m_alphaBlend;
