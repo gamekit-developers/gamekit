@@ -1441,7 +1441,7 @@ void gkScene::updateObjectsAnimations(const gkScalar tick)
 		while (it.hasMoreElements())
 			it.getNext()->updateAnimationBlender(animtick);
 
-		m_endObjects.clear(true);
+		//m_endObjects.clear(true);
 	}
 
 }
