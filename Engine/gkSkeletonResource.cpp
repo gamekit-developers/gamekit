@@ -63,14 +63,14 @@ void gkSkeletonResource::copyBones(gkSkeletonResource& other)
 		Bones::Iterator biter = other.m_bones.iterator();
 		while (biter.hasMoreElements())
 		{
-			gkBone* bone = biter.getNext().second;
-			gkBone* parent = bone->getParent();
-			if (parent)
+			gkBone* sBone = biter.getNext().second;
+			gkBone* sParent = sBone->getParent();
+			if (sParent)
 			{
-				gkBone* dest = getBone(bone->getName());
-				GK_ASSERT(dest && getBone(parent->getName()));
-				dest->setParent(getBone(parent->getName()));
-				dest->setRestPosition(bone->getPose());
+				gkBone* dBone = getBone(sBone->getName());     GK_ASSERT(dBone);
+				gkBone* dParent = getBone(sParent->getName()); GK_ASSERT(dParent);
+				dBone->setParent(dParent);
+				dBone->setRestPosition(sBone->getRest());
 			}
 		}
 	}

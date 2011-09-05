@@ -63,7 +63,7 @@ protected:
 	gkLevel m_level;
 
 	gkGamePlayer* m_player;
-	gkGamePlayer* m_enemy;
+	utArray<gkGamePlayer*> m_enemies;
 
 	gkKeyboard* m_keyboard;
 	gkMouse* m_mouse;

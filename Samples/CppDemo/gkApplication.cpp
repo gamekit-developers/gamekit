@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	prefs.wintitle = "OgreKit C++ Testbed";
 	prefs.verbose = GK_CPP_VERBOSE_LOG;
 	//prefs.fsaa = true;
-	//prefs.debugPhysics = true;
+	prefs.debugPhysics = true;
 	//prefs.debugFps = true;
 	//prefs.grabInput = false;
 

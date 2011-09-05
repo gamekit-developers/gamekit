@@ -66,6 +66,23 @@ gkGamePlayer::~gkGamePlayer()
 	delete m_input;
 }
 
+void _setTransform(gkGameObject* gobj, gkGameObject* pobj)
+{
+	gkMatrix4 omat, pmat;
+
+	gobj->getProperties().m_transform.toMatrix(omat);
+	pobj->getProperties().m_transform.toMatrix(pmat);
+
+	omat = pmat.inverse() * omat;
+
+	gkTransformState st;
+	gkMathUtils::extractTransform(omat, st.loc, st.rot, st.scl);
+
+
+	// apply
+	gobj->setTransform(st);
+}
+
 gkGamePlayer* gkGamePlayer::clone()
 {
 	gkGamePlayer* player = new gkGamePlayer(m_levelData, true);
@@ -73,33 +90,34 @@ gkGamePlayer* gkGamePlayer::clone()
 
 	player->m_physics = dest->cloneObject(m_physics, 0, true);
 	player->m_skeleton = (gkSkeleton*)dest->cloneObject(m_skeleton, 0, true);
-	player->m_entity = (gkEntity*)dest->cloneObject(m_entity, 0);
+	player->m_entity = (gkEntity*)dest->cloneObject(m_entity, 0, false);
 	player->m_entity->setSkeleton(player->m_skeleton);
 	player->m_camera = 0;
+	player->m_zRot = 0;	
+	player->m_xRot = 0;	
 
-	player->m_zRot = dest->cloneObject(m_zRot, 0, true);
-	player->m_xRot = dest->cloneObject(m_xRot, 0, true);
-		
-	player->m_entity->createInstance();	
+	player->m_entity->createInstance();
 
-	player->m_physics->setTransform(m_physics->getTransform());
-	player->m_skeleton->setTransform(m_skeleton->getTransform());
-	player->m_entity->setTransform(m_entity->getTransform());
-	
-
-	player->m_zRot->setTransform(m_zRot->getTransform());
-	player->m_xRot->setTransform(m_xRot->getTransform());
-
-	player->m_physics->addChild(player->m_skeleton);
 	player->m_skeleton->addChild(player->m_entity);
-	player->m_zRot->addChild(player->m_xRot);
+	player->m_physics->addChild(player->m_skeleton);
+
+#if 0
+	_setTransform(player->m_entity, player->m_skeleton);
+	_setTransform(player->m_skeleton, player->m_physics);
+#else	
+	player->m_skeleton->setTransform(m_skeleton->getTransform());
+	player->m_entity->setTransform(m_entity->getTransform());	
+	player->m_physics->setTransform(m_physics->getTransform());
+#endif
+
+	
 
 	player->m_playerData.setup(player);
 	
 	player->loadConstraints();
 	player->loadAnimations();
 
-	player->m_physics->rotate(gkEuler(0,0,180)); //?
+	//player->m_physics->rotate(gkEuler(0,0,180)); //?
 
 	return player;
 }
@@ -229,18 +247,24 @@ void gkGamePlayer::loadConstraints()
 	props.m_mode |= GK_CONTACT;
 
 	// add constraint clamping
-	gkLimitRotConstraint* lr = new gkLimitRotConstraint();
-	lr->setLimitX(gkVector2(-90, 5));
-	dest->addConstraint(m_xRot, lr);
+	if (m_xRot)
+	{
+		gkLimitRotConstraint* lr = new gkLimitRotConstraint();
+		lr->setLimitX(gkVector2(-90, 5));
+		dest->addConstraint(m_xRot, lr);
+	}
 
-	gkLimitLocConstraint* ll = new gkLimitLocConstraint();
-	ll->setMinX(-30.f);
-	ll->setMaxX(30.f);
-	ll->setMinY(-30.f);
-	ll->setMaxY(30.f);
-	ll->setMinZ(0.f);
-	ll->setMaxZ(30.f);
-	dest->addConstraint(m_physics, ll);
+	if (m_physics)
+	{
+		gkLimitLocConstraint* ll = new gkLimitLocConstraint();
+		ll->setMinX(-30.f);
+		ll->setMaxX(30.f);
+		ll->setMinY(-30.f);
+		ll->setMaxY(30.f);
+		ll->setMinZ(0.f);
+		ll->setMaxZ(30.f);
+		dest->addConstraint(m_physics, ll);
+	}
 
 	if (m_camera)
 	{
@@ -261,7 +285,6 @@ void gkGamePlayer::loadHuds()
 	{
 		m_currentState = m_momoData->getChild("m_momoData/m_currentState");
 		m_momoData->show();
-
 	}
 	
 	m_cameraData = gkHUDManager::getSingleton().getOrCreate("Camera_StateOverlay");
