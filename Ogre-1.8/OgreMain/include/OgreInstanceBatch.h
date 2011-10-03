@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2009 Torus Knot Software Ltd
+Copyright (c) 2000-2011 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -128,6 +128,10 @@ namespace Ogre
 		/// Tells that the list of entity instances with shared transforms has changed
 		bool mTransformSharingDirty;
 
+		//When true remove the memory of the VertexData we've created because no one else will
+		bool mRemoveOwnVertexData;
+		//When true remove the memory of the IndexData we've created because no one else will
+		bool mRemoveOwnIndexData;
 
 		virtual void setupVertices( const SubMesh* baseSubMesh ) = 0;
 		virtual void setupIndices( const SubMesh* baseSubMesh ) = 0;

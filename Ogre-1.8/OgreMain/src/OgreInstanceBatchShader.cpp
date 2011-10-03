@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2009 Torus Knot Software Ltd
+Copyright (c) 2000-2011 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -65,19 +65,22 @@ namespace Ogre
 				const GpuConstantDefinition &constDef = itor.getNext();
 				if( constDef.constType == GCT_MATRIX_3X4 ||
 					constDef.constType == GCT_MATRIX_4X3 ||		//OGL GLSL bitches without this
+					constDef.constType == GCT_MATRIX_2X4 ||
 					constDef.constType == GCT_FLOAT4			//OGL GLSL bitches without this
 					&& constDef.isFloat() )
 				{
 					const GpuProgramParameters::AutoConstantEntry *entry =
 									vertexParam->_findRawAutoConstantEntryFloat( constDef.physicalIndex );
-					if( entry && entry->paramType == GpuProgramParameters::ACT_WORLD_MATRIX_ARRAY_3x4 )
+					if( entry && (entry->paramType == GpuProgramParameters::ACT_WORLD_MATRIX_ARRAY_3x4 || entry->paramType == GpuProgramParameters::ACT_WORLD_DUALQUATERNION_ARRAY_2x4))
 					{
 						//Material is correctly done!
 						size_t arraySize = constDef.arraySize;
 
 						//Deal with GL "hacky" way of doing 4x3 matrices
-						if( constDef.constType == GCT_FLOAT4 )
+						if(entry->paramType == GpuProgramParameters::ACT_WORLD_MATRIX_ARRAY_3x4 && constDef.constType == GCT_FLOAT4)
 							arraySize /= 3;
+						else if(entry->paramType == GpuProgramParameters::ACT_WORLD_DUALQUATERNION_ARRAY_2x4 && constDef.constType == GCT_FLOAT4)
+							arraySize /= 2;
 
 						//Check the num of arrays
 						size_t retVal = arraySize / numBones;
@@ -88,7 +91,8 @@ namespace Ogre
 								retVal = 0xFFFF / baseSubMesh->vertexData->vertexCount;
 						}
 
-						if( retVal < 3 )
+						if((retVal < 3 && entry->paramType == GpuProgramParameters::ACT_WORLD_MATRIX_ARRAY_3x4) ||
+							(retVal < 2 && entry->paramType == GpuProgramParameters::ACT_WORLD_DUALQUATERNION_ARRAY_2x4))
 						{
 							LogManager::getSingleton().logMessage( "InstanceBatchShader: Mesh " +
 										mMeshReference->getName() + " using material " +
@@ -124,6 +128,7 @@ namespace Ogre
 	void InstanceBatchShader::setupVertices( const SubMesh* baseSubMesh )
 	{
 		mRenderOperation.vertexData = OGRE_NEW VertexData();
+		mRemoveOwnVertexData = true; //Raise flag to remove our own vertex data in the end (not always needed)
 
 		VertexData *thisVertexData = mRenderOperation.vertexData;
 		VertexData *baseVertexData = baseSubMesh->vertexData;
@@ -205,6 +210,7 @@ namespace Ogre
 	void InstanceBatchShader::setupIndices( const SubMesh* baseSubMesh )
 	{
 		mRenderOperation.indexData = OGRE_NEW IndexData();
+		mRemoveOwnIndexData = true;	//Raise flag to remove our own index data in the end (not always needed)
 
 		IndexData *thisIndexData = mRenderOperation.indexData;
 		IndexData *baseIndexData = baseSubMesh->indexData;

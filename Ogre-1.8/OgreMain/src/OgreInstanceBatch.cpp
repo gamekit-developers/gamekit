@@ -55,7 +55,9 @@ namespace Ogre
 				mMaterialLodIndex( 0 ),
 				mTechnSupportsSkeletal( true ),
 				mCachedCamera( 0 ),
-				mTransformSharingDirty(true)
+				mTransformSharingDirty(true),
+				mRemoveOwnVertexData(false),
+				mRemoveOwnIndexData(false)
 	{
 		assert( mInstancesPerBatch );
 
@@ -83,6 +85,12 @@ namespace Ogre
 			sceneNode->detachAllObjects();
 			sceneNode->getParentSceneNode()->removeAndDestroyChild( sceneNode->getName() );
 		}
+
+		if( mRemoveOwnVertexData )
+			OGRE_DELETE mRenderOperation.vertexData;
+		if( mRemoveOwnIndexData )
+			OGRE_DELETE mRenderOperation.indexData;
+
 	}
 
 	void InstanceBatch::_setInstancesPerBatch( size_t instancesPerBatch )
@@ -114,19 +122,29 @@ namespace Ogre
 		InstancedEntityVec::const_iterator itor = mInstancedEntities.begin();
 		InstancedEntityVec::const_iterator end  = mInstancedEntities.end();
 
+		Real maxScale = 0;
 		while( itor != end )
 		{
+			InstancedEntity* ent = (*itor);
 			//Only increase the bounding box for those objects we know are in the scene
-			if( (*itor)->isInScene() )
-				mFullBoundingBox.merge( (*itor)->getWorldBoundingBox(true) );
+			if( ent->isInScene() )
+			{
+				maxScale = std::max(maxScale, ent->getMaxScaleCoef());
+				mFullBoundingBox.merge( ent->_getDerivedPosition() );
+			}
 
 			++itor;
 		}
 
+		Real addToBound = maxScale * _getMeshReference()->getBoundingSphereRadius();
+		mFullBoundingBox.setMaximum(mFullBoundingBox.getMaximum() + addToBound);
+		mFullBoundingBox.setMinimum(mFullBoundingBox.getMinimum() - addToBound);
+
+
 		mBoundingRadius = Math::boundingRadiusFromAABB( mFullBoundingBox );
 
 		//Tell the SceneManager our bounds have changed
-		getParentSceneNode()->_updateBounds();
+		getParentSceneNode()->needUpdate();
 
 		mBoundsDirty	= false;
 		mBoundsUpdated	= true;
@@ -241,7 +259,7 @@ namespace Ogre
 			retVal = mUnusedEntities.back();
 			mUnusedEntities.pop_back();
 
-			retVal->mInUse = true;
+			retVal->setInUse(true);
 		}
 
 		return retVal;
@@ -260,7 +278,7 @@ namespace Ogre
 		if( instancedEntity->getParentSceneNode() )
 			instancedEntity->getParentSceneNode()->detachObject( instancedEntity );
 
-		instancedEntity->mInUse = false;
+		instancedEntity->setInUse(false);
 		instancedEntity->stopSharingTransform();
 
 		//Put it back into the queue
@@ -274,7 +292,7 @@ namespace Ogre
 
 		while( itor != end )
 		{
-			if( (*itor)->mInUse )
+			if( (*itor)->isInUse() )
 				outEntities.push_back( *itor );
 			++itor;
 		}
@@ -294,22 +312,22 @@ namespace Ogre
 	void InstanceBatch::defragmentBatchDoCull( InstancedEntityVec &usedEntities )
 	{
 		//Get the the entity closest to the minimum bbox edge and put into "first"
-		InstancedEntityVec::const_iterator itor	= usedEntities.begin();
-		InstancedEntityVec::const_iterator end	= usedEntities.end();
+		InstancedEntityVec::const_iterator itor   = usedEntities.begin();
+		InstancedEntityVec::const_iterator end   = usedEntities.end();
 
 		Vector3 vMinPos = Vector3::ZERO, firstPos = Vector3::ZERO;
 		InstancedEntity *first = 0;
 
 		if( !usedEntities.empty() )
 		{
-			first		= *usedEntities.begin();
-			firstPos	= first->getParentNode()->_getDerivedPosition();
-			vMinPos		= first->getParentNode()->_getDerivedPosition();
+			first      = *usedEntities.begin();
+			firstPos   = first->_getDerivedPosition();
+			vMinPos      = first->_getDerivedPosition();
 		}
 
 		while( itor != end )
 		{
-			const Vector3 &vPos		= (*itor)->getParentNode()->_getDerivedPosition();
+			const Vector3 &vPos      = (*itor)->_getDerivedPosition();
 
 			vMinPos.x = std::min( vMinPos.x, vPos.x );
 			vMinPos.y = std::min( vMinPos.y, vPos.y );
@@ -317,7 +335,7 @@ namespace Ogre
 
 			if( vMinPos.squaredDistance( vPos ) < vMinPos.squaredDistance( firstPos ) )
 			{
-				firstPos	= vPos;
+				firstPos   = vPos;
 			}
 
 			++itor;
@@ -326,21 +344,21 @@ namespace Ogre
 		//Now collect entities closest to 'first'
 		while( !usedEntities.empty() && mInstancedEntities.size() < mInstancesPerBatch )
 		{
-			InstancedEntityVec::iterator closest	= usedEntities.begin();
+			InstancedEntityVec::iterator closest   = usedEntities.begin();
 			InstancedEntityVec::iterator it         = usedEntities.begin();
 			InstancedEntityVec::iterator e          = usedEntities.end();
 
 			Vector3 closestPos;
-			closestPos = (*closest)->getParentNode()->_getDerivedPosition();
+			closestPos = (*closest)->_getDerivedPosition();
 
 			while( it != e )
 			{
-				const Vector3 &vPos	= (*it)->getParentNode()->_getDerivedPosition();
+				const Vector3 &vPos   = (*it)->_getDerivedPosition();
 
 				if( firstPos.squaredDistance( vPos ) < firstPos.squaredDistance( closestPos ) )
 				{
-					closest		= it;
-					closestPos	= vPos;
+					closest      = it;
+					closestPos   = vPos;
 				}
 
 				++it;
@@ -402,7 +420,7 @@ namespace Ogre
 	//-----------------------------------------------------------------------
 	void InstanceBatch::_boundsDirty(void)
 	{
-		if( !mBoundsDirty )
+		if( mCreator && !mBoundsDirty ) 
 			mCreator->_addDirtyBatch( this );
 		mBoundsDirty = true;
 	}

@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2009 Torus Knot Software Ltd
+Copyright (c) 2000-2011 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -386,7 +386,7 @@ namespace Ogre {
                 OverlayManager& oMgr = OverlayManager::getSingleton();
                 vpWidth = (Real) (oMgr.getViewportWidth());
                 vpHeight = (Real) (oMgr.getViewportHeight());
-
+				
                 mPixelScaleX = 1.0f / (10000.0f * (vpWidth / vpHeight));
                 mPixelScaleY = 1.0f /  10000.0f;
 

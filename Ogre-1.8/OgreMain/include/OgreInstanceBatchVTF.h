@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2009 Torus Knot Software Ltd
+Copyright (c) 2000-2011 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -75,6 +75,7 @@ namespace Ogre
 	{
 	protected:
 		typedef vector<uint8>::type HWBoneIdxVec;
+		typedef vector<float>::type HWBoneWgtVec;
 		typedef vector<Matrix4>::type Matrix4Vec;
 
 		size_t					mMatricesPerInstance; //number of bone matrices per instance
@@ -87,12 +88,18 @@ namespace Ogre
 		size_t					mWidthFloatsPadding;
 		size_t					mMaxFloatsPerLine;
 
+		size_t					mRowLength;
+		size_t 					mWeightCount;
+		//Temporary array used to store 3x4 matrices before they are converted to dual quaternions
+		float* 					mTempTransformsArray3x4;
+
 		// The state of the usage of bone matrix lookup
 		bool mUseBoneMatrixLookup;
 		size_t mMaxLookupTableInstances;
 
-		//When true remove the memory of the VertexData & index we've created because no one else will
-		bool					mRemoveOwnVertexData;
+		bool mUseBoneDualQuaternions;
+		bool mForceOneWeight;
+		bool mUseOneWeight;
 
 		/** Clones the base material so it can have it's own vertex texture, and also
 			clones it's shadow caster materials, if it has any
@@ -105,6 +112,12 @@ namespace Ogre
 		*/
 		void retrieveBoneIdx( VertexData *baseVertexData, HWBoneIdxVec &outBoneIdx );
 
+		/** @see: retrieveBoneIdx()
+			Assumes outBoneIdx has enough space (twice the base submesh vertex count, one for each weight)
+			Assumes outBoneWgt has enough space (twice the base submesh vertex count, one for each weight)
+		*/
+		void retrieveBoneIdxWithWeights(VertexData *baseVertexData, HWBoneIdxVec &outBoneIdx, HWBoneWgtVec &outBoneWgt);
+
 		/** Setups the material to use a vertex texture */
 		void setupMaterialToUseVTF( TextureType textureType, MaterialPtr &material );
 
@@ -113,8 +126,10 @@ namespace Ogre
 
 		/** Creates 2 TEXCOORD semantics that will be used to sample the vertex texture */
 		virtual void createVertexSemantics( VertexData *thisVertexData, VertexData *baseVertexData,
-									const HWBoneIdxVec &hwBoneIdx ) = 0;
+									const HWBoneIdxVec &hwBoneIdx, const HWBoneWgtVec &hwBoneWgt) = 0;
 
+		size_t convert3x4MatricesToDualQuaternions(float* matrices, size_t numOfMatrices, float* outDualQuaternions);
+									
 		/** Keeps filling the VTF with world matrix data */
 		void updateVertexTexture(void);
 
@@ -130,7 +145,7 @@ namespace Ogre
 	public:
 		BaseInstanceBatchVTF( InstanceManager *creator, MeshPtr &meshReference, const MaterialPtr &material,
 							size_t instancesPerBatch, const Mesh::IndexMap *indexToBoneMap,
-							const String &batchName );
+							const String &batchName);
 		virtual ~BaseInstanceBatchVTF();
 
 		/** @See InstanceBatch::buildFrom */
@@ -156,12 +171,27 @@ namespace Ogre
 		This value needs to be set before adding any instanced entities
 		*/
 		void setBoneMatrixLookup(bool enable, size_t maxLookupTableInstances) { assert(mInstancedEntities.empty()); 
-			mUseBoneMatrixLookup = enable; }
+			mUseBoneMatrixLookup = enable; mMaxLookupTableInstances = maxLookupTableInstances; }
 
 		/** Tells whether to use bone matrix lookup
 		@See setBoneMatrixLookup()
 		*/
 		bool useBoneMatrixLookup() const { return mUseBoneMatrixLookup; }
+
+		void setBoneDualQuaternions(bool enable) { assert(mInstancedEntities.empty());
+			mUseBoneDualQuaternions = enable; mRowLength = (mUseBoneDualQuaternions ? 2 : 3); }
+
+		bool useBoneDualQuaternions() const { return mUseBoneDualQuaternions; }
+
+		void setForceOneWeight(bool enable) {  assert(mInstancedEntities.empty());
+			mForceOneWeight = enable; }
+
+		bool forceOneWeight() const { return mForceOneWeight; }
+
+		void setUseOneWeight(bool enable) {  assert(mInstancedEntities.empty());
+			mUseOneWeight = enable; }
+
+		bool useOneWeight() const { return mUseOneWeight; }
 
 		/** @See InstanceBatch::useBoneWorldMatrices()	*/
 		virtual bool useBoneWorldMatrices() const { return !mUseBoneMatrixLookup; }
@@ -179,13 +209,13 @@ namespace Ogre
 
 		/** Creates 2 TEXCOORD semantics that will be used to sample the vertex texture */
 		void createVertexSemantics( VertexData *thisVertexData, VertexData *baseVertexData,
-			const HWBoneIdxVec &hwBoneIdx );
+			const HWBoneIdxVec &hwBoneIdx, const HWBoneWgtVec &hwBoneWgt );
 
 		virtual bool matricesToghetherPerRow() const { return false; }
 	public:
 		InstanceBatchVTF( InstanceManager *creator, MeshPtr &meshReference, const MaterialPtr &material,
 							size_t instancesPerBatch, const Mesh::IndexMap *indexToBoneMap,
-							const String &batchName );
+							const String &batchName);
 		virtual ~InstanceBatchVTF();
 
 		/** @See InstanceBatch::calculateMaxNumInstances */

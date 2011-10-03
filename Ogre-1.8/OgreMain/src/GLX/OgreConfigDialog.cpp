@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2009 Torus Knot Software Ltd
+Copyright (c) 2000-2011 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,6 @@ THE SOFTWARE.
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #include <X11/Xaw/Command.h>

@@ -74,12 +74,6 @@ namespace Ogre
 
 			++itor;
 		}
-
-		//Free the shared RenderOperation since it's our responsibility
-		if( mSharedRenderOperation.vertexData )
-			OGRE_DELETE mSharedRenderOperation.vertexData;
-		if( mSharedRenderOperation.indexData )
-			OGRE_DELETE mSharedRenderOperation.indexData;
 	}
 	//----------------------------------------------------------------------
 	void InstanceManager::setInstancesPerBatch( size_t instancesPerBatch )
@@ -127,6 +121,9 @@ namespace Ogre
 		case TextureVTF:
 			batch = OGRE_NEW InstanceBatchVTF( this, mMeshReference, mat, suggestedSize,
 													0, mName + "/TempBatch" );
+			static_cast<InstanceBatchVTF*>(batch)->setBoneDualQuaternions(mInstancingFlags & IM_USEBONEDUALQUATERNIONS);
+			static_cast<InstanceBatchVTF*>(batch)->setUseOneWeight(mInstancingFlags & IM_USEONEWEIGHT);
+			static_cast<InstanceBatchVTF*>(batch)->setForceOneWeight(mInstancingFlags & IM_FORCEONEWEIGHT);
 			break;
 		case HWInstancingBasic:
 			batch = OGRE_NEW InstanceBatchHW( this, mMeshReference, mat, suggestedSize,
@@ -136,6 +133,9 @@ namespace Ogre
 			batch = OGRE_NEW InstanceBatchHW_VTF( this, mMeshReference, mat, suggestedSize,
 													0, mName + "/TempBatch" );
 			static_cast<InstanceBatchHW_VTF*>(batch)->setBoneMatrixLookup(mInstancingFlags & IM_VTFBONEMATRIXLOOKUP, mMaxLookupTableInstances);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setBoneDualQuaternions(mInstancingFlags & IM_USEBONEDUALQUATERNIONS);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setUseOneWeight(mInstancingFlags & IM_USEONEWEIGHT);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setForceOneWeight(mInstancingFlags & IM_FORCEONEWEIGHT);
 			break;
 		default:
 			OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED,
@@ -208,6 +208,9 @@ namespace Ogre
 			batch = OGRE_NEW InstanceBatchVTF( this, mMeshReference, mat, mInstancesPerBatch,
 													&idxMap, mName + "/InstanceBatch_" +
 													StringConverter::toString(mIdCount++) );
+			static_cast<InstanceBatchVTF*>(batch)->setBoneDualQuaternions(mInstancingFlags & IM_USEBONEDUALQUATERNIONS);
+			static_cast<InstanceBatchVTF*>(batch)->setUseOneWeight(mInstancingFlags & IM_USEONEWEIGHT);
+			static_cast<InstanceBatchVTF*>(batch)->setForceOneWeight(mInstancingFlags & IM_FORCEONEWEIGHT);
 			break;
 		case HWInstancingBasic:
 			batch = OGRE_NEW InstanceBatchHW( this, mMeshReference, mat, mInstancesPerBatch,
@@ -219,6 +222,9 @@ namespace Ogre
 													&idxMap, mName + "/InstanceBatch_" +
 													StringConverter::toString(mIdCount++) );
 			static_cast<InstanceBatchHW_VTF*>(batch)->setBoneMatrixLookup(mInstancingFlags & IM_VTFBONEMATRIXLOOKUP, mMaxLookupTableInstances);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setBoneDualQuaternions(mInstancingFlags & IM_USEBONEDUALQUATERNIONS);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setUseOneWeight(mInstancingFlags & IM_USEONEWEIGHT);
+			static_cast<InstanceBatchHW_VTF*>(batch)->setForceOneWeight(mInstancingFlags & IM_FORCEONEWEIGHT);
 			break;
 		default:
 			OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED,

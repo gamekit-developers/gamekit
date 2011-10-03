@@ -61,6 +61,7 @@ namespace Ogre
 	void InstanceBatchHW_VTF::setupVertices( const SubMesh* baseSubMesh )
 	{
 		mRenderOperation.vertexData = OGRE_NEW VertexData();
+		mRemoveOwnVertexData = true; //Raise flag to remove our own vertex data in the end (not always needed)
 
 		VertexData *thisVertexData = mRenderOperation.vertexData;
 		VertexData *baseVertexData = baseSubMesh->vertexData;
@@ -88,18 +89,42 @@ namespace Ogre
 
 		//Remove the blend weights & indices
 		HWBoneIdxVec hwBoneIdx;
-		hwBoneIdx.resize( baseVertexData->vertexCount, 0 );
+		HWBoneWgtVec hwBoneWgt;
+
+		const VertexElement *veWeights = baseVertexData->vertexDeclaration->findElementBySemantic( VES_BLEND_WEIGHTS );	
+		mWeightCount = forceOneWeight() ? 1 : veWeights->getSize() / sizeof(float);
+
+		hwBoneIdx.resize( baseVertexData->vertexCount * mWeightCount, 0 );
+
 		if( mMeshReference->hasSkeleton() && !mMeshReference->getSkeleton().isNull() )
 		{
-			retrieveBoneIdx( baseVertexData, hwBoneIdx );
-
-			thisVertexData->vertexDeclaration->removeElement( VES_BLEND_INDICES );
-			thisVertexData->vertexDeclaration->removeElement( VES_BLEND_WEIGHTS );
-			thisVertexData->vertexDeclaration->closeGapsInSource();
+			if(mWeightCount > 1)
+			{
+				hwBoneWgt.resize( baseVertexData->vertexCount * mWeightCount, 0 );
+				retrieveBoneIdxWithWeights(baseVertexData, hwBoneIdx, hwBoneWgt);
+			}
+			else
+			{
+				retrieveBoneIdx( baseVertexData, hwBoneIdx );
+			const VertexElement* pElement = thisVertexData->vertexDeclaration->findElementBySemantic(VES_BLEND_INDICES);
+			if (pElement) 
+			{
+				unsigned short skelDataSource = pElement->getSource();
+				thisVertexData->vertexDeclaration->removeElement( VES_BLEND_INDICES );
+				thisVertexData->vertexDeclaration->removeElement( VES_BLEND_WEIGHTS );
+				if (thisVertexData->vertexDeclaration->findElementsBySource(skelDataSource).empty())
+				{
+					thisVertexData->vertexDeclaration->closeGapsInSource();
+					thisVertexData->vertexBufferBinding->unsetBinding(skelDataSource);
+					VertexBufferBinding::BindingIndexMap tmpMap;
+					thisVertexData->vertexBufferBinding->closeGaps(tmpMap);
+				}
+			}
+			}
 		}
 
 		createVertexTexture( baseSubMesh );
-		createVertexSemantics( thisVertexData, baseVertexData, hwBoneIdx );
+		createVertexSemantics( thisVertexData, baseVertexData, hwBoneIdx, hwBoneWgt);
 	}
 	//-----------------------------------------------------------------------
 	void InstanceBatchHW_VTF::setupIndices( const SubMesh* baseSubMesh )
@@ -107,11 +132,13 @@ namespace Ogre
 		//We could use just a reference, but the InstanceManager will in the end attampt to delete
 		//the pointer, and we can't give it something that doesn't belong to us.
 		mRenderOperation.indexData = baseSubMesh->indexData->clone( true );
+		mRemoveOwnIndexData = true;	//Raise flag to remove our own index data in the end (not always needed)
 	}
 	//-----------------------------------------------------------------------
 	void InstanceBatchHW_VTF::createVertexSemantics( VertexData *thisVertexData,
 														 VertexData *baseVertexData,
-														 const HWBoneIdxVec &hwBoneIdx )
+														 const HWBoneIdxVec &hwBoneIdx,
+														 const HWBoneWgtVec& hwBoneWgt)
 	{
 		const float texWidth  = static_cast<float>(mMatrixTexture->getWidth());
 		const float texHeight = static_cast<float>(mMatrixTexture->getHeight());
@@ -119,9 +146,25 @@ namespace Ogre
 		//Only one weight per vertex is supported. It would not only be complex, but prohibitively slow.
 		//Put them in a new buffer, since it's 16 bytes aligned :-)
 		unsigned short newSource = thisVertexData->vertexDeclaration->getMaxSource() + 1;
-		thisVertexData->vertexDeclaration->addElement( newSource, 0, VET_FLOAT4, VES_TEXTURE_COORDINATES,
-									thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() );
 
+		size_t offset = 0;
+
+		size_t maxFloatsPerVector = 4;
+
+		//Can fit two dual quaternions in every float4, but only one 3x4 matrix
+		for(size_t i = 0; i < mWeightCount; i += maxFloatsPerVector / mRowLength)
+		{
+			offset += thisVertexData->vertexDeclaration->addElement( newSource, offset, VET_FLOAT4, VES_TEXTURE_COORDINATES,
+										thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() ).getSize();
+		}
+
+		//Add the weights (supports up to four, which is Ogre's limit)
+		if(mWeightCount > 1)
+		{
+			offset += thisVertexData->vertexDeclaration->addElement(newSource, offset, VET_FLOAT4, VES_BLEND_WEIGHTS,
+										thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() ).getSize();
+		}
+		
 		//Create our own vertex buffer
 		HardwareVertexBufferSharedPtr vertexBuffer =
 			HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -133,25 +176,59 @@ namespace Ogre
 		float *thisFloat = static_cast<float*>(vertexBuffer->lock(HardwareBuffer::HBL_DISCARD));
 
 		//Create the UVs to sample from the right bone/matrix
-		for( size_t j=0; j<baseVertexData->vertexCount; ++j )
+		for( size_t j=0; j < baseVertexData->vertexCount * mWeightCount; j += mWeightCount)
 		{
-			for( size_t k=0; k<3; ++k )
+			size_t numberOfMatricesInLine = 0;
+			
+			//Write the matrices, adding padding as needed
+			for(size_t i = 0; i < mWeightCount; ++i)
 			{
-				//Only calculate U (not V) since all matrices are in the same row. We use the instanced
-				//(repeated) buffer to tell how much U & V we need to offset
-				size_t instanceIdx = hwBoneIdx[j] * 3 + k;
-				*thisFloat++ = instanceIdx / texWidth;
+				//Write the matrix
+				for( size_t k=0; k < mRowLength; ++k)
+				{
+					//Only calculate U (not V) since all matrices are in the same row. We use the instanced
+					//(repeated) buffer to tell how much U & V we need to offset
+					size_t instanceIdx = hwBoneIdx[j+i] * mRowLength + k;
+					*thisFloat++ = instanceIdx / texWidth;
+				}
+
+				++numberOfMatricesInLine;
+
+				//If another matrix can't be fit, we're on another line, or if this is the last weight
+				if((numberOfMatricesInLine + 1) * mRowLength > maxFloatsPerVector || (i+1) == mWeightCount)
+				{
+					//Place zeroes in the remaining coordinates
+					for ( size_t k=mRowLength * numberOfMatricesInLine; k < maxFloatsPerVector; ++k)
+					{
+						*thisFloat++ = 0.0f;
+					}
+
+					numberOfMatricesInLine = 0;
+				}
 			}
 
-			//Put a zero in the 4th U coordinate (it's not really used, but it's handy)
-			*thisFloat++ = 0;
+			//Don't need to write weights if there is only one
+			if(mWeightCount > 1)
+			{
+				//Write the weights
+				for(size_t i = 0; i < mWeightCount; ++i)
+				{
+					*thisFloat++ = hwBoneWgt[j+i];
+				}
+
+				//Write the empty space
+				for(size_t i = mWeightCount; i < maxFloatsPerVector; ++i)
+				{
+					*thisFloat++ = 0.0f;
+				}
+			}
 		}
 
 		vertexBuffer->unlock();
 
 		//Now create the instance buffer that will be incremented per instance, contains UV offsets
 		newSource = thisVertexData->vertexDeclaration->getMaxSource() + 1;
-		size_t offset = thisVertexData->vertexDeclaration->addElement( newSource, 0, VET_FLOAT2, VES_TEXTURE_COORDINATES,
+		offset = thisVertexData->vertexDeclaration->addElement( newSource, 0, VET_FLOAT2, VES_TEXTURE_COORDINATES,
 									thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() ).getSize();
 		if (useBoneMatrixLookup())
 		{
@@ -163,6 +240,8 @@ namespace Ogre
 				thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() ).getSize();
 			offset += thisVertexData->vertexDeclaration->addElement( newSource, offset, VET_FLOAT4, VES_TEXTURE_COORDINATES,
 				thisVertexData->vertexDeclaration->getNextFreeTextureCoordinate() ).getSize();
+			//Add two floats of padding here? or earlier?
+			//If not using bone matrix lookup, is it ok that it is 8 bytes since divides evenly into 16
 
 		}
 
@@ -216,14 +295,14 @@ namespace Ogre
 					(entity->findVisible(currentCamera)))
 				{
 					size_t matrixIndex = useMatrixLookup ? entity->mTransformLookupNumber : i;
-					size_t instanceIdx = matrixIndex * mMatricesPerInstance * 3;
+					size_t instanceIdx = matrixIndex * mMatricesPerInstance * mRowLength;
 					*thisVec = ((instanceIdx % maxPixelsPerLine) / texWidth) - texelOffsets.x;
 					*(thisVec + 1) = ((instanceIdx / maxPixelsPerLine) / texHeight) - texelOffsets.y;
 					thisVec += 2;
 
 					if (useMatrixLookup)
 					{
-						const Matrix4& mat =  entity->getParentNode()->_getFullTransform();
+						const Matrix4& mat =  entity->_getParentNodeFullTransform();
 						*(thisVec)     = mat[0][0];
 						*(thisVec + 1) = mat[0][1];
 						*(thisVec + 2) = mat[0][2];
@@ -268,7 +347,7 @@ namespace Ogre
 			//we need another 3 for the unique world transform of each instanced entity
 			neededTextureCoord += 3;
 		}
-		if( baseSubMesh->vertexData->vertexDeclaration->getNextFreeTextureCoordinate() >= 8 - neededTextureCoord )
+		if( baseSubMesh->vertexData->vertexDeclaration->getNextFreeTextureCoordinate() > 8 - neededTextureCoord )
 		{
 			OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED, 
 					String("Given mesh must have at least ") + 
@@ -294,10 +373,10 @@ namespace Ogre
 			//TODO: Check PF_FLOAT32_RGBA is supported (should be, since it was the 1st one)
 			const size_t numBones = std::max<size_t>( 1, baseSubMesh->blendIndexToBoneIndexMap.size() );
 
-			const size_t maxUsableWidth = c_maxTexWidthHW - (c_maxTexWidthHW % (numBones * 3));
+			const size_t maxUsableWidth = c_maxTexWidthHW - (c_maxTexWidthHW % (numBones * mRowLength));
 
 			//See InstanceBatchHW::calculateMaxNumInstances for the 65535
-			retVal = std::min<size_t>( 65535, maxUsableWidth * c_maxTexHeightHW / 3 / numBones );
+			retVal = std::min<size_t>( 65535, maxUsableWidth * c_maxTexHeightHW / mRowLength / numBones );
 
 			if( flags & IM_VTFBESTFIT )
 			{
@@ -308,13 +387,13 @@ namespace Ogre
 				//Do the same as in createVertexTexture(), but changing c_maxTexWidthHW for maxUsableWidth
 				const size_t numWorldMatrices = instancesPerBatch * numBones;
 
-				size_t texWidth  = std::min<size_t>( numWorldMatrices * 3, maxUsableWidth );
-				size_t texHeight = numWorldMatrices * 3 / maxUsableWidth;
+				size_t texWidth  = std::min<size_t>( numWorldMatrices * mRowLength, maxUsableWidth );
+				size_t texHeight = numWorldMatrices * mRowLength / maxUsableWidth;
 
-				const size_t remainder = (numWorldMatrices * 3) % maxUsableWidth;
+				const size_t remainder = (numWorldMatrices * mRowLength) % maxUsableWidth;
 
 				if( remainder && texHeight > 0 )
-					retVal = static_cast<size_t>(texWidth * texHeight / 3.0f / (float)(numBones));
+					retVal = static_cast<size_t>(texWidth * texHeight / (float)mRowLength / (float)(numBones));
 			}
 		}
 
@@ -349,11 +428,19 @@ namespace Ogre
 		
 		std::vector<bool> writtenPositions(getMaxLookupTableInstances(), false);
 
-		size_t floatPerEntity = mMatricesPerInstance * 3 * 4;
+		size_t floatPerEntity = mMatricesPerInstance * mRowLength * 4;
 		size_t entitiesPerPadding = (size_t)(mMaxFloatsPerLine / floatPerEntity);
 		
 		size_t instanceCount = mInstancedEntities.size();
 		size_t updatedInstances = 0;
+
+		float* transforms;
+		//If using dual quaternions, write 3x4 matrices to a temporary buffer, then convert to dual quaternions
+		if(mUseBoneDualQuaternions)
+		{
+			transforms = mTempTransformsArray3x4;
+		}
+		
 		for(size_t i = 0 ; i < instanceCount ; ++i)
 		{
 			InstancedEntity* entity = mInstancedEntities[i];
@@ -371,13 +458,24 @@ namespace Ogre
 			{
 				float* pDest = pSource + floatPerEntity * textureLookupPosition + 
 					(size_t)(textureLookupPosition / entitiesPerPadding) * mWidthFloatsPadding;
+
+				if(!mUseBoneDualQuaternions)
+				{
+					transforms = pDest;
+				}
+				
 				if( mMeshReference->hasSkeleton() )
 					mDirtyAnimation |= entity->_updateAnimation();
 
-				const size_t floatsWritten = entity->getTransforms3x4( pDest );
+				size_t floatsWritten = entity->getTransforms3x4( transforms );
 
 				if( !useMatrixLookup && mManager->getCameraRelativeRendering() )
-					makeMatrixCameraRelative3x4( pDest, floatsWritten );
+					makeMatrixCameraRelative3x4( transforms, floatsWritten );
+
+				if(mUseBoneDualQuaternions)
+				{
+					floatsWritten = convert3x4MatricesToDualQuaternions(transforms, floatsWritten / 12, pDest);
+				}
 
 				if (useMatrixLookup)
 				{
@@ -405,7 +503,7 @@ namespace Ogre
 	void InstanceBatchHW_VTF::_boundsDirty(void)
 	{
 		//Don't update if we're static, but still mark we're dirty
-		if( !mBoundsDirty && !mKeepStatic )
+		if( !mBoundsDirty && !mKeepStatic && mCreator)
 			mCreator->_addDirtyBatch( this );
 		mBoundsDirty = true;
 	}
