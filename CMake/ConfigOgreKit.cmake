@@ -552,8 +552,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_OPENSTEER_INCLUDE})
 	endif()
 		
-	configure_file(${CMAKE_SOURCE_DIR}/CMake/Templates/OgreKitSettings.in ${CMAKE_BINARY_DIR}/Engine/gkSettings.h)
-	include_directories(${CMAKE_BINARY_DIR}/Engine)
+	configure_file(${ROOT}/CMake/Templates/OgreKitSettings.in ${CMAKE_BINARY_DIR}/Engine/gkSettings.h)
+	include_directories(${ROOT}/Engine ${CMAKE_BINARY_DIR}/Engine)
 		
 	#Check Build Settings
 	if (APPLE)
