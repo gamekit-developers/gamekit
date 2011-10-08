@@ -261,8 +261,12 @@ namespace Ogre {
         GLuint fb, tid;
         GLenum target = GL_TEXTURE_2D;
 
-        for(size_t x=0; x<PF_COUNT; ++x)
-        {
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID		
+        for(size_t x=1; x<PF_COUNT; ++x)		
+#else
+		for(size_t x=0; x<PF_COUNT; ++x)
+#endif
+        {		
             mProps[x].valid = false;
 
 			// Fetch GL format token
