@@ -91,7 +91,7 @@ ProgramWriter* ProgramWriterManager::createProgramWriter( const String& language
 	}
 	
 	OGRE_EXCEPT( Exception::ERR_ITEM_NOT_FOUND, 
-		"Could not create ShaderProgramWriter unknown language ", 
+		"Could not create ShaderProgramWriter unknown language " + language, 
 		"ShaderProgramWriterManager::createProgramWriter" );
 }
 

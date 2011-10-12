@@ -321,6 +321,12 @@ namespace Ogre {
                 // The function name must always main.
                 os << "void main() {" << ENDL;
 
+                if(gpuType == GPT_FRAGMENT_PROGRAM)
+                {
+                    os << "vec4	outputColor;" << ENDL;
+                }
+
+
                 // Write local parameters.
                 const ShaderParameterList& localParams = curFunction->getLocalParameters();
                 ShaderParameterConstIterator itParam = localParams.begin();
@@ -523,6 +529,10 @@ namespace Ogre {
                     localOs << ENDL;
                     os << localOs.str();
                 }
+                if(gpuType == GPT_FRAGMENT_PROGRAM)
+                {
+                    os << "gl_FragColor=outputColor;" << ENDL;
+                }
                 os << "}" << ENDL;
             }
             os << ENDL;
@@ -649,7 +659,7 @@ namespace Ogre {
                         pParam->getSemantic() == Parameter::SPS_COLOR)
                 {					
                     // GLSL ES fragment program has to always write gl_FragColor
-                    mInputToGLStatesMap[pParam->getName()] = "gl_FragColor";						
+                    mInputToGLStatesMap[pParam->getName()] = "outputColor";						
                 }
             }
         }
