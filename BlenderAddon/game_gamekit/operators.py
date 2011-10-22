@@ -109,7 +109,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         cfg.set('fardistanceshadow', str(gks.gk_far_dist_shadow))
         
         if cfg.write_config(self.properties.filepath) is False:
-            self.report('ERROR', "Error saving gamekit comfig to: " + self.properties.filepath)
+            self.report({'ERROR'}, "Error saving gamekit comfig to: " + self.properties.filepath)
             return {'CANCELLED'}
         
         return {'FINISHED'}
@@ -151,13 +151,13 @@ class GamekitStartGameOperator(bpy.types.Operator):
         # save temporary game .blend         
         returnv = bpy.ops.wm.save_as_mainfile(filepath=gamefile, compress= False, relative_remap=True, check_existing=True, copy=True)
         if returnv != {'FINISHED'}:
-            self.report('ERROR',"Could not save temporary blend file: " + gamefile)
+            self.report({'ERROR'},"Could not save temporary blend file: " + gamefile)
             return {'CANCELLED'}
 
         # save temporary game .cfg
         returnv = bpy.ops.scene.gamekit_export_startup_config(filepath=cfgfile)
         if returnv != {'FINISHED'}:
-            self.report('ERROR',"Could not save temporary cfg file: " + cfgfile)
+            self.report({'ERROR'},"Could not save temporary cfg file: " + cfgfile)
             return {'CANCELLED'}
 
         # launch game
@@ -167,13 +167,13 @@ class GamekitStartGameOperator(bpy.types.Operator):
             returnv = subp.returncode
 
             if returnv != 0:
-                self.report('ERROR',"Gamekit exited anormally.")
+                self.report({'ERROR'},"Gamekit exited anormally.")
                 return {'CANCELLED'}
 
-            self.report('INFO',"Gamekit exited normally.")
+            self.report({'INFO'},"Gamekit exited normally.")
 
         except OSError as er:
-            self.report('ERROR', "Could not launch: " + cmdline + ". In directory:" + workingdir+ ". Error: " + str(er))
+            self.report({'ERROR'}, "Could not launch: " + cmdline + ". In directory:" + workingdir+ ". Error: " + str(er))
             return {'CANCELLED'}
             
         return {'FINISHED'}
