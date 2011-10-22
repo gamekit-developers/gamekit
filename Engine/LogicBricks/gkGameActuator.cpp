@@ -69,4 +69,6 @@ void gkGameActuator::execute(void)
 		printf("todo!\n");
 		break;
 	}
+	setPulse(BM_OFF);
+
 }

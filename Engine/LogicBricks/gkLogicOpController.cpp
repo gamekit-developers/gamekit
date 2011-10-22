@@ -73,7 +73,7 @@ void gkLogicOpController::execute(void)
 				pos = sens->isPositive();
 				if (pos)
 					doUpdate = true;
-				if (m_op == OP_NOR && pos)
+				if (m_op == OP_NOR)
 					m_isInverter = true;
 
 				if (doUpdate)
@@ -128,7 +128,7 @@ void gkLogicOpController::execute(void)
 				else
 					doUpdate = doUpdate && pos;
 
-				if (m_op == OP_NAND && pos)
+				if (m_op == OP_NAND)
 					m_isInverter = true;
 
 			}

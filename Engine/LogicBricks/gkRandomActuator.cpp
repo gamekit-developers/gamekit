@@ -134,4 +134,7 @@ void gkRandomActuator::execute(void)
 		gkMath::Exp(0.f);
 		return;
 	}
+
+	setPulse(BM_OFF);
+
 }

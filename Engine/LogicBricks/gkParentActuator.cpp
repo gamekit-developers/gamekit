@@ -72,4 +72,6 @@ void gkParentActuator::execute(void)
 		m_object->clearParentInPlace();
 		break;
 	}
+	setPulse(BM_OFF);
+
 }

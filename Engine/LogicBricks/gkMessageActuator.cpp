@@ -47,6 +47,9 @@ gkLogicBrick* gkMessageActuator::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkMessageActuator::execute(void)
 {
+	if (isPulseOff())
+		return;
+
 	gkString from, body;
 
 	from = m_object->getName();
@@ -61,4 +64,6 @@ void gkMessageActuator::execute(void)
 	}
 
 	gkMessageManager::getSingleton().sendMessage(from, m_to, m_subject, body);
+
+	setPulse(BM_OFF);
 }

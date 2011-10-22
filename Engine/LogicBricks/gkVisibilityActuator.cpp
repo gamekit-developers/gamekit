@@ -61,4 +61,7 @@ void gkVisibilityActuator::execute(void)
 		return;
 
 	m_object->getNode()->setVisible((m_flag & VA_INVIS_FLAG) == 0, (m_flag & VA_CHILDREN) != 0);
+
+	setPulse(BM_OFF);
+
 }

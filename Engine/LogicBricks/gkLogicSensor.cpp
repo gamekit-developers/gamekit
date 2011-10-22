@@ -161,7 +161,7 @@ void gkLogicSensor::execute(void)
 	}
 
 	bool doQuery = false;
-	if ((++m_tick > m_freq))
+	if ((++m_tick > m_freq) || m_pulse == PM_IDLE)
 	{
 		doQuery = true;
 		m_tick = 0;
@@ -189,9 +189,19 @@ void gkLogicSensor::execute(void)
 		else
 		{
 			if (m_pulse & PM_TRUE)
-				doDispatch = (lp != m_positive) || m_positive;
+			{
+				if (!m_invert)
+					doDispatch = (lp != m_positive) || m_positive;
+				else
+					doDispatch = (lp != m_positive) || !m_positive;
+			}
 			if (m_pulse & PM_FALSE)
-				doDispatch = (lp != m_positive) || !m_positive;
+			{
+				if (!m_invert)
+					doDispatch = (lp != m_positive) || !m_positive;
+				else
+					doDispatch = (lp != m_positive) || m_positive;
+			}
 		}
 
 		// Tap mode (Switch On->Switch Off)

@@ -90,5 +90,6 @@ void gkSceneActuator::execute(void)
 	case SC_RESUME:
 		break;
 	}
+	setPulse(BM_OFF);
 
 }

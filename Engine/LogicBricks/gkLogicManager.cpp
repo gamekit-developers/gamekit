@@ -175,15 +175,32 @@ void gkLogicManager::push(gkLogicSensor* a, gkLogicController* b, bool stateValu
 
 
 
-void gkLogicManager::push(gkLogicController* a, gkLogicActuator* b, bool stateValue)
+void gkLogicManager::push(gkLogicController* ctrl, gkLogicActuator* act, bool stateValue)
 {
-	if (a->inActiveState())
+	if (ctrl->inActiveState())
 	{
 #ifdef GK_DEBUG_EXEC
-		if (b->wantsDebug())
-			dsPrintf("Push: Controller %s to Actuator %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
+		if (act->wantsDebug())
+			dsPrintf("Push: Controller %s to Actuator %s: %s\n", ctrl->getName().c_str(), act->getName().c_str(), (stateValue ? "On" : "Off"));
 #endif
-		push(b, a, m_ain, stateValue);
+
+
+		if (!m_tickActuators.find(act))
+		{
+			m_tickActuators.push_back(act);
+			act->setPulse(stateValue ? BM_ON : BM_OFF);
+		}
+		else if (stateValue)
+		{
+			act->setPulse(true);
+		}
+
+		if (!act->isActive())
+		{
+			act->setActive(true);
+			m_ain.push_back(act);
+		}
+
 	}
 }
 
@@ -296,6 +313,7 @@ void gkLogicManager::clearActuators(void)
 		if (m_ain.empty())
 			m_ain.clear(true);
 	}
+	m_tickActuators.clear();
 }
 
 void gkLogicManager::sort(void)

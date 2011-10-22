@@ -89,11 +89,6 @@ void gkPropertyActuator::execute(void)
 				}
 			}
 		}
-		else
-		{
-			setPulse(BM_OFF);
-			return;
-		}
 	}
 
 	if (m_cur && !m_cur->isReadOnly())
@@ -118,4 +113,7 @@ void gkPropertyActuator::execute(void)
 			break;
 		}
 	}
+
+	setPulse(BM_OFF);
+
 }

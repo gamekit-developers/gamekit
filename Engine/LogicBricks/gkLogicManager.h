@@ -61,6 +61,7 @@ public:
 	typedef gkAbstractDispatcher*    gkAbstractDispatcherPtr;
 	typedef utArray<gkLogicBrick*>   Bricks;
 	typedef utHashSet<gkLogicBrick*> BrickSet;
+	typedef utList<gkLogicActuator*> TickActuators;
 
 protected:
 
@@ -71,6 +72,8 @@ protected:
 	bool                        m_sort;
 
 	BrickSet					m_updateBricks;
+	TickActuators 				m_tickActuators; // actuators that get processed by the controller.
+											//  This list makes it possible to set the actuator-state to false and only change to true if needed
 
 	void push(gkLogicBrick* a, gkLogicBrick* b, Bricks& in, bool stateValue);
 
