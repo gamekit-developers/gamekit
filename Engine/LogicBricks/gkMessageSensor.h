@@ -28,6 +28,7 @@
 #ifndef GKMESSAGESENSOR_H
 #define GKMESSAGESENSOR_H
 
+#include "gkGameObject.h"
 #include "gkLogicSensor.h"
 #include "gkMessageManager.h"
 
@@ -36,6 +37,8 @@ class gkMessageSensor : public gkLogicSensor
 private:
 	gkMessageManager::GenericMessageListener* m_listener;
 	utArray<gkMessageManager::Message>       m_messages;
+
+
 
 public:
 	gkMessageSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);

@@ -1786,6 +1786,9 @@ void gsDebugPrint(const char* str)
 	gkDebugScreen::printTo(str);
 }
 
+void sendMessage(const char* from,const char* to,const char* subject,const char* body){
+	gkMessageManager::getSingletonPtr()->sendMessage(from,to,subject,body);
+}
 
 
 bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)

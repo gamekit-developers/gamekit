@@ -33,7 +33,8 @@
 gkMessageSensor::gkMessageSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name)
 {
-	m_listener = new gkMessageManager::GenericMessageListener();
+	m_listener = new gkMessageManager::GenericMessageListener("",object->getName(),"");
+	m_listener->setAcceptEmptyTo(true);
 	gkMessageManager::getSingleton().addListener(m_listener);
 
 	m_dispatchType = DIS_CONSTANT;
@@ -74,8 +75,11 @@ bool gkMessageSensor::query(void)
 		while (iter.hasMoreElements())
 		{
 			gkMessageManager::Message m = iter.peekNext();
-
-			m_messages.push_back(m);
+			if (m.m_to==""
+					|| m.m_to == m_object->getName())
+			{
+				m_messages.push_back(m);
+			}
 			iter.getNext();
 		}
 	}

@@ -354,6 +354,8 @@ public:
 	bool isOn(void)      {BRICK_GET(isPulseOn(), false); }
 	bool isOff(void)     {BRICK_GET(isPulseOff(), false);}
 	bool isActive(void)  {BRICK_GET(isActive(), false);}
+	gkGameObject* getOwner(void);
+	gkLogicLink* getLogicObject(void){ return get()->getLink();}
 
 
 	void connect(gsListenerMode mode, gsSelf self, gsFunction func)
@@ -389,6 +391,7 @@ public:
 	void            setInvert(bool v)             { BRICK_SET(invert(v)); }
 	bool            isInverse(void)               { BRICK_GET(isInverse(), false); }
 
+	bool			isPositive(void) 				{ BRICK_GET(isPositive(),false); }
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Sensor);
 //	OGRE_KIT_TEMPLATE_NEW(gsSensor, gkLogicSensor);
@@ -652,6 +655,8 @@ public:
 class gsController : public gsBrick
 {
 public:
+	typedef utList<gkLogicBrick*> BrickList;
+
 	gsController();
 	~gsController();
 
@@ -659,6 +664,8 @@ public:
 	void link(gsSensor* sens);
 	void link(gsActuator* act);
 
+	gkLogicSensor* getSensor(gkString sensorName);
+	gkLogicActuator* getActuator(gkString actuatorName);
 
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Controller);

@@ -431,6 +431,12 @@ public:
 	
 	void playAnimation(const gkString& name, float blend);
 
+	// actually just calling not lua-enabled method!
+	gsProperty getProperty(const gkString& name) {return __getitem__(name);}
+	void        setProperty(const gkString& prop, bool  v) {__setitem__(prop,v);}
+	void       setProperty(const gkString& prop, float v){__setitem__(prop,v);}
+	void        setProperty(const gkString& prop, gkString v){__setitem__(prop,v.c_str());}
+
 	gsProperty  __getitem__(const gkString& prop);
 	void        __setitem__(const gkString& prop, bool  v);
 	void        __setitem__(const gkString& prop, float v);
@@ -533,7 +539,7 @@ public:
 	void clear(void);
 };
 
-
+extern void sendMessage(const char* from,const char* to,const char* subject,const char* body);
 
 extern void gsDebugPrint(const char* str);
 

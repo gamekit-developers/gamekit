@@ -56,10 +56,14 @@ public:
 	struct GenericMessageListener : public MessageListener
 	{
 		gkString m_fromFilter, m_toFilter, m_subjectFilter;
+		bool m_acceptEmptyTo;
 		utArray<Message> m_messages;
 
 		GenericMessageListener(gkString fromfilter = "", gkString tofilter = "", gkString subjectfilter = "")
-			:    m_fromFilter(fromfilter), m_toFilter(tofilter), m_subjectFilter(subjectfilter) {}
+			:    m_fromFilter(fromfilter), m_toFilter(tofilter), m_subjectFilter(subjectfilter), m_acceptEmptyTo(false) {}
+
+		void setAcceptEmptyTo(bool accept){this->m_acceptEmptyTo=accept;}
+		bool isAcceptingEmptyTo(){return this->m_acceptEmptyTo;}
 
 		~GenericMessageListener() {m_messages.clear();}
 

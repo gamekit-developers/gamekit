@@ -369,6 +369,9 @@ gkString gsBrick::getName(void)
 	return m_brick ? m_brick->getName() : "";
 }
 
+gkGameObject* gsBrick::getOwner(){
+	return get()->getObject();
+}
 
 
 #define GS_IMPLEMENT_DEFAULT_BRICK(base, cls) \
@@ -432,6 +435,14 @@ void gsController::link(gsActuator* act)
 {
 	if (act && act->get())
 		get()->link(act->get());
+}
+
+gkLogicSensor* gsController::getSensor(gkString sensorName) {
+	return get()->getLink()->findSensor(sensorName);
+}
+
+gkLogicActuator* gsController::getActuator(gkString actuatorName){
+	return get()->getLink()->findActuator(actuatorName);
 }
 
 
