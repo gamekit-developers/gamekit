@@ -126,7 +126,7 @@ gkGameObject* gkGameObject::clone(const gkString& name)
 
 void gkGameObject::cloneImpl(gkGameObject* clob)
 {
-	clob->m_activeLayer = clob->m_activeLayer;
+	clob->m_activeLayer = m_activeLayer;
 	clob->m_baseProps = m_baseProps;
 	clob->m_isClone = true;
 	clob->m_scene = m_scene;
