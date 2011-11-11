@@ -161,7 +161,7 @@ void gkLogicSensor::execute(void)
 	}
 
 	bool doQuery = false;
-	if ((++m_tick > m_freq) || m_pulse == PM_IDLE)
+	if (m_firstExec || (++m_tick > m_freq) || m_pulse == PM_IDLE)
 	{
 		doQuery = true;
 		m_tick = 0;
