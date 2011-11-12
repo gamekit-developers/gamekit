@@ -19626,6 +19626,32 @@ fail:
 }
 
 
+static int _wrap_EditObjectActuator_getLastCreatedObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEditObjectActuator *arg1 = (gsEditObjectActuator *) 0 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsEditObjectActuator::getLastCreatedObject",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEditObjectActuator::getLastCreatedObject",1,"gsEditObjectActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEditObjectActuator,0))){
+    SWIG_fail_ptr("EditObjectActuator_getLastCreatedObject",1,SWIGTYPE_p_gsEditObjectActuator);
+  }
+  
+  result = (gkGameObject *)(arg1)->getLastCreatedObject();
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_EditObjectActuator(void *obj) {
 gsEditObjectActuator *arg1 = (gsEditObjectActuator *) obj;
 delete arg1;
@@ -19643,6 +19669,7 @@ static swig_lua_method swig_gsEditObjectActuator_methods[] = {
     {"getLinearVelocity", _wrap_EditObjectActuator_getLinearVelocity}, 
     {"getAngularVelocity", _wrap_EditObjectActuator_getAngularVelocity}, 
     {"getLifeSpan", _wrap_EditObjectActuator_getLifeSpan}, 
+    {"getLastCreatedObject", _wrap_EditObjectActuator_getLastCreatedObject}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsEditObjectActuator_attributes[] = {

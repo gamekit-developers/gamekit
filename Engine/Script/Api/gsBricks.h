@@ -785,10 +785,10 @@ public:
 	gsVector3  getAngularVelocity(void)       {BRICK_GET( getAngV(), gsVector3(0, 0, 0) );}
 	int        getLifeSpan(void)              {BRICK_GET( getLifeSpan(), 0 );}
 
+	gkGameObject* getLastCreatedObject(void) {BRICK_GET( getLastCreatedObject(),0);}
 
 	OGRE_KIT_LOGIC_BRICK(EditObjectActuator);
 };
-
 
 
 

@@ -31,7 +31,7 @@
 
 
 
-class gkEditObjectActuator : public gkLogicActuator
+class gkEditObjectActuator : public gkLogicActuator, public gkInstancedManager::InstancedListener
 {
 public:
 
@@ -60,6 +60,7 @@ private:
 	bool        m_lvlocal, m_avlocal;
 	int         m_life, m_mode, m_dynMode;
 	gkString    m_obj;
+	gkGameObject* m_lastCreatedObject;
 
 	void addObject(void);
 	void endObject(void);
@@ -92,8 +93,13 @@ public:
 	GK_INLINE bool  getAngVL(void)                  const {return m_avlocal;}
 	GK_INLINE int   getLifeSpan(void)               const {return m_life;}
 
+	GK_INLINE gkGameObject* getLastCreatedObject(void) const {return m_lastCreatedObject;}
 
-
+	virtual void notifyInstanceDestroyed(gkInstancedObject* inst) {
+		if (m_lastCreatedObject==inst){
+			m_lastCreatedObject=NULL;
+		}
+	}
 
 	void execute(void);
 };

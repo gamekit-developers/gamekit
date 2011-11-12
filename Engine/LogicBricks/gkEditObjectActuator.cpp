@@ -32,19 +32,23 @@
 #include "gkCamera.h"
 #include "OgreCamera.h"
 #include "OgreSceneNode.h"
+#include "gkSceneManager.h"
+#include "gkGameObjectManager.h"
 
 
 
 gkEditObjectActuator::gkEditObjectActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:   gkLogicActuator(object, link, name), m_linv(0, 0, 0), m_angv(0, 0, 0),
-	    m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj("")
+	    m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj(""),m_lastCreatedObject(0)
 {
+	gkGameObjectManager::getSingletonPtr()->addInstanceListener(this);
 }
 
 
 
 gkEditObjectActuator::~gkEditObjectActuator()
 {
+	gkGameObjectManager::getSingletonPtr()->removeInstanceListener(this);
 }
 
 
@@ -82,6 +86,8 @@ void gkEditObjectActuator::addObject(void)
 			else
 			{
 				gkGameObject* nobj = scene->cloneObject(obj, m_life);
+
+				m_lastCreatedObject = nobj;
 
 				gkGameObjectProperties& props = nobj->getProperties();
 
@@ -126,7 +132,13 @@ void gkEditObjectActuator::addObject(void)
 void gkEditObjectActuator::endObject(void)
 {
 	if (m_object)
+	{
+		if (m_lastCreatedObject==m_object)
+		{
+			m_lastCreatedObject=NULL;
+		}
 		m_object->getOwner()->endObject(m_object);
+	}
 }
 
 void gkEditObjectActuator::trackToObject(void)
