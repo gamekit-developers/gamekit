@@ -86,7 +86,8 @@ public:
 	// If prop is empty and material is empty, return any old collision.
 	// If onlyActor is true, filter collision on actor settings (gkGameObjectProperties).
 	// If testAllMaterials is true, test all assigned opposed to only testing the first assigned.
-	bool sensorCollides(const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
+//	bool sensorCollides(const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
+	bool sensorCollides(const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials, utArray<gkGameObject*>* list=NULL);
 	static bool sensorTest(gkGameObject* ob, const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
 
 	static gkPhysicsController* castController(btCollisionObject* colObj);

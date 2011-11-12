@@ -45,7 +45,9 @@ public:
 class gkCollisionSensor : public gkLogicSensor
 {
 protected:
+	utArray<gkGameObject*> m_colObjList;
 	gkString m_material, m_prop;
+
 
 public:
 
@@ -60,6 +62,10 @@ public:
 	GK_INLINE void            setProperty(const gkString& prop)           {m_prop = prop;}
 	GK_INLINE const gkString& getMaterial(void)                     const {return m_material;}
 	GK_INLINE const gkString& getProperty(void)                     const {return m_prop;}
+	GK_INLINE const int 	  getHitObjectCount(void)               const {return m_colObjList.size();}
+	GK_INLINE const utArray<gkGameObject*> getHitObjects(void)      const {return m_colObjList;}
+	GK_INLINE  gkGameObject*  getHitObject(int nr)                        {if (nr< (int)m_colObjList.size()) return m_colObjList[nr];}
+
 
 };
 

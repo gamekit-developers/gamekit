@@ -14876,6 +14876,59 @@ fail:
 }
 
 
+static int _wrap_CollisionSensor_getHitObjectsCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCollisionSensor *arg1 = (gsCollisionSensor *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsCollisionSensor::getHitObjectsCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCollisionSensor::getHitObjectsCount",1,"gsCollisionSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCollisionSensor,0))){
+    SWIG_fail_ptr("CollisionSensor_getHitObjectsCount",1,SWIGTYPE_p_gsCollisionSensor);
+  }
+  
+  result = (int)(arg1)->getHitObjectsCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_CollisionSensor_getHitObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCollisionSensor *arg1 = (gsCollisionSensor *) 0 ;
+  int arg2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsCollisionSensor::getHitObject",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCollisionSensor::getHitObject",1,"gsCollisionSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsCollisionSensor::getHitObject",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCollisionSensor,0))){
+    SWIG_fail_ptr("CollisionSensor_getHitObject",1,SWIGTYPE_p_gsCollisionSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkGameObject *)(arg1)->getHitObject(arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_CollisionSensor(void *obj) {
 gsCollisionSensor *arg1 = (gsCollisionSensor *) obj;
 delete arg1;
@@ -14885,6 +14938,8 @@ static swig_lua_method swig_gsCollisionSensor_methods[] = {
     {"getMaterialName", _wrap_CollisionSensor_getMaterialName}, 
     {"setPropertyName", _wrap_CollisionSensor_setPropertyName}, 
     {"getPropertyName", _wrap_CollisionSensor_getPropertyName}, 
+    {"getHitObjectsCount", _wrap_CollisionSensor_getHitObjectsCount}, 
+    {"getHitObject", _wrap_CollisionSensor_getHitObject}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsCollisionSensor_attributes[] = {
@@ -15131,6 +15186,59 @@ fail:
 }
 
 
+static int _wrap_gsTouchSensor_getHitObjectsCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsTouchSensor::getHitObjectsCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsTouchSensor::getHitObjectsCount",1,"gsTouchSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_getHitObjectsCount",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  result = (int)(arg1)->getHitObjectsCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTouchSensor_getHitObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  int arg2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsTouchSensor::getHitObject",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsTouchSensor::getHitObject",1,"gsTouchSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsTouchSensor::getHitObject",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_getHitObject",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkGameObject *)(arg1)->getHitObject(arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_gsTouchSensor(void *obj) {
 gsTouchSensor *arg1 = (gsTouchSensor *) obj;
 delete arg1;
@@ -15140,6 +15248,8 @@ static swig_lua_method swig_gsTouchSensor_methods[] = {
     {"getMaterialName", _wrap_gsTouchSensor_getMaterialName}, 
     {"setPropertyName", _wrap_gsTouchSensor_setPropertyName}, 
     {"getPropertyName", _wrap_gsTouchSensor_getPropertyName}, 
+    {"getHitObjectsCount", _wrap_gsTouchSensor_getHitObjectsCount}, 
+    {"getHitObject", _wrap_gsTouchSensor_getHitObject}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsTouchSensor_attributes[] = {

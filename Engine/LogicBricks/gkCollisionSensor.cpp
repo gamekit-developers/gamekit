@@ -73,5 +73,7 @@ bool gkCollisionSensor::query(void)
 		return false;
 
 	bool isTouchSensorTODO = false;
-	return object->sensorCollides(m_prop, m_material, isTouchSensorTODO, isTouchSensorTODO);
+	return object->sensorCollides(m_prop, m_material, isTouchSensorTODO, isTouchSensorTODO,&m_colObjList);
+	//OLD-CALL: Just query if there is a collision! What objects collide is not registered
+	//return object->sensorCollides(m_prop, m_material, isTouchSensorTODO, isTouchSensorTODO);
 }

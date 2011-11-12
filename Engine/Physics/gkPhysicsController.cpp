@@ -189,17 +189,21 @@ bool gkPhysicsController::collidesWith(const gkString& name, gkContactInfo* cpy,
 
 
 
-bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials)
-{
 
+bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials, utArray<gkGameObject*>* collisionList)
+{
+	if (collisionList){
+		collisionList->clear();
+	}
 	if (onlyActor && !m_object->getProperties().isActor())
 		return false;
 
 
 	if (!m_localContacts.empty())
 	{
-		if (prop.empty() && material.empty())
+		if (!collisionList && prop.empty() && material.empty())
 		{
+			// there are contacts and we do not care about property, nor empty, nor we need a list of objects (list = NULL)
 			// any filter
 			return true;
 		}
@@ -227,38 +231,79 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 				{
 					if (!prop.empty())
 					{
-						if (gobj->hasVariable(prop))
-							return true;
+						if (gobj->hasVariable(prop)){
+							if (!collisionList){
+								return true;
+							}
+							else if (collisionList->find(gobj)==UT_NPOS)
+								collisionList->push_back(gobj);
+						}
 					}
 					else if (!material.empty())
 					{
 						if (gobj->hasSensorMaterial(material, !testAllMaterials))
-							return true;
+						{
+							if (!collisionList)
+							{
+								return true;
+							}
+							else if (collisionList->find(gobj)==UT_NPOS){
+								collisionList->push_back(gobj);
+							}
+						}
 					}
 				}
 			}
 			else
 			{
 				if (prop.empty() && material.empty())
-					return true;
+					if (!collisionList)
+					{
+						return true;
+					}
+					else if (collisionList->find(gobj)==UT_NPOS)
+					{
+						collisionList->push_back(gobj);
+					}
 
 				if (!prop.empty())
 				{
 					if (gobj->hasVariable(prop))
-						return true;
+					{
+						if (!collisionList)
+						{
+							return true;
+						}
+						else if (collisionList->find(gobj)==UT_NPOS)
+						{
+							collisionList->push_back(gobj);
+						}
+					}
 				}
 				else if (!material.empty())
 				{
-					if (gobj->hasSensorMaterial(material, !testAllMaterials))
-						return true;
+					if (gobj->hasSensorMaterial(material, !testAllMaterials)){
+						if (!collisionList)
+						{
+							return true;
+						}
+						else if (collisionList->find(gobj)==UT_NPOS)
+						{
+							collisionList->push_back(gobj);
+						}
+					}
 				}
 			}
 
 			++i;
 		}
 	}
-
-	return false;
+	if (!collisionList)
+		return false;
+	else if (collisionList->empty())
+		return false;
+	else
+		return true;
 }
 
 

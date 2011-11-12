@@ -391,7 +391,7 @@ public:
 	void            setInvert(bool v)             { BRICK_SET(invert(v)); }
 	bool            isInverse(void)               { BRICK_GET(isInverse(), false); }
 
-	bool			isPositive(void) 				{ BRICK_GET(isPositive(),false); }
+	bool			isPositive(void) 			  { BRICK_GET(isPositive(),false); }
 
 	OGRE_KIT_LOGIC_BRICK_BASE(Sensor);
 //	OGRE_KIT_TEMPLATE_NEW(gsSensor, gkLogicSensor);
@@ -408,7 +408,7 @@ public:
 	~gsActuatorSensor();
 
 	void      setActuatorName(const gkString& str)  { BRICK_SET(setActuatorName(str));  }
-	gkString  getActuatorName(void)                 { BRICK_GET(getActuatorName(), "");   }
+	gkString  getActuatorName(void)                 { BRICK_GET(getActuatorName(), ""); }
 
 	OGRE_KIT_LOGIC_BRICK(ActuatorSensor);
 };
@@ -442,6 +442,9 @@ public:
 	void      setPropertyName(const gkString& str)  { BRICK_SET(setProperty(str));  }
 	gkString  getPropertyName(void)                 { BRICK_GET(getProperty(), ""); }
 
+	int           getHitObjectsCount()              { return get()->getHitObjectCount(); }
+	gkGameObject* getHitObject(int nr)              { return get()->getHitObject(nr);    }
+
 	OGRE_KIT_LOGIC_BRICK(CollisionSensor);
 };
 
@@ -460,6 +463,9 @@ public:
 
 	void      setPropertyName(const gkString& str)  { BRICK_SET(setProperty(str));  }
 	gkString  getPropertyName(void)                 { BRICK_GET(getProperty(), ""); }
+
+	int     getHitObjectsCount() {return get()->getHitObjectCount();}
+	gkGameObject* getHitObject(int nr) { return get()->getHitObject(nr);}
 
 	OGRE_KIT_LOGIC_BRICK(TouchSensor);
 };
