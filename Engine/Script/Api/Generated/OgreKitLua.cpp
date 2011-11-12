@@ -16519,6 +16519,59 @@ fail:
 }
 
 
+static int _wrap_NearSensor_getNearObjectCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsNearSensor *arg1 = (gsNearSensor *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsNearSensor::getNearObjectCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsNearSensor::getNearObjectCount",1,"gsNearSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsNearSensor,0))){
+    SWIG_fail_ptr("NearSensor_getNearObjectCount",1,SWIGTYPE_p_gsNearSensor);
+  }
+  
+  result = (int)(arg1)->getNearObjectCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_NearSensor_getNearObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsNearSensor *arg1 = (gsNearSensor *) 0 ;
+  int arg2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsNearSensor::getNearObject",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsNearSensor::getNearObject",1,"gsNearSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsNearSensor::getNearObject",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsNearSensor,0))){
+    SWIG_fail_ptr("NearSensor_getNearObject",1,SWIGTYPE_p_gsNearSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkGameObject *)(arg1)->getNearObject(arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_NearSensor(void *obj) {
 gsNearSensor *arg1 = (gsNearSensor *) obj;
 delete arg1;
@@ -16532,6 +16585,8 @@ static swig_lua_method swig_gsNearSensor_methods[] = {
     {"getResetRange", _wrap_NearSensor_getResetRange}, 
     {"getMaterial", _wrap_NearSensor_getMaterial}, 
     {"getProperty", _wrap_NearSensor_getProperty}, 
+    {"getNearObjectCount", _wrap_NearSensor_getNearObjectCount}, 
+    {"getNearObject", _wrap_NearSensor_getNearObject}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsNearSensor_attributes[] = {

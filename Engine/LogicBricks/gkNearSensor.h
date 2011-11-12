@@ -36,6 +36,7 @@ private:
 	gkScalar    m_range, m_resetrange;
 	gkString    m_material, m_prop;
 	bool        m_previous;
+	utArray<gkGameObject*> m_nearObjList;
 
 public:
 
@@ -55,7 +56,9 @@ public:
 	GK_INLINE gkScalar getResetRange(void)          const {return m_resetrange;}
 	GK_INLINE const gkString& getMaterial(void)     const {return m_material;}
 	GK_INLINE const gkString& getProperty(void)     const {return m_prop;}
-
+	GK_INLINE const utArray<gkGameObject*> getNearObjects(void) const {return m_nearObjList;}
+	GK_INLINE const int getNearObjectCount(void) 	    const {return m_nearObjList.size();}
+	GK_INLINE const gkGameObject* getNearObject(int nr)  {return m_nearObjList[nr];}
 };
 
 #endif // GKNEARSENSOR_H

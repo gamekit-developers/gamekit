@@ -559,6 +559,9 @@ public:
 	gkString getMaterial(void)              {BRICK_GET(getMaterial(), "");}
 	gkString getProperty(void)              {BRICK_GET(getProperty(), "");}
 
+	int     getNearObjectCount()                 {return get()->getNearObjectCount();}
+	const   gkGameObject* getNearObject(int nr)  {return get()->getNearObject(nr);   }
+
 	OGRE_KIT_LOGIC_BRICK(NearSensor);
 };
 

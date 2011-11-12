@@ -55,6 +55,7 @@ gkLogicBrick* gkNearSensor::clone(gkLogicLink* link, gkGameObject* dest)
 
 bool gkNearSensor::query(void)
 {
+	m_nearObjList.clear();
 	gkScene* scene = m_object->getOwner();
 	gkDynamicsWorld* dyn = scene->getDynamicsWorld();
 
@@ -86,8 +87,8 @@ bool gkNearSensor::query(void)
 	if (exec.m_contactObjects.empty())
 		return m_previous = false;
 
-	if (m_material.empty() && m_prop.empty())
-		return m_previous = true;
+//	if (m_material.empty() && m_prop.empty())
+//		return m_previous = true;
 
 	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
 	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
@@ -95,12 +96,16 @@ bool gkNearSensor::query(void)
 	while (iter.hasMoreElements())
 	{
 		gkGameObject* ob = gkPhysicsController::castObject(iter.peekNext());
-
-		if (gkPhysicsController::sensorTest(ob, m_prop, m_material))
-			return m_previous = true;
+		if (ob!=m_object && gkPhysicsController::sensorTest(ob, m_prop, m_material)){
+			if (m_nearObjList.find(ob)==UT_NPOS){
+				m_nearObjList.push_back(ob);
+			}
+		}
 
 		iter.getNext();
 	}
-
-	return m_previous = false;
+	if (m_nearObjList.empty())
+		return m_previous = false;
+	else
+		return m_previous = true;
 }
