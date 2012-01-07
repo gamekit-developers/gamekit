@@ -4,8 +4,6 @@
 #  GLUT_FOUND, If false, do not try to use GLUT.
 # Also defined, but not for general use are:
 #  GLUT_glut_LIBRARY = the full path to the glut library.
-#  GLUT_Xmu_LIBRARY  = the full path to the Xmu library.
-#  GLUT_Xi_LIBRARY   = the full path to the Xi Library.
 
 #=============================================================================
 # Copyright 2001-2009 Kitware, Inc.
@@ -52,13 +50,6 @@ ELSE (WIN32)
       /usr/openwin/lib
       )
     
-    FIND_LIBRARY( GLUT_Xi_LIBRARY Xi
-      /usr/openwin/lib
-      )
-    
-    FIND_LIBRARY( GLUT_Xmu_LIBRARY Xmu
-      /usr/openwin/lib
-      )
     
   ENDIF (APPLE)
   
@@ -71,8 +62,6 @@ IF(GLUT_INCLUDE_DIR)
     # If not, we need some way to figure out what platform we are on.
     SET( GLUT_LIBRARIES
       ${GLUT_glut_LIBRARY}
-      ${GLUT_Xmu_LIBRARY}
-      ${GLUT_Xi_LIBRARY} 
       ${GLUT_cocoa_LIBRARY}
       )
     SET( GLUT_FOUND "YES" )
@@ -87,6 +76,4 @@ ENDIF(GLUT_INCLUDE_DIR)
 MARK_AS_ADVANCED(
   GLUT_INCLUDE_DIR
   GLUT_glut_LIBRARY
-  GLUT_Xmu_LIBRARY
-  GLUT_Xi_LIBRARY
   )
