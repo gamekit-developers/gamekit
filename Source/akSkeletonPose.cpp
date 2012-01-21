@@ -136,6 +136,7 @@ void akSkeletonPose::toLocalSpace(akSkeletonPose* dest) const
 		break;
 		
 	case SP_LOCAL_SPACE:
+	default:
 		for(i=0; i<count; i++)
 		{
 			dest->m_jointPoses[i] = m_jointPoses[i];
@@ -197,6 +198,7 @@ void akSkeletonPose::toModelSpace(akSkeletonPose* dest) const
 		break;
 	
 	case SP_MODEL_SPACE:
+	default:
 		for(i=0; i<count; i++)
 			dest->m_jointPoses[i] = m_jointPoses[i];
 		break;
@@ -209,12 +211,6 @@ void akSkeletonPose::fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)
 {
 	switch(m_space)
 	{
-	case SP_MODEL_SPACE:
-		for(int i=0; i<getNumJoints(); i++)
-		{
-			palette[i] = m_jointPoses[i].toMatrix();
-		}
-		break;
 	case SP_LOCAL_SPACE:
 		for(int i=0; i<getNumJoints(); i++)
 		{
@@ -247,6 +243,14 @@ void akSkeletonPose::fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)
 			}
 			else
 				palette[i] = jbp->toMatrix() * m_jointPoses[i].toMatrix();
+		}
+		break;
+		
+	case SP_MODEL_SPACE:
+	default:
+		for(int i=0; i<getNumJoints(); i++)
+		{
+			palette[i] = m_jointPoses[i].toMatrix();
 		}
 		break;
 	}
