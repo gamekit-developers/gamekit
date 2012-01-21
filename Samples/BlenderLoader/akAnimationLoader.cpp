@@ -5,7 +5,7 @@
 	
     Copyright (c) 2006-2010 Xavier T.
 	
-    Contributor(s): none yet.
+    Contributor(s): astojilj.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -387,8 +387,6 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 			if(!chan)
 			{
 				chan = new akAnimationChannel(akAnimationChannel::AC_TRANSFORM, chan_name);
-				
-				chan->setEulerRotation(true);
 				act->addChannel(chan);
 			}
 		}
@@ -410,6 +408,8 @@ void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animf
 			}
 			else if (transform_name == "rotation_euler")
 			{
+				chan->setEulerRotation(true);
+				
 				if (bfc->array_index == 0) code = akAnimationCurve::AC_CODE_ROT_EULER_X;
 				else if (bfc->array_index == 1) code = akAnimationCurve::AC_CODE_ROT_EULER_Y;
 				else if (bfc->array_index == 2) code = akAnimationCurve::AC_CODE_ROT_EULER_Z;
@@ -529,6 +529,9 @@ void akAnimationLoader::convertObject(akEntity* obj, Blender::Object* bobj, bool
 	else
 	{
 		convert25AnimData(obj, bobj->adt, animfps);
+		
+		if(bobj->parent && bobj->parent->type == OB_ARMATURE) 
+			convert25AnimData(obj, bobj->parent->adt, animfps);
 	}
 	
 	// object data
