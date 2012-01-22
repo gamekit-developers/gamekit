@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 
 	fp._setuid("BLENDEs"); //Prevent access from Blender. bFile only compare first 6 chars of uid.
 
-	fp.reflect(outFile.c_str());
+	fp.save(outFile.c_str());
 	long orgSize = getFileSize(inFile.c_str());
 	long redSize = getFileSize(outFile.c_str());
 	long diff = orgSize - redSize;

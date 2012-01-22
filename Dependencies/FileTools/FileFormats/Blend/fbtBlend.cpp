@@ -179,3 +179,9 @@ FBTsize fbtBlend::getFBTlength(void)
 {
 	return bfBlenderLen;
 }
+
+int fbtBlend::save(const char *path, const int mode)
+{
+	m_version = m_fileVersion;
+	return reflect(path, mode);
+}

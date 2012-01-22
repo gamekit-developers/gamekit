@@ -25,10 +25,10 @@
 
 set(File_SRC
     fbtFile.cpp
-    fbtTables.cpp
-    fbtBuilder.cpp
+    fbtTables.cpp    
     fbtTypes.cpp
     fbtStreams.cpp
+	fbtBuilder.cpp
 )
 
 set(File_HDR
@@ -38,6 +38,7 @@ set(File_HDR
     fbtTypes.h
     fbtConfig.h
     fbtStreams.h
+    fbtPlatformHeaders.h
 )
 
 # only for updating scanner 

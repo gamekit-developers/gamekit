@@ -64,13 +64,14 @@ struct fbtChunk
 	};
 
 	static int read(fbtFile::Chunk* dest, fbtStream* stream, int flags);
+	static int write(fbtFile::Chunk* src, fbtStream* stream);
 };
 
 
 
 
 fbtFile::fbtFile(const char* uid)
-	:   m_version(-1), m_fileHeader(0), m_uhid(uid), m_aluhid(0),
+	:   m_version(-1), m_fileVersion(0), m_fileHeader(0), m_uhid(uid), m_aluhid(0),
 	    m_memory(0), m_file(0), m_curFile(0)
 {
 }
@@ -85,8 +86,16 @@ fbtFile::~fbtFile()
 	MemoryChunk* node = (MemoryChunk*)m_chunks.first, *tnd;
 	while (node)
 	{
-		fbtFree(node->m_block);
-		fbtFree(node->m_newBlock);
+		if (node->m_block)
+		{
+			//printf("free  m_block: 0x%x\n", node->m_block);fflush(stdout);
+			fbtFree(node->m_block);
+		}
+		if (node->m_newBlock)
+		{
+			//printf("free m_newBlock: 0x%x\n", node->m_newBlock);fflush(stdout);
+			fbtFree(node->m_newBlock);
+		}
 
 		tnd  = node;
 		node = node->m_next;
@@ -179,7 +188,7 @@ int fbtFile::parseHeader(fbtStream* stream)
 	char* headerMagic = (m_header.ptr() + 7);
 
 	m_fileHeader = 0;
-	m_version = 0;
+	m_fileVersion = 0;
 
 	if (*(headerMagic++) == FM_64_BIT)
 	{
@@ -200,7 +209,7 @@ int fbtFile::parseHeader(fbtStream* stream)
 		m_fileHeader |= FH_ENDIAN_SWAP;
 
 
-	m_version = atoi(headerMagic);
+	m_fileVersion = atoi(headerMagic);
 
 	return FS_OK;
 }
@@ -257,7 +266,6 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 
 		if (chunk.m_code == SDNA)
 		{
-
 			chunk.m_code = DNA1;
 			stream->seek(-status, SEEK_CUR);
 			chunk.m_len = stream->size() - stream->position();
@@ -269,6 +277,7 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 
 
 		void* curPtr = fbtMalloc(chunk.m_len);
+		//printf("alloc curPtr: 0x%x\n", curPtr);fflush(stdout);
 		if (!curPtr)
 		{
 			FBT_MALLOC_FAILED;
@@ -309,6 +318,7 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 			if ((pos = m_map.find(chunk.m_old)) != FBT_NPOS)
 			{
 				fbtFree(curPtr);
+				curPtr = 0;
 				int result = fbtMemcmp(&m_map.at(pos)->m_chunk, &chunk, fbtChunk::BlockSize);
 				if (result != 0)
 				{
@@ -319,7 +329,9 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 #else
 			if (m_map.find(chunk.m_old) != FBT_NPOS)
 			{
+				//printf("free  curPtr: 0x%x\n", curPtr);
 				fbtFree(curPtr);
+				curPtr = 0;
 			}
 #endif
 			else
@@ -474,7 +486,18 @@ int fbtLinkCompiler::link(void)
 	return fbtFile::FS_OK;
 }
 
-void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FBT_PRIM_TYPE srctp, FBT_PRIM_TYPE dsttp, FBTsize malen)
+void copyValues(FBTbyte* srcPtr, FBTbyte* dstPtr, FBTsize srcElmSize, FBTsize dstElmSize, FBTsize len)
+{
+	FBTsize i;
+	for (i = 0; i < len; i++)
+	{
+		fbtMemcpy(srcPtr, dstPtr, srcElmSize);
+		srcPtr += srcElmSize;
+		dstElmSize += dstElmSize;
+	}
+}
+
+void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FBT_PRIM_TYPE srctp, FBT_PRIM_TYPE dsttp, FBTsize len)
 {
 #define GET_V(value, current, type, cast, ptr, match) \
 	if (current == type) \
@@ -495,7 +518,7 @@ void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FBT_PRIM_TYPE srctp, FBT_PRIM_T
 	double value = 0.0;
 
 	FBTsizeType i;
-	for (i = 0; i < malen; i++)
+	for (i = 0; i < len; i++)
 	{
 		int match = 0;
 		GET_V(value, srctp, FBT_PRIM_CHAR,    char,            srcPtr, match);
@@ -529,9 +552,9 @@ int fbtFile::link(void)
 	char* dst, *src;
 	FBTsize* dstPtr, *srcPtr;
 
-	bool needSwap = (m_fileHeader & FH_ENDIAN_SWAP) != 0;
+	bool endianSwap = (m_fileHeader & FH_ENDIAN_SWAP) != 0;
 
-	FBThash hk = fbtCharHashKey("Link").hash();
+	static const FBThash hk = fbtCharHashKey("Link").hash();
 
 
 	MemoryChunk* node;
@@ -550,6 +573,8 @@ int fbtFile::link(void)
 		{
 			FBTsize totSize = node->m_chunk.m_len;
 			node->m_newBlock = fbtMalloc(totSize);
+			//printf("alloc1 m_newBlock: 0x%x %d\n", node->m_newBlock, totSize);fflush(stdout);
+
 			if (!node->m_newBlock)
 			{
 				FBT_MALLOC_FAILED;
@@ -571,6 +596,8 @@ int fbtFile::link(void)
 
 
 		node->m_newBlock = fbtMalloc(totSize);
+		//printf("alloc2 m_newBlock: 0x%x %d\n", node->m_newBlock, totSize);fflush(stdout);
+
 		if (!node->m_newBlock)
 		{
 			FBT_MALLOC_FAILED;
@@ -600,6 +627,8 @@ int fbtFile::link(void)
 
 		if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
 		{
+			//printf("free  m_newBlock: 0x%x \n", node->m_newBlock);fflush(stdout);
+
 			fbtFree(node->m_newBlock);
 			node->m_newBlock = 0;
 
@@ -632,11 +661,6 @@ int fbtFile::link(void)
 
 				const fbtName& nameD = m_memory->m_name[dstStrc->m_key.k16[1]];
 				const fbtName& nameS = m_file->m_name[srcStrc->m_key.k16[1]];
-
-
-
-				// Take the minimum length of any array.
-				mlen = dstStrc->m_len > srcStrc->m_len ? srcStrc->m_len : dstStrc->m_len;
 
 
 				if (nameD.m_ptrCount > 0)
@@ -697,11 +721,24 @@ int fbtFile::link(void)
 				}
 				else
 				{
-					bool needCast = (dstStrc->m_flag & fbtStruct::NEED_CAST) != 0;
+					FBTsize dstElmSize = dstStrc->m_len / nameD.m_arraySize;
+					FBTsize srcElmSize = srcStrc->m_len / nameS.m_arraySize;
 
-					FBTsize* tmpPtr = dstPtr;
-					FBTsize  tmpLen = mlen;
-					FBTsize  tmpALen = 0;
+					bool needCast = (dstStrc->m_flag & fbtStruct::NEED_CAST) != 0;
+					bool needSwap = endianSwap && srcElmSize > 1;
+
+					if (!needCast && !needSwap && srcStrc->m_val.k32[0] == dstStrc->m_val.k32[0]) //same type
+					{						
+						// Take the minimum length of any array.
+						mlen = fbtMin(srcStrc->m_len, dstStrc->m_len);
+
+						fbtMemcpy(dstPtr, srcPtr, mlen);
+						continue;
+					}
+
+					FBTbyte* dstBPtr = reinterpret_cast<FBTbyte*>(dstPtr);
+					FBTbyte* srcBPtr = reinterpret_cast<FBTbyte*>(srcPtr);
+
 					FBT_PRIM_TYPE stp = FBT_PRIM_UNKNOWN, dtp  = FBT_PRIM_UNKNOWN;
 
 					if (needCast || needSwap)
@@ -712,36 +749,36 @@ int fbtFile::link(void)
 						FBT_ASSERT(fbtIsNumberType(stp) && fbtIsNumberType(dtp) && stp != dtp);
 					}
 
-					if (needCast)
+					FBTsize alen = fbtMin(nameS.m_arraySize, nameD.m_arraySize);
+					FBTsize elen = fbtMin(srcElmSize, dstElmSize);
+
+					FBTbyte tmpBuf[8] = {0, };
+					FBTsize i;
+					for (i = 0; i < alen; i++)
 					{
-						//printf("need cast: %s %s\n", m_memory->getStructName(dstStrc), m_memory->getStructType(dstStrc));
-						tmpLen = srcStrc->m_len;
-						tmpPtr = (FBTsize*)fbtMalloc(tmpLen);						
-					}
+						FBTbyte* tmp = srcBPtr;
+						if (needSwap)
+						{
+							tmp = tmpBuf;
+							fbtMemcpy(tmpBuf, srcBPtr, srcElmSize);
 
-					fbtMemcpy(tmpPtr, srcPtr, tmpLen);
+							if (stp == FBT_PRIM_SHORT || stp == FBT_PRIM_USHORT) 
+								fbtSwap16((FBTuint16*)tmpBuf, 1);
+							else if (stp >= FBT_PRIM_INT && stp <= FBT_PRIM_FLOAT) 
+								fbtSwap32((FBTuint32*)tmpBuf, 1);
+							else if (stp == FBT_PRIM_DOUBLE)
+								fbtSwap64((FBTuint64*)tmpBuf, 1);
+							else
+								fbtMemset(tmpBuf, 0, sizeof(tmpBuf)); //unknown type
+						}
+						
+						if (needCast)
+							castValue((FBTsize*)tmp, (FBTsize*)dstBPtr, stp, dtp, 1);
+						else
+							fbtMemcpy(dstBPtr, tmp, elen);
 
-					if (needSwap)
-					{
-						char* cp = (char*)tmpPtr;
-
-						malen = nameD.m_arraySize > nameS.m_arraySize ? nameS.m_arraySize : nameD.m_arraySize;
-						tmpALen = needCast ? nameS.m_arraySize : malen;	
-
-						if (stp == FBT_PRIM_SHORT || stp == FBT_PRIM_USHORT) 
-							fbtSwap16((FBTuint16*)cp, tmpALen);							
-						else if (stp >= FBT_PRIM_INT && stp <= FBT_PRIM_FLOAT) 
-							fbtSwap32((FBTuint32*)cp, tmpALen);
-						else if (stp == FBT_PRIM_DOUBLE)
-							fbtSwap64((FBTuint64*)cp, tmpALen);
-					}
-					
-					if (needCast)
-					{						
-						castValue(srcPtr, dstPtr, stp, dtp, malen);
-
-						fbtFree(tmpPtr);
-						tmpPtr = 0;
+						dstBPtr += dstElmSize;
+						srcBPtr += srcElmSize;
 					}
 				}
 			}
@@ -802,33 +839,48 @@ bool fbtFile::_setuid(const char* uid)
 	return true;
 }
 
-int fbtFile::reflect(const char* path, const fbtEndian& endian)
+int fbtFile::reflect(const char* path, const int mode, const fbtEndian& endian)
 {
+	fbtStream* fs;
+	
 #if FBT_USE_GZ_FILE == 1
-	fbtGzStream fs;
-#else
-	fbtFileStream fs;
+	if (mode == PM_COMPRESSED)
+		fs = new fbtGzStream();
+	else
 #endif
-	fs.open(path, fbtStream::SM_WRITE);
-
+	{
+		fs = new fbtFileStream();
+	}
+	
+	fs->open(path, fbtStream::SM_WRITE);
 
 
 	FBTuint8 cp = FBT_VOID8 ? FM_64_BIT : FM_32_BIT;
 	FBTuint8 ce = ((FBTuint8)fbtGetEndian()) == FBT_ENDIAN_IS_BIG ? FM_BIG_ENDIAN : FM_LITTLE_ENDIAN;
 
-
-	if (endian != FBT_ENDIAN_NATIVE)
-	{
-		if (endian == FBT_ENDIAN_IS_BIG)
-			ce = FM_BIG_ENDIAN;
-		else
-			ce = FM_LITTLE_ENDIAN;
-	}
+//	Commented for now since the rest of the code does not care
+//	if (endian != FBT_ENDIAN_NATIVE)
+//	{
+//		if (endian == FBT_ENDIAN_IS_BIG)
+//			ce = FM_BIG_ENDIAN;
+//		else
+//			ce = FM_LITTLE_ENDIAN;
+//	}
 
 	// put magic
-	fs.writef("%s%c%c%i", m_uhid, cp, ce, m_version);
-
-	writeData(&fs);
+	//fs->writef("%s%c%c%i", m_uhid, cp, ce, m_version);
+	char header[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+	char version[33];
+	sprintf(version, "%i",m_version);
+	
+	strncpy(&header[0], m_uhid, 7); // 7 first bytes of header
+	header[7] = cp;					// 8th byte = pointer size
+	header[8] = ce;					// 9th byte = endianness
+	strncpy(&header[9], version, 3);// last 3 bytes vor 3 version char
+	
+	fs->write(header, 12);
+	
+	writeData(fs);
 
 	// write DNA1
 	Chunk ch;
@@ -837,8 +889,8 @@ int fbtFile::reflect(const char* path, const fbtEndian& endian)
 	ch.m_nr     = 1;
 	ch.m_old    = 0;
 	ch.m_typeid = 0;
-	fs.write(&ch, fbtChunk::BlockSize);
-	fs.write(getFBT(), ch.m_len);
+	fs->write(&ch, fbtChunk::BlockSize);
+	fs->write(getFBT(), ch.m_len);
 
 
 	// write ENDB (End Byte | EOF )
@@ -847,11 +899,44 @@ int fbtFile::reflect(const char* path, const fbtEndian& endian)
 	ch.m_nr     = 0;
 	ch.m_old    = 0;
 	ch.m_typeid = 0;
-	fs.write(&ch, fbtChunk::BlockSize);
+	fs->write(&ch, fbtChunk::BlockSize);
+	
+	delete fs;
 	return FS_OK;
 
 }
 
+void fbtFile::writeStruct(fbtStream* stream, FBTtype index, FBTuint32 code, FBTsize len, void* writeData)
+{
+	Chunk ch;
+	ch.m_code   = code;
+	ch.m_len    = len;
+	ch.m_nr     = 1;
+	ch.m_old    = (FBTsize)writeData;
+	ch.m_typeid = index;
+
+	fbtChunk::write(&ch, stream);
+}
+
+void fbtFile::writeBuffer(fbtStream* stream, FBTsize len, void* writeData)
+{
+	Chunk ch;
+	ch.m_code   = DATA;
+	ch.m_len    = len;
+	ch.m_nr     = 1;
+	ch.m_old    = (FBTsize)writeData;
+	ch.m_typeid = m_memory->findTypeId("Link");
+
+	fbtChunk::write(&ch, stream);
+}
+
+int fbtChunk::write(fbtFile::Chunk* src, fbtStream* stream)
+{	
+	int size = 0;
+	size += stream->write(src, BlockSize);
+	size += stream->write((void*)src->m_old, src->m_len);
+	return size;
+}
 
 int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 {

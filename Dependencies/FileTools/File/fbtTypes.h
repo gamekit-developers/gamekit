@@ -278,20 +278,20 @@ FBT_INLINE FBTuint64 fbtSwap64(const FBTuint64& in)
 }
 
 
-FBT_INLINE void fbtSwap16(FBTuint16* sp, FBTsize malen)
+FBT_INLINE void fbtSwap16(FBTuint16* sp, FBTsize len)
 {
-	FBTsizeType a2;
-	for (a2 = 0; a2 < malen; ++a2)
+	FBTsizeType i;
+	for (i = 0; i < len; ++i)
 	{
 		*sp = fbtSwap16(*sp);
 		++sp;	
 	}	
 }
 
-FBT_INLINE void fbtSwap32(FBTuint32* ip, FBTsize malen)
+FBT_INLINE void fbtSwap32(FBTuint32* ip, FBTsize len)
 {	 
-	FBTsizeType a2;
-	for (a2 = 0; a2 < malen; ++a2)
+	FBTsizeType i;
+	for (i = 0; i < len; ++i)
 	{
 		*ip = fbtSwap32(*ip);
 		++ip;
@@ -299,10 +299,10 @@ FBT_INLINE void fbtSwap32(FBTuint32* ip, FBTsize malen)
 }
 
 
-FBT_INLINE void fbtSwap64(FBTuint64* dp, FBTsize malen)
+FBT_INLINE void fbtSwap64(FBTuint64* dp, FBTsize len)
 {	 
-	FBTsizeType a2;
-	for (a2 = 0; a2 < malen; ++a2)
+	FBTsizeType i;
+	for (i = 0; i < len; ++i)
 	{
 		*dp = fbtSwap64(*dp);
 		++dp;

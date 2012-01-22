@@ -69,7 +69,8 @@ public:
 
 	Blender::FileGlobal* m_fg;
 
-
+	int save(const char* path, const int mode = PM_UNCOMPRESSED);
+	
 	void setIgnoreList(FBTuint32 *stripList) {m_stripList = stripList;}
 
 protected:
