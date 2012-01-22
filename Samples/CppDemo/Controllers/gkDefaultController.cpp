@@ -107,13 +107,17 @@ void gkDefaultController::movePlayer(void)
 
 
 	gkScalar speed = 3.f;
-    gkVector3 movement = data.m_zRot->getOrientation()  * gkVector3(0, speed, 0);
-
-	data.m_entity->setOrientation(gkEuler(0, 0, data.m_zRot->getRotation().z.valueDegrees()));
-
-
-	movement.z = data.m_physics->getLinearVelocity().z;
-    data.m_physics->setLinearVelocity(movement);
+	
+	if(data.m_zRot)
+	{
+		gkVector3 movement = data.m_zRot->getOrientation()  * gkVector3(0, speed, 0);
+		
+		data.m_entity->setOrientation(gkEuler(0, 0, data.m_zRot->getRotation().z.valueDegrees()));
+		
+		
+		movement.z = data.m_physics->getLinearVelocity().z;
+		data.m_physics->setLinearVelocity(movement);
+	}
 }
 
 
