@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): none yet.
+    Contributor(s): astojilj.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -119,12 +119,12 @@ void akEntity::init(bool useVbo, akDemoBase* demo)
 	{
 		akSubMesh* sub = m_mesh->getSubMesh(i);
 		
+		m_textures[i] = 0;
+		
 		if(sub->getMaterial().m_mode & akMaterial::MA_HASFACETEX)
 		{
 			const utString& texname = sub->getMaterial().m_textures.at(0).m_image;
-			GLuint tex = demo->getTexture(texname);
-			if(tex)
-				m_textures[i] = tex;
+			m_textures[i] = demo->getTexture(texname);
 		}
 	}
 	

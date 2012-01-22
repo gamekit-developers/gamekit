@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): Xavier T.
+    Contributor(s): Xavier T, astojilj.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -851,7 +851,7 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 
 			for (int i = 0; i < totlayer; i++)
 			{
-				if (mtface[i] != 0)
+				if (mtface[i] != 0 && mtface[i]->tpage)
 				{
 					VEC2CPY(f.uvLayers[i][0], mtface[i][fi].uv[0]);
 					VEC2CPY(f.uvLayers[i][1], mtface[i][fi].uv[1]);
@@ -959,7 +959,7 @@ void akMeshLoader::convert(bool sortByMat, bool openglVertexColor)
 		}
 		if (arpos >= meshtable.size())
 		{
-			curSubMesh = new akSubMesh(akSubMesh::ME_TRIANGLES, true, true, totlayer);
+			curSubMesh = new akSubMesh(akSubMesh::ME_TRIANGLES, true, mcol, totlayer);
 			m_gmesh->addSubMesh(curSubMesh);
 			
 			curSubMeshPair = new akSubMeshPair(curSubMesh, m_bmesh, &smoothfacesarray, &shapekeysnormals);
