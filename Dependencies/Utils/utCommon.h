@@ -37,14 +37,22 @@
 #define UT_ASSERTSAFE(x)    ( ((x) == 0) ? true : false )
 #define UT_ASSERTCOMP(x, n) typedef bool n[(x) ? 1 : 0];
 
-#define UT_PLATFORM_WIN32    0
-#define UT_PLATFORM_LINUX    2
-#define UT_PLATFORM_APPLE    3
+#define UT_PLATFORM_WIN32     0
+#define UT_PLATFORM_LINUX     2
+#define UT_PLATFORM_APPLE     3
+#define UT_PLATFORM_APPLE_IOS 5
+#define UT_PLATFORM_ANDROID   6
 
 #if defined (_WIN32)
 # define UT_PLATFORM UT_PLATFORM_WIN32
 #elif defined(__APPLE__)
-# define UT_PLATFORM UT_PLATFORM_APPLE
+# if __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ >= 30000 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 30000
+#   define UT_PLATFORM UT_PLATFORM_APPLE_IOS
+# else
+#	define UT_PLATFORM UT_PLATFORM_APPLE
+# endif
+#elif defined(__ANDROID__)
+# define UT_PLATFORM UT_PLATFORM_ANDROID
 #else
 # define UT_PLATFORM UT_PLATFORM_LINUX
 #endif

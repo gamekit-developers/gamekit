@@ -4,6 +4,8 @@
     Unless the dependency can be compiled along with this library.
 
     Copyright (c) 2009-2010 Charlie C.
+	
+	Contributor(s): vekoon.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -1362,7 +1364,7 @@ public:
 		if (lindex == findex)
 		{
 			--m_size;
-			m_bptr[m_size].~Entry();
+			//m_bptr[m_size].~Entry();
 			return;
 		}
 
@@ -1388,7 +1390,7 @@ public:
 		m_iptr[lhash] = findex;
 
 		--m_size;
-		m_bptr[m_size].~Entry();
+		//m_bptr[m_size].~Entry();
 		return;
 	}
 
@@ -1418,7 +1420,7 @@ public:
 
 
 	UT_INLINE UTsize size(void) const       { return m_size; }
-	UT_INLINE UTsize capacity(void) const   { return capacity; }
+	UT_INLINE UTsize capacity(void) const   { return m_capacity; }
 	UT_INLINE bool empty(void) const        { return m_size == 0; }
 
 
