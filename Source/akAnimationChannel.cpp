@@ -80,15 +80,20 @@ void akAnimationChannel::evaluate(akPose& pose, akScalar time, akScalar weight, 
 	{
 	case akAnimationChannel::AC_BONE:
 	{
-		UTuint32 bid = pose.getSkeletonPose()->getIndex(m_name);
-		if( bid >= 0 )
+		akSkeletonPose* skelpose = pose.getSkeletonPose();
+		
+		if(skelpose)
 		{
-			akTransformState* jpose = pose.getSkeletonPose()->getJointPose(bid);
-			if(jpose)
+			UTuint32 bid = skelpose->getIndex(m_name);
+			if( bid >= 0 )
 			{
-				if(mask)
-					weight *= mask->getWeight(bid);
-				evaluate(*jpose, time, weight, delta);
+				akTransformState* jpose = skelpose->getJointPose(bid);
+				if(jpose)
+				{
+					if(mask)
+						weight *= mask->getWeight(bid);
+					evaluate(*jpose, time, weight, delta);
+				}
 			}
 		}
 		break;

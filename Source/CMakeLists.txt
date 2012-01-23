@@ -5,9 +5,11 @@ project(LibAnimKit)
 SET(${PROJECT_NAME} 1.0)
 
 set(ANIMKIT_SRC 
+	akAnimatedObject.cpp
 	akAnimationChannel.cpp
 	akAnimationClip.cpp
 	akAnimationCurve.cpp
+	akAnimationEngine.cpp
 	akAnimationPlayer.cpp
 	akAnimationPlayerSet.cpp
 	akBufferInfo.cpp
@@ -27,9 +29,11 @@ set(ANIMKIT_SRC
 )
 
 set(ANIMKIT_HDR
+	akAnimatedObject.h
 	akAnimationChannel.h
 	akAnimationClip.h
 	akAnimationCurve.h
+	akAnimationEngine.h
 	akAnimationPlayer.h
 	akAnimationPlayerSet.h
 	akBufferInfo.h

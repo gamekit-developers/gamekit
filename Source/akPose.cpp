@@ -26,15 +26,13 @@
 */
 
 #include "akPose.h"
-akPose::akPose(): m_skelpose(0)
-{
-	m_transform = (akTransformState*)btAlignedAlloc(sizeof(akTransformState), 16);
-}
 
-akPose::akPose(akSkeleton* skeleton)
+akPose::akPose(akSkeleton* skeleton) : m_skelpose(0)
 {
 	m_transform = (akTransformState*)btAlignedAlloc(sizeof(akTransformState), 16);
-	m_skelpose = new akSkeletonPose(skeleton);
+	
+	if(skeleton)
+		m_skelpose = new akSkeletonPose(skeleton);
 }
 
 akPose::~akPose()
@@ -45,14 +43,25 @@ akPose::~akPose()
 	m_floats.clear();
 }
 
-void akPose::reset(akSkeletonPose::Space space)
+void akPose::setSkeleton(akSkeleton *skeleton)
+{
+	if(m_skelpose)
+	{
+		delete m_skelpose;
+		m_skelpose = 0;
+	}
+	
+	if(skeleton)
+		m_skelpose = new akSkeletonPose(skeleton);
+}
+
+void akPose::reset(void)
 {
 	*m_transform = akTransformState::identity();
 	
 	if(m_skelpose)
 	{
 		m_skelpose->setIdentity();
-		m_skelpose->setSpace(space);
 	}
 	
 	for(int i=0; i<m_floats.size(); i++)

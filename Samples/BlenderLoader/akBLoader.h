@@ -30,6 +30,7 @@
 
 #include "utString.h"
 
+#include "akCommon.h"
 #include "akMathUtils.h"
 
 #include "Blender.h"
@@ -53,13 +54,14 @@ struct bArmature;
 class akBLoader
 {
 public:
-	akBLoader(akDemoBase* demo);
+	akBLoader(akDemoBase* demo, akAnimationEngine* engine): m_demo(demo), m_engine(engine) {}
 	
 	void loadFile(const utString& filename, bool sortByMat, bool openglVertexColor);
 	
 private:
 	akDemoBase* m_demo;
-
+	akAnimationEngine* m_engine;
+	
 	void convertCameraObject(Blender::Object *bobj);
 	void convertMeshObject(Blender::Object *bobj);
 	void convertObjectMesh(Blender::Object *bobj);

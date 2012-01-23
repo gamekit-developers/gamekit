@@ -34,6 +34,8 @@
 #include "akSkeletonPose.h"
 #include "akGeometryDeformer.h"
 #include "akAnimationPlayerSet.h"
+#include "akAnimationEngine.h"
+#include "akAnimatedObject.h"
 
 akDemo::akDemo() : akDemoBase()
 {
@@ -48,7 +50,7 @@ akDemo::~akDemo()
 
 void akDemo::init(void)
 {
-	akBLoader loader(this);
+	akBLoader loader(this, m_animengine);
 	loader.loadFile("Blu.blend", false, true);
 	//loader.loadFile("Sintel.blend", false, true);
 	
@@ -58,8 +60,8 @@ void akDemo::init(void)
 		square->setPositionAnimated(true);
 	
 	// Join the morph action and the rest action together.
-	akAnimationClip* bluc = getAnimation("Rest");
-	akAnimationClip* morphc = getAnimation("KeyAction");
+	akAnimationClip* bluc = m_animengine->getAnimationClip("Rest");
+	akAnimationClip* morphc = m_animengine->getAnimationClip("KeyAction");
 	if(bluc && morphc)
 	{
 		akAnimationChannel* chan = morphc->getChannel("Key 1");
@@ -74,7 +76,7 @@ void akDemo::init(void)
 	akEntity* blu = getEntity("Blu");
 	if(blu)
 	{
-		akAnimationPlayer* play = blu->getAnimationPlayers()->getAnimationPlayer(0);
+		akAnimationPlayer* play = blu->getAnimatedObject()->getAnimationPlayers()->getAnimationPlayer(0);
 		akSkeleton* skel = blu->getSkeleton();
 		if(play && skel)
 		{

@@ -32,6 +32,7 @@
 #include "akMesh.h"
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
+#include "akAnimationEngine.h"
 
 #include "fbtBlend.h"
 #include "Blender.h"
@@ -43,11 +44,6 @@
 #include "akMeshLoader.h"
 
 #define BLENDER_ARM_DEF_QUATERNION (1<<2)  //form blender dna files
-
-akBLoader::akBLoader(akDemoBase* demo)
-{
-	m_demo = demo;
-}
 
 void buildBoneTree(akSkeleton* skel, btAlignedObjectArray<akMatrix4>& bind, Blender::Bone* bone, UTuint8 parent)
 {
@@ -99,7 +95,7 @@ void akBLoader::convertSkeleton(Blender::bArmature *bskel)
 	}
 	skel->setBindingPose(bindPose);
 	
-	m_demo->addSkeleton(AKB_IDNAME(bskel), skel);
+	m_engine->addSkeleton(AKB_IDNAME(bskel), skel);
 }
 
 void akBLoader::convertObjectMesh(Blender::Object *bobj)
@@ -107,7 +103,7 @@ void akBLoader::convertObjectMesh(Blender::Object *bobj)
 	if(!bobj->data)
 		return;
 
-	akEntity* entity = new akEntity();
+	akEntity* entity = new akEntity(AKB_IDNAME(bobj));
 	m_demo->addEntity(AKB_IDNAME(bobj), entity);
 	
 	float* bmat = (float*)bobj->obmat; 
@@ -123,25 +119,25 @@ void akBLoader::convertObjectMesh(Blender::Object *bobj)
 	
 	Blender::Mesh* bmesh =  (Blender::Mesh*)bobj->data;
 	
-	if (!m_demo->getMesh(AKB_IDNAME(bmesh)))
+	if (!m_engine->getMesh(AKB_IDNAME(bmesh)))
 	{
 		akMesh* mesh = new akMesh();
 		akMeshLoader meconv(m_demo, mesh, bobj, bmesh);
 		meconv.convert(false, true);
-		m_demo->addMesh(AKB_IDNAME(bmesh), mesh);
+		m_engine->addMesh(AKB_IDNAME(bmesh), mesh);
 	}
 	
-	akMesh* mesh = m_demo->getMesh(AKB_IDNAME(bmesh));
+	akMesh* mesh = m_engine->getMesh(AKB_IDNAME(bmesh));
 	entity->setMesh(mesh);
 	
 	if(mesh && bobj->parent != 0 && bobj->parent->type == OB_ARMATURE)
 	{
 	
 		Blender::bArmature* bskel = (Blender::bArmature*)bobj->parent->data;
-		if(!m_demo->getSkeleton(AKB_IDNAME(bskel)))
+		if(!m_engine->getSkeleton(AKB_IDNAME(bskel)))
 			convertSkeleton(bskel);
 		
-		akSkeleton* skel = m_demo->getSkeleton(AKB_IDNAME(bskel));
+		akSkeleton* skel = m_engine->getSkeleton(AKB_IDNAME(bskel));
 		entity->setSkeleton(skel);
 		
 		if(bskel->deformflag & BLENDER_ARM_DEF_QUATERNION)
@@ -186,7 +182,7 @@ void akBLoader::loadFile(const utString &filename, bool sortByMat, bool openglVe
 	Blender::Scene* bscene = fp.m_fg->curscene;
 	
 	//animations
-	akAnimationLoader animLoader(m_demo);
+	akAnimationLoader animLoader(m_demo, m_engine);
 	animLoader.convertActions(fp.m_action, fp.getVersion() <= 249, bscene->r.frs_sec);
 	
 	//convert camera

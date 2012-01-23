@@ -32,8 +32,8 @@
 
 #include "akCommon.h"
 #include "akTransformState.h"
-#include "akAnimationPlayer.h"
-#include "akAnimationPlayerSet.h"
+#include "akMesh.h"
+
 
 #include "btAlignedAllocator.h"
 #include "btAlignedObjectArray.h"
@@ -42,16 +42,15 @@
 class akEntity
 {
 private:
+	utHashedString m_name;
 	// object's world transform
 	akTransformState m_transform;
 	
 	// pointers to shared data (resources)
 	akMesh*     m_mesh;
 	akSkeleton* m_skeleton;
+	akAnimatedObject* m_animated;
 	
-	// per object anim data
-	akAnimationPlayerSet             m_players;
-	akPose*                          m_pose;
 	btAlignedObjectArray<akMatrix4>  m_matrixPalette;
 	btAlignedObjectArray<akDualQuat> m_dualquatPalette;
 	bool                             m_useDualQuatSkinning;
@@ -63,25 +62,40 @@ private:
 	utArray<GLuint> m_textures;
 
 public:
-	akEntity();
+	akEntity(const utHashedString& name);
 	~akEntity();
 	
-	void setSkeleton(akSkeleton* skel);
-	
 	void init(bool useVbo, akDemoBase* demo);
-	void step(akScalar dt, int dualQuat, int normalsMethos);
+	void update(int dualQuat, int normalsMethod);
 	void draw(bool drawNormal, bool drawColor, bool textured, bool useVbo, bool shaded, bool drawskel);
-	
-	bool isMeshDeformedByMorphing(void);
-	
 	void updateVBO(void);
+	
+	UT_INLINE const utHashedString& getName(void) const
+	{
+		return m_name;
+	}
+	
+	UT_INLINE akAnimatedObject* getAnimatedObject(void)
+	{
+		return m_animated;
+	}
+	
+	UT_INLINE void setAnimatedObject(akAnimatedObject* mesh)
+	{
+		m_animated = mesh;
+	}
+	
+	UT_INLINE akMesh* getMesh(void)
+	{
+		return m_mesh;
+	}
 	
 	UT_INLINE void setMesh(akMesh* mesh)
 	{
 		m_mesh = mesh;
 	}
 	
-	UT_INLINE akTransformState getTransform(void)
+	UT_INLINE akTransformState getTransformState(void)
 	{
 		return m_transform;
 	}
@@ -91,24 +105,14 @@ public:
 		m_transform = v;
 	}
 	
+	UT_INLINE void setSkeleton(akSkeleton* skel)
+	{
+		m_skeleton = skel;
+	}
+	
 	UT_INLINE akSkeleton* getSkeleton(void)
 	{
 		return m_skeleton;
-	}
-	
-	UT_INLINE akPose* getPose(void)
-	{
-		return m_pose;
-	}
-	
-	UT_INLINE akMesh* getMesh(void)
-	{
-		return m_mesh;
-	}
-	
-	UT_INLINE akAnimationPlayerSet* getAnimationPlayers(void)
-	{
-		return &m_players;
 	}
 	
 	UT_INLINE bool isPositionAnimated(void)
@@ -124,6 +128,11 @@ public:
 	UT_INLINE bool isMeshDeformedBySkeleton(void)
 	{
 		return m_skeleton? true:false;
+	}
+	
+	UT_INLINE bool isMeshDeformedByMorphing(void)
+	{
+		return m_mesh->hasMorphTargets();
 	}
 	
 	UT_INLINE bool isMeshDeformed(void)

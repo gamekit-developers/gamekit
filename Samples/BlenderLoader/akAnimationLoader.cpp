@@ -30,6 +30,8 @@
 #include "akAnimationChannel.h"
 #include "akAnimationClip.h"
 #include "akAnimationPlayerSet.h"
+#include "akAnimationEngine.h"
+#include "akAnimatedObject.h"
 
 #include "akBlenderDefines.h"
 
@@ -242,7 +244,7 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, akScalar sta
 akAnimationClip* akAnimationLoader::convertObjectIpoToAnimation(Blender::Ipo* bipo, akScalar animfps)
 {
 	akAnimationClip* act = new akAnimationClip();
-	m_demo->addAnimation(AKB_IDNAME(bipo), act);
+	m_engine->addAnimationClip(AKB_IDNAME(bipo), act);
 	
 	akScalar start, end;
 	
@@ -294,7 +296,7 @@ void akAnimationLoader::convertAction24(Blender::bAction* action, akScalar animf
 {
 	// 2.4x actions are always Pose actions 
 	akAnimationClip* act = new akAnimationClip(); 
-	m_demo->addAnimation(AKB_IDNAME(action), act);
+	m_engine->addAnimationClip(AKB_IDNAME(action), act);
 	
 	if(!act)
 		return;
@@ -324,7 +326,7 @@ void akAnimationLoader::convertAction24(Blender::bAction* action, akScalar animf
 void akAnimationLoader::convertAction25(Blender::bAction* action, akScalar animfps)
 {
 	akAnimationClip* act = new akAnimationClip();
-	m_demo->addAnimation(AKB_IDNAME(action), act);
+	m_engine->addAnimationClip(AKB_IDNAME(action), act);
 	
 	if(!act)
 		return;
@@ -454,16 +456,25 @@ void akAnimationLoader::convert25AnimData(akEntity* obj, Blender::AnimData* adt,
 	if(adt->action)
 	{
 		//gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
-		akAnimationClip* clip = m_demo->getAnimation(AKB_IDNAME(adt->action));
+		akAnimationClip* clip = m_engine->getAnimationClip(AKB_IDNAME(adt->action));
 		if(!clip)
 		{
 			convertAction25(adt->action, animfps);
-			clip = m_demo->getAnimation(AKB_IDNAME(adt->action));
+			clip = m_engine->getAnimationClip(AKB_IDNAME(adt->action));
 		}
 		
 		if(clip)
 		{
-			akAnimationPlayer* play = obj->getAnimationPlayers()->addNewAnimationPlayer(clip);
+			akAnimatedObject* animated = obj->getAnimatedObject();
+			
+			if(animated==0)
+			{
+				animated = new akAnimatedObject();
+				m_engine->addAnimatedObject(obj->getName(), animated);
+				obj->setAnimatedObject(animated);
+			}
+			
+			akAnimationPlayer* play = animated->getAnimationPlayers()->addNewAnimationPlayer(clip);
 			//play->setWeight(adt->act_influence);
 		}
 		
@@ -500,28 +511,50 @@ void akAnimationLoader::convertObject(akEntity* obj, Blender::Object* bobj, bool
 		if(bobj && bobj->ipo)
 		{
 			//gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->ipo)));
-			akAnimationClip* clip = m_demo->getAnimation(AKB_IDNAME(bobj->ipo));
+			akAnimationClip* clip = m_engine->getAnimationClip(AKB_IDNAME(bobj->ipo));
 			
 			if(!clip)
 				clip = convertObjectIpoToAnimation(bobj->ipo, animfps);
 			
 			if(clip)
-				obj->getAnimationPlayers()->addNewAnimationPlayer(clip);
+			{
+				akAnimatedObject* animated = obj->getAnimatedObject();
+				
+				if(animated==0)
+				{
+					animated = new akAnimatedObject();
+					m_engine->addAnimatedObject(obj->getName(), animated);
+					obj->setAnimatedObject(animated);
+				}
+				
+				animated->getAnimationPlayers()->addNewAnimationPlayer(clip);
+			}
 		}
 		
 		if(bobj && bobj->action)
 		{
 			//gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
-			akAnimationClip* clip = m_demo->getAnimation(AKB_IDNAME(bobj->action));
+			akAnimationClip* clip = m_engine->getAnimationClip(AKB_IDNAME(bobj->action));
 			
 			if(!clip)
 			{
 				convertAction(bobj->action, pre25compat, animfps);
-				clip = m_demo->getAnimation(AKB_IDNAME(bobj->action));
+				clip = m_engine->getAnimationClip(AKB_IDNAME(bobj->action));
 			}
 			
 			if(clip)
-				obj->getAnimationPlayers()->addNewAnimationPlayer(clip);
+			{
+				akAnimatedObject* animated = obj->getAnimatedObject();
+				
+				if(animated==0)
+				{
+					animated = new akAnimatedObject();
+					m_engine->addAnimatedObject(obj->getName(), animated);
+					obj->setAnimatedObject(animated);
+				}
+				
+				animated->getAnimationPlayers()->addNewAnimationPlayer(clip);
+			}
 		}
 		// TODO 2.4 NLA
 	}

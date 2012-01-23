@@ -48,9 +48,6 @@ typedef struct akCamera
 class akDemoBase
 {
 public:
-	typedef utHashTable<utIntHashKey, akAnimationClip*> AnimationClips;
-	typedef utHashTable<utIntHashKey, akSkeleton*> Skeletons;
-	typedef utHashTable<utIntHashKey, akMesh*> Meshes;
 	typedef utHashTable<utIntHashKey, akEntity*> Entities;
 	typedef utHashTable<utIntHashKey, GLuint> Textures;
 	
@@ -69,35 +66,31 @@ public:
 	
 	int getFps(void);
 	
-	void             addAnimation(const utHashedString& name, akAnimationClip* anim);
-	akAnimationClip* getAnimation(const utHashedString& name);
-	
-	AnimationClips::ConstPointer getAnimations(void);
-	UTsize                       getNumAnimations(void);
-	
-	void        addMesh(const utHashedString& name, akMesh* mesh);
-	akMesh*     getMesh(const utHashedString& name);
-	
-	Meshes::ConstPointer         getMeshes(void);
-	UTsize                       getNumMeshes(void);
-	
-	void        addSkeleton(const utHashedString& name, akSkeleton* skel);
-	akSkeleton* getSkeleton(const utHashedString& name);
-	
-	Skeletons::ConstPointer      getSkeletons(void);
-	UTsize                       getNumSkeletonss(void);
 	
 	void        addEntity(const utHashedString& name, akEntity* ent);
 	akEntity*   getEntity(const utHashedString& name);
-	
-	Entities::ConstPointer       getEntities(void) const    { return m_objects.ptr(); }
-	UTsize                       getNumEntities(void) const { return m_objects.size(); }
-	
 	void        addTexture(const utHashedString& name, GLuint tex);
 	GLuint      getTexture(const utHashedString& name);
 	
-	Textures::ConstPointer       getTextures(void) const    { return m_textures.ptr(); }
-	UTsize                       getNumTextures(void) const { return m_textures.size(); }
+	UT_INLINE Entities::ConstPointer getEntities(void) const
+	{
+		return m_objects.ptr();
+	}
+	
+	UT_INLINE UTsize getNumEntities(void) const
+	{
+		return m_objects.size();
+	}
+	
+	UT_INLINE Textures::ConstPointer getTextures(void) const
+	{
+		return m_textures.ptr();
+	}
+	
+	UT_INLINE UTsize getNumTextures(void) const
+	{
+		return m_textures.size();
+	}
 	
 	UT_INLINE akCamera* getCamera(void)
 	{
@@ -136,10 +129,9 @@ protected:
 	UTuint32 m_vertexCount;
 	UTuint32 m_triCount;
 	
+	akAnimationEngine* m_animengine;
+	
 	// Ressources
-	AnimationClips m_animations;
-	Skeletons      m_skeletons;
-	Meshes         m_meshes;
 	Entities       m_objects;
 	Textures       m_textures;
 	

@@ -26,22 +26,21 @@
 */
 
 #include "akEntity.h"
+
+#include "akAnimatedObject.h"
 #include "akMesh.h"
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
 #include "akDualQuat.h"
 #include "akPose.h"
 
-akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0), m_useDualQuatSkinning(false),
-						m_posAnimated(false), m_morphAnimated(false), m_useVbo(false)
+akEntity::akEntity(const utHashedString &name) : m_name(name), m_mesh(0), m_skeleton(0), m_animated(0),
+	m_useDualQuatSkinning(false), m_posAnimated(false), m_morphAnimated(false), m_useVbo(false)
 {
 }
 
 akEntity::~akEntity()
-{
-	if(m_pose)
-		delete m_pose;
-	
+{	
 	m_matrixPalette.clear();
 	m_dualquatPalette.clear();
 	
@@ -52,28 +51,19 @@ akEntity::~akEntity()
 	m_textures.clear();
 }
 
-bool akEntity::isMeshDeformedByMorphing(void)
-{
-	return m_mesh->hasMorphTargets();
-}
-
-void akEntity::setSkeleton(akSkeleton *skel)
-{
-	m_skeleton = skel;
-}
-
 void akEntity::init(bool useVbo, akDemoBase* demo)
 {
 	m_useVbo = useVbo;
 	
 	if(m_skeleton)
 	{
-		m_pose = new akPose(m_skeleton);
+		if(m_animated==0)
+			m_animated = new akAnimatedObject();
+		m_animated->getPose()->setSkeleton(m_skeleton);
+		
 		m_matrixPalette.resize(m_skeleton->getNumJoints());
 		m_dualquatPalette.resize(m_skeleton->getNumJoints());
 	}
-	else
-		m_pose = new akPose();
 	
 	if(isMeshDeformed())
 		m_mesh->addSecondPositionBuffer();
@@ -129,7 +119,7 @@ void akEntity::init(bool useVbo, akDemoBase* demo)
 	}
 	
 	// Activate the first action of each object
-	akAnimationPlayer* player = m_players.getAnimationPlayer(0);
+	akAnimationPlayer* player = m_animated->getAnimationPlayers()->getAnimationPlayer(0);
 	if(player)
 	{
 		player->setEnabled(true);
@@ -159,66 +149,79 @@ void akEntity::updateVBO(void)
 	}
 }
 
-void akEntity::step(akScalar dt, int dualQuat, int normalsMethod)
+void akEntity::update(int dualQuat, int normalsMethod)
 {
-	m_pose->reset(akSkeletonPose::SP_BINDING_SPACE);
-	m_players.stepTime(dt);
-	m_players.evaluate(m_pose);
-		
-	if(isPositionAnimated())
-		setTransformState(m_pose->getTransform());
+	//m_pose->reset(akSkeletonPose::SP_BINDING_SPACE);
+	//m_players.stepTime(dt);
+	//m_players.evaluate(m_pose);
 	
-	if(isMeshDeformed())
+	if(m_animated)
 	{
-		int dq ;
-		switch(dualQuat)
-		{
-		case 0:
-			if(getUseDualQuatSkinning())
-				dq = akGeometryDeformer::GD_SO_DUAL_QUAT;
-			else
-				dq = akGeometryDeformer::GD_SO_MATRIX;
-			break;
-		case 1:
-			dq = akGeometryDeformer::GD_SO_MATRIX;
-			break;
-		case 2:
-			dq = akGeometryDeformer::GD_SO_DUAL_QUAT;
-			break;
-		case 3:
-			dq = akGeometryDeformer::GD_SO_DUAL_QUAT_ANTIPOD;
-			break;
-		}
-		int nm;
-		switch(normalsMethod)
-		{
-		case 0:
-			nm = akGeometryDeformer::GD_NO_NONE;
-			break;
-		case 1:
-			nm = akGeometryDeformer::GD_NO_NOSCALE;
-			break;
-		case 2:
-			nm = akGeometryDeformer::GD_NO_UNIFORM_SCALE;
-			break;
-		case 3:
-			nm = akGeometryDeformer::GD_NO_FULL;
-			break;
-		}
-	
+		akPose* pose = m_animated->getPose();
 		
-		//akSkeletonPose* skelpose = m_pose->getSkeletonPose();
-		//skelpose->toModelSpace(skelpose);
+		if(isPositionAnimated())
+			setTransformState(pose->getTransform());
 		
-		if( dq != akGeometryDeformer::GD_SO_MATRIX )
-			m_pose->fillDualQuatPalette(m_dualquatPalette, m_matrixPalette);
-		else
-			m_pose->fillMatrixPalette(m_matrixPalette);
+		if(isMeshDeformed())
+		{
+			// Animations are in binding space (imported "as is" from Blender)
+			// The skeleton pose (result of the animations blending) is therefore in binding space
+			// We need to tell that so it gets converted to model space OK
+			akSkeletonPose* skelpose = pose->getSkeletonPose();
+			skelpose->setSpace(akSkeletonPose::SP_BINDING_SPACE);
 			
-		m_mesh->deform((akGeometryDeformer::SkinningOption)dq, (akGeometryDeformer::NormalsOption)nm,
-					   m_pose, &m_matrixPalette, &m_dualquatPalette);
-		
-		updateVBO();
+			// Manul conversion to model space is not needed anymore
+			// On the fly conversion is done at the time of filling the matrix palette if necessary
+			// But the skeleton pose space must be set correctly for this to work
+			// Note: If you need to get a bone pose in model space, try to avoid doing the conversion twice.
+			//skelpose->toModelSpace(skelpose);
+			
+			int dq ;
+			switch(dualQuat)
+			{
+			case 0:
+				if(getUseDualQuatSkinning())
+					dq = akGeometryDeformer::GD_SO_DUAL_QUAT;
+				else
+					dq = akGeometryDeformer::GD_SO_MATRIX;
+				break;
+			case 1:
+				dq = akGeometryDeformer::GD_SO_MATRIX;
+				break;
+			case 2:
+				dq = akGeometryDeformer::GD_SO_DUAL_QUAT;
+				break;
+			case 3:
+				dq = akGeometryDeformer::GD_SO_DUAL_QUAT_ANTIPOD;
+				break;
+			}
+			int nm;
+			switch(normalsMethod)
+			{
+			case 0:
+				nm = akGeometryDeformer::GD_NO_NONE;
+				break;
+			case 1:
+				nm = akGeometryDeformer::GD_NO_NOSCALE;
+				break;
+			case 2:
+				nm = akGeometryDeformer::GD_NO_UNIFORM_SCALE;
+				break;
+			case 3:
+				nm = akGeometryDeformer::GD_NO_FULL;
+				break;
+			}
+			
+			if( dq != akGeometryDeformer::GD_SO_MATRIX )
+				pose->fillDualQuatPalette(m_dualquatPalette, m_matrixPalette);
+			else
+				pose->fillMatrixPalette(m_matrixPalette);
+			
+			m_mesh->deform((akGeometryDeformer::SkinningOption)dq, (akGeometryDeformer::NormalsOption)nm,
+						   pose, &m_matrixPalette, &m_dualquatPalette);
+			
+			updateVBO();
+		}
 	}
 }
 
@@ -387,41 +390,46 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 	
 	if(m_skeleton && drawskel)
 	{
-		akSkeletonPose* skelpose = m_pose->getSkeletonPose();
-		skelpose->toModelSpace(skelpose);
+		akSkeletonPose* skelpose = m_animated->getPose()->getSkeletonPose();
 		
-		glDisable(GL_LIGHTING);
-		glDisable(GL_DEPTH_TEST);
-		
-		int i, tot;
-		tot = skelpose->getNumJoints();
-		for(i=0; i<tot; i++)
+		if(skelpose)
 		{
-			glPushMatrix();
+			skelpose->toModelSpace(skelpose);
 			
-			akSkeletonPose* pose = m_pose->getSkeletonPose();
-			const akTransformState* jointpose = pose->getJointPose(i);
-			akMatrix4 mat = jointpose->toMatrix();
+			glDisable(GL_LIGHTING);
+			glDisable(GL_DEPTH_TEST);
 			
-			glMultMatrixf((GLfloat*)&mat);
-	
-			glBegin(GL_LINES);
-			glColor3f(1,0,0);
-			glVertex3f(0.05,0,0);
-			glVertex3f(0,0,0);
+			int i, tot;
+			tot = skelpose->getNumJoints();
+			for(i=0; i<tot; i++)
+			{
+				glPushMatrix();
+				
+				akSkeletonPose* pose = m_animated->getPose()->getSkeletonPose();
+				const akTransformState* jointpose = pose->getJointPose(i);
+				akMatrix4 mat = jointpose->toMatrix();
+				
+				glMultMatrixf((GLfloat*)&mat);
+				
+				glBegin(GL_LINES);
+				glColor3f(1,0,0);
+				glVertex3f(0.05,0,0);
+				glVertex3f(0,0,0);
+				
+				glColor3f(0,1,0);
+				glVertex3f(0,0.05,0);
+				glVertex3f(0,0,0);
+				
+				glColor3f(0,0,1);
+				glVertex3f(0,0,0.05);
+				glVertex3f(0,0,0);
+				glEnd();
+				
+				glPopMatrix();
+			}
+			glEnable(GL_DEPTH_TEST);
 			
-			glColor3f(0,1,0);
-			glVertex3f(0,0.05,0);
-			glVertex3f(0,0,0);
-			
-			glColor3f(0,0,1);
-			glVertex3f(0,0,0.05);
-			glVertex3f(0,0,0);
-			glEnd();
-			
-			glPopMatrix();
 		}
-		glEnable(GL_DEPTH_TEST);
 	}
 	
 	glPopMatrix();

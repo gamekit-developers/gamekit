@@ -51,11 +51,11 @@ private:
 	utArray<FloatResult> m_floats;
 
 public:
-	akPose();
-	akPose(akSkeleton* skeleton);
+	akPose(akSkeleton* skeleton =0);
 	~akPose();
 	
-	void reset(akSkeletonPose::Space=akSkeletonPose::SP_LOCAL_SPACE);
+	void setSkeleton(akSkeleton* skeleton);
+	void reset(void);
 	FloatResult* getFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code);
 	const FloatResult* getFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code) const;
 	void addFloatResult(UTuint32 ctype, UTuint32 chash, UTuint32 code, float value);

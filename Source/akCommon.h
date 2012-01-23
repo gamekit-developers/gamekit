@@ -27,10 +27,11 @@
 #ifndef _akCommon_h_
 #define _akCommon_h_
 
-
+class akAnimatedObject;
 class akAnimationChannel;
 class akAnimationClip;
 class akAnimationCurve;
+class akAnimationEngine;
 class akAnimationPlayer;
 class akAnimationPlayerSet;
 class akBufferInfo;
