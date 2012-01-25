@@ -43,7 +43,7 @@ public:
 	akAnimatedObject(akSkeleton* skeleton);
 	virtual ~akAnimatedObject();
 	
-	void stepTime(akScalar seconds);
+	void stepTime(akScalar deltaTimeInSeconds);
 	
 	
 	UT_INLINE akPose* getPose(void)

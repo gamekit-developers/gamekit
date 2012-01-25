@@ -49,7 +49,7 @@ private:
 	// pointers to shared data (resources)
 	akMesh*     m_mesh;
 	akSkeleton* m_skeleton;
-	akAnimatedObject* m_animated;
+	akAnimatedObject* m_animatedObject;
 	
 	btAlignedObjectArray<akMatrix4>  m_matrixPalette;
 	btAlignedObjectArray<akDualQuat> m_dualquatPalette;
@@ -77,12 +77,12 @@ public:
 	
 	UT_INLINE akAnimatedObject* getAnimatedObject(void)
 	{
-		return m_animated;
+		return m_animatedObject;
 	}
 	
-	UT_INLINE void setAnimatedObject(akAnimatedObject* mesh)
+	UT_INLINE void setAnimatedObject(akAnimatedObject* obj)
 	{
-		m_animated = mesh;
+		m_animatedObject = obj;
 	}
 	
 	UT_INLINE akMesh* getMesh(void)

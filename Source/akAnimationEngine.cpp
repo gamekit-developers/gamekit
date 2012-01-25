@@ -118,14 +118,14 @@ akAnimatedObject* akAnimationEngine::getAnimatedObject(const utHashedString &nam
 	return m_animated.at(pos);
 }
 
-void akAnimationEngine::stepTime(akScalar seconds)
+void akAnimationEngine::stepTime(akScalar deltaTimeInSeconds)
 {
 	unsigned int i;
 	
 	for( i=0; i<m_animated.size(); i++)
 	{
 		akAnimatedObject* object = m_animated.at(i);
-		object->stepTime(seconds);
+		object->stepTime(deltaTimeInSeconds);
 	}
 }
 

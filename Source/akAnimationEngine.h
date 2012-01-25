@@ -65,7 +65,7 @@ public:
 	//void start(void);
 	//void stop(void);
 
-	void stepTime(akScalar seconds);
+	void stepTime(akScalar deltaTimeInSeconds);
 	
 	UT_INLINE AnimationClips::ConstPointer getAnimations(void)
 	{

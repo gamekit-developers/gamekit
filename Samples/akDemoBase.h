@@ -108,7 +108,7 @@ public:
 	}
 	
 	void start(void);
-	void step(akScalar seconds);
+	void step(akScalar deltaTimeInSeconds);
 	virtual void init(void) =0;
 	
 protected:

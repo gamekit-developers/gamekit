@@ -59,7 +59,7 @@ public:
 	
 	AnimationPlayers::ConstPointer getAnimationPlayers();
 	
-	void stepTime(akScalar seconds);
+	void stepTime(akScalar deltaTimeInSeconds);
 	
 	void evaluate(akPose* pose) const;
 	void evaluate(akSkeletonPose* pose) const;

@@ -34,7 +34,7 @@
 #include "akDualQuat.h"
 #include "akPose.h"
 
-akEntity::akEntity(const utHashedString &name) : m_name(name), m_mesh(0), m_skeleton(0), m_animated(0),
+akEntity::akEntity(const utHashedString &name) : m_name(name), m_mesh(0), m_skeleton(0), m_animatedObject(0),
 	m_useDualQuatSkinning(false), m_posAnimated(false), m_morphAnimated(false), m_useVbo(false)
 {
 }
@@ -57,9 +57,9 @@ void akEntity::init(bool useVbo, akDemoBase* demo)
 	
 	if(m_skeleton)
 	{
-		if(m_animated==0)
-			m_animated = new akAnimatedObject();
-		m_animated->getPose()->setSkeleton(m_skeleton);
+		if(m_animatedObject==0)
+			m_animatedObject = new akAnimatedObject();
+		m_animatedObject->getPose()->setSkeleton(m_skeleton);
 		
 		m_matrixPalette.resize(m_skeleton->getNumJoints());
 		m_dualquatPalette.resize(m_skeleton->getNumJoints());
@@ -119,7 +119,7 @@ void akEntity::init(bool useVbo, akDemoBase* demo)
 	}
 	
 	// Activate the first action of each object
-	akAnimationPlayer* player = m_animated->getAnimationPlayers()->getAnimationPlayer(0);
+	akAnimationPlayer* player = m_animatedObject->getAnimationPlayers()->getAnimationPlayer(0);
 	if(player)
 	{
 		player->setEnabled(true);
@@ -155,9 +155,9 @@ void akEntity::update(int dualQuat, int normalsMethod)
 	//m_players.stepTime(dt);
 	//m_players.evaluate(m_pose);
 	
-	if(m_animated)
+	if(m_animatedObject)
 	{
-		akPose* pose = m_animated->getPose();
+		akPose* pose = m_animatedObject->getPose();
 		
 		if(isPositionAnimated())
 			setTransformState(pose->getTransform());
@@ -390,7 +390,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 	
 	if(m_skeleton && drawskel)
 	{
-		akSkeletonPose* skelpose = m_animated->getPose()->getSkeletonPose();
+		akSkeletonPose* skelpose = m_animatedObject->getPose()->getSkeletonPose();
 		
 		if(skelpose)
 		{
@@ -405,7 +405,7 @@ void akEntity::draw(bool drawNormal, bool drawColor, bool textured, bool useVbo,
 			{
 				glPushMatrix();
 				
-				akSkeletonPose* pose = m_animated->getPose()->getSkeletonPose();
+				akSkeletonPose* pose = m_animatedObject->getPose()->getSkeletonPose();
 				const akTransformState* jointpose = pose->getJointPose(i);
 				akMatrix4 mat = jointpose->toMatrix();
 				

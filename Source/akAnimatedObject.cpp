@@ -44,9 +44,9 @@ akAnimatedObject::~akAnimatedObject()
 	delete m_pose;
 }
 
-void akAnimatedObject::stepTime(akScalar seconds)
+void akAnimatedObject::stepTime(akScalar deltaTimeInSeconds)
 {
 	m_pose->reset();
-	m_players.stepTime(seconds);
+	m_players.stepTime(deltaTimeInSeconds);
 	m_players.evaluate(m_pose);
 }

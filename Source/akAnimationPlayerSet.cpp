@@ -71,14 +71,14 @@ akAnimationPlayerSet::AnimationPlayers::ConstPointer akAnimationPlayerSet::getAn
 	return m_players.ptr();
 }
 
-void akAnimationPlayerSet::stepTime(akScalar seconds)
+void akAnimationPlayerSet::stepTime(akScalar deltaTimeInSeconds)
 {
 	akAnimationPlayer* const* ptr = m_players.ptr();
 	int len = getNumAnimationPlayers();
 	
 	for(int i=0; i<len; i++)
 	{
-		ptr[i]->stepTime(seconds);
+		ptr[i]->stepTime(deltaTimeInSeconds);
 	}
 }
 
