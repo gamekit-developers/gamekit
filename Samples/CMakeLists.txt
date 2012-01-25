@@ -84,5 +84,6 @@ subdirs(BlenderLoader)
 
 if(SAMPLES_ANIMKIT_GL)
 	subdirs(AnimKitGL)
+	subdirs(SimpleAnimKit)
 endif()
 

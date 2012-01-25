@@ -428,8 +428,8 @@ void akSubMesh::deform(akGeometryDeformer::SkinningOption method,
 									 indices, indicess,
 									 posin, posins,
 									 posout, posouts,
-									 norin, norins,
-									 norout, norouts);
+									 m_hasNormals?norin:0, m_hasNormals?norins:0,
+									 m_hasNormals?norout:0, m_hasNormals?norouts:0);
 		
 	}
 }
