@@ -40,9 +40,9 @@ akAnimationEngine::~akAnimationEngine()
 {
 	unsigned int i;
 	
-	for( i=0; i<m_animations.size(); i++)
+	for( i=0; i<m_animationClips.size(); i++)
 	{
-		delete m_animations[i];
+		delete m_animationClips[i];
 	}
 	
 	for( i=0; i<m_meshes.size(); i++)
@@ -55,28 +55,28 @@ akAnimationEngine::~akAnimationEngine()
 		delete m_skeletons[i];
 	}
 	
-	for( i=0; i<m_animated.size(); i++)
+	for( i=0; i<m_animatedObjects.size(); i++)
 	{
-		delete m_animated[i];
+		delete m_animatedObjects[i];
 	}
 	
-	m_animations.clear();
+	m_animationClips.clear();
 	m_meshes.clear();
 	m_skeletons.clear();
-	m_animated.clear();
+	m_animatedObjects.clear();
 }
 
 void akAnimationEngine::addAnimationClip(const utHashedString& name, akAnimationClip* anim)
 {
-	m_animations.insert(name.hash(), anim);
+	m_animationClips.insert(name.hash(), anim);
 }
 
 akAnimationClip* akAnimationEngine::getAnimationClip(const utHashedString &name)
 {
-	UTsize pos = m_animations.find(name.hash());
+	UTsize pos = m_animationClips.find(name.hash());
 	if(pos==UT_NPOS)
 		return 0;
-	return m_animations.at(pos);
+	return m_animationClips.at(pos);
 }
 
 void akAnimationEngine::addMesh(const utHashedString& name, akMesh *mesh)
@@ -107,24 +107,24 @@ akSkeleton * akAnimationEngine::getSkeleton(const utHashedString &name)
 
 void akAnimationEngine::addAnimatedObject(const utHashedString &name, akAnimatedObject* obj)
 {
-	m_animated.insert(name.hash(), obj);
+	m_animatedObjects.insert(name.hash(), obj);
 }
 
 akAnimatedObject* akAnimationEngine::getAnimatedObject(const utHashedString &name)
 {
-	UTsize pos = m_animated.find(name.hash());
+	UTsize pos = m_animatedObjects.find(name.hash());
 	if(pos==UT_NPOS)
 		return 0;
-	return m_animated.at(pos);
+	return m_animatedObjects.at(pos);
 }
 
 void akAnimationEngine::stepTime(akScalar deltaTimeInSeconds)
 {
 	unsigned int i;
 	
-	for( i=0; i<m_animated.size(); i++)
+	for( i=0; i<m_animatedObjects.size(); i++)
 	{
-		akAnimatedObject* object = m_animated.at(i);
+		akAnimatedObject* object = m_animatedObjects.at(i);
 		object->stepTime(deltaTimeInSeconds);
 	}
 }

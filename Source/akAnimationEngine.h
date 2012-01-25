@@ -43,10 +43,10 @@ public:
 	typedef utHashTable<utIntHashKey, akAnimatedObject*> AnimatedObjects;
 
 protected:
-	AnimationClips  m_animations;
+	AnimationClips  m_animationClips;
 	Skeletons       m_skeletons;
 	Meshes          m_meshes;
-	AnimatedObjects m_animated;
+	AnimatedObjects m_animatedObjects;
 
 public:
 	akAnimationEngine();
@@ -69,12 +69,12 @@ public:
 	
 	UT_INLINE AnimationClips::ConstPointer getAnimations(void)
 	{
-		return m_animations.ptr();
+		return m_animationClips.ptr();
 	}
 	
 	UT_INLINE UTsize getNumAnimations(void)
 	{
-		return m_animations.size();
+		return m_animationClips.size();
 	}
 	
 	UT_INLINE Meshes::ConstPointer getMeshes(void)
@@ -99,12 +99,12 @@ public:
 	
 	UT_INLINE AnimatedObjects::ConstPointer getAnimatedObjects(void)
 	{
-		return m_animated.ptr();
+		return m_animatedObjects.ptr();
 	}
 	
 	UT_INLINE UTsize getNumAnimatedObjects(void)
 	{
-		return m_animated.size();
+		return m_animatedObjects.size();
 	}
 	
 };
