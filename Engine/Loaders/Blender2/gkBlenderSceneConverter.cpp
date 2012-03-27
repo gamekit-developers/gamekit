@@ -36,7 +36,11 @@
 #include "gkParticleObject.h"
 #include "gkParticleResource.h"
 #include "OgreKit.h"
+#include "Converters/gkMeshConverter26.h"
 
+#ifndef OGREKIT_USE_BPARSE
+	#define OGREKIT_USE_FBT
+#endif
 
 
 gkBlenderSceneConverter::gkBlenderSceneConverter(gkBlendFile* fp, Blender::Scene* sc)
@@ -567,6 +571,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	case OB_BODY_TYPE_RIGID:        phy.m_type = GK_RIGID;          break;
 	case OB_BODY_TYPE_DYNAMIC:      phy.m_type = GK_DYNAMIC;        break;
 	case OB_BODY_TYPE_NO_COLLISION: phy.m_type = GK_NO_COLLISION;   break;
+	case OB_BODY_TYPE_SENSOR :		phy.m_type = GK_SENSOR; break;
 	}
 
 	if (bobj->type != OB_MESH)
@@ -615,6 +620,13 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	phy.m_radius        = bobj->inertia;
 	phy.m_formFactor    = bobj->formfactor;
 	phy.m_margin        = bobj->margin;
+
+	if (gobj->hasVariable("gk_collisionmask")){
+		phy.m_colMask = gobj->getVariable("gk_collisionmask")->getValueInt();
+	}
+	if (gobj->hasVariable("gk_collisiongroup")){
+		phy.m_colGroupMask = gobj->getVariable("gk_collisiongroup")->getValueInt();
+	}
 
 	if (bobj->type == OB_MESH)
 	{
@@ -772,9 +784,30 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject* gobj, Blender::Obj
 	// and better efficiency
 	if (!m_gscene->hasMesh(GKB_IDNAME(me)))
 	{
+		bool conversionSucceeded = false;
+
 		props.m_mesh = m_gscene->createMesh(GKB_IDNAME(me));
-		gkBlenderMeshConverter meconv(props.m_mesh, bobj, me);
-		meconv.convert();
+
+// if available test blend263-format
+#if !defined OGREKIT_USE_BPARSE || BPARSE_FILE_FORMAT==BPARSE_FILEFORMAT_263
+		if (!conversionSucceeded){
+			//gkLogger::write("try blend263",true);
+			gkBlenderMeshConverter26 meconv263(props.m_mesh, bobj, me);
+			conversionSucceeded = meconv263.convert();
+		}
+#endif
+
+
+// use this only if fbt or bparse is compiled with blender25-format
+#if !defined OGREKIT_USE_BPARSE || BPARSE_FILE_FORMAT==BPARSE_FILEFORMAT_25
+		if (!conversionSucceeded){
+			//gkLogger::write("try blend25",true);
+			gkBlenderMeshConverter meconv25(props.m_mesh, bobj, me);
+			conversionSucceeded = meconv25.convert();
+		}
+#endif
+
+
 	}
 	else
 		props.m_mesh = m_gscene->getMesh(GKB_IDNAME(me));

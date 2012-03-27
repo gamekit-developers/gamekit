@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,42 +24,37 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkMeshConverter_h_
-#define _gkMeshConverter_h_
 
+/*
+
+ This class converts a mesh from blender-file version 2.63+
+ Since 'bmesh' was added to trunk, the data-representation changed from faces to polys.
+ This converter is called by gkBlenderMeshConverter's convert-method as soon as it
+ realizes that there is no face-data.
+
+ */
+
+#ifndef _gkMeshConverter26_h_
+#define _gkMeshConverter26_h_
+
+#include "gkMeshConverter.h"
 #include "gkSerialize.h"
 #include "gkMesh.h"
 
 
 
-namespace Blender
-{
-struct Object;
-struct Mesh;
-struct MDeformVert;
-struct Material;
-struct Image;
-struct MCol;
-struct MTex;
-}
-
 class gkBlendFile;
 
 
-
-class gkBlenderMeshConverter
+class gkBlenderMeshConverter26
 {
 public:
 
-	gkBlenderMeshConverter(gkMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh);
-	~gkBlenderMeshConverter();
+	gkBlenderMeshConverter26(gkMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh);
+	~gkBlenderMeshConverter26();
 
-	// returns false if conversion-failed due to lack of data
 	bool convert(void);
 
-	static Blender::Material* getMaterial(Blender::Object* ob, int index);
-	static int getTexBlendType(int blend);
-	static int getRampBlendType(int blend);
 private:
 
 	typedef utArray<int>                                AssignmentIndexList;
@@ -98,13 +93,13 @@ private:
 
 	void calcNormal(TempFace* tri);
 
-	void convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, class gkMeshHashKey& hk);
-	void convertTextureFace(gkMaterialProperties& gma, class gkMeshHashKey& hk, Blender::Image** imas);
+	void convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, class gkMeshHashKey26& hk);
+	void convertTextureFace(gkMaterialProperties& gma, class gkMeshHashKey26& hk, Blender::Image** imas);
 
 	int findTextureLayer(Blender::MTex* te);
 
 
-	unsigned int packColour(const Blender::MCol& col, bool opengl);
+	unsigned int packColour(const Blender::MLoopCol& col, bool opengl);
 
 
 	gkMesh*          m_gmesh;
@@ -114,6 +109,5 @@ private:
 
 
 
-#define BlenderMaterial(ob, i) gkBlenderMeshConverter::getMaterial(ob, i)
 
-#endif//_gkMeshConverter_h_
+#endif//_gkMeshConverter26_h_

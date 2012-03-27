@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -26,8 +26,16 @@
 */
 #include "Blender.h"
 #include "gkBlenderDefines.h"
-#include "gkMeshConverter.h"
+#include "gkMeshConverter26.h"
 #include "OgreKit.h"
+
+/*
+ *
+ * TODO: Since most of this code is also in gkMeshConverter.cpp we could think
+ *       of creating something like a gkMeshConverterCommon.cpp class. There
+ *       were problems with e.g. friendly access and such and it hadn't high priority
+ * 		 (dertom 24/03/12)
+ */
 
 
 #define VEC3CPY(a, b) {a.x= b[0]; a.y= b[1]; a.z= b[2];}
@@ -37,19 +45,20 @@
 #define VEC3CPN(a, b) {a.x= (b[0]/32767.f); a.y= (b[1]/32767.f); a.z= (b[2]/32767.f);}
 
 
-static void gkLoaderUtils_getLayers(
+static void gkLoaderUtils_getLayers26(
     Blender::Mesh* mesh,
-    Blender::MTFace** eightLayerArray,
-    Blender::MCol** oneMCol,
+    Blender::MTexPoly** eightLayerArray,
+    Blender::MLoopUV** uvEightLayerArray,
+    Blender::MLoopCol** oneMCol,
     int& validLayers);
 
 
-
-class gkMeshHashKey
+// this is one to one to the gkMeshConverter-version. Only the friendly access is special to this class
+class gkMeshHashKey26
 {
 protected:
 
-	friend class    gkBlenderMeshConverter;
+	friend class    gkBlenderMeshConverter26;
 
 	short           m_matnr, m_mode;
 	bool            m_blenderMat;
@@ -57,14 +66,14 @@ protected:
 	Blender::Image* m_images[8];
 
 public:
-	gkMeshHashKey()
+	gkMeshHashKey26()
 		: m_matnr(0), m_mode(0), m_blenderMat(false)
 	{
 		for (int i = 0; i < 8; ++i) m_images[i] = 0;
 	}
 
 	// Blender materials
-	gkMeshHashKey(int mat_nr, int mode)
+	gkMeshHashKey26(int mat_nr, int mode)
 		: m_matnr(mat_nr), m_mode(0), m_blenderMat(true)
 	{
 		for (int i = 0; i < 8; ++i) m_images[i] = 0;
@@ -74,7 +83,7 @@ public:
 
 
 	// Blender texture materials
-	gkMeshHashKey(int mode, int alpha, Blender::Image* images[8])
+	gkMeshHashKey26(int mode, int alpha, Blender::Image* images[8])
 		: m_matnr(-1), m_mode(0), m_blenderMat(false)
 	{
 		m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
@@ -93,7 +102,7 @@ public:
 	}
 
 	// Copy constructor
-	gkMeshHashKey(const gkMeshHashKey& k)
+	gkMeshHashKey26(const gkMeshHashKey26& k)
 		:   m_matnr(k.m_matnr), m_mode(k.m_mode),  m_blenderMat(k.m_blenderMat)
 
 	{
@@ -101,7 +110,7 @@ public:
 	}
 
 
-	bool operator == (const gkMeshHashKey& rhs) const
+	bool operator == (const gkMeshHashKey26& rhs) const
 	{
 		if (m_blenderMat)
 			return m_matnr == rhs.m_matnr;
@@ -118,31 +127,31 @@ public:
 	}
 };
 
-
-class gkMeshPair
+// this is one to one
+class gkMeshPair26
 {
 public:
-	gkMeshHashKey test;
+	gkMeshHashKey26 test;
 	gkSubMesh*     item;
 
-	gkMeshPair() : test(), item(0)
+	gkMeshPair26() : test(), item(0)
 	{
 	}
-	gkMeshPair(gkSubMesh* cur) : test(), item(cur)
+	gkMeshPair26(gkSubMesh* cur) : test(), item(cur)
 	{
 	}
 
-	gkMeshPair& operator = (const gkMeshPair& p)
+	gkMeshPair26& operator = (const gkMeshPair26& p)
 	{
 		if (this != &p)
 		{
-			test = gkMeshHashKey(p.test);
+			test = gkMeshHashKey26(p.test);
 			item = p.item;
 		}
 		return *this;
 	}
 
-	bool operator == (const gkMeshPair& rhs) const
+	bool operator == (const gkMeshPair26& rhs) const
 	{
 		return test == rhs.test;
 	}
@@ -150,19 +159,19 @@ public:
 };
 
 
-gkBlenderMeshConverter::gkBlenderMeshConverter(gkMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh)
+gkBlenderMeshConverter26::gkBlenderMeshConverter26(gkMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh)
 	:   m_gmesh(gmesh), m_bmesh(bmesh), m_bobj(bobject)
 {
 }
 
 
-gkBlenderMeshConverter::~gkBlenderMeshConverter()
+gkBlenderMeshConverter26::~gkBlenderMeshConverter26()
 {
 }
 
 
-
-void gkBlenderMeshConverter::convertIndexedTriangle(
+// one to one
+void gkBlenderMeshConverter26::convertIndexedTriangle(
     TempFace* dest,
     unsigned int i0,
     unsigned int i1,
@@ -200,20 +209,21 @@ void gkBlenderMeshConverter::convertIndexedTriangle(
 	}
 }
 
-
-void gkBlenderMeshConverter::calcNormal(TempFace* tri)
+// one to one
+void gkBlenderMeshConverter26::calcNormal(TempFace* tri)
 {
 	gkVector3 n = (tri->v1.co - tri->v2.co).crossProduct(tri->v2.co - tri->v0.co).normalisedCopy();
 	tri->v0.no = tri->v1.no = tri->v2.no = n;
 }
 
 
-
-unsigned int gkBlenderMeshConverter::packColour(const Blender::MCol& col, bool opengl)
+// new! opengl-values did changes!
+// OpenGLES still to test
+unsigned int gkBlenderMeshConverter26::packColour(const Blender::MLoopCol& col, bool opengl)
 {
 	union
 	{
-		Blender::MCol col;
+		Blender::MLoopCol col;
 		unsigned int integer;
 		unsigned char cp[4];
 	} out_color, in_color;
@@ -224,12 +234,12 @@ unsigned int gkBlenderMeshConverter::packColour(const Blender::MCol& col, bool o
 
 	if (opengl) // abgr
 	{
-		out_color.cp[0] = in_color.cp[3]; // red
-		out_color.cp[1] = in_color.cp[2]; // green
-		out_color.cp[2] = in_color.cp[1]; // blue
-		out_color.cp[3] = in_color.cp[0]; // alpha
+		out_color.cp[0] = in_color.cp[0]; // red
+		out_color.cp[1] = in_color.cp[1]; // green
+		out_color.cp[2] = in_color.cp[2]; // blue
+		out_color.cp[3] = in_color.cp[3]; // alpha
 	}
-	else // argb
+	else // argb // TODO test this on android or such
 	{
 		// vertex buffer is packed with VET_COLOUR_ABGR, swap b,r
 		out_color.cp[2] = in_color.cp[3]; // red
@@ -240,23 +250,39 @@ unsigned int gkBlenderMeshConverter::packColour(const Blender::MCol& col, bool o
 
 	return out_color.integer;
 }
+/*
+ *
+ * 	// Poly-Data: Textures,...
+	Blender::CustomDataLayer* layers = (Blender::CustomDataLayer*)mesh->pdata.layers;
+	if (layers)
+	{
+		// push valid layers
+		for (int i = 0; i < mesh->pdata.totlayer && validLayers < 8; i++)
+		{
+			Blender::CustomDataLayer l = layers[i];
+			if (layers[i].type == CD_MTEXPOLY && eightLayerArray)
+			{
+				void* a = layers[i].data;
+				Blender::MTexPoly* mtf = (Blender::MTexPoly*)layers[i].data;
+ *
+ *
+ */
 
-
-
-int gkBlenderMeshConverter::findTextureLayer(Blender::MTex* te)
+// FIXME!!! wrong access to layers
+int gkBlenderMeshConverter26::findTextureLayer(Blender::MTex* te)
 {
 	if (!(te->texco & TEXCO_UV) || te->uvname[0] == '\0')
 		return 0;
 
-	if (m_bmesh->fdata.layers)
+	if (m_bmesh->pdata.layers)
 	{
-		Blender::CustomDataLayer* cd = (Blender::CustomDataLayer*)m_bmesh->fdata.layers;
+		Blender::CustomDataLayer* cd = (Blender::CustomDataLayer*)m_bmesh->pdata.layers;
 		if (cd)
 		{
 			int layer = 0;
-			for (int i = 0; i < m_bmesh->fdata.totlayer; i++)
+			for (int i = 0; i < m_bmesh->pdata.totlayer; i++)
 			{
-				if (cd[i].type == CD_MTFACE)
+				if (cd[i].type == CD_MTEXPOLY)
 				{
 					if (utCharEq(cd[i].name, te->uvname))
 						return layer;
@@ -269,8 +295,8 @@ int gkBlenderMeshConverter::findTextureLayer(Blender::MTex* te)
 
 }
 
-
-void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties& gma, gkMeshHashKey& hk, Blender::Image** imas)
+// OneToOne
+void gkBlenderMeshConverter26::convertTextureFace(gkMaterialProperties& gma, gkMeshHashKey26& hk, Blender::Image** imas)
 {
 	gma.m_mode = hk.m_mode;
 	if (imas)
@@ -298,41 +324,9 @@ void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties& gma, gkMes
 	}
 }
 
-int gkBlenderMeshConverter::getRampBlendType(int blend)
-{
-	switch (blend)
-	{
-	case MA_RAMP_BLEND:   return GK_BT_MIXTURE;	
-	case MA_RAMP_ADD:     return GK_BT_ADDITIVE;	
-	case MA_RAMP_SUB:     return GK_BT_SUBTRACT;	
-	case MA_RAMP_SCREEN:  return GK_BT_SCREEN;	
-	case MA_RAMP_DARK:	  return GK_BT_DARKEN;	
-	case MA_RAMP_LIGHT:	  return GK_BT_LIGHTEN;	
-	case MA_RAMP_COLOR:   return GK_BT_COLOR;		
-	default:              break;
-	}
 
-	return GK_BT_MULTIPLY;	
-}
-
-int gkBlenderMeshConverter::getTexBlendType(int blend)
-{
-	switch (blend)
-	{
-	case MTEX_BLEND:      return GK_BT_MIXTURE;	
-	case MTEX_ADD:        return GK_BT_ADDITIVE;	
-	case MTEX_SUB:        return GK_BT_SUBTRACT;	
-	case MTEX_SCREEN:	  return GK_BT_SCREEN;	
-	case MTEX_DARK:		  return GK_BT_DARKEN;	
-	case MTEX_LIGHT:	  return GK_BT_LIGHTEN;	
-	case MTEX_BLEND_VAL:  return GK_BT_COLOR;		
-	default:              break;
-	}
-
-	return GK_BT_MULTIPLY;	
-}
-
-void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, gkMeshHashKey& hk)
+// one to one
+void gkBlenderMeshConverter26::convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, gkMeshHashKey26& hk)
 {
 	convertTextureFace(gma, hk, 0);
 
@@ -345,7 +339,7 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 	gma.m_alpha         = bma->alpha;
 	gma.m_diffuse       = gkColor(bma->r, bma->g, bma->b);
 	gma.m_specular      = gkColor(bma->specr, bma->specg, bma->specb);
-	gma.m_rblend		= getRampBlendType(bma->rampblend_col);
+	gma.m_rblend		= gkBlenderMeshConverter::getRampBlendType(bma->rampblend_col);
 
 	if (bma->mode & MA_ZTRA)        gma.m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
 	if (bma->mode & MA_SHADOW)      gma.m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
@@ -403,7 +397,7 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 				if (mtex->normapspace == MTEX_NSPACE_OBJECT) //else set to tagent space.
 					gte.m_texmode |= gkTextureProperties::TX_OBJ_SPACE;
 
-				gte.m_blend = getTexBlendType(mtex->blendtype);				
+				gte.m_blend = gkBlenderMeshConverter::getTexBlendType(mtex->blendtype);
 
 				gte.m_layer = findTextureLayer(mtex);
 				gte.m_mix   = mtex->colfac;				
@@ -419,8 +413,8 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 }
 
 
-
-void gkBlenderMeshConverter::convertBoneAssignments(int dgi, AssignmentListMap& dest)
+// OneToOne
+void gkBlenderMeshConverter26::convertBoneAssignments(int dgi, AssignmentListMap& dest)
 {
 
 	Blender::MDeformVert* dvert = m_bmesh->dvert;
@@ -450,8 +444,8 @@ void gkBlenderMeshConverter::convertBoneAssignments(int dgi, AssignmentListMap& 
 	}
 }
 
-
-void gkBlenderMeshConverter::findWeight(int index, gkSubMesh* me, AssignmentListMap& assign)
+//OneToOne
+void gkBlenderMeshConverter26::findWeight(int index, gkSubMesh* me, AssignmentListMap& assign)
 {
 	gkVertex* vbuf = me->getVertexBuffer().ptr();
 	if (vbuf[index].vba == -1)
@@ -473,8 +467,8 @@ void gkBlenderMeshConverter::findWeight(int index, gkSubMesh* me, AssignmentList
 
 
 
-
-void gkBlenderMeshConverter::assignBoneAssignments(gkSubMesh* me, AssignmentListMap& dest)
+//OneToOne
+void gkBlenderMeshConverter26::assignBoneAssignments(gkSubMesh* me, AssignmentListMap& dest)
 {
 	UTsize totface = me->getIndexBuffer().size();
 	gkTriangle* ibuf = me->getIndexBuffer().ptr();
@@ -489,18 +483,24 @@ void gkBlenderMeshConverter::assignBoneAssignments(gkSubMesh* me, AssignmentList
 	}
 }
 
-
-bool gkBlenderMeshConverter::convert(void)
+// this is what is completely new
+bool gkBlenderMeshConverter26::convert(void)
 {
-	Blender::MFace*  mface = m_bmesh->mface;
 	Blender::MVert*  mvert = m_bmesh->mvert;
-	Blender::MCol*   mcol =  0;
-	Blender::MTFace* mtface[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	Blender::MPoly*  mpoly = m_bmesh->mpoly;
+	Blender::MLoop*   mloop = m_bmesh->mloop;
+	Blender::MTexPoly* mtexpoly = m_bmesh->mtpoly;
+	Blender::MLoopUV* muvloop = m_bmesh->mloopuv;
+	Blender::MLoopCol* mloopCol =  m_bmesh->mloopcol;
+	// UV-Layer-Data
+	Blender::MTexPoly* mtpoly[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	Blender::MLoopUV* muvs[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+	bool hasUV = muvloop != 0;
 
-	if (!mface || !mvert){
+	if (!mpoly || !mvert)
 		return false;
-	}
+
 
 	Blender::MVert          vpak[4];
 	unsigned int            cpak[4];
@@ -509,9 +509,9 @@ bool gkBlenderMeshConverter::convert(void)
 
 
 	gkSubMesh* curSubMesh = 0;
-	utArray<gkMeshPair> meshtable;
+	utArray<gkMeshPair26> meshtable;
 
-	gkLoaderUtils_getLayers(m_bmesh, mtface, &mcol, totlayer);
+	gkLoaderUtils_getLayers26(m_bmesh, mtpoly,muvs, &mloopCol, totlayer);
 
 	bool sortByMat          = gkEngine::getSingleton().getUserDefs().blendermat;
 	bool openglVertexColor  = gkEngine::getSingleton().getUserDefs().rendersystem == OGRE_RS_GL;
@@ -530,62 +530,86 @@ bool gkBlenderMeshConverter::convert(void)
 	}
 
 
+	bool hasTexPoly = mtexpoly != 0;
 
-	for (int fi = 0; fi < m_bmesh->totface; fi++)
+	for (int fi = 0; fi < m_bmesh->totpoly; fi++)
 	{
-		const Blender::MFace& curface = mface[fi];
+		const Blender::MPoly& curpoly = mpoly[fi];
+		const Blender::MTexPoly& curTexPol = mtexpoly[fi];
 
 		// skip if face is not a triangle || quad
-		if (!curface.v3)
+		if (curpoly.totloop<3)
 			continue;
 
-		const bool isQuad = curface.v4 != 0;
+		if (curpoly.totloop>4){
+			gkLogger::write("Using poly with more than 4 verts is not supported by gkMeshConverter!");
+			continue;
+		}
+
+
+		const bool isQuad = curpoly.totloop==4;
 
 		TempFace t[2];
 		PackedFace f;
 		f.totlay = totlayer;
 
+		const Blender::MLoop& v1 = mloop[curpoly.loopstart];
+		const Blender::MLoop& v2 = mloop[curpoly.loopstart+1];
+		const Blender::MLoop& v3 = mloop[curpoly.loopstart+2];
+
 		if (isQuad)
 		{
-			vpak[0] = mvert[curface.v1];
-			vpak[1] = mvert[curface.v2];
-			vpak[2] = mvert[curface.v3];
-			vpak[3] = mvert[curface.v4];
 
-			ipak[0] = curface.v1;
-			ipak[1] = curface.v2;
-			ipak[2] = curface.v3;
-			ipak[3] = curface.v4;
+			const Blender::MLoop& v4 = mloop[curpoly.loopstart+3];
 
-			if (mcol != 0)
+			const Blender::MLoopUV& uv1 = muvloop[curpoly.loopstart];
+			const Blender::MLoopUV& uv2 = muvloop[curpoly.loopstart+1];
+			const Blender::MLoopUV& uv3 = muvloop[curpoly.loopstart+2];
+			const Blender::MLoopUV& uv4 = muvloop[curpoly.loopstart+3];
+
+			vpak[0] = mvert[v1.v];
+			vpak[1] = mvert[v2.v];
+			vpak[2] = mvert[v3.v];
+			vpak[3] = mvert[v4.v];
+
+			ipak[0] = v1.v;
+			ipak[1] = v2.v;
+			ipak[2] = v3.v;
+			ipak[3] = v4.v;
+
+			if (mloopCol != 0)
 			{
-				cpak[0] = packColour(mcol[0], openglVertexColor);
-				cpak[1] = packColour(mcol[1], openglVertexColor);
-				cpak[2] = packColour(mcol[2], openglVertexColor);
-				cpak[3] = packColour(mcol[3], openglVertexColor);
+				cpak[0] = packColour(mloopCol[curpoly.loopstart], openglVertexColor);
+				cpak[1] = packColour(mloopCol[curpoly.loopstart+1], openglVertexColor);
+				cpak[2] = packColour(mloopCol[curpoly.loopstart+2], openglVertexColor);
+				cpak[3] = packColour(mloopCol[curpoly.loopstart+3], openglVertexColor);
 			}
 			else
 				cpak[0] = cpak[1] = cpak[2] = cpak[3] = 0xFFFFFFFF;
 
 
+//TODO: Multitexture!?
+
 			for (int i = 0; i < totlayer; i++)
 			{
-				if (mtface[i] != 0)
+				if (mtpoly[i] != 0)
 				{
-					f.uvLayers[i][0] = gkVector2((float*)mtface[i][fi].uv[0]);
-					f.uvLayers[i][1] = gkVector2((float*)mtface[i][fi].uv[1]);
-					f.uvLayers[i][2] = gkVector2((float*)mtface[i][fi].uv[2]);
-					f.uvLayers[i][3] = gkVector2((float*)mtface[i][fi].uv[3]);
+					f.uvLayers[i][0] = gkVector2((float*)&muvs[i][curpoly.loopstart].uv[0]);
+					f.uvLayers[i][1] = gkVector2((float*)&muvs[i][curpoly.loopstart+1].uv[0]);
+					f.uvLayers[i][2] = gkVector2((float*)&muvs[i][curpoly.loopstart+2].uv[0]);
+					f.uvLayers[i][3] = gkVector2((float*)&muvs[i][curpoly.loopstart+3].uv[0]);
 				}
 			}
+
 			f.verts     = vpak;
 			f.index     = ipak;
 			f.colors    = cpak;
 
+			// what is this?
 			gkVector3 e0, e1;
 
-			e0 = (gkVector3(mvert[curface.v1].co) - gkVector3(mvert[curface.v2].co));
-			e1 = (gkVector3(mvert[curface.v3].co) - gkVector3(mvert[curface.v4].co));
+			e0 = (gkVector3(mvert[v1.v].co) - gkVector3(mvert[v2.v].co));
+			e1 = (gkVector3(mvert[v3.v].co) - gkVector3(mvert[v4.v].co));
 
 			if (e0.squaredLength() < e1.squaredLength())
 			{
@@ -602,30 +626,29 @@ bool gkBlenderMeshConverter::convert(void)
 		{
 			for (int i = 0; i < totlayer; i++)
 			{
-				if (mtface[i] != 0)
+				if (mtpoly[i] != 0)
 				{
-					f.uvLayers[i][0] = gkVector2((float*)mtface[i][fi].uv[0]);
-					f.uvLayers[i][1] = gkVector2((float*)mtface[i][fi].uv[1]);
-					f.uvLayers[i][2] = gkVector2((float*)mtface[i][fi].uv[2]);
+					f.uvLayers[i][0] = gkVector2((float*)&muvs[i][curpoly.loopstart].uv[0]);
+					f.uvLayers[i][1] = gkVector2((float*)&muvs[i][curpoly.loopstart+1].uv[0]);
+					f.uvLayers[i][2] = gkVector2((float*)&muvs[i][curpoly.loopstart+2].uv[0]);
 				}
 			}
 
-			vpak[0] = mvert[curface.v1];
-			vpak[1] = mvert[curface.v2];
-			vpak[2] = mvert[curface.v3];
+			vpak[0] = mvert[v1.v];
+			vpak[1] = mvert[v2.v];
+			vpak[2] = mvert[v3.v];
 
-			ipak[0] = curface.v1;
-			ipak[1] = curface.v2;
-			ipak[2] = curface.v3;
+			ipak[0] = v1.v;
+			ipak[1] = v2.v;
+			ipak[2] = v3.v;
 
-			if (mcol != 0)
+			if (mloopCol != 0)
 			{
-				cpak[0] = packColour(mcol[0], openglVertexColor);
-				cpak[1] = packColour(mcol[1], openglVertexColor);
-				cpak[2] = packColour(mcol[2], openglVertexColor);
-			}
+				cpak[0] = packColour(mloopCol[curpoly.loopstart], openglVertexColor);
+				cpak[1] = packColour(mloopCol[curpoly.loopstart+1], openglVertexColor);
+				cpak[2] = packColour(mloopCol[curpoly.loopstart+2], openglVertexColor);			}
 			else
-				cpak[0] = cpak[1] = cpak[2] = cpak[3] = 0xFFFFFFFF;
+				cpak[0] = cpak[1] = cpak[2] = 0xFFFFFFFF;
 
 			f.verts     = vpak;
 			f.index     = ipak;
@@ -634,32 +657,37 @@ bool gkBlenderMeshConverter::convert(void)
 			convertIndexedTriangle(&t[0], 0, 1, 2, f);
 		}
 
-		gkMeshPair tester(curSubMesh);
+
+		gkMeshPair26 tester(curSubMesh);
+
 		if (sortByMat)
 		{
 			int mode = 0;
-			if (mtface[0])
-				mode = mtface[0][fi].mode;
+			if (mtpoly[0])
+				mode = mtpoly[0][fi].mode;
 
-			tester.test = gkMeshHashKey(curface.mat_nr, mode);
+
+			tester.test = gkMeshHashKey26(curpoly.mat_nr, mode);
 		}
 		else
 		{
 			Blender::Image* ima[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 			for (int i = 0; i < totlayer; i++)
 			{
-				if (mtface[i] != 0)
-					ima[i] = mtface[i][fi].tpage;
+				if (mtpoly[i] != 0)
+					ima[i] = mtpoly[i][fi].tpage;
 			}
+
 
 			int mode = 0, alpha = 0;
-			if (mtface[0])
+			if (mtpoly[0])
 			{
-				mode    = mtface[0][fi].mode;
-				alpha   = mtface[0][fi].transp;
+				mode    = mtpoly[0][fi].mode;
+				alpha   = mtpoly[0][fi].transp;
 			}
 
-			tester.test = gkMeshHashKey(mode, alpha, ima);
+
+			tester.test = gkMeshHashKey26(mode, alpha, ima);
 		}
 
 		// find submesh
@@ -669,7 +697,7 @@ bool gkBlenderMeshConverter::convert(void)
 			curSubMesh = new gkSubMesh();
 
 			curSubMesh->setTotalLayers(totlayer);
-			curSubMesh->setVertexColors(mcol != 0);
+			curSubMesh->setVertexColors(mloopCol != 0);
 
 			m_gmesh->addSubMesh(curSubMesh);
 			tester.item = curSubMesh;
@@ -681,7 +709,7 @@ bool gkBlenderMeshConverter::convert(void)
 		if (curSubMesh == 0) continue;
 
 
-		if (!(curface.flag & ME_SMOOTH))
+		if (!(curpoly.flag & ME_SMOOTH))
 		{
 			// face normal
 			calcNormal(&t[0]);
@@ -689,18 +717,26 @@ bool gkBlenderMeshConverter::convert(void)
 				t[1].v0.no = t[1].v1.no = t[1].v2.no = t[0].v0.no;
 		}
 
-		int triflag = 0;
-		if (mtface[0])
+
+// ---- warning -----
+// mtpoly[0][fi].mode is always 0 which makes the mesh invisible
+// For now setting the standardvalue to collider (which means visible)
+// This is afaik the only data I couldn't get in import
+
+		int triflag = gkTriangle::TRI_COLLIDER;
+
+
+		if (mtpoly[0])
 		{
-			if (mtface[0][fi].mode & TF_DYNAMIC)
+			if (mtpoly[0][fi].mode & TF_DYNAMIC)
 				triflag |= gkTriangle::TRI_COLLIDER;
-			if (mtface[0][fi].mode & TF_INVISIBLE)
+			if (mtpoly[0][fi].mode & TF_INVISIBLE)
 				triflag |= gkTriangle::TRI_INVISIBLE;
 		}
 		else
 			triflag = gkTriangle::TRI_COLLIDER;
 
-
+// ---- end warning ------
 
 		curSubMesh->addTriangle(t[0].v0, t[0].i0,
 		                        t[0].v1, t[0].i1,
@@ -714,17 +750,15 @@ bool gkBlenderMeshConverter::convert(void)
 
 		}
 
-		if (mcol)
-			mcol += 4;
 
 	}
 
 	// build materials
-	utArrayIterator<utArray<gkMeshPair> > iter(meshtable);
+	utArrayIterator<utArray<gkMeshPair26> > iter(meshtable);
 
 	while (iter.hasMoreElements())
 	{
-		gkMeshHashKey& key  = iter.peekNext().test;
+		gkMeshHashKey26& key  = iter.peekNext().test;
 		gkSubMesh* val      = iter.peekNext().item;
 
 
@@ -751,81 +785,74 @@ bool gkBlenderMeshConverter::convert(void)
 }
 
 
-Blender::Material* gkBlenderMeshConverter::getMaterial(Blender::Object* ob, int index)
-{
-	if (!ob || ob->totcol == 0) return 0;
 
-	index = gkClamp<int>(index, 0, ob->totcol - 1);
-	Blender::Material* ma = 0;
-
-	int inObject = ob->matbits && ob->matbits[index] ? 1 : 0;
-
-	if (!inObject)
-		inObject = ob->colbits & (1 << index);
-
-
-	if (inObject)
-		ma = (Blender::Material*)ob->mat[index];
-	else
-	{
-		Blender::Mesh* me = (Blender::Mesh*)ob->data;
-		if (me && me->mat && me->mat[index])
-			ma = me->mat[index];
-	}
-
-
-
-//#define DEBUG_BPARSE_PTRPTR_ARRAY
-#ifdef DEBUG_BPARSE_PTRPTR_ARRAY
-
-	printf("Object(%s):\n\t"
-	       "Total Materials = %i\n\t"
-	       "In Object Data  = %i\n\t"
-	       "Material Index  = %i\n\t"
-	       "Material Name   = %s\n",
-	       ob->id.name, ob->totcol, inObject, index, (ma ? ma->id.name : "NULL"));
-#endif
-
-	return ma;
-}
-
-
-static void gkLoaderUtils_getLayers(
+// very new
+static void gkLoaderUtils_getLayers26(
     Blender::Mesh* mesh,
-    Blender::MTFace** eightLayerArray,
-    Blender::MCol** oneMCol,
+    Blender::MTexPoly** eightLayerArray,
+    Blender::MLoopUV** uvEightLayerArray,
+    Blender::MLoopCol** oneMCol,
     int& validLayers)
 {
 	GK_ASSERT(mesh);
 
 	validLayers = 0;
 
-	Blender::CustomDataLayer* layers = (Blender::CustomDataLayer*)mesh->fdata.layers;
+	// Poly-Data: Textures,...
+	Blender::CustomDataLayer* layers = (Blender::CustomDataLayer*)mesh->pdata.layers;
 	if (layers)
 	{
 		// push valid layers
-		for (int i = 0; i < mesh->fdata.totlayer && validLayers < 8; i++)
+		for (int i = 0; i < mesh->pdata.totlayer && validLayers < 8; i++)
 		{
-			if (layers[i].type == CD_MTFACE && eightLayerArray)
+			Blender::CustomDataLayer l = layers[i];
+			if (layers[i].type == CD_MTEXPOLY && eightLayerArray)
 			{
-				Blender::MTFace* mtf = (Blender::MTFace*)layers[i].data;
+				void* a = layers[i].data;
+				Blender::MTexPoly* mtf = (Blender::MTexPoly*)layers[i].data;
 				if (mtf)
 					eightLayerArray[validLayers++] = mtf;
-			}
-			else if (layers[i].type == CD_MCOL)
-			{
-				if (oneMCol && !(*oneMCol))
-					*oneMCol = static_cast<Blender::MCol*>(layers[i].data);
 			}
 		}
 	}
 	else
 	{
-		if (eightLayerArray && mesh->mtface)
-			eightLayerArray[validLayers++] = mesh->mtface;
-		if (oneMCol && mesh->mcol)
-			*oneMCol = mesh->mcol;
-
-
+		// TODO: Check this
+		if (eightLayerArray && mesh->mtpoly)
+			eightLayerArray[validLayers++] = mesh->mtpoly;
+		// TODO: Check this
+		if (oneMCol && mesh->mloopcol)
+			*oneMCol = mesh->mloopcol;
 	}
+
+	// this have to be equal to validLayers afterwards,right?
+	int uvValidLayers = 0;
+	// Loop-Data: UV-Data,..
+	layers = (Blender::CustomDataLayer*)mesh->ldata.layers;
+	if (layers)
+	{
+		// push valid layers
+		for (int i = 0; i < mesh->ldata.totlayer && uvValidLayers < 8; i++)
+		{
+			Blender::CustomDataLayer l = layers[i];
+			if (layers[i].type == CD_MLOOPUV && uvEightLayerArray)
+			{
+				void* a = layers[i].data;
+				Blender::MLoopUV* mtf = (Blender::MLoopUV*)layers[i].data;
+				if (mtf)
+					uvEightLayerArray[uvValidLayers++] = mtf;
+			}
+		}
+	}
+	else
+	{
+		// TODO: Check this
+		if (oneMCol && mesh->mloopcol)
+			*oneMCol = mesh->mloopcol;
+	}
+
+	if (uvValidLayers!=validLayers){
+		gkLogger::write("Warning! gkMeshConverter gkLoaderUtilsGetLayers: validLayers!=validUvLayers!");
+	}
+
 }

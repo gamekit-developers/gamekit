@@ -96,7 +96,10 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 
 	m_createdLinks.push_back(lnk);
 
-	lnk->setState(bobj->init_state ? bobj->init_state : bobj->state);
+	// FIXME (dertom): Had to set this manually to one. It worked fine on desktop but refused to work
+	// for android. Works fine afais.
+	// orig: lnk->setState(bobj->init_state ? bobj->init_state : bobj->state);
+	lnk->setState(1);
 	gobj->setState(lnk->getState());
 	lnk->setObject(gobj);
 	gobj->attachLogic(lnk);
@@ -221,8 +224,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 
 				Blender::bActionActuator* baa = (Blender::bActionActuator*)bact->data;
 
-				aa->setStart(baa->sta/animFps);
-				aa->setEnd(baa->end/animFps);
+				aa->setStart(baa->sta);
+				aa->setEnd(baa->end);
 				aa->setBlend(baa->blendin);
 
 				int mode = 0;
@@ -254,8 +257,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				la = aa;
 				Blender::bIpoActuator* bia = (Blender::bIpoActuator*)bact->data;
 				
-				aa->setStart(bia->sta / animFps);
-				aa->setEnd(bia->end / animFps);
+				aa->setStart(bia->sta);
+				aa->setEnd(bia->end);
 				aa->setBlend(0);
 
 				int mode = 0;
