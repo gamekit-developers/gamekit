@@ -35,7 +35,8 @@ namespace OIS
 AndroidInputManager::AndroidInputManager()
 	:	InputManager("AndroidInputManager"),
 		mKeyboard(0),
-		mTouch(0)
+		mTouch(0),
+		mAccelerometer(0)
 {
 	mFactories.push_back(this);
 
@@ -68,6 +69,10 @@ DeviceList AndroidInputManager::freeDeviceList()
 	//if( bMultiTouchUsed == false )
 		ret.insert(std::make_pair(OISMultiTouch, mInputSystemName));
 
+		if (mAccelerometer){
+			ret.insert(std::make_pair(OISJoyStick, mInputSystemName));
+		}
+
 	return ret;
 }
 
@@ -77,6 +82,7 @@ int AndroidInputManager::totalDevices(Type iType)
 	{
         case OISKeyboard: return 1;
         case OISMultiTouch: return 1;
+        case OISJoyStick : return 1;
         default: return 0;
 	}
 }
@@ -87,13 +93,14 @@ int AndroidInputManager::freeDevices(Type iType)
 	{
         case OISKeyboard: return 1; //bAccelerometerUsed ? 0 : 1;
         case OISMultiTouch: return 1; //bMultiTouchUsed ? 0 : 1;
+        case OISJoyStick : return 1;
         default: return 0;
 	}
 }
 
 bool AndroidInputManager::vendorExist(Type iType, const std::string & vendor)
 {
-	if( ( iType == OISMultiTouch || iType == OISKeyboard) && vendor == mInputSystemName )
+	if( ( iType == OISMultiTouch || iType == OISKeyboard || iType == OISJoyStick) && vendor == mInputSystemName )
 		return true;
 
 	return false;
@@ -123,6 +130,14 @@ Object* AndroidInputManager::createObject(InputManager* creator, Type iType, boo
 			AndroidMultiTouch* touch = new AndroidMultiTouch(this);
 			obj = touch;
 			if (!mTouch) mTouch = touch;		
+			break;
+		}
+	case OISJoyStick:
+		{
+			AndroidAccelerometer* accel = new AndroidAccelerometer(this,true);
+			obj = accel;
+			if (!mAccelerometer)
+				mAccelerometer = accel;
 			break;
 		}
 	default:
@@ -491,5 +506,52 @@ void AndroidMultiTouch::injectTouch(int action, float x, float y)
 			}
 		}
 	}
+}
+
+
+AndroidAccelerometer::AndroidAccelerometer(InputManager* creator, bool buffered) : JoyStick(creator->inputSystemName(), true, 0, 0) {}
+AndroidAccelerometer::~AndroidAccelerometer() {}
+
+/** @copydoc Object::setBuffered */
+void AndroidAccelerometer::setBuffered(bool buffered){
+	// TODO?
+	mBuffered=buffered;
+}
+
+//    void setUpdateInterval(float interval) {
+//        mUpdateInterval = interval;
+//        setUpdateInterval(1.0f / mUpdateInterval);
+//    }
+
+
+/** @copydoc Object::capture */
+void AndroidAccelerometer::capture(){
+    mState.clear();
+    mState.mVectors[0] = mTempState;
+
+    if(mListener && mBuffered){
+        mListener->axisMoved(JoyStickEvent(this, mState), 0);
+        printf("Android Inp:CAPTURE");
+    } else {
+        printf("NO Android Inp CAP");
+    }
+}
+
+
+
+/** @copydoc Object::_initialize */
+void AndroidAccelerometer::_initialize(){
+	// Clear old joy state
+    mState.mVectors.resize(1);
+	mState.clear();
+	mTempState.clear();
+}
+
+void AndroidAccelerometer::injectAcceleration(float x,float y,float z) {
+	mTempState.clear();
+	printf("inject %f %f %f",x,y,z);
+	mTempState.x = x;
+	mTempState.y = y;
+	mTempState.z = z;
 }
 }

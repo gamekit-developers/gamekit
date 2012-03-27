@@ -25,6 +25,7 @@ restrictions:
 #include "OISFactoryCreator.h"
 #include "OISKeyboard.h"
 #include "OISMultiTouch.h"
+#include "OISJoyStick.h"
 
 #ifndef OIS_AndroidInputManager_H
 #define OIS_AndroidInputManager_H
@@ -71,10 +72,46 @@ public:
 
 };
 
+class AndroidAccelerometer : public JoyStick
+{
+public:
+	AndroidAccelerometer(InputManager* creator, bool buffered);
+	virtual ~AndroidAccelerometer();
+
+	/** @copydoc Object::setBuffered */
+	virtual void setBuffered(bool buffered);
+
+    void setUpdateInterval(float interval) {
+        mUpdateInterval = interval;
+        setUpdateInterval(1.0f / mUpdateInterval);
+    }
+
+    virtual Vector3 getAccelerometerVector3(void) { return mState.mVectors[0]; }
+	/** @copydoc Object::capture */
+	virtual void capture();
+
+	/** @copydoc Object::queryInterface */
+	virtual Interface* queryInterface(Interface::IType type) {return 0;}
+
+	/** @copydoc Object::_initialize */
+	virtual void _initialize();
+
+
+    void injectAcceleration(float x,float y,float z);
+
+//protected:
+//    iPhoneAccelerometerDelegate *accelerometerDelegate;
+//
+//    /** The update frequency of the accelerometer.  Represented in times per second. */
+    float mUpdateInterval;
+    Vector3 mTempState;
+};
+
 class AndroidInputManager : public InputManager, public FactoryCreator
 {
 	AndroidMultiTouch* mTouch;
 	AndroidKeyboard* mKeyboard;
+	AndroidAccelerometer* mAccelerometer;
 
 public:
 	AndroidInputManager();
@@ -85,6 +122,8 @@ public:
 	DeviceList freeDeviceList();		
 	int totalDevices(Type iType);	
 	int freeDevices(Type iType);
+	int getNumberOfDevices( Type iType ){ return totalDevices(iType);}
+
 	bool vendorExist(Type iType, const std::string & vendor);
 
 	Object* createObject(InputManager* creator, Type iType, bool bufferMode, const std::string & vendor);
@@ -93,7 +132,7 @@ public:
 
 
 	//--
-
+	void injectAcceleration(float x,float y,float z) {if (mAccelerometer) mAccelerometer->injectAcceleration(x,y,z);}
 	void injectKey(int action, int uniChar, int keyCode) { if (mKeyboard) mKeyboard->injectKey(action, uniChar, keyCode); }
 	void injectTouch(int action, float x, float y) { if (mTouch) mTouch->injectTouch(action, x, y); }
 	void setOffsets(int x, int y) { if (mTouch) mTouch->setOffsets(x,y); }

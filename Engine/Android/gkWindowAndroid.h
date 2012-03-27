@@ -27,6 +27,7 @@
 
 #ifndef _gkWindowAndroid_h_
 #define _gkWindowAndroid_h_
+#include "OISJoyStick.h"
 
 
 // Internal interface
@@ -50,7 +51,11 @@ public:
 
 	void transformInputState(OIS::MultiTouchState& state);
 
+	bool axisMoved( const OIS::JoyStickEvent &arg, int axis );
+
+
 	OIS::MultiTouch*        m_itouch;
+	OIS::JoyStick*			m_iacc;
 };
 
 #endif //_gkWindowIOS_h_

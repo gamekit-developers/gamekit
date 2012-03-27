@@ -82,8 +82,21 @@ bool gkWindowAndroid::setupInput(const gkUserDefs& prefs)
 		m_ikeyboard = (OIS::Keyboard*)m_input->createInputObject(OIS::OISKeyboard, true);  GK_ASSERT(m_ikeyboard);
 		m_ikeyboard->setEventCallback(this);
 
+		// TODO: Option for disabling accelration! Performance...
+		try{
+			m_iacc = (OIS::JoyStick*)m_input->createInputObject(OIS::OISJoyStick, true);
+			m_iacc->setEventCallback(this);
+			m_ijoysticks.push_back(m_iacc);
+
+			gkJoystick* gkjs = new gkJoystick(0,0);
+			m_joysticks.push_back(gkjs);
+		} catch (OIS::Exception&){
+			m_iacc=0;
+		}
+
 		m_itouch = (OIS::MultiTouch*)m_input->createInputObject(OIS::OISMultiTouch, true); GK_ASSERT(m_itouch);
 		m_itouch->setEventCallback(this);
+
 	}
 	catch (OIS::Exception& e)
 	{
@@ -102,6 +115,10 @@ void gkWindowAndroid::dispatch(void)
 
 	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
 		m_mouse.moved = false;
+	if(m_iacc){
+		m_iacc->capture();
+	} else {
+	}
 }
 
 void gkWindowAndroid::process(void)
@@ -125,7 +142,8 @@ void gkWindowAndroid::transformInputState(OIS::MultiTouchState& state)
 	int absY = state.Y.abs;
 	int relX = state.X.rel;
 	int relY = state.Y.rel;
-
+//TODO: This have to work! Check this orientation stuff
+#if OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
 	switch (viewport->getOrientationMode())
 	{
 	case Ogre::OR_DEGREE_0:   //OR_PORTRAIT
@@ -149,6 +167,8 @@ void gkWindowAndroid::transformInputState(OIS::MultiTouchState& state)
 		state.Y.rel = -relX;
 		break;
 	}
+#endif
+
 }
 
 bool gkWindowAndroid::touchPressed(const OIS::MultiTouchEvent& arg)
@@ -214,6 +234,26 @@ bool gkWindowAndroid::touchMoved(const OIS::MultiTouchEvent& arg)
 		}
 	}
 
+	return true;
+}
+
+bool gkWindowAndroid::axisMoved( const OIS::JoyStickEvent &arg, int axis ){
+	const OIS::Vector3& arg_accel = arg.state.mVectors[0];
+	gkVector3& accel = m_joysticks[0]->accel;
+
+	accel.x = arg_accel.x;
+	accel.y = arg_accel.y;
+	accel.z = arg_accel.z;
+
+	if (!m_listeners.empty())
+	{
+		gkWindowSystem::Listener* node = m_listeners.begin();
+		while (node)
+		{
+			node->joystickMoved(*m_joysticks[0], 0);
+			node = node->getNext();
+		}
+	}
 	return true;
 }
 

@@ -53,7 +53,7 @@
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #ifdef __ANDROID__
-#define ZZIP_HAVE_STDINT_H  1
+//#define ZZIP_HAVE_STDINT_H  1
 #endif
 
 #ifndef ZZIP_HAVE_STDINT_H 

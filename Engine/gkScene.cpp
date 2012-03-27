@@ -79,6 +79,7 @@
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 #include "OgreRTShaderSystem.h"
 #endif
+#include "Physics/gkGhost.h"
 
 //using namespace Ogre;
 
@@ -691,8 +692,8 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 
 	if (props.isGhost())
 	{
-		gkCharacter* con = m_physicsWorld->createCharacter(obj);
-		obj->attachCharacter(con);
+		gkGhost* con = m_physicsWorld->createGhost(obj);
+		obj->attachGhost(con);
 	}
 	else
 	{
@@ -966,19 +967,28 @@ void gkScene::createInstanceImpl(void)
 
 
 
-	const gkString& iparam = gkEngine::getSingleton().getUserDefs().viewportOrientation;
 
+#if OGRE_NO_VIEWPORT_ORIENTATIONMODE != 0
+	const gkString& iparam = gkEngine::getSingleton().getUserDefs().viewportOrientation;
 	if (!iparam.empty())
 	{
 		int oparam = Ogre::OR_PORTRAIT;
 		if (iparam == "landscaperight") //viewport orientation is reversed.
+		{
 			oparam = Ogre::OR_LANDSCAPELEFT;
-		else if (iparam == "landscapeleft")
+//			gkLogger::write("Set Orientation: OR_LANDSCAPELEFT",true);
+		}
+		else if (iparam == "landscapeleft") {
 			oparam = Ogre::OR_LANDSCAPERIGHT;
-
-		m_viewport->getViewport()->setOrientationMode((Ogre::OrientationMode)oparam);
+//			gkLogger::write("Set Orientation: OR_LANDSCAPERIGHT",true);
+		}
+		try{
+			m_viewport->getViewport()->setOrientationMode((Ogre::OrientationMode)oparam);
+		} catch (...) {
+			gkLogger::write("Problem setting Viewport Orientation");
+		}
 	}
-
+#endif
 
 	if (m_baseProps.m_fog.m_mode != gkFogParams::FM_NONE)
 	{

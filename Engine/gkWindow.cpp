@@ -259,7 +259,10 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			winsizex = m_requestedWidth;
 			winsizey = m_requestedHeight;
 		}
-
+#ifdef __ANDROID__
+		params["externalWindowHandle"] = Ogre::StringConverter::toString(0);
+		params["externalGLContext"] = Ogre::StringConverter::toString(0);
+#endif
 		m_rwindow = Ogre::Root::getSingleton().createRenderWindow(prefs.wintitle,
 				   winsizex, winsizey, prefs.fullscreen, &params);
 		m_rwindow->setActive(true);
