@@ -459,6 +459,9 @@ gsScriptController* getCurrentController(void)
 	return 0;
 }
 
+void  gsActionActuator::play(void) {
+	get()->playAction();
+}
 
 
 //

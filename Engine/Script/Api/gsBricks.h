@@ -542,7 +542,6 @@ public:
 
 	void setType(int v) {BRICK_SET(setType(v));}
 	int  getType(int v) {BRICK_GET(getType(), MST_LEFT);}
-
 	OGRE_KIT_LOGIC_BRICK(MouseSensor);
 };
 
@@ -758,7 +757,9 @@ public:
 	void  setAnimation(const gkString& v) {BRICK_SET( setAnimation(v) );}
 	void  setProperty(const gkString& v)  {BRICK_SET( setProperty(v) );}
 	void  setReset(bool v)                {BRICK_SET( setReset(v) );}
-
+	void  reInit(void)					  {BRICK_SET( doInit() );}
+	void  play(void);
+	void  stop(void)					  {BRICK_SET( stopAction() );}
 	int       getStart(void)              {BRICK_GET( getStart(), 0 );}
 	int       getEnd(void)                {BRICK_GET( getEnd(), 0 );}
 	int       getBlend(void)              {BRICK_GET( getBlend(), 0 );}
@@ -767,7 +768,10 @@ public:
 	gkString  getAnimation(void)          {BRICK_GET( getAnimation(), "" );}
 	gkString  getProperty(void)           {BRICK_GET( getProperty(), "" );}
 	bool      getReset(void)              {BRICK_GET( getReset(), 0 );}
-
+	void 	  setAnimPosition(float time){BRICK_SET( setAnimationPosition(time));}
+	float  getAnimPosition()			  {BRICK_GET( getAnimationPosition(), 0 );}
+	float  getAnimLength(void)    {BRICK_GET( getAnimationLength(), 0 );}
+	bool 	  isActionEnded(void)		  {BRICK_GET( isActionEnded(),false);}
 	OGRE_KIT_LOGIC_BRICK(ActionActuator);
 };
 

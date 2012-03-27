@@ -326,7 +326,7 @@ class gsScene : public gsObject
 {
 private:
 	gsArray<gsGameObject, gkGameObject> m_objectCache;
-
+	gsRay* m_pickRay;
 public:
 	gsScene();
 	~gsScene();
@@ -341,6 +341,10 @@ public:
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
 	gsDynamicsWorld* getDynamicsWorld(void);
+
+	gsCamera* getMainCamera(void);
+
+	gsRay* getPickRay();
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);

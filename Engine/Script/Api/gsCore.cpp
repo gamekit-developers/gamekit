@@ -26,7 +26,7 @@
 */
 #include "gsCore.h"
 #include "gsPhysics.h"
-
+#include "gkCam2ViewportRay.h"
 
 
 gsProperty::gsProperty(gkVariable* var) : m_prop(var), m_creator(false)
@@ -401,7 +401,6 @@ gsMouse::gsMouse()
 	     wheel(0), moved(false)
 {
 }
-
 
 
 
@@ -902,12 +901,12 @@ gkString gsObject::getName(void)
 
 
 
-gsScene::gsScene()
+gsScene::gsScene() : m_pickRay(0)
 {
 }
 
 
-gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob)
+gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob),m_pickRay(0)
 {
 }
 
@@ -915,9 +914,10 @@ gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob)
 
 gsScene::~gsScene()
 {
+	if (m_pickRay){
+		delete m_pickRay;
+	}
 }
-
-
 
 bool gsScene::hasObject(const gkString& name)
 {
@@ -957,6 +957,24 @@ gkGameObject* gsScene::createEmpty(const gkString& name)
 }
 
 
+gsRay* gsScene::getPickRay(){
+	if (m_object){
+		gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
+
+		gkScalar ncx = mse->position.x;
+		gkScalar ncy = mse->position.y;
+
+		gkCam2ViewportRay pickRay = gkCam2ViewportRay(ncx, ncy);
+		if (!m_pickRay){
+			m_pickRay = new gsRay;
+		}
+		m_pickRay->setDirection(pickRay.getDirection());
+		m_pickRay->setOrigin(pickRay.getOrigin());
+		return m_pickRay;
+	}
+	return 0;
+}
+
 gkGameObject* gsScene::cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate)
 {
 	if (m_object && obj)
@@ -986,6 +1004,15 @@ gsDynamicsWorld* gsScene::getDynamicsWorld(void)
 
 	return 0;
 }
+
+gsCamera* gsScene::getMainCamera(void){
+	if (m_object) {
+		gkScene* scene = cast<gkScene>();
+		return new gsCamera(scene->getMainCamera());
+	}
+	return 0;
+}
+
 
 
 gkScene* getActiveScene(void)
@@ -1429,7 +1456,6 @@ void gsGameObject::changeState(int v)
 		cast<gkGameObject>()->changeState(v);
 }
 
-
 bool gsGameObject::hasParent()
 {
 	return m_object && cast<gkGameObject>()->getParent() != 0;
@@ -1598,7 +1624,6 @@ void gsGameObject::playAnimation(const gkString& name, float blend)
 }
 
 
-
 gsEntity::gsEntity()
 {
 }
@@ -1636,18 +1661,6 @@ gsLight::gsLight(gkInstancedObject* ob) : gsGameObject(ob)
 
 
 
-gsCamera::gsCamera()
-{
-}
-
-
-
-gsCamera::gsCamera(gkInstancedObject* ob) : gsGameObject(ob)
-{
-}
-
-
-
 void  gsCamera::setClipping(float start, float end)
 {
 	if (m_object)
@@ -1663,6 +1676,14 @@ float gsCamera::getClipStart()
 	return 0;
 }
 
+gsCamera::gsCamera()
+{
+}
+
+
+gsCamera::gsCamera(gkInstancedObject* ob) : gsGameObject(ob)
+{
+}
 
 
 float gsCamera::getClipEnd()
@@ -1696,9 +1717,6 @@ void gsCamera::makeCurrent()
 	if (m_object)
 		cast<gkCamera>()->makeCurrent();
 }
-
-
-
 
 
 gsSkeleton::gsSkeleton()
@@ -1789,7 +1807,6 @@ void gsDebugPrint(const char* str)
 void sendMessage(const char* from,const char* to,const char* subject,const char* body){
 	gkMessageManager::getSingletonPtr()->sendMessage(from,to,subject,body);
 }
-
 
 bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 {
