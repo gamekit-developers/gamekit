@@ -13,19 +13,24 @@
 #  OIS_FOUND - system has OIS
 #  OIS_INCLUDE_DIRS - the OIS include directories 
 #  OIS_LIBRARIES - link these to use OIS
+#  OIS_BINARY_REL / OIS_BINARY_DBG - DLL names (windows only)
 
 include(FindPkgMacros)
 findpkg_begin(OIS)
 
 # Get path, convert backslashes as ${ENV_${var}}
 getenv_path(OIS_HOME)
+getenv_path(OGRE_SDK)
 getenv_path(OGRE_HOME)
 getenv_path(OGRE_SOURCE)
+getenv_path(OGRE_DEPENDENCIES_DIR)
 
 # construct search paths
 set(OIS_PREFIX_PATH ${OIS_HOME} ${ENV_OIS_HOME} 
-  ${OGRE_SOURCE}/iPhoneDependencies ${ENV_OGRE_SOURCE}/iPhoneDependencies
+  ${OGRE_DEPENDENCIES_DIR} ${ENV_OGRE_DEPENDENCIES_DIR}
+  ${OGRE_SOURCE}/iOSDependencies ${ENV_OGRE_SOURCE}/iOSDependencies
   ${OGRE_SOURCE}/Dependencies ${ENV_OGRE_SOURCE}/Dependencies
+  ${OGRE_SDK} ${ENV_OGRE_SDK}
   ${OGRE_HOME} ${ENV_OGRE_HOME})
 create_search_paths(OIS)
 # redo search if prefix path changed
@@ -55,11 +60,38 @@ if (APPLE AND OIS_HOME)
   set(OIS_LIB_SEARCH_PATH ${OIS_LIB_SEARCH_PATH} ${OIS_HOME}/Mac/XCode-2.2/build)
 endif()
 find_path(OIS_INCLUDE_DIR NAMES OIS.h HINTS ${OIS_INC_SEARCH_PATH} ${OIS_PKGC_INCLUDE_DIRS} PATH_SUFFIXES OIS)
+if (SYMBIAN) 
+set(ORIGINAL_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH ${CMAKE_SYSYEM_OUT_DIR})
+message(STATUS "Lib will be searched in Symbian out dir: ${CMAKE_SYSYEM_OUT_DIR}")
+endif (SYMBIAN)
 find_library(OIS_LIBRARY_REL NAMES ${OIS_LIBRARY_NAMES} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" release relwithdebinfo minsizerel)
 find_library(OIS_LIBRARY_DBG NAMES ${OIS_LIBRARY_NAMES_DBG} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" debug)
+if (SYMBIAN) 
+set(OIS_LIBRARY_REL "${FreeImage_LIBRARY_REL} ois.lib touchfeedback.lib")
+set(CMAKE_PREFIX_PATH ${ORIGINAL_CMAKE_PREFIX_PATH})
+endif (SYMBIAN)
+
 make_library_set(OIS_LIBRARY)
 
+if (WIN32)
+	set(OIS_BIN_SEARCH_PATH ${OIS_HOME}/dll ${ENV_OIS_HOME}/dll
+		${OGRE_DEPENDENCIES_DIR}/bin ${ENV_OGRE_DEPENDENCIES_DIR}/bin
+		${OGRE_SOURCE}/Dependencies/bin ${ENV_OGRE_SOURCE}/Dependencies/bin
+		${OGRE_SDK}/bin ${ENV_OGRE_SDK}/bin
+		${OGRE_HOME}/bin ${ENV_OGRE_HOME}/bin)
+	find_file(OIS_BINARY_REL NAMES "OIS.dll" HINTS ${OIS_BIN_SEARCH_PATH}
+	  PATH_SUFFIXES "" release relwithdebinfo minsizerel)
+	find_file(OIS_BINARY_DBG NAMES "OIS_d.dll" HINTS ${OIS_BIN_SEARCH_PATH}
+	  PATH_SUFFIXES "" debug )
+endif()
+mark_as_advanced(OIS_BINARY_REL OIS_BINARY_DBG)
+
+
 findpkg_finish(OIS)
+
+# add parent of OIS folder to support OIS/OIS.h
+add_parent_dir(OIS_INCLUDE_DIRS OIS_INCLUDE_DIR)
 
 # Reset framework finding
 set(CMAKE_FIND_FRAMEWORK "FIRST")

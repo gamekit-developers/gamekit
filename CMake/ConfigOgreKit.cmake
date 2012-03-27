@@ -38,7 +38,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_MINIMAL_FREEIMAGE_CODEC	"Compile minimal FreeImage Codec(PNG/JPEG/TGA)" OFF)
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
-	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" ON) #FBT alternative 
+	# CAUTION: As of the blender 2.63-update bparse do not work for the moment! So set FBT as default for now
+	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
@@ -245,8 +246,11 @@ macro (configure_ogrekit ROOT OGREPATH)
         set(OGREKIT_BUILD_GLES2RS TRUE  CACHE BOOL "Forcing remove GLES2RS"   FORCE)
         
 		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
-		
-		
+		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE FALSE CACHE BOOL "Forcing viewport orientation support for Android" FORCE)
+		if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
+			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
+		endif()
+
 		#message(${OGREKIT_BUILD_GLRS} "---" ${OGREKIT_BUILD_GLESRS} " --- " ${OPENGLES2_gl_LIBRARY})
 		
 	elseif (OGREKIT_BUILD_IPHONE)
@@ -328,7 +332,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
-	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/Settings ${OGREKIT_PLATFORM})	
+	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/include ${OGREKIT_PLATFORM})	
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
 	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
@@ -348,6 +352,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	)
 	
 	if (OGREKIT_USE_BPARSE)
+	
 		list(APPEND OGREKIT_DEP_INCLUDE
 			${GAMEKIT_SERIALIZE_BULLET}
 			${GAMEKIT_SERIALIZE_BLENDER}
@@ -358,6 +363,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		)
 	endif()
 
+	message(STATUS "DEP_INCLUDES: ${OGREKIT_DEP_INCLUDE}")
 	
 	set(OGREKIT_LIBROCKET_INCLUDE ${OGREKIT_DEP_DIR}/libRocket/Include)
 	set(OGREKIT_LIBROCKET_LIBS RocketCore RocketControls RocketDebugger)
@@ -399,8 +405,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" ON)
 		else ()
 			# Use standard OIS build.
-
-			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" OFF)
+			# CAUTION: For now there are some missing symbols, which work with native fine. So for now lets set it to native as default
+			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" On)
 		endif()
 	endif()
 
@@ -512,6 +518,12 @@ macro (configure_ogrekit ROOT OGREPATH)
 	)    
 	
 	if (OGREKIT_USE_BPARSE)
+		set(BPARSE_FILE_FORMAT 2 CACHE STRING 
+			"Select the bparse-blendfile-format:
+				 1 - <= 2.62
+				 2 - >= 2.63
+			"
+		)
 		list(APPEND OGREKIT_OGRE_LIBS
 			${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 			${GAMEKIT_SERIALIZE_BULLET_TARGET}
@@ -634,7 +646,7 @@ macro(configure_rendersystem)
             #message(STATUS ${OGREKIT_OGRE_LIBS})
         endif()
 		
-		#message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
+		message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
 		
 	endif()
 	

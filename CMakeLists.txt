@@ -39,12 +39,11 @@ configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 	"Select the graphic backend for GameKit. Possible values:
 		 1 - Ogre 1.8
 		 2 - Ogre 1.7
-		 3 - GLUT
 	"
 	)
 	
 if (GAMEKIT_GRAPHIC_BACKEND EQUAL 1)
-	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8)	
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8rc)	
 elseif (GAMEKIT_GRAPHIC_BACKEND EQUAL 2)	
 	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.7)
 else()
@@ -71,12 +70,11 @@ if (NOT APPLE AND OGREKIT_COMPILE_WXWIDGETS)
 endif()
 
 
-
-if (APPLE)
-    if (${XCODE_VERSION} STRGREATER "4.0.0")
-        set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "4.2")
-    endif()
-endif()
+#if (APPLE)
+#    if (${XCODE_VERSION} STRGREATER "4.0.0")
+#        set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "4.2")
+#    endif()
+#endif()
 
 
 IF(MSVC)
@@ -122,6 +120,7 @@ subdirs(Engine)
 
 if (NOT OGREKIT_USE_BPARSE OR OGREKIT_USE_FILETOOLS)
 	subdirs(Tools/FileTools)
+else()
 endif()
 
 if (OGREKIT_COMPILE_WXWIDGETS)
@@ -131,6 +130,7 @@ endif()
 subdirs(Samples)
 
 if (OGREKIT_UPDATE_CPP_DOCS)
+	message(STATUS "Update CPP")
 	subdirs(Docs/CppAPI)
 endif()
 

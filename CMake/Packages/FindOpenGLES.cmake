@@ -13,29 +13,25 @@
 #  OPENGLES_FOUND        - system has OpenGLES
 #  OPENGLES_INCLUDE_DIR  - the GL include directory
 #  OPENGLES_LIBRARIES    - Link these to use OpenGLES
-
 include(FindPkgMacros)
 
 IF (WIN32)
+  IF (CYGWIN)
 
-	IF(0) # Disabled, untill further testing
-	  IF (CYGWIN)
+    FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h )
 
-		FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h )
+    FIND_LIBRARY(OPENGLES_gl_LIBRARY libgles_cm )
 
-		FIND_LIBRARY(OPENGLES_gl_LIBRARY libgles_cm )
+  ELSE (CYGWIN)
 
-	  ELSE (CYGWIN)
+    IF(BORLAND)
+      SET (OPENGLES_gl_LIBRARY import32 CACHE STRING "OpenGL ES 1.x library for win32")
+    ELSE(BORLAND)
+	  #MS compiler - todo - fix the following line:
+      SET (OPENGLES_gl_LIBRARY ${OGRE_SOURCE_DIR}/Dependencies/lib/release/libgles_cm.lib CACHE STRING "OpenGL ES 1.x library for win32")
+    ENDIF(BORLAND)
 
-		IF(BORLAND)
-		  SET (OPENGLES_gl_LIBRARY import32 CACHE STRING "OpenGL library for win32")
-		ELSE(BORLAND)
-		  #MS compiler - todo - fix the following line:
-		  SET (OPENGLES_gl_LIBRARY ${OGRE_SOURCE_DIR}/Dependencies/lib/release/libgles_cm.lib CACHE STRING "OpenGL library for win32")
-		ENDIF(BORLAND)
-
-	  ENDIF (CYGWIN)
-	ENDIF()
+  ENDIF (CYGWIN)
 
 ELSE (WIN32)
 
@@ -47,40 +43,32 @@ ELSE (WIN32)
 
   ELSE(APPLE)
 
-	IF(0) # Disabled, untill further testing
+    FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h
+      /usr/openwin/share/include
+      /opt/graphics/OpenGL/include /usr/X11R6/include
+      /usr/include
+    )
 
+    FIND_LIBRARY(OPENGLES_gl_LIBRARY
+      NAMES GLES_CM GLESv1_CM
+      PATHS /opt/graphics/OpenGL/lib
+            /usr/openwin/lib
+            /usr/shlib /usr/X11R6/lib
+            /usr/lib
+    )
 
-		FIND_PATH(OPENGLES_INCLUDE_DIR GLES/gl.h
-		  /usr/openwin/share/include
-		  /opt/graphics/OpenGL/include /usr/X11R6/include
-		  /usr/include
-		)
+    # On Unix OpenGL most certainly always requires X11.
+    # Feel free to tighten up these conditions if you don't 
+    # think this is always true.
 
-
-		FIND_LIBRARY(OPENGLES_gl_LIBRARY
-		  NAMES GLES_CM
-		  PATHS /opt/graphics/OpenGL/lib
-				/usr/openwin/lib
-				/usr/shlib /usr/X11R6/lib
-				/usr/lib
-		)
-
-		# On Unix OpenGL most certainly always requires X11.
-		# Feel free to tighten up these conditions if you don't 
-		# think this is always true.
-		# It's not true on OSX.
-
-		IF (OPENGLES_gl_LIBRARY)
-		  IF(NOT X11_FOUND)
-			INCLUDE(FindX11)
-		  ENDIF(NOT X11_FOUND)
-		  IF (X11_FOUND)
-			IF (NOT APPLE)
-			  SET (OPENGLES_LIBRARIES ${X11_LIBRARIES})
-			ENDIF (NOT APPLE)
-		  ENDIF (X11_FOUND)
-		ENDIF (OPENGLES_gl_LIBRARY)
-	ENDIF()
+    IF (OPENGLES_gl_LIBRARY)
+      IF(NOT X11_FOUND)
+        INCLUDE(FindX11)
+      ENDIF(NOT X11_FOUND)
+      IF (X11_FOUND)
+        SET (OPENGLES_LIBRARIES ${X11_LIBRARIES})
+      ENDIF (X11_FOUND)
+    ENDIF (OPENGLES_gl_LIBRARY)
 
   ENDIF(APPLE)
 ENDIF (WIN32)
@@ -98,3 +86,12 @@ MARK_AS_ADVANCED(
   OPENGLES_INCLUDE_DIR
   OPENGLES_gl_LIBRARY
 )
+
+
+if(SYMBIAN)
+  SET( OPENGLES_FOUND "YES" )
+  set(ORIGINAL_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
+  set(CMAKE_PREFIX_PATH ${CMAKE_SYSYEM_OUT_DIR})
+  FIND_LIBRARY(OPENGLES_gl_LIBRARY libgles_cm )
+  set(CMAKE_PREFIX_PATH ${ORIGINAL_CMAKE_PREFIX_PATH})
+endif()

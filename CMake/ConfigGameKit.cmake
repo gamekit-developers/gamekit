@@ -11,6 +11,7 @@ macro (configure_gamekit ROOT)
 		#${FBT_SOURCE_DIR}/FileFormats/Bullet
 	)
 	
+	
 	set(GAMEKIT_FBT_LIBS
 		fbtFile
 		bfBlend

@@ -54,7 +54,7 @@ macro(create_unity_build_files TARGETNAME)
   set(_SOURCES ${_PRIMARY} ${_EXCLUDES})
   list(REMOVE_DUPLICATES _SOURCES)
 
-  if (IS_UNITY_BUILD)
+  if (OGRE_UNITY_BUILD)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
     # create Unity compilation units
     # all source files given will be put into a certain number of
@@ -74,7 +74,7 @@ macro(create_unity_build_files TARGETNAME)
         set(_FILE_CONTENTS "${_FILE_CONTENTS}\#include \"${_FILE}\"\n")
         math(EXPR _FILE_CNT "${_FILE_CNT}+1")
         if(_FILE_CNT EQUAL OGRE_UNITY_FILES_PER_UNIT)
-          set(_FILENAME "${CMAKE_CURRENT_BINARY_DIR}/${TARGETNAME}/compile_${TARGETNAME}_${_FILE_NUM}.cpp")
+          set(_FILENAME "${OGRE_BINARY_DIR}/${TARGETNAME}/compile_${TARGETNAME}_${_FILE_NUM}.cpp")
           check_and_update_file(${_FILENAME} ${_FILE_CONTENTS})
           math(EXPR _FILE_NUM "${_FILE_NUM}+1")
           set(_FILE_CNT 0)
@@ -86,7 +86,7 @@ macro(create_unity_build_files TARGETNAME)
       endif()
     endforeach()
     # don't forget the last set of files
-    set(_FILENAME "${CMAKE_CURRENT_BINARY_DIR}/${TARGETNAME}/compile_${TARGETNAME}_${_FILE_NUM}.cpp")
+    set(_FILENAME "${OGRE_BINARY_DIR}/${TARGETNAME}/compile_${TARGETNAME}_${_FILE_NUM}.cpp")
     check_and_update_file(${_FILENAME} ${_FILE_CONTENTS})
     list(APPEND _SOURCES ${_FILENAME})
   endif ()
@@ -95,11 +95,10 @@ endmacro()
 
 # add a new library target
 # usage: ogre_add_library(TARGETNAME LIBTYPE SOURCE_FILES [SEPARATE SOURCE_FILES])
-macro(ogre_add_library TARGETNAME LIBTYPE) 
-  set(IS_UNITY_BUILD ${OGRE_UNITY_BUILD})
+function(ogre_add_library TARGETNAME LIBTYPE)
   create_unity_build_files(${TARGETNAME} ${ARGN})
   add_library(${TARGETNAME} ${LIBTYPE} ${_SOURCES})
-endmacro(ogre_add_library)
+endfunction(ogre_add_library)
 
 
 # add a new executable target
@@ -118,7 +117,6 @@ function(ogrekit_add_executable TARGETNAME)
     set(_OSX "MACOSX_BUNDLE")
     list(REMOVE_AT ARGN ${_OSX_IDX})
   endif ()
-  set(IS_UNITY_BUILD ${OGREKIT_UNITY_BUILD})
   create_unity_build_files(${TARGETNAME} ${ARGN})
   add_executable(${TARGETNAME} ${_WIN32} ${_OSX} ${_SOURCES})
 endfunction()
@@ -132,3 +130,4 @@ endmacro()
 # function(ogrekit_add_executable TARGETNAME)
   # ogre_add_executable(${TARGETNAME} ${ARGN})
 # endfunction()
+

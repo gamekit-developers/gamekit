@@ -1,5 +1,6 @@
 function(config_target_if_iphone_build targetname is_library)   
 	if (OGREKIT_BUILD_IPHONE)
+		include_directories("include/iOS")
 		set_target_properties(${targetname} PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
 		set_target_properties(${targetname} PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
 		set_target_properties(${targetname} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")

@@ -9,6 +9,17 @@
 
 # Configure settings and install targets
 
+# Default build output paths
+if (NOT OGRE_ARCHIVE_OUTPUT)
+  set(OGRE_ARCHIVE_OUTPUT ${OGRE_BINARY_DIR}/lib)
+endif ()
+if (NOT OGRE_LIBRARY_OUTPUT)
+  set(OGRE_LIBRARY_OUTPUT ${OGRE_BINARY_DIR}/lib)
+endif ()
+if (NOT OGRE_RUNTIME_OUTPUT)
+  set(OGRE_RUNTIME_OUTPUT ${OGRE_BINARY_DIR}/bin)
+endif ()
+
 if (WIN32)
   set(OGRE_RELEASE_PATH "/Release")
   set(OGRE_RELWDBG_PATH "/RelWithDebInfo")
@@ -25,12 +36,33 @@ elseif (UNIX)
   set(OGRE_RELWDBG_PATH "")
   set(OGRE_MINSIZE_PATH "")
   set(OGRE_DEBUG_PATH "/debug")
+  if (NOT APPLE)
+	set(OGRE_DEBUG_PATH "")
+  endif ()
   set(OGRE_LIB_RELEASE_PATH "")
   set(OGRE_LIB_RELWDBG_PATH "")
   set(OGRE_LIB_MINSIZE_PATH "")
   set(OGRE_LIB_DEBUG_PATH "")
-  set(OGRE_PLUGIN_PATH "/OGRE")
+  if(APPLE AND OGRE_BUILD_PLATFORM_APPLE_IOS)
+    set(OGRE_LIB_RELEASE_PATH "/Release")
+  endif(APPLE AND OGRE_BUILD_PLATFORM_APPLE_IOS)
+  if (APPLE)
+    set(OGRE_PLUGIN_PATH "/")
+  else()
+    set(OGRE_PLUGIN_PATH "/OGRE")
+  endif(APPLE)
   set(OGRE_SAMPLE_PATH "/OGRE/Samples")
+elseif (SYMBIAN)
+  set(OGRE_RELEASE_PATH ".")
+  set(OGRE_RELWDBG_PATH ".")
+  set(OGRE_MINSIZE_PATH ".")
+  set(OGRE_DEBUG_PATH ".")
+  set(OGRE_LIB_RELEASE_PATH ".")
+  set(OGRE_LIB_RELWDBG_PATH ".")
+  set(OGRE_LIB_MINSIZE_PATH ".")
+  set(OGRE_LIB_DEBUG_PATH ".")
+  set(OGRE_PLUGIN_PATH ".")
+  set(OGRE_SAMPLE_PATH ".")
 endif ()
 
 # create vcproj.user file for Visual Studio to set debug working directory
@@ -41,103 +73,130 @@ function(ogre_create_vcproj_userfile TARGETNAME)
 	  ${CMAKE_CURRENT_BINARY_DIR}/${TARGETNAME}.vcproj.user
 	  @ONLY
 	)
+    configure_file(
+	  ${OGRE_TEMPLATES_DIR}/VisualStudioUserFile.vcxproj.user.in
+	  ${CMAKE_CURRENT_BINARY_DIR}/${TARGETNAME}.vcxproj.user
+	  @ONLY
+	)
   endif ()
 endfunction(ogre_create_vcproj_userfile)
 
 # install targets according to current build type
-function(ogre_install_target TARGETNAME SUFFIX)
-  install(TARGETS ${TARGETNAME}
-    BUNDLE DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
-    RUNTIME DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
-    LIBRARY DESTINATION "lib${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
-    ARCHIVE DESTINATION "lib${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
-    FRAMEWORK DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
-  )
-  install(TARGETS ${TARGETNAME}
-    BUNDLE DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
-    RUNTIME DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
-    LIBRARY DESTINATION "lib${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
-    ARCHIVE DESTINATION "lib${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
-    FRAMEWORK DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
-  )
-  install(TARGETS ${TARGETNAME}
-    BUNDLE DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
-    RUNTIME DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
-    LIBRARY DESTINATION "lib${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
-    ARCHIVE DESTINATION "lib${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
-    FRAMEWORK DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
-  )
-  install(TARGETS ${TARGETNAME}
-    BUNDLE DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
-    RUNTIME DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
-    LIBRARY DESTINATION "lib${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
-    ARCHIVE DESTINATION "lib${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
-    FRAMEWORK DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
-  )
+function(ogre_install_target TARGETNAME SUFFIX EXPORT)
+	# Skip all install targets in SDK
+	if (OGRE_SDK_BUILD)
+		return()
+	endif()
+
+	if(EXPORT)
+	  install(TARGETS ${TARGETNAME} #EXPORT Ogre-exports
+		BUNDLE DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
+		RUNTIME DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_RELEASE_PATH}/Release" CONFIGURATIONS Release None ""
+      )
+	  install(TARGETS ${TARGETNAME} #EXPORT Ogre-exports
+		BUNDLE DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
+		RUNTIME DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_RELWDBG_PATH}/RelWithDebInfo" CONFIGURATIONS RelWithDebInfo
+      )
+	  install(TARGETS ${TARGETNAME} #EXPORT Ogre-exports
+		BUNDLE DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
+		RUNTIME DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_MINSIZE_PATH}/MinSizeRel" CONFIGURATIONS MinSizeRel
+      )
+	  install(TARGETS ${TARGETNAME} #EXPORT Ogre-exports
+		BUNDLE DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
+		RUNTIME DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_DEBUG_PATH}/Debug" CONFIGURATIONS Debug
+	  )
+	  #install(EXPORT Ogre-exports DESTINATION ${OGRE_LIB_DIRECTORY})
+	else()
+	  install(TARGETS ${TARGETNAME}
+		BUNDLE DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
+		RUNTIME DESTINATION "bin${OGRE_RELEASE_PATH}" CONFIGURATIONS Release None ""
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELEASE_PATH}${SUFFIX}" CONFIGURATIONS Release None ""
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_RELEASE_PATH}/Release" CONFIGURATIONS Release None ""
+      )
+	  install(TARGETS ${TARGETNAME}
+		BUNDLE DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
+		RUNTIME DESTINATION "bin${OGRE_RELWDBG_PATH}" CONFIGURATIONS RelWithDebInfo
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}${SUFFIX}" CONFIGURATIONS RelWithDebInfo
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_RELWDBG_PATH}/RelWithDebInfo" CONFIGURATIONS RelWithDebInfo
+      )
+	  install(TARGETS ${TARGETNAME}
+		BUNDLE DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
+		RUNTIME DESTINATION "bin${OGRE_MINSIZE_PATH}" CONFIGURATIONS MinSizeRel
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_MINSIZE_PATH}${SUFFIX}" CONFIGURATIONS MinSizeRel
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_MINSIZE_PATH}/MinSizeRel" CONFIGURATIONS MinSizeRel
+      )
+	  install(TARGETS ${TARGETNAME}
+		BUNDLE DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
+		RUNTIME DESTINATION "bin${OGRE_DEBUG_PATH}" CONFIGURATIONS Debug
+		LIBRARY DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
+		ARCHIVE DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}${SUFFIX}" CONFIGURATIONS Debug
+		FRAMEWORK DESTINATION "${OGRE_LIB_DIRECTORY}${OGRE_DEBUG_PATH}/Debug" CONFIGURATIONS Debug
+	  )
+	endif()
+
 endfunction(ogre_install_target)
 
 # setup common target settings
 function(ogre_config_common TARGETNAME)
   set_target_properties(${TARGETNAME} PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${OGRE_BINARY_DIR}/lib
-    LIBRARY_OUTPUT_DIRECTORY ${OGRE_BINARY_DIR}/lib
-    RUNTIME_OUTPUT_DIRECTORY ${OGRE_BINARY_DIR}/bin
+    ARCHIVE_OUTPUT_DIRECTORY ${OGRE_ARCHIVE_OUTPUT}
+    LIBRARY_OUTPUT_DIRECTORY ${OGRE_LIBRARY_OUTPUT}
+    RUNTIME_OUTPUT_DIRECTORY ${OGRE_RUNTIME_OUTPUT}
   )
-  if(OGRE_BUILD_PLATFORM_IPHONE)
+  if(OGRE_BUILD_PLATFORM_APPLE_IOS)
     set_target_properties(${TARGETNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
     set_target_properties(${TARGETNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
     set_target_properties(${TARGETNAME} PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer")
     set_target_properties(${TARGETNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
-    set_target_properties(${TARGETNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${OGRELITE_SOURCE_DIR}/OgreMain/include/OgreStableHeaders.h")
-  endif(OGRE_BUILD_PLATFORM_IPHONE)
+  endif(OGRE_BUILD_PLATFORM_APPLE_IOS)
 
   ogre_create_vcproj_userfile(${TARGETNAME})
-  config_target_if_iphone_build(${TARGETNAME}  TRUE)
 endfunction(ogre_config_common)
 
 # setup library build
-function(ogre_config_lib LIBNAME)
+function(ogre_config_lib LIBNAME EXPORT)
   ogre_config_common(${LIBNAME})
   if (OGRE_STATIC)
     # add static prefix, if compiling static version
     set_target_properties(${LIBNAME} PROPERTIES OUTPUT_NAME ${LIBNAME}Static)
-
-    if(OGRE_BUILD_PLATFORM_IPHONE)
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${OGRELITE_SOURCE_DIR}/OgreMain/include/OgreStableHeaders.h")
-    endif(OGRE_BUILD_PLATFORM_IPHONE)
   else (OGRE_STATIC)
     if (CMAKE_COMPILER_IS_GNUCXX)
       # add GCC visibility flags to shared library build
       set_target_properties(${LIBNAME} PROPERTIES COMPILE_FLAGS "${OGRE_GCC_VISIBILITY_FLAGS}")
-	endif (CMAKE_COMPILER_IS_GNUCXX)
-	
-	# Set some Mac OS X specific framework settings, including installing the headers in subdirs
-	if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${OGRELITE_SOURCE_DIR}/OgreMain/include/OgreStableHeaders.h")
-      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
-      add_custom_command(TARGET ${LIBNAME} POST_BUILD
-        COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading
-	    COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRELITE_SOURCE_DIR}/OgreMain/include/Threading/* ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading/
-        COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX
-	    COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX/
-    )
-	endif (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN}")
+      set_target_properties(${LIBNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN}")
+    endif (CMAKE_COMPILER_IS_GNUCXX)
+	if (MINGW)
+	  # remove lib prefix from DLL outputs
+	  set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
+	endif ()
   endif (OGRE_STATIC)
-  ogre_install_target(${LIBNAME} "")
+  ogre_install_target(${LIBNAME} "" ${EXPORT})
   
   if (OGRE_INSTALL_PDB)
     # install debug pdb files
     if (OGRE_STATIC)
 	  install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_LIB_DEBUG_PATH}/${LIBNAME}Static_d.pdb
-	    DESTINATION lib${OGRE_LIB_DEBUG_PATH}
+	    DESTINATION ${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}
 		CONFIGURATIONS Debug
 	  )
 	  install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_LIB_RELWDBG_PATH}/${LIBNAME}Static.pdb
-	    DESTINATION lib${OGRE_LIB_RELWDBG_PATH}
+	    DESTINATION ${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}
 		CONFIGURATIONS RelWithDebInfo
 	  )
 	else ()
@@ -154,55 +213,45 @@ function(ogre_config_lib LIBNAME)
 endfunction(ogre_config_lib)
 
 function(ogre_config_component LIBNAME)
-  ogre_config_common(${LIBNAME})
-  ogre_install_target(${LIBNAME} "")
-  
-  if (OGRE_INSTALL_PDB)
-    # install debug pdb files
-    install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_DEBUG_PATH}/${LIBNAME}_d.pdb
-	  DESTINATION bin${OGRE_DEBUG_PATH}
-	  CONFIGURATIONS Debug
-	)
-	install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_RELWDBG_PATH}/${LIBNAME}.pdb
-	  DESTINATION bin${OGRE_RELWDBG_PATH}
-	  CONFIGURATIONS RelWithDebInfo
-	)
-  endif ()
+  ogre_config_lib(${LIBNAME} FALSE)
 endfunction(ogre_config_component)
 
 
 # setup plugin build
 function(ogre_config_plugin PLUGINNAME)
   ogre_config_common(${PLUGINNAME})
+  set_target_properties(${PLUGINNAME} PROPERTIES VERSION ${OGRE_SOVERSION})
   if (OGRE_STATIC)
     # add static prefix, if compiling static version
     set_target_properties(${PLUGINNAME} PROPERTIES OUTPUT_NAME ${PLUGINNAME}Static)
 
-    if(OGRE_BUILD_PLATFORM_IPHONE)
+    if(OGRE_BUILD_PLATFORM_APPLE_IOS)
       set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
       set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
       set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
-      set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${OGRELITE_SOURCE_DIR}/OgreMain/include/OgreStableHeaders.h")
-    endif(OGRE_BUILD_PLATFORM_IPHONE)
+    endif(OGRE_BUILD_PLATFORM_APPLE_IOS)
   else (OGRE_STATIC)
     if (CMAKE_COMPILER_IS_GNUCXX)
       # add GCC visibility flags to shared library build
       set_target_properties(${PLUGINNAME} PROPERTIES COMPILE_FLAGS "${OGRE_GCC_VISIBILITY_FLAGS}")
+      set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN}")
+      set_target_properties(${PLUGINNAME} PROPERTIES XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN}")
       # disable "lib" prefix on Unix
       set_target_properties(${PLUGINNAME} PROPERTIES PREFIX "")
 	endif (CMAKE_COMPILER_IS_GNUCXX)	
   endif (OGRE_STATIC)
-  ogre_install_target(${PLUGINNAME} ${OGRE_PLUGIN_PATH})
+  # export only if static
+  ogre_install_target(${PLUGINNAME} ${OGRE_PLUGIN_PATH} ${OGRE_STATIC})
 
   if (OGRE_INSTALL_PDB)
     # install debug pdb files
     if (OGRE_STATIC)
 	  install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_LIB_DEBUG_PATH}/${PLUGINNAME}Static_d.pdb
-	    DESTINATION lib${OGRE_LIB_DEBUG_PATH}/opt
+	    DESTINATION ${OGRE_LIB_DIRECTORY}${OGRE_LIB_DEBUG_PATH}/opt
 		CONFIGURATIONS Debug
 	  )
 	  install(FILES ${OGRE_BINARY_DIR}/lib${OGRE_LIB_RELWDBG_PATH}/${PLUGINNAME}Static.pdb
-	    DESTINATION lib${OGRE_LIB_RELWDBG_PATH}/opt
+	    DESTINATION ${OGRE_LIB_DIRECTORY}${OGRE_LIB_RELWDBG_PATH}/opt
 		CONFIGURATIONS RelWithDebInfo
 	  )
 	else ()
@@ -220,38 +269,48 @@ endfunction(ogre_config_plugin)
 
 # setup Ogre sample build
 function(ogre_config_sample_common SAMPLENAME)
-  # The PRODUCT_NAME target setting cannot contain underscores.  Just remove them
-  # Known bug in Xcode CFBundleIdentifier processing rdar://6187020
-  # Can cause an instant App Store rejection. Also, code signing will fail. 
-  #if (OGRE_BUILD_PLATFORM_IPHONE)
-#    string (REPLACE "_" "" SAMPLENAME ${SAMPLENAME})
-  #endif()
   ogre_config_common(${SAMPLENAME})
 
   # set install RPATH for Unix systems
   if (UNIX AND OGRE_FULL_RPATH)
     set_property(TARGET ${SAMPLENAME} APPEND PROPERTY
-      INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+      INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${OGRE_LIB_DIRECTORY})
     set_property(TARGET ${SAMPLENAME} PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
   endif ()
   
   if (APPLE)
     # On OS X, create .app bundle
     set_property(TARGET ${SAMPLENAME} PROPERTY MACOSX_BUNDLE TRUE)
+    if (NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
+      # Add the path where the Ogre framework was found
+      if(${OGRE_FRAMEWORK_PATH})
+        set_target_properties(${SAMPLENAME} PROPERTIES
+          COMPILE_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+          LINK_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+        )
+      endif()
+    endif(NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
   endif (APPLE)
-  if (CMAKE_COMPILER_IS_GNUCXX)
-    # add GCC visibility flags to shared library build
-    set_target_properties(${SAMPLENAME} PROPERTIES COMPILE_FLAGS "${OGRE_GCC_VISIBILITY_FLAGS}")
-    # disable "lib" prefix on Unix
-    set_target_properties(${SAMPLENAME} PROPERTIES PREFIX "")
-  endif (CMAKE_COMPILER_IS_GNUCXX)	
-  ogre_install_target(${SAMPLENAME} ${OGRE_SAMPLE_PATH})
+  if (NOT OGRE_STATIC)
+    if (CMAKE_COMPILER_IS_GNUCXX)
+      # add GCC visibility flags to shared library build
+      set_target_properties(${SAMPLENAME} PROPERTIES COMPILE_FLAGS "${OGRE_GCC_VISIBILITY_FLAGS}")
+      set_target_properties(${SAMPLENAME} PROPERTIES XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_SYMBOLS_PRIVATE_EXTERN}")
+      set_target_properties(${SAMPLENAME} PROPERTIES XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN "${XCODE_ATTRIBUTE_GCC_INLINES_ARE_PRIVATE_EXTERN}")
+      # disable "lib" prefix on Unix
+      set_target_properties(${SAMPLENAME} PROPERTIES PREFIX "")
+    endif (CMAKE_COMPILER_IS_GNUCXX)
+  endif()
 
+  if (OGRE_INSTALL_SAMPLES)
+	ogre_install_target(${SAMPLENAME} ${OGRE_SAMPLE_PATH} FALSE)
+  endif()
+  
 endfunction(ogre_config_sample_common)
 
 function(ogre_config_sample_exe SAMPLENAME)
   ogre_config_sample_common(${SAMPLENAME})
-  if (OGRE_INSTALL_PDB)
+  if (OGRE_INSTALL_PDB AND OGRE_INSTALL_SAMPLES)
 	  # install debug pdb files - no _d on exe
 	  install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_DEBUG_PATH}/${SAMPLENAME}.pdb
 		  DESTINATION bin${OGRE_DEBUG_PATH}
@@ -262,11 +321,21 @@ function(ogre_config_sample_exe SAMPLENAME)
 		  CONFIGURATIONS RelWithDebInfo
 		  )
   endif ()
+
+  if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS AND OGRE_SDK_BUILD)
+    # Add the path where the Ogre framework was found
+    if(NOT ${OGRE_FRAMEWORK_PATH} STREQUAL "")
+      set_target_properties(${SAMPLENAME} PROPERTIES
+        COMPILE_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+        LINK_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+      )
+    endif()
+  endif(APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS AND OGRE_SDK_BUILD)
 endfunction(ogre_config_sample_exe)
 
 function(ogre_config_sample_lib SAMPLENAME)
   ogre_config_sample_common(${SAMPLENAME})
-  if (OGRE_INSTALL_PDB)
+  if (OGRE_INSTALL_PDB AND OGRE_INSTALL_SAMPLES)
 	  # install debug pdb files - with a _d on lib
 	  install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_DEBUG_PATH}/${SAMPLENAME}_d.pdb
 		  DESTINATION bin${OGRE_DEBUG_PATH}
@@ -277,6 +346,23 @@ function(ogre_config_sample_lib SAMPLENAME)
 		  CONFIGURATIONS RelWithDebInfo
 		  )
   endif ()
+
+  if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS AND OGRE_SDK_BUILD)
+    # Add the path where the Ogre framework was found
+    if(NOT ${OGRE_FRAMEWORK_PATH} STREQUAL "")
+      set_target_properties(${SAMPLENAME} PROPERTIES
+        COMPILE_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+        LINK_FLAGS "-F${OGRE_FRAMEWORK_PATH}"
+      )
+    endif()
+  endif(APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS AND OGRE_SDK_BUILD)
+
+  # Add sample to the list of link targets
+  # Global property so that we can build this up across entire sample tree
+  # since vars are local to containing scope of directories / functions
+  get_property(OGRE_SAMPLES_LIST GLOBAL PROPERTY "OGRE_SAMPLES_LIST")
+  set_property (GLOBAL PROPERTY "OGRE_SAMPLES_LIST" ${OGRE_SAMPLES_LIST} ${SAMPLENAME})
+
 endfunction(ogre_config_sample_lib)
 
 
@@ -284,18 +370,23 @@ endfunction(ogre_config_sample_lib)
 function(ogre_config_tool TOOLNAME)
   ogre_config_common(${TOOLNAME})
 
+  #set _d debug postfix
+  if (NOT APPLE)
+	set_property(TARGET ${TOOLNAME} APPEND PROPERTY DEBUG_POSTFIX "_d")
+  endif ()
+
   # set install RPATH for Unix systems
   if (UNIX AND OGRE_FULL_RPATH)
     set_property(TARGET ${TOOLNAME} APPEND PROPERTY
-      INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+      INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${OGRE_LIB_DIRECTORY})
     set_property(TARGET ${TOOLNAME} PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
   endif ()
 
   if (OGRE_INSTALL_TOOLS)
-    ogre_install_target(${TOOLNAME} "")
+    ogre_install_target(${TOOLNAME} "" FALSE)
     if (OGRE_INSTALL_PDB)
       # install debug pdb files
-      install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_DEBUG_PATH}/${TOOLNAME}.pdb
+      install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_DEBUG_PATH}/${TOOLNAME}_d.pdb
         DESTINATION bin${OGRE_DEBUG_PATH}
         CONFIGURATIONS Debug
         )
@@ -307,3 +398,12 @@ function(ogre_config_tool TOOLNAME)
   endif ()	
 
 endfunction(ogre_config_tool)
+
+# Get component include dir (different when referencing SDK)
+function(ogre_add_component_include_dir COMPONENTNAME)
+	if (OGRE_SDK_BUILD)
+		include_directories("${OGRE_INCLUDE_DIR}/${COMPONENTNAME}")
+	else()
+		include_directories("${OGRE_SOURCE_DIR}/Components/${COMPONENTNAME}/include")	
+	endif()
+endfunction(ogre_add_component_include_dir)

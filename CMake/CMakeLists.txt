@@ -13,53 +13,59 @@
 # directory, but can also be used for custom projects.
 #############################################################
 
-if(WIN32)
+if(WIN32 OR APPLE)
 	set(OGRE_CMAKE_DIR "CMake")
-else(WIN32)
-	set(OGRE_CMAKE_DIR "lib/OGRE/cmake")
-endif(WIN32)
+else()
+	set(OGRE_CMAKE_DIR "${OGRE_LIB_DIRECTORY}/OGRE/cmake")
+endif()
 
 set(INST_FILES
-	Packages/FindOIS.cmake
-	Packages/FindOGRE.cmake
-	Utils/FindPkgMacros.cmake
-	Utils/PreprocessorUtils.cmake
-	Utils/OgreConfigTargets.cmake
-	Utils/OgreGetVersion.cmake
-	Utils/OgreFindFrameworks.cmake
+  Packages/FindOIS.cmake
+  Packages/FindOGRE.cmake
+  Utils/FindPkgMacros.cmake
+  Utils/MacroLogFeature.cmake
+  Utils/PreprocessorUtils.cmake
+  Utils/PrecompiledHeader.cmake
+  Utils/OgreAddTargets.cmake
+  Utils/OgreConfigTargets.cmake
+  Utils/OgreGetVersion.cmake
+  Utils/OgreFindFrameworks.cmake
 ) 
 set(STATIC_INST_FILES
-	Packages/FindCg.cmake
-	Packages/FindDirectX.cmake
-	Packages/FindFreeImage.cmake
-	Packages/FindFreetype.cmake
-	Packages/FindOpenGLES.cmake
-	Packages/FindOpenGLES2.cmake
-	Packages/FindPOCO.cmake
-	Packages/FindTBB.cmake
-	Packages/FindZLIB.cmake
-	Packages/FindZZip.cmake
+  Packages/FindCg.cmake
+  Packages/FindDirectX.cmake
+  Packages/FindFreeImage.cmake
+  Packages/FindFreetype.cmake
+  Packages/FindOpenGLES.cmake
+  Packages/FindOpenGLES2.cmake
+  Packages/FindPOCO.cmake
+  Packages/FindTBB.cmake
+  Packages/FindZLIB.cmake
+  Packages/FindZZip.cmake
+  Packages/FindSoftimage.cmake
 )
 if (WIN32)
-	set(INST_FILES ${INST_FILES}
-		Templates/VisualStudioUserFile.vcproj.user.in
-	)
+  set(INST_FILES ${INST_FILES}
+    Templates/VisualStudioUserFile.vcproj.user.in
+    Templates/VisualStudioUserFile.vcxproj.user.in
+  )
 endif ()
 
 if (APPLE)
-	set(INST_FILES ${INST_FILES}
-		Packages/FindIOKit.cmake
-	)
-	set(STATIC_INST_FILES ${STATIC_INST_FILES}
-		Packages/FindCarbon.cmake
-		Packages/FindCocoa.cmake
-	)
-	set(STATIC_INST_FILES ${STATIC_INST_FILES}
-		Packages/FindiPhoneSDK.cmake
-	)
+  set(INST_FILES ${INST_FILES}
+    Packages/FindIOKit.cmake
+    Packages/FindCarbon.cmake
+    Packages/FindCocoa.cmake
+    Packages/FindCoreVideo.cmake
+  )
+  set(STATIC_INST_FILES ${STATIC_INST_FILES}
+    Packages/FindiOSSDK.cmake
+    Packages/FindGLSLOptimizer.cmake
+    Packages/FindHLSL2GLSL.cmake
+  )
 endif ()
 
 install(FILES ${INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
 if (OGRE_STATIC)
-	install(FILES ${STATIC_INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
+  install(FILES ${STATIC_INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
 endif ()
