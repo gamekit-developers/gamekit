@@ -49,6 +49,9 @@ public:
 	bool query(void);
 	GK_INLINE void            setSubject(const gkString& v)       {m_listener->m_subjectFilter = v;}
 	GK_INLINE const gkString& getSubject(void)              const {return m_listener->m_subjectFilter;}
+	GK_INLINE int getMessageCount() { return m_messages.size();}
+	GK_INLINE gkMessageManager::Message getMessage(int nr) { return m_messages.at(nr);}
+
 };
 
 #endif // GKMESSAGESENSOR_H

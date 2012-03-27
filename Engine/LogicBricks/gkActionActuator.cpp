@@ -55,6 +55,7 @@ gkActionActuator::gkActionActuator(gkGameObject* object, gkLogicLink* link, cons
 		m_ignorePulseOn(false),
 		m_state(0)
 {	
+	m_animFps = gkEngine::getSingleton().getUserDefs().animFps;
 }
 
 
@@ -158,9 +159,34 @@ void gkActionActuator::stopAction(void)
 	gkLogicManager::getSingleton().removeUpdate(this);
 }
 
-bool gkActionActuator::isActionEnd(void)
+bool gkActionActuator::isActionEnded(void)
 {
-	return m_action ? m_action->getTimePosition() >= m_action->getLength() : false;
+	if (m_action && (((float)m_action->getTimePosition() >= (float)m_end)
+					|| m_action->getTimePosition() >= m_action->getLength()))
+	{
+		return true;
+	}
+	return false;
+}
+
+void gkActionActuator::setAnimationPosition(gkScalar time) {
+	if (m_action){
+		m_action->setTimePosition(time);
+	}
+}
+
+gkScalar gkActionActuator::getAnimationPosition(void){
+	if (m_action){
+		return m_action->getTimePosition();
+	}
+	return 0;
+}
+
+gkScalar gkActionActuator::getAnimationLength(void){
+	if (m_action){
+		return m_action->getLength();
+	}
+	return 0;
 }
 
 
@@ -183,7 +209,6 @@ void gkActionActuator::stateChanged(void)
 
 	m_ignorePulseOn = false;	
 }
-
 
 void gkActionActuator::update(void)
 {	

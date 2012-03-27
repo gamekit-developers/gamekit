@@ -46,10 +46,10 @@ public:
 		AA_PROPERTY,
 	};
 
-
 private:
 
 	gkScalar m_start, m_end, m_blend;
+	int m_startFrame, m_endFrame;
 	int m_mode, m_prio;
 
 	gkString m_startAct, m_startProp;
@@ -62,18 +62,15 @@ private:
 	bool m_ignorePulseOn;
 	int m_state;
 
-	void doInit(void);
+	gkScalar m_animFps;
 
 	void notifyActiveStatus(void);
 
 	void resetTimer(void);
 	gkScalar getElapsedTime(void);
 	
-	bool isActionEnd(void);
 
 	void resetAction(bool exceptTimer = false);
-	void playAction(void);
-	void stopAction(void);
 	void stateChanged(void);
 public:
 
@@ -82,9 +79,12 @@ public:
 
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
+	void doInit(void);
+	void playAction(void);
+	void stopAction(void);
 
-	GK_INLINE void     setStart(gkScalar v)                 {m_start = v;}
-	GK_INLINE void     setEnd(gkScalar v)                   {m_end = v;}
+	GK_INLINE void     setStart(int v)                 {m_startFrame = m_start; m_start = v / m_animFps;}
+	GK_INLINE void     setEnd(int v)                   {m_endFrame = m_end; m_end = v / m_animFps;}
 	GK_INLINE void     setBlend(gkScalar v)                 {m_blend = v;}
 	GK_INLINE void     setMode(int v)                       {m_mode = v;}
 	GK_INLINE void     setPriority(int v)                   {m_prio = v;}
@@ -92,8 +92,8 @@ public:
 	GK_INLINE void     setProperty(const gkString& v)       {m_startProp = v;}
 	GK_INLINE void     setReset(bool v)                     {m_reset = v;}
 
-	GK_INLINE gkScalar getStart(void)                 const {return m_start;}
-	GK_INLINE gkScalar getEnd(void)                   const {return m_end;}
+	GK_INLINE int getStart(void)                 const {return m_startFrame;}
+	GK_INLINE int getEnd(void)                   const {return m_endFrame;}
 	GK_INLINE gkScalar getBlend(void)                 const {return m_blend;}
 	GK_INLINE int      getMode(void)                  const {return m_mode;}
 	GK_INLINE int      getPriority(void)              const {return m_prio;}
@@ -102,6 +102,11 @@ public:
 	GK_INLINE bool     getReset(void)                 const {return m_reset;}
 
 	GK_INLINE bool     isLoopMode(void)               const {return m_mode == AA_LOOP_STOP || m_mode == AA_LOOP_END;}
+
+	bool isActionEnded(void);
+	void setAnimationPosition(gkScalar time);
+	gkScalar getAnimationPosition();
+	gkScalar getAnimationLength(void);
 
 	void execute(void);
 	void update(void);
