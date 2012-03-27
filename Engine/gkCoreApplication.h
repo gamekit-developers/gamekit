@@ -37,8 +37,7 @@ class gkCoreApplication : public gkEngine::Listener
 {
 protected:
 
-	// Internal startup
-	bool initialize(void);
+
 
 
 protected:
@@ -55,7 +54,8 @@ public:
 
 	// access to user options ( apply before a call to run )
 	gkUserDefs& getPrefs(void) {return m_prefs;}
-
+	// Internal startup
+	bool initialize(void);
 	void run(void);
 };
 

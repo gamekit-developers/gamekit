@@ -62,7 +62,7 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 	:    gkInstancedObject(creator, name, handle),
 	     m_type(type), m_baseProps(), m_parent(0), m_scene(0),
 	     m_node(0), m_logic(0), m_bricks(0),
-	     m_rigidBody(0), m_character(0),
+	     m_rigidBody(0), m_character(0),m_ghost(0),
 	     m_groupID(0), m_group(0),
 	     m_state(0), m_activeLayer(true),
 	     m_layer(0xFFFFFFFF),
@@ -491,6 +491,9 @@ void gkGameObject::applyTransformState(const gkTransformState& newstate, const g
 		{
 			m_character->setTransformState(state);
 		}
+		else if (m_ghost){
+			m_ghost->setTransformState(state);
+		}
 	}
 }
 
@@ -543,6 +546,9 @@ void gkGameObject::setPosition(const gkVector3& v)
 		{
 			m_character->updateTransform();
 		}
+		else if (m_ghost) {
+			m_ghost->updateTransform();
+		}
 	}
 }
 
@@ -581,6 +587,8 @@ void gkGameObject::setOrientation(const gkQuaternion& q)
 		else if (m_character)
 		{
 			m_character->updateTransform();
+		} else if (m_ghost) {
+			m_ghost->updateTransform();
 		}
 	}
 }
@@ -606,6 +614,10 @@ void gkGameObject::setOrientation(const gkEuler& v)
 		else if (m_character)
 		{
 			m_character->updateTransform();
+		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
 		}
 	}
 }
@@ -642,6 +654,11 @@ void gkGameObject::rotate(const gkQuaternion& dq, int tspace)
 		{
 			m_character->updateTransform();
 		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
+		}
+
 	}
 }
 
@@ -665,6 +682,10 @@ void gkGameObject::yaw(const gkRadian& v, int tspace)
 		else if (m_character)
 		{
 			m_character->updateTransform();
+		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
 		}
 	}
 }
@@ -690,6 +711,10 @@ void gkGameObject::pitch(const gkRadian& v, int tspace )
 		{
 			m_character->updateTransform();
 		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
+		}
 	}
 }
 
@@ -714,6 +739,10 @@ void gkGameObject::roll(const gkRadian& v, int tspace)
 		{
 			m_character->updateTransform();
 		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
+		}
 	}
 }
 
@@ -737,6 +766,10 @@ void gkGameObject::translate(const gkVector3& dloc, int tspace)
 		else if (m_character)
 		{
 			m_character->updateTransform();
+		}
+		else if (m_ghost)
+		{
+					m_ghost->updateTransform();
 		}
 	}
 }
@@ -769,7 +802,12 @@ void gkGameObject::setLinearVelocity(const gkVector3& v, int tspace)
 	else if (m_character)
 	{
 		m_character->setVelocity(m_node->getOrientation() * v, gkEngine::getStepRate());
+
 	}
+//	else if (m_ghost)
+//	{
+//		m_ghost->updateTransform();
+//	}
 }
 
 
@@ -1043,6 +1081,8 @@ gkPhysicsController* gkGameObject::getPhysicsController()
 		return m_rigidBody;
 	else if (m_character)
 		return m_character;
+	else if (m_ghost)
+		return m_ghost;
 	else
 		return 0;
 }
@@ -1055,6 +1095,8 @@ btCollisionObject* gkGameObject::getCollisionObject()
 		return m_rigidBody->getCollisionObject();
 	else if (m_character)
 		return m_character->getCollisionObject();
+	else if (m_ghost)
+		return m_ghost->getCollisionObject();
 	else
 		return 0;
 }

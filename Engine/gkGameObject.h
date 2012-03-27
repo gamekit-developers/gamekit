@@ -33,6 +33,7 @@
 #include "gkSerialize.h"
 
 #include "Animation/gkAnimation.h"
+#include "Physics/gkGhost.h"
 
 class gkGameObject : public gkInstancedObject
 {
@@ -134,6 +135,9 @@ public:
 	GK_INLINE gkRigidBody*   getAttachedBody(void)                      {return m_rigidBody;}
 	GK_INLINE void           attachCharacter(gkCharacter* character)     {m_character = character;}
 	GK_INLINE gkCharacter*   getAttachedCharacter(void)                 {return m_character;}
+	GK_INLINE void           attachGhost(gkGhost* ghost)     {m_ghost = ghost;}
+	GK_INLINE gkGhost*   getAttachedGhost(void)                 {return m_ghost;}
+
 	gkPhysicsController*     getPhysicsController(void);
 	btCollisionObject*       getCollisionObject(void);
 
@@ -319,6 +323,7 @@ protected:
 	// Physics body instances
 	gkRigidBody*                m_rigidBody;
 	gkCharacter*                m_character;
+	gkGhost*					m_ghost;
 
 
 

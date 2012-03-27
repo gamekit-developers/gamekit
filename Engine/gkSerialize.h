@@ -277,7 +277,8 @@ enum gkPhysicsType
 	GK_STATIC,
 	GK_DYNAMIC,
 	GK_RIGID,
-	GK_SOFT
+	GK_SOFT,
+	GK_SENSOR
 };
 
 
@@ -348,6 +349,7 @@ public:
 class gkPhysicsProperties
 {
 public:
+	typedef signed short int CollisionMask;
 
 	gkPhysicsProperties()
 		:   m_type(GK_NO_COLLISION),
@@ -363,7 +365,9 @@ public:
 		    m_minVel(0.f),
 		    m_maxVel(0.f),
 		    m_restitution(0.f),
-		    m_friction(0.5f)
+		    m_friction(0.5f),
+			m_colMask(-2),
+			m_colGroupMask(-2)
 	{
 	}
 
@@ -381,12 +385,16 @@ public:
 	gkScalar    m_maxVel;
 	gkScalar    m_restitution;
 	gkScalar    m_friction;
+	CollisionMask m_colMask;
+	CollisionMask m_colGroupMask;
+
 	utArray<gkPhysicsConstraintProperties> m_constraints;
 
 	GK_INLINE bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0; }
 	GK_INLINE bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0; }
 	GK_INLINE bool isCompound(void)	          const { return (m_mode & GK_COMPOUND) != 0; }  
 	GK_INLINE bool isCompoundChild(void)	  const { return (m_mode & GK_COMPOUND_CHILD) != 0; }
+	GK_INLINE bool isSensor(void)			  const { return (m_type==GK_SENSOR);}
 	GK_INLINE bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID; }
 	GK_INLINE bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID; }
 	GK_INLINE bool isPhysicsObject(void)      const { return m_type != GK_NO_COLLISION; }
@@ -397,7 +405,6 @@ public:
 	GK_INLINE bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH; }
 	GK_INLINE bool hasPhysicsConstraint(void) const { return getConstraintCount() != 0; }
 	GK_INLINE bool isLinkedToOther(void)      const { return hasPhysicsConstraint() || isCompoundChild(); }
-
 	GK_INLINE UTsize getConstraintCount(void) const { return m_constraints.size(); }
 	GK_INLINE const  gkPhysicsConstraintProperties& getConstraint(UTsize i) const { return m_constraints[i]; }	
 };

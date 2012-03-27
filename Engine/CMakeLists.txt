@@ -119,8 +119,8 @@ set(Core_HEADER
 )
 
 if (OGREKIT_BUILD_IPHONE)
-	list(APPEND Core_HEADER iOS/gkWindowIOS.h)
-	list(APPEND Core_SOURCE iOS/gkWindowIOS.mm)
+	list(APPEND Core_HEADER iOS/gkWindowIOS.h iOS/macUtils.h)
+	list(APPEND Core_SOURCE iOS/gkWindowIOS.mm iOS/macUtils.mm)
 endif()
 
 if (OGREKIT_BUILD_ANDROID)
@@ -503,6 +503,12 @@ set(Blend_HEADER
 	Loaders/Blender2/Converters/gkSkeletonConverter.h	
 )
 
+# -- include blend2.63-mesh-converter
+if(NOT OGREKIT_USE_BPARSE OR BPARSE_FILE_FORMAT EQUAL 2)
+	list(APPEND Blend_SOURCE Loaders/Blender2/Converters/gkMeshConverter26.cpp)
+	list(APPEND Blend_HEADER Loaders/Blender2/Converters/gkMeshConverter26.h)
+endif()
+
 if(OGREKIT_USE_PARTICLE)
 	list(APPEND Blend_SOURCE Loaders/Blender2/Converters/gkParticleConverter.cpp)
 	list(APPEND Blend_HEADER Loaders/Blender2/Converters/gkParticleConverter.h)
@@ -562,6 +568,7 @@ set(Physics_SOURCE
 	Physics/gkSoftBody.cpp
 	Physics/gkSweptTest.cpp
 	Physics/gkVehicle.cpp
+	Physics/gkGhost.cpp
 )
 
 set(Physics_HEADER
@@ -578,6 +585,7 @@ set(Physics_HEADER
 	Physics/gkSoftBody.h
 	Physics/gkSweptTest.h
 	Physics/gkVehicle.h
+	Physics/gkGhost.h
 )
 
 if(APPLE)
@@ -993,6 +1001,13 @@ include_directories(
 	./Particles
 	./Graphics
 	)
+	
+if (OGREKIT_USE_BPARSE)
+	include_directories(
+		../Dependencies/Source/Blender25/Serialize/BlenderSerialize/${BPARSE_BLENDER_HEADER_DIR}	
+	)
+	message(STATUS "BPARSE ../Dependencies/Source/Blender25/Serialize/BlenderSerialize/${BPARSE_BLENDER_HEADER_DIR}")
+endif()	
 
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
 config_target_if_iphone_build(BulletDynamics TRUE)
