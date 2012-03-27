@@ -21,6 +21,8 @@
 //----------------------------------------------------------------------------------
 package com.nvidia.devtech;
 
+import org.gamekit.jni.GameKitJNI;
+
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -56,7 +58,7 @@ public abstract class NvActivity
     protected static final int MULTI_MAX_INPUTS = 10;
 
     //accelerometer related
-    protected boolean wantsAccelerometer = false;
+    protected boolean wantsAccelerometer = true;
     protected SensorManager mSensorManager;
     protected int mSensorDelay = SensorManager.SENSOR_DELAY_GAME; //other options: SensorManager.SENSOR_DELAY_FASTEST, SensorManager.SENSOR_DELAY_NORMAL and SensorManager.SENSOR_DELAY_UI
     
@@ -262,7 +264,8 @@ public abstract class NvActivity
 
 	public void onSensorChanged(SensorEvent event) {
 		// Auto-generated method stub
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
 			sensorEvent(event.sensor.getType(), event.values[0], event.values[1], event.values[2]);
+		}
 	}
 }
