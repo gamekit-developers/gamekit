@@ -85,7 +85,6 @@ void gkFont::Loader::loadResource(Ogre::Resource* resource)
 	m_font->setTrueTypeSize(Ogre::Real(m_size));
 	m_font->setTrueTypeResolution(m_resolution);
 
-
 	Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void*)m_parent->m_data->ptr(), m_parent->m_data->size(), false, true));
 	m_font->loadManualResource(memStream);
 }

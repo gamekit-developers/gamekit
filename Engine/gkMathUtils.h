@@ -141,9 +141,9 @@ public:
 	GK_INLINE gkMatrix3 toMatrix3(void) const
 	{
 		gkMatrix3 rx, ry, rz;
-		rx.FromAxisAngle(gkVector3::UNIT_X, x);
-		ry.FromAxisAngle(gkVector3::UNIT_Y, y);
-		rz.FromAxisAngle(gkVector3::UNIT_Z, z);
+		rx.FromAngleAxis(gkVector3::UNIT_X, x);
+		ry.FromAngleAxis(gkVector3::UNIT_Y, y);
+		rz.FromAngleAxis(gkVector3::UNIT_Z, z);
 		return gkMatrix3(rz * ry * rx);
 	}
 

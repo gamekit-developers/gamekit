@@ -50,13 +50,13 @@ gkMatrix3 gkMathUtils::getMat3FromEuler(const gkVector3& eul, bool isDegree)
 		if (!gkFuzzy(eul.z)) Rz = gkRadian(eul.z);
 	}
 
-	if (!gkFuzzy(eul.x)) rx.FromAxisAngle(gkVector3::UNIT_X, Rx);
+	if (!gkFuzzy(eul.x)) rx.FromAngleAxis(gkVector3::UNIT_X, Rx);
 	else rx = gkMatrix3::IDENTITY;
 
-	if (!gkFuzzy(eul.y)) ry.FromAxisAngle(gkVector3::UNIT_Y, Ry);
+	if (!gkFuzzy(eul.y)) ry.FromAngleAxis(gkVector3::UNIT_Y, Ry);
 	else ry = gkMatrix3::IDENTITY;
 
-	if (!gkFuzzy(eul.z)) rz.FromAxisAngle(gkVector3::UNIT_Z, Rz);
+	if (!gkFuzzy(eul.z)) rz.FromAngleAxis(gkVector3::UNIT_Z, Rz);
 	else rz = gkMatrix3::IDENTITY;
 
 	return gkMatrix3(rz * ry * rx);
