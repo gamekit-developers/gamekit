@@ -27,6 +27,7 @@
 #include "fbtBuilder.h"
 #include "fbtStreams.h"
 #include "Generated/fbtScanner.inl"
+
 #define fbtValidToken(x) (x > 0)
 
 
@@ -628,6 +629,7 @@ void fbtBuildInfo::makeBuiltinTypes(void)
 	addType("ushort",       sizeof(short));
 	addType("int",          sizeof(int));
 	addType("long",         sizeof(long));
+	addType("FBTuint64",sizeof(FBTuint64));
 	addType("ulong",        sizeof(long));
 	addType("float",        sizeof(float));
 	addType("double",       sizeof(double));
