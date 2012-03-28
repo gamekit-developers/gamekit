@@ -132,7 +132,12 @@ void gkRigidBody::create(void)
 		m_body->setActivationState(m_body->getActivationState() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
 	m_collisionObject = m_body;
-	dyn->addRigidBody(m_body);
+
+	// both values have to be set
+	if (phy.m_colMask!=-2 && phy.m_colGroupMask!=-2)
+		dyn->addRigidBody(m_body,phy.m_colGroupMask,phy.m_colMask);
+	else
+		dyn->addRigidBody(m_body);
 }
 
 void gkRigidBody::removeConstaints(void)

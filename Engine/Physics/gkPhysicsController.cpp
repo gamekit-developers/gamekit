@@ -667,7 +667,9 @@ void gkPhysicsController::setTransform(const btTransform& worldTrans)
 
 void gkPhysicsController::_handleManifold(btPersistentManifold* manifold)
 {
-	if (m_suspend || !m_props.isContactListener() || !m_object->isInstanced())
+	if (m_suspend
+			|| !m_props.isContactListener()
+			|| !m_object->isInstanced())
 		return;
 
 
@@ -681,23 +683,33 @@ void gkPhysicsController::_handleManifold(btPersistentManifold* manifold)
 		collider = colA;
 	}
 
-	int nrc = manifold->getNumContacts();
 
-	if (nrc)
-	{
-		m_localContacts.reserve(nrc);
+	if (collider->m_object->getProperties().isGhost()){
+		m_localContacts.reserve(1);
 
-		for (int j = 0; j < nrc; ++j)
+		gkContactInfo cinf;
+		cinf.collider = collider;
+		m_localContacts.push_back(cinf);
+	}
+	else {
+		int nrc = manifold->getNumContacts();
+
+		if (nrc)
 		{
-			gkContactInfo cinf;
-			btManifoldPoint& pt = manifold->getContactPoint(j);
+			m_localContacts.reserve(nrc);
 
-			if (pt.getDistance() < 0.f)
+			for (int j = 0; j < nrc; ++j)
 			{
-				cinf.collider = collider;
-				cinf.point    = pt;
+				gkContactInfo cinf;
+				btManifoldPoint& pt = manifold->getContactPoint(j);
 
-				m_localContacts.push_back(cinf);
+				if (pt.getDistance() < 0.f)
+				{
+					cinf.collider = collider;
+					cinf.point    = pt;
+
+					m_localContacts.push_back(cinf);
+				}
 			}
 		}
 	}

@@ -31,6 +31,7 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 #include "LinearMath/btScalar.h"
+#include "gkGhost.h"
 
 class btDynamicsWorld;
 class btCollisionConfiguration;
@@ -105,7 +106,7 @@ public:
 	gkRigidBody* createRigidBody(gkGameObject* state);
 
 	gkCharacter* createCharacter(gkGameObject* state);
-
+	gkGhost* createGhost(gkGameObject* state);
 	void destroyObject(gkPhysicsController* cont);
 
 	GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}

@@ -284,7 +284,13 @@ gkRigidBody* gkDynamicsWorld::createRigidBody(gkGameObject* state)
 	return rb;
 }
 
-
+gkGhost* gkDynamicsWorld::createGhost(gkGameObject* state){
+	GK_ASSERT(state);
+	gkGhost* ghost = new gkGhost(state,this);
+	ghost->create();
+	m_objects.push_back(ghost);
+	return ghost;
+}
 
 gkCharacter* gkDynamicsWorld::createCharacter(gkGameObject* state)
 {
@@ -412,7 +418,6 @@ void gkDynamicsWorld::substep(gkScalar tick)
 
 			gkPhysicsController* colA = gkPhysicsController::castController(manifold->getBody0());
 			gkPhysicsController* colB = gkPhysicsController::castController(manifold->getBody1());
-
 
 			colA->_resetContactInfo();
 			colB->_resetContactInfo();
