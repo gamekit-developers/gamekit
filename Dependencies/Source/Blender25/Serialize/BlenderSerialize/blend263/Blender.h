@@ -1,6 +1,8 @@
 #ifndef _Blender_h_
 #define _Blender_h_
+#include "utTypes.h"
 // Generated from a Blender(262) file.
+
 
 #ifdef near
 #undef near
@@ -5303,8 +5305,8 @@ struct Object
     FluidsimSettings *fluidsimSettings;
     void *derivedDeform;
     void *derivedFinal;
-    uint64_t lastDataMask;
-    uint64_t customdata_mask;
+    UTuint64 lastDataMask;
+    UTuint64 customdata_mask;
     int state;
     int init_state;
     ListBase gpulamp;
@@ -5838,8 +5840,8 @@ struct Scene
     bGPdata *gpd;
     PhysicsSettings physics_settings;
     MovieClip *clip;
-    uint64_t customdata_mask;
-    uint64_t customdata_mask_modal;
+    UTuint64 customdata_mask;
+    UTuint64 customdata_mask_modal;
 };
 
 struct BGpic

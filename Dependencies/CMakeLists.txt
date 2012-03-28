@@ -8,6 +8,7 @@ subdirs(Source/GameKit/Utils)
 subdirs(Source/GameKit/AnimKit)
 
 if (OGREKIT_USE_BPARSE)
+    include_directories( GameKit/Utils )
 	subdirs(Source/Blender25)
 endif()
 
