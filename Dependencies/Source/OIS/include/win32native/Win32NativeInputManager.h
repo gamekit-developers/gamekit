@@ -28,7 +28,7 @@ restrictions:
 
 #include "OISInputManager.h"
 #include "OISFactoryCreator.h"
-#include "win32Native/Win32NativePrereqs.h"
+#include "win32native/Win32NativePrereqs.h"
 
 
 namespace OIS
