@@ -359,7 +359,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		)
 	else()
 		list(APPEND OGREKIT_DEP_INCLUDE
-			${GAMEKIT_FBT_INCLUDE}
+			${OGREKIT_SOURCE_DIR}/Tools/FileTools/File
+			${OGREKIT_SOURCE_DIR}/Tools/FileTools/FileFormats/Blend
 		)
 	endif()
 

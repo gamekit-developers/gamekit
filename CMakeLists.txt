@@ -119,7 +119,7 @@ subdirs(${GAMEKIT_GRAPHIC_BACKEND_DIR})
 subdirs(Engine)
 
 if (NOT OGREKIT_USE_BPARSE OR OGREKIT_USE_FILETOOLS)
-	subdirs(Tools/FileTools)
+	subdirs(${OGREKIT_SOURCE_DIR}/Tools/FileTools)
 else()
 endif()
 
