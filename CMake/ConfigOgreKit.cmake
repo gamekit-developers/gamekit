@@ -219,7 +219,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR))
-		set(OGREKIT_OIS_WIN32_NATIVE TRUE CACHE BOOL "Forcing OISWin32Native"  FORCE)
+		set(OGREKIT_OIS_WIN32_NATIVE FALSE CACHE BOOL "Forcing OISWin32Native"  FORCE)
 	endif()
 	
 	if (SAMPLES_GUIDEMO)
@@ -518,7 +518,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	)    
 	
 	if (OGREKIT_USE_BPARSE)
-		set(BPARSE_FILE_FORMAT 2 CACHE STRING 
+		set(BPARSE_FILE_FORMAT 1 CACHE STRING 
 			"Select the bparse-blendfile-format:
 				 1 - <= 2.62
 				 2 - >= 2.63

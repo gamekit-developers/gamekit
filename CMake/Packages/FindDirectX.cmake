@@ -56,7 +56,8 @@ if(WIN32) # The only platform it makes sense to check for DirectX SDK
   find_library(DirectX_D3DX9_LIBRARY NAMES d3dx9 HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
   find_library(DirectX_DXERR_LIBRARY NAMES DxErr HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
   find_library(DirectX_DXGUID_LIBRARY NAMES dxguid HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
-  
+  find_library(DirectX_DINPUT8_LIBRARY NAMES dinput8 HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
+  find_library(DirectX_XINPUT_LIBRARY NAMES xinput HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
 
   # look for dxgi (needed by both 10 and 11)
   find_library(DirectX_DXGI_LIBRARY NAMES dxgi HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
@@ -65,15 +66,16 @@ if(WIN32) # The only platform it makes sense to check for DirectX SDK
   find_library(DirectX_D3DCOMPILER_LIBRARY NAMES d3dcompiler HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
 
   findpkg_finish(DirectX)
-  set(DirectX_LIBRARIES ${DirectX_LIBRARIES} 
+  set(DirectX_LIBRARIES ${DirectX_LIBRARIES}
     ${DirectX_D3DX9_LIBRARY}
     ${DirectX_DXERR_LIBRARY}
     ${DirectX_DXGUID_LIBRARY}
+    ${DirectX_DINPUT8_LIBRARY}
   )
-  
+
   mark_as_advanced(DirectX_D3DX9_LIBRARY DirectX_DXERR_LIBRARY DirectX_DXGUID_LIBRARY
-    DirectX_DXGI_LIBRARY DirectX_D3DCOMPILER_LIBRARY)
-  
+    DirectX_DXGI_LIBRARY DirectX_D3DCOMPILER_LIBRARY
+    DirectX_DINPUT8_LIBRARY DirectX_XINPUT_LIBRARY)
 
   # look for D3D11 components
   if (DirectX_FOUND)
