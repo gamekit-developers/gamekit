@@ -154,8 +154,7 @@ bool OgreKit::init(const gkString& blend,JavaVM* vm)
 
 
 
-	getPrefs().winsize.x        = 800;
-	getPrefs().winsize.y        = 480;
+
 	getPrefs().wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
 	getPrefs().blendermat=true;
 //	getPrefs().viewportOrientation="portrait";
@@ -173,7 +172,6 @@ bool OgreKit::init(const gkString& blend,JavaVM* vm)
     LOG_FOOT;
 
 	bool ok = initialize();
-	gkLogger::write("back here!");
 	LOG_FOOT;
 	gkMessageManager::getSingleton().addListener(this);
 	return ok;
@@ -311,7 +309,7 @@ void cleanup(JNIEnv* env)
 
 jboolean inputEvent(JNIEnv* env, jobject thiz, jint action, jfloat mx, jfloat my)
 {
-	LOG_FOOT;
+//	LOG_FOOT;
 
 	okit.injectTouch(action, mx, my);
 
@@ -320,7 +318,7 @@ jboolean inputEvent(JNIEnv* env, jobject thiz, jint action, jfloat mx, jfloat my
 
 jboolean keyEvent(JNIEnv* env, jobject thiz, jint action, jint unicodeChar, jint keyCode, jobject keyEvent)
 {
-	LOG_FOOT;
+//	LOG_FOOT;
 
 	okit.injectKey(action, unicodeChar, keyCode);
 
