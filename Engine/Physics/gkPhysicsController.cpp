@@ -607,13 +607,17 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 				btTriangleMesh* triMesh = me->getTriMesh();
 				if (triMesh->getNumTriangles() > 0)
 				{
-					if (m_props.m_shape == SH_CONVEX_TRIMESH)
+					switch (m_props.m_shape)
+					{
+					case SH_CONVEX_TRIMESH:
+					case SH_GIMPACT_MESH:
 						shape = new btConvexTriangleMeshShape(triMesh);
-					else if (m_props.m_shape == SH_GIMPACT_MESH)
-						shape = new btConvexTriangleMeshShape(triMesh);
-					else
+						break;
+					case SH_BVH_MESH:
 						shape = new btBvhTriangleMeshShape(triMesh, true);
-					break;
+						break;
+					}
+ 					break;
 				}
 				else
 					return 0;
@@ -621,6 +625,10 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 		}
 	case SH_SPHERE:
 		shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
+		break;
+	case SH_CAPSULE:
+		// For some reason, the shape is a bit bigger than the actual capsule...
+		shape = new btCapsuleShapeZ(gkMax(size.x, size.y)*0.93, size.z*0.93);
 		break;
 	}
 

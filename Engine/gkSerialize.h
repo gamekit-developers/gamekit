@@ -304,7 +304,8 @@ enum gkPhysicsShape
 	SH_SPHERE,
 	SH_CONVEX_TRIMESH,
 	SH_GIMPACT_MESH,
-	SH_BVH_MESH,
+        SH_BVH_MESH,
+        SH_CAPSULE,
 };
 
 enum gkPhysicsConstraintType

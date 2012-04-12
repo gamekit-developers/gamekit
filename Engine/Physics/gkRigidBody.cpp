@@ -129,7 +129,14 @@ void gkRigidBody::create(void)
 	m_body->setWorldTransform(tstate.toTransform());
 
 	if (!phy.isDosser())
-		m_body->setActivationState(m_body->getActivationState() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		// No Sleep option in Blender
+		m_body->setActivationState(DISABLE_DEACTIVATION);
+	
+	// Alternative way of making the object a ghost
+	/*
+	if (props.isGhost())
+		m_body->setCollisionFlags(m_body->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	*/
 
 	m_collisionObject = m_body;
 

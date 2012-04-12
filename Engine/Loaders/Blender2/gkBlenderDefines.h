@@ -1407,9 +1407,10 @@
 #define OB_BOUND_SPHERE                          1
 #define OB_BOUND_CYLINDER                        2
 #define OB_BOUND_CONE                            3
-#define OB_BOUND_POLYH                           4
-#define OB_BOUND_POLYT                           5
-#define OB_BOUND_DYN_MESH                        6
+#define OB_BOUND_TRIANGLE_MESH                   4
+#define OB_BOUND_CONVEX_HULL                     5
+/* #define OB_BOUND_DYN_MESH   6 */ /*UNUSED*/
+#define OB_BOUND_CAPSULE                         7
 #define BA_WAS_SEL                               2
 #define BA_HAS_RECALC_OB                         4
 #define BA_HAS_RECALC_DATA                       8

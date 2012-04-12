@@ -564,6 +564,8 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 {
 	gkGameObjectProperties&  props  = gobj->getProperties();
 	gkPhysicsProperties&     phy    = props.m_physics;
+	int boundtype;
+	int version = m_file->_getInternalFile()->getVersion();
 
 	phy.m_type = GK_STATIC;
 	switch (bobj->body_type)
@@ -585,7 +587,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	while (parent && parent->parent) 
 		parent = parent->parent;
 	
-	if (parent && (bobj->gameflag  & OB_CHILD) == 0)
+	if (parent && (bobj->gameflag & OB_CHILD) == 0)
 		phy.m_type = GK_NO_COLLISION;
 
 
@@ -643,40 +645,45 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 
 		}
 	}
-
-	if (phy.isRigidOrDynamic())
-	{
-		switch (bobj->boundtype)
-		{
-		case OB_BOUND_BOX:
-			phy.m_shape = SH_BOX;
-			break;
-		case OB_BOUND_SPHERE:
-			phy.m_shape = SH_SPHERE;
-			break;
-		case OB_BOUND_CONE:
-			phy.m_shape = SH_CONE;
-			break;
-		case OB_BOUND_CYLINDER:
-			phy.m_shape = SH_CYLINDER;
-			break;
-		case OB_BOUND_POLYT:
-			phy.m_shape = SH_CONVEX_TRIMESH;
-			break;
-		case OB_BOUND_POLYH:
-		case OB_BOUND_DYN_MESH:
-			phy.m_shape = SH_GIMPACT_MESH;
-			break;
-		}
-	}
+	
+	if (version<=260)
+		boundtype = bobj->boundtype;
 	else
+		boundtype = bobj->collision_boundtype;
+
+	switch (boundtype)
 	{
+	case OB_BOUND_BOX:
+		phy.m_shape = SH_BOX;
+		break;
+	case OB_BOUND_SPHERE:
+		phy.m_shape = SH_SPHERE;
+		break;
+	case OB_BOUND_CONE:
+		phy.m_shape = SH_CONE;
+		break;
+	case OB_BOUND_CYLINDER:
+		phy.m_shape = SH_CYLINDER;
+		break;
+	case OB_BOUND_CONVEX_HULL:
+		phy.m_shape = SH_CONVEX_TRIMESH;
+		break;
+	case OB_BOUND_TRIANGLE_MESH:
 		if (bobj->type == OB_MESH)
+		{
+		if (phy.isRigidOrDynamic())
+			phy.m_shape = SH_GIMPACT_MESH;
+		else
 			phy.m_shape = SH_BVH_MESH;
+		}
 		else
 			phy.m_shape = SH_SPHERE;
+		break;
+	case OB_BOUND_CAPSULE:
+		phy.m_shape = SH_CAPSULE;
 	}
-
+		
+		
 	// setup velocity constraints
 	if (phy.isRigidOrDynamic())
 	{
