@@ -1,3 +1,9 @@
+// experimental fix for clang-compiler and its inline issue
+// see: http://code.google.com/p/gamekit/issues/detail?id=222
+#ifdef __clang__
+#define ZZIP_inline
+#endif
+
 #ifndef _ZZIP__CONFIG_H
 #define _ZZIP__CONFIG_H 1
  
