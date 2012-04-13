@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha(dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -98,11 +98,8 @@ void gkFSM::update()
 			if (pData->m_trigger.get())
 				pData->m_trigger->execute(m_currentState, pData->m_state);
 
-			execute_end_trigger(m_currentState, pData->m_state);
-
 			setState(pData->m_state);
 
-			execute_start_trigger(m_currentState, pData->m_state);
 		}
 	}
 }
@@ -168,8 +165,13 @@ gkFSM::Event* gkFSM::addTransition(int from, int to, unsigned long ms, ITrigger*
 }
 
 
-void gkFSM::setState(int state)
+void gkFSM::setState(int state, bool fireTriggers)
 {
+	if (fireTriggers)
+	{
+		execute_end_trigger(m_currentState,state);
+		execute_start_trigger(m_currentState,state);
+	}
 	m_currentState = state;
 
 	m_timer.reset();

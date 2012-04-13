@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha(dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -122,7 +122,7 @@ public:
 
 	virtual void notifyState(int state) {};
 
-	void setState(int state);
+	void setState(int state, bool useTriggers = true);
 
 private:
 
