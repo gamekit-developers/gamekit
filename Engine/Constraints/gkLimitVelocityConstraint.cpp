@@ -58,9 +58,9 @@ bool gkLimitVelocityConstraint::update(gkScalar delta)
 
 
 	if (m_lim.y > 0.f && len > m_lim.y)
-		m_object->setLinearVelocity((vel * (m_lim.y / len)) *m_influence, TRANSFORM_LOCAL);
+		m_object->setLinearVelocity((vel * (m_lim.y / len)) *m_influence, TRANSFORM_WORLD);
 	else if (m_lim.x > 0.f && !gkFuzzy(len) && len < m_lim.x)
-		m_object->setLinearVelocity((vel * (m_lim.x / len)) * m_influence, TRANSFORM_LOCAL);
+		m_object->setLinearVelocity((vel * (m_lim.x / len)) * m_influence, TRANSFORM_WORLD);
 
 	return false;
 }
