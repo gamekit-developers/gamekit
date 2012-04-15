@@ -628,7 +628,8 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 		break;
 	case SH_CAPSULE:
 		// For some reason, the shape is a bit bigger than the actual capsule...
-		shape = new btCapsuleShapeZ(gkMax(size.x, size.y)*0.93, size.z*0.93);
+		gkScalar c_radius = gkMax(size.x, size.y);
+		shape = new btCapsuleShapeZ(c_radius-0.05, (size.z-c_radius-0.05) * 2);
 		break;
 	}
 

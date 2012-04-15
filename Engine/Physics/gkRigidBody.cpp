@@ -132,11 +132,9 @@ void gkRigidBody::create(void)
 		// No Sleep option in Blender
 		m_body->setActivationState(DISABLE_DEACTIVATION);
 	
-	// Alternative way of making the object a ghost
-	/*
+
 	if (props.isGhost())
 		m_body->setCollisionFlags(m_body->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-	*/
 
 	m_collisionObject = m_body;
 

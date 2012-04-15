@@ -690,21 +690,13 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 		m_physicsWorld->destroyObject(obj->getPhysicsController());
 
 
-	if (props.isGhost())
-	{
-		gkGhost* con = m_physicsWorld->createGhost(obj);
-		obj->attachGhost(con);
-	}
-	else
-	{
-		gkRigidBody* con = m_physicsWorld->createRigidBody(obj);
-		obj->attachRigidBody(con);
+	gkRigidBody* con = m_physicsWorld->createRigidBody(obj);
+	obj->attachRigidBody(con);
 
-		if (con->isStaticObject())
-		{
-			m_staticControllers.insert(con);
-			m_limits.merge(con->getAabb());
-		}
+	if (con->isStaticObject())
+	{
+		m_staticControllers.insert(con);
+		m_limits.merge(con->getAabb());
 	}
 }
 
