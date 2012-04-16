@@ -147,7 +147,7 @@ public:
 	gkVariable* createVariable(const gkString& name, bool debug);
 	gkVariable* getVariable(const gkString& name);
 	bool        hasVariable(const gkString& name);
-	void 	removeVariable(const gkString& name)
+	void 	removeVariable(const gkString& name);
 	void        clearVariables(void);
 
 
