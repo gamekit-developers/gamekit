@@ -940,6 +940,20 @@ bool gkGameObject::hasVariable(const gkString& name)
 	return m_variables.find(name) != UT_NPOS;
 }
 
+void gkGameObject::removeVariable(const gkString& name)
+{
+       gkVariable* v;
+       gkEngine& eng = gkEngine::getSingleton();
+       UTsize pos = m_variables.find(name);
+       if (pos != UT_NPOS) 
+       {
+            v = m_variables.at(pos);
+            // remove from debug list
+            if (v->isDebug())
+                    eng.removeDebugProperty(v);
+            m_variables.remove(name);
+       }
+}
 
 
 
