@@ -648,7 +648,6 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	
 	if (version<=260)
 		boundtype = bobj->boundtype;
-	else
 #if OGREKIT_USE_BPARSE && BPARSE_FILE_FORMAT==BPARSE_FILEFORMAT_263
 	else
 		boundtype = bobj->collision_boundtype;
