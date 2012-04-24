@@ -56,6 +56,7 @@ gkLogicBrick* gkMessageSensor::clone(gkLogicLink* link, gkGameObject* dest)
 	gkMessageSensor* sens = new gkMessageSensor(*this);
 	sens->cloneImpl(link, dest);
 	sens->m_listener = new gkMessageManager::GenericMessageListener("", "", m_listener->m_subjectFilter);
+	gkMessageManager::getSingleton().addListener(sens->m_listener);
 	return sens;
 }
 
