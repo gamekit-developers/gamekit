@@ -53,6 +53,8 @@ public:
 	gkString getParameter(const gkString& name);
 	void setParameter(const gkString& name, const gkString& value);
 
+	void setPosition(float x, float y);
+
 	void show(bool v);
 
 	const gkString& getName(void) {return m_name;}

@@ -80,6 +80,15 @@ void gkHUDElement::setUvCoords(float u1, float v1, float u2, float v2)
 	}
 }
 
+void gkHUDElement::setPosition(float x,float y)
+{
+	if (m_element)
+	{
+		Ogre::PanelOverlayElement* panel = dynamic_cast<Ogre::PanelOverlayElement*>(m_element);
+		if (panel) panel->setPosition(x,y);
+	}
+}
+
 gkString gkHUDElement::getMaterialName(void)
 {
 	if (m_element)
