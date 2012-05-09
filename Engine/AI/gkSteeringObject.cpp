@@ -469,7 +469,7 @@ void gkSteeringObject::applySteeringForce(const Vec3& force, const float elapsed
 
 	m_obj->rotate(m_steerUtility.getRotation(forward(), newVelocity.normalize()), TRANSFORM_LOCAL);
 
-	m_obj->setLinearVelocity(m_forward * m_speed);
+	m_obj->setLinearVelocity(m_forward * m_speed,TRANSFORM_LOCAL);
 
 	measurePathCurvature(elapsedTime);
 }
