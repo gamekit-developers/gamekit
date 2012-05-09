@@ -689,14 +689,22 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 	if (obj->getPhysicsController())
 		m_physicsWorld->destroyObject(obj->getPhysicsController());
 
-
-	gkRigidBody* con = m_physicsWorld->createRigidBody(obj);
-	obj->attachRigidBody(con);
-
-	if (con->isStaticObject())
+	if (obj->hasVariable("gk_character"))
 	{
-		m_staticControllers.insert(con);
-		m_limits.merge(con->getAabb());
+		gkCharacter* character = m_physicsWorld->createCharacter(obj);
+		obj->attachCharacter(character);
+		gkLogger::write("Attached Character... ",true );
+	}
+	else
+	{
+		gkRigidBody* con = m_physicsWorld->createRigidBody(obj);
+		obj->attachRigidBody(con);
+
+		if (con->isStaticObject())
+		{
+			m_staticControllers.insert(con);
+			m_limits.merge(con->getAabb());
+		}
 	}
 }
 
