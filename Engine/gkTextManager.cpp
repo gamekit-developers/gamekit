@@ -38,6 +38,7 @@
 #include "OgreOverlayManager.h"
 #include "gkFontManager.h"
 #include "External/Ogre/gkOgreBlendArchive.h"
+#include "OgreCompositorManager.h"
 #endif //OGREKIT_COMPILE_OGRE_SCRIPTS
 
 
@@ -158,6 +159,13 @@ void gkTextManager::parseScripts(const gkString& group)
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::FontManager::getSingleton().parseScript(memStream, group);
+			}
+			else if (type == TT_COMPOSIT)
+			{
+				Ogre::DataStreamPtr memStream(
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
+
+				Ogre::CompositorManager::getSingleton().parseScript(memStream, group);
 			}
 		}
 		catch (Ogre::Exception& e)
