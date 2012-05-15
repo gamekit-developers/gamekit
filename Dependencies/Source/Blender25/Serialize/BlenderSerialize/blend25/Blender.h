@@ -4614,7 +4614,7 @@ struct Object
     short ipowin;
     short scaflag;
     short scavisflag;
-    short boundtype;
+    short boundtype; /* <2.61 only */
     int dupon;
     int dupoff;
     int dupsta;
@@ -4632,10 +4632,12 @@ struct Object
     float min_vel;
     float m_contactProcessingThreshold;
     short rotmode;
+    char visual_boundtype;
+    char collision_boundtype;
+    char restrictflag_n;
     char dt;
     char dtx;
     char empty_drawtype;
-    char pad1[3];
     float empty_drawsize;
     float dupfacesca;
     ListBase prop;
