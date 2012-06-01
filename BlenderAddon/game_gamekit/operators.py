@@ -117,7 +117,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
     
     def invoke(self, context, event):
         self.properties.filepath = "//GamekitStartup.cfg"
-        context.window_manager.add_fileselect(self)
+        context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
     
 
