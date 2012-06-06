@@ -685,6 +685,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 					rs->setMaterial(gkLogicLoader_formatText(brs->matname));
 				if (brs->propname[0] != '\0')
 					rs->setProperty(gkLogicLoader_formatText(brs->propname));
+				if (brs->mode & SENS_RAY_XRAY)
+					rs->setXray(true);
 
 			} break;
 		case SENS_TOUCH:

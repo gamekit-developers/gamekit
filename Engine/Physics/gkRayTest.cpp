@@ -5,7 +5,7 @@
 
     Copyright (c) Nestor Silveira.
 
-    Contributor(s): none yet.
+    Contributor(s): Alberto Torres.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -47,11 +47,16 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 {
 	gkVector3 from = ray.getOrigin();
 	gkVector3 to = ray.getOrigin() + ray.getDirection();
+	return gkRayTest::collides(from, to);
+}
 
+bool gkRayTest::collides(const gkVector3 from, const gkVector3 to,
+			  gkRayTest::gkRayTestFilter rayCallback)
+{
 	btVector3 rayFrom(from.x, from.y, from.z);
 	btVector3 rayTo(to.x, to.y, to.z);
-
-	btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
+	btVector3 hitPointWorld;
+	
 	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
 	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 
@@ -67,13 +72,14 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 
 	if (rayCallback.hasHit())
 	{
-		m_hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
-
 		m_hitNormalWorld = gkVector3(rayCallback.m_hitNormalWorld);
 
 		m_collisionObject = rayCallback.m_collisionObject;
 
 		m_hitFraction = rayCallback.m_closestHitFraction;
+
+		hitPointWorld.setInterpolate3(rayFrom, rayTo, m_hitFraction);
+		m_hitPointWorld = gkVector3(hitPointWorld);
 
 		return true;
 	}
@@ -85,3 +91,63 @@ gkGameObject* gkRayTest::getObject() const
 {
 	return static_cast<gkPhysicsController*>(m_collisionObject->getUserPointer())->getObject();
 }
+
+
+btScalar gkRayTest::gkRayTestFilter::addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+{
+	//caller already does the filter on the m_closestHitFraction
+	btAssert(rayResult.m_hitFraction <= m_closestHitFraction);
+	
+	m_closestHitFraction = rayResult.m_hitFraction;
+	m_collisionObject = rayResult.m_collisionObject;
+	if (normalInWorldSpace)
+	{
+		m_hitNormalWorld = rayResult.m_hitNormalLocal;
+	} else
+	{
+		///need to transform normal into worldspace
+		m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis()*rayResult.m_hitNormalLocal;
+	}
+	return rayResult.m_hitFraction;
+}
+
+
+
+bool notMeFilter::filterFunc(btCollisionObject* ob) const{
+	gkGameObject *other = gkPhysicsController::castObject(ob);
+	
+	return other!=m_self;
+}
+
+
+
+bool xrayFilter::filterFunc(btCollisionObject* ob) const{
+	gkGameObject *other = gkPhysicsController::castObject(ob);
+	
+	return other!=m_self && gkPhysicsController::sensorTest(
+		other, m_prop, m_material, false);
+}
+
+
+
+bool gkRayTest::gkRayTestFilter::needsCollision(btBroadphaseProxy* proxy0) const
+{
+	bool collides = (proxy0->m_collisionFilterGroup & m_collisionFilterMask) != 0;
+	collides = collides && (m_collisionFilterGroup & proxy0->m_collisionFilterMask);
+	collides = collides && filterFunc((btCollisionObject*)proxy0->m_clientObject);
+	return collides;
+}
+
+/*
+bool gkRayTestCStyleFilter::needsCollision(btBroadphaseProxy* proxy0) const
+{
+	bool collides = (proxy0->m_collisionFilterGroup & m_collisionFilterMask) != 0;
+	collides = collides && (m_collisionFilterGroup & proxy0->m_collisionFilterMask);
+	if (m_filterFunc!=NULL)
+		collides = collides && m_filterFunc(
+			(btCollisionObject*)proxy0->m_clientObject, m_filterFuncData
+		);
+	return collides;
+}
+*/
+

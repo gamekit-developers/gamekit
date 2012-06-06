@@ -48,6 +48,7 @@ protected:
 	gkScalar    m_range;
 	int         m_axis;
 	gkString    m_material, m_prop;
+        bool        m_xray;
 
 public:
 
@@ -62,13 +63,14 @@ public:
 	GK_INLINE void setAxis(int v)                   {m_axis = v;}
 	GK_INLINE void setMaterial(const gkString& v)   {m_material = v; m_prop = "";}
 	GK_INLINE void setProperty(const gkString& v)   {m_prop = v; m_material = "";}
+	GK_INLINE void setXray(bool v)   {m_xray = v;}
 
 
 	GK_INLINE gkScalar        getRange(void)        const {return m_range;}
 	GK_INLINE int             getAxis(void)         const {return m_axis;}
 	GK_INLINE const gkString& getMaterial(void)     const {return m_material;}
 	GK_INLINE const gkString& getProperty(void)     const {return m_prop;}
+	GK_INLINE bool            getXray(void)         const {return m_xray;}
 };
-
 
 #endif//_gkRaySensor_h_

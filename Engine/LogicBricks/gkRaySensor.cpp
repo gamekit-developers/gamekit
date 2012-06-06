@@ -36,7 +36,8 @@
 
 
 gkRaySensor::gkRaySensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:       gkLogicSensor(object, link, name), m_range(0.01), m_axis(-1), m_material(""), m_prop("")
+	:       gkLogicSensor(object, link, name), m_range(0.01), m_axis(-1),
+                m_material(""), m_prop(""), m_xray(false)
 {
 	m_dispatchType = DIS_CONSTANT;
 	connect();
@@ -56,7 +57,12 @@ gkLogicBrick* gkRaySensor::clone(gkLogicLink* link, gkGameObject* dest)
 bool gkRaySensor::query(void)
 {
 
-	gkVector3 dir;
+	gkVector3 from, to, dir;
+	bool result;
+	gkRayTest test;
+	
+	from = m_object->getWorldPosition();
+	
 	switch (m_axis)
 	{
 	case RA_XPOS: {dir = gkVector3(m_range, 0, 0);  break;}
@@ -66,16 +72,28 @@ bool gkRaySensor::query(void)
 	case RA_YNEG: {dir = gkVector3(0, -m_range, 0); break;}
 	case RA_ZNEG: {dir = gkVector3(0, 0, -m_range); break;}
 	}
-
-	gkRayTest test;
-	if (test.collides(gkRay(m_object->getWorldPosition(), dir)))
-	{
-		gkGameObject* hit = gkPhysicsController::castObject(test.getCollisionObject());
-		if (hit && hit != m_object)
-		{
-			bool onlyActorTODO = false;
-			return gkPhysicsController::sensorTest(hit, m_prop, m_material, onlyActorTODO);
-		}
+	
+	dir = m_object->getWorldOrientation() * dir;
+	to = from + dir;
+	
+	if(m_xray){
+		xrayFilter xrf(m_object, m_prop, m_material);
+		result = test.collides(from, to, xrf);
 	}
-	return false;
+	else
+	{
+		result = test.collides(from, to, notMeFilter(m_object));
+	}
+	
+	bool onlyActorTODO = false;
+	// if x-ray, m_prop and m_material were already tested
+	if (!m_xray && result){
+		gkGameObject* hit = gkPhysicsController::castObject(test.getCollisionObject());
+		result = hit && gkPhysicsController::sensorTest(hit, m_prop, m_material, onlyActorTODO);
+	}
+	
+	return result;
 }
+
+
+

@@ -29,6 +29,7 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "btBulletDynamicsCommon.h"
 
 class btCollisionObject;
 class gkGameObject;
@@ -36,11 +37,29 @@ class gkGameObject;
 class gkRayTest
 {
 public:
+	
+	struct gkRayTestFilter : public btCollisionWorld::RayResultCallback
+	{
+		virtual bool filterFunc(btCollisionObject* ob) const {return true;}
+		
+		// taken from ClosestRayResultCallback
+		btVector3	m_hitNormalWorld;
+		virtual bool needsCollision(btBroadphaseProxy* proxy0) const;
+		virtual btScalar addSingleResult(
+			btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace);
+	};
+	
 	gkRayTest();
 
 	~gkRayTest();
 
 	bool collides(const Ogre::Ray& ray);
+        
+	// rayCallback is a struct for filtering objects that will be ray tested;
+	// gkRayTestFilter.filterFunc is called with each colliding objects
+	// until it returns true.
+	bool collides(const gkVector3 from, const gkVector3 to,
+		      gkRayTestFilter rayCallback = gkRayTestFilter());
 
 	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
 
@@ -63,5 +82,44 @@ private:
 	gkScalar m_hitFraction;
 };
 
+
+struct notMeFilter : gkRayTest::gkRayTestFilter
+{
+	notMeFilter(gkGameObject *self)
+	:m_self(self) {}
+	
+	gkGameObject *m_self;
+		
+	virtual bool filterFunc(btCollisionObject* ob) const;
+};
+
+
+struct xrayFilter : gkRayTest::gkRayTestFilter
+{
+	xrayFilter(gkGameObject *self, const gkString& prop, const gkString& material)
+	:m_self(self), m_prop(prop), m_material(material) {}
+	
+	gkGameObject *m_self;
+	gkString m_prop, m_material;
+		
+	virtual bool filterFunc(btCollisionObject* ob) const;
+};
+
+/*
+// C style callback
+struct gkRayTestCStyleFilter : gkRayTest::gkRayTestFilter
+{
+	gkRayTestCStyleFilter(bool (*filterFunc)(btCollisionObject*, void *),
+				void *filterFuncData)
+	:m_filterFunc(filterFunc),
+	m_filterFuncData(filterFuncData)
+	{}
+		
+	bool (*m_filterFunc)(btCollisionObject*, void *);
+	void *m_filterFuncData;
+
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const;
+};
+*/
 
 #endif//_gkRayTest_h_
