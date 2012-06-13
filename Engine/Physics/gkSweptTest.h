@@ -35,7 +35,7 @@ class btCollisionObject;
 class gkSweptTest
 {
 public:
-	typedef std::set<btCollisionObject*> AVOID_LIST;
+	typedef utArray<btCollisionObject*> AVOID_LIST;
 
 	gkSweptTest(const AVOID_LIST& avoidList);
 
@@ -51,7 +51,7 @@ public:
 
 	const gkVector3& getSliding() const { return m_sliding; }
 
-	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
+	const btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
 	gkGameObject* getObject() const;
 
@@ -61,7 +61,7 @@ private:
 
 	gkVector3 m_hitPointWorld;
 
-	btCollisionObject* m_collisionObject;
+	const btCollisionObject* m_collisionObject;
 
 	gkVector3 m_hitNormalWorld;
 

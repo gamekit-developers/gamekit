@@ -28,6 +28,7 @@ restrictions:
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
 #include <cstring>
+#include <unistd.h>
 
 using namespace OIS;
 #include <iostream>

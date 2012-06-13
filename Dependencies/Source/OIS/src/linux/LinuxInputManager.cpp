@@ -26,6 +26,7 @@ restrictions:
 #include "linux/LinuxMouse.h"
 #include "OISException.h"
 #include <cstdlib>
+#include <unistd.h>
 
 using namespace OIS;
 

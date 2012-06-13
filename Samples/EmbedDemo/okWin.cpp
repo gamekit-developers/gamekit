@@ -515,7 +515,7 @@ gkGameObject* okWindow::pickObject(int x, int y)
 
 	if (rayTest.collides(ray))
 	{
-		btCollisionObject* pCol = rayTest.getCollisionObject();
+		const btCollisionObject* pCol = rayTest.getCollisionObject();
 		gkPhysicsController* pObj = static_cast<gkPhysicsController*>(pCol->getUserPointer());
 		gkRigidBody* pickedBody = dynamic_cast<gkRigidBody*>(pObj);
 

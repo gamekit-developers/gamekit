@@ -49,12 +49,12 @@ public:
 
 	bool hasHit(void) {return m_hasHit;}
 
-	virtual    btScalar    addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+	virtual    btScalar    addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
 	{
 		m_hasHit = true;
 
-		if (m_contactObjects.find(colObj1) == UT_NPOS)
-			m_contactObjects.push_back(colObj1);
+		if (m_contactObjects.find(colObj1->getCollisionObject()) == UT_NPOS)
+			m_contactObjects.push_back(colObj1->getCollisionObject());
 
 		return 0.;
 	}

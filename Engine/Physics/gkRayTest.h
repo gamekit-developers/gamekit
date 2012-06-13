@@ -65,7 +65,7 @@ public:
 
 	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
 
-	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
+	const btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
 	gkGameObject* getObject() const;
 
@@ -77,7 +77,7 @@ private:
 
 	gkVector3 m_hitNormalWorld;
 
-	btCollisionObject* m_collisionObject;
+	const btCollisionObject* m_collisionObject;
 
 	gkScalar m_hitFraction;
 };

@@ -24,6 +24,7 @@ restrictions:
 #include "linux/LinuxInputManager.h"
 #include "OISException.h"
 #include "OISEvents.h"
+#include <unistd.h>
 
 using namespace OIS;
 

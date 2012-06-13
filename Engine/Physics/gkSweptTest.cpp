@@ -51,7 +51,7 @@ public:
 
 	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
-		if (m_avoidList.end() != m_avoidList.find(convexResult.m_hitCollisionObject))
+		if (UT_NPOS != m_avoidList.find(const_cast<btCollisionObject*>(convexResult.m_hitCollisionObject)))
 			return 1.0f;
 
 		//ignore result if there is no contact response
@@ -73,7 +73,7 @@ public:
 	bool needsCollision(btBroadphaseProxy* proxy0) const
 	{
 		//don't collide with itself
-		if (m_avoidList.end() != m_avoidList.find(static_cast<btCollisionObject*>(proxy0->m_clientObject)))
+		if (UT_NPOS != m_avoidList.find(static_cast<btCollisionObject*>(proxy0->m_clientObject)))
 			return false;
 
 		///don't do CCD when the collision filters are not matching

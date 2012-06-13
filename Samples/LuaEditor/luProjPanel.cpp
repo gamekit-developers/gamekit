@@ -407,7 +407,7 @@ void luProjPanel::OnObjTypeChanged(wxCommandEvent& event)
 {
 	wxChoice* choice = getChoice();
 	int sel = choice->GetCurrentSelection();
-	int type = (int)choice->GetClientData(sel);
+	intptr_t type = (intptr_t)choice->GetClientData(sel);
 	//gkPrintf("%d %d", sel, type);
 
 }

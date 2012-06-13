@@ -26,7 +26,8 @@ restrictions:
 
 #include <assert.h>
 #include <stdlib.h>
-
+#include <memory.h>
+#include <cstdio>
 #include "OISLog.h"
 
 namespace OIS

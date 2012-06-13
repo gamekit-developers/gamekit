@@ -102,7 +102,7 @@ gsSweptTest::gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid)
 			gkGameObject* ob = avoid.iat(i);
 			btCollisionObject* col = 0;
 			if ((col = ob->getCollisionObject()) != 0)
-				m_avoid.insert(col);
+				m_avoid.push_back(col);
 		}
 	}
 

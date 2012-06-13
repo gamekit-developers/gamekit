@@ -92,6 +92,7 @@ public:
 	static bool sensorTest(gkGameObject* ob, const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
 
 	static gkPhysicsController* castController(btCollisionObject* colObj);
+	static gkPhysicsController* castController(const btCollisionObject* colObj);
 	static gkPhysicsController* castController(void* colObj);
 	static gkGameObject* castObject(btCollisionObject* colObj);
 	static gkGameObject* castObject(const btCollisionObject* colObj);

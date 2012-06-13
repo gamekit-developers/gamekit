@@ -213,7 +213,7 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 		Ogre::Ray ray(m_center, direction);
 
 		gkSweptTest::AVOID_LIST avoidList;
-		avoidList.insert(m_centerObj->getPhysicsController()->getCollisionObject());
+		avoidList.push_back(m_centerObj->getPhysicsController()->getCollisionObject());
 
 		gkSweptTest sweptTest(avoidList);
 

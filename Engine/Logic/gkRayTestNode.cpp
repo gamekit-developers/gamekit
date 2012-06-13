@@ -80,7 +80,7 @@ void gkRayTestNode::update(gkScalar tick)
 
 		if (rayTest.collides(ray))
 		{
-			btCollisionObject* pCol = rayTest.getCollisionObject();
+			const btCollisionObject* pCol = rayTest.getCollisionObject();
 
 			gkGameObject* pObj = gkPhysicsController::castObject(pCol);
 
@@ -122,7 +122,7 @@ bool gkScreenRayTestNode::evaluate(gkScalar tick)
 
 		if (rayTest.collides(ray))
 		{
-			btCollisionObject* pCol = rayTest.getCollisionObject();
+			const btCollisionObject* pCol = rayTest.getCollisionObject();
 
 			gkGameObject* pObj = gkPhysicsController::castObject(pCol);
 

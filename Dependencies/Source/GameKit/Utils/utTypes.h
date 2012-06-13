@@ -620,7 +620,7 @@ public:
 		}
 	}
 
-	UTsize find(const T &v)
+	UTsize find(const T &v) const
 	{
 		for (UTsize i = 0; i < m_size; i++)
 		{

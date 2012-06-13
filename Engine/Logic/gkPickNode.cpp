@@ -110,7 +110,7 @@ void gkPickNode::CreatePick()
 
 	if (rayTest.collides(ray))
 	{
-		btCollisionObject* pCol = rayTest.getCollisionObject();
+		const btCollisionObject* pCol = rayTest.getCollisionObject();
 
 		gkPhysicsController* pObj = static_cast<gkPhysicsController*>(pCol->getUserPointer());
 
