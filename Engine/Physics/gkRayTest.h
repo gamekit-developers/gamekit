@@ -58,8 +58,7 @@ public:
 	// rayCallback is a struct for filtering objects that will be ray tested;
 	// gkRayTestFilter.filterFunc is called with each colliding objects
 	// until it returns true.
-	bool collides(const gkVector3 from, const gkVector3 to,
-		      gkRayTestFilter rayCallback = gkRayTestFilter());
+	bool collides(const gkVector3& from, const gkVector3& to,gkRayTestFilter& rayCallback);
 
 	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
 

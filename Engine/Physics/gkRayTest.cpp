@@ -47,11 +47,12 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 {
 	gkVector3 from = ray.getOrigin();
 	gkVector3 to = ray.getOrigin() + ray.getDirection();
-	return gkRayTest::collides(from, to);
+	gkRayTestFilter test;
+	return gkRayTest::collides(from, to,test);
 }
 
-bool gkRayTest::collides(const gkVector3 from, const gkVector3 to,
-			  gkRayTest::gkRayTestFilter rayCallback)
+bool gkRayTest::collides(const gkVector3& from, const gkVector3& to,
+			  gkRayTest::gkRayTestFilter& rayCallback)
 {
 	btVector3 rayFrom(from.x, from.y, from.z);
 	btVector3 rayTo(to.x, to.y, to.z);
