@@ -82,7 +82,8 @@ bool gkRaySensor::query(void)
 	}
 	else
 	{
-		result = test.collides(from, to, notMeFilter(m_object));
+		notMeFilter nmf(m_object);
+		result = test.collides(from, to, nmf);
 	}
 	
 	bool onlyActorTODO = false;
