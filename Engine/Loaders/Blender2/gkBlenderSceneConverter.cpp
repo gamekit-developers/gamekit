@@ -650,6 +650,12 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 		boundtype = bobj->boundtype;
 	else
 		boundtype = bobj->collision_boundtype;
+	
+	if (!(bobj->gameflag & OB_BOUNDS))
+		if (bobj->body_type == OB_BODY_TYPE_STATIC)
+			boundtype = OB_BOUND_TRIANGLE_MESH;
+		else
+			boundtype = OB_BOUND_BOX;
 
 	switch (boundtype)
 	{
