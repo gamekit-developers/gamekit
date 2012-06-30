@@ -167,3 +167,12 @@ void gkSource::loop(bool v)
 	if (m_playback)
 		m_playback->setLoop(m_props.m_loop);
 }
+
+void gkSource::requestUpdateProperties(void){
+	gkCriticalSection::Lock lock(m_cs);
+	// if there is a buffer tell it to update (which is processed in the gkStreamer)
+	if (m_playback) {
+		m_playback->setProperties(m_props);
+		m_playback->m_doUpdateProperties = true;
+	}
+}

@@ -82,7 +82,7 @@ private:
 	bool                m_loop, m_ok, m_exit, m_initial, m_isInit;
 	bool                m_suspend;
 
-	bool m_doSuspend, m_do3D;
+	bool m_doSuspend, m_do3D,m_doUpdateProperties;
 
 	gkSoundProperties   m_props;
 	UTsize              m_pos;

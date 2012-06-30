@@ -525,5 +525,45 @@ void gkSoundManager::notifyDestroyAllImpl(void)
 	if (m_stream) m_stream->exit();
 }
 
+void gkSoundManager::setGlobalVolume(gkScalar volume)
+{
+	if (!gkSndCtxValid())
+		return;
+
+	if (volume > 1) volume = 1;
+	else if (volume < 0 ) volume = 0;
+
+	// set the global volume in the soundscene-properties
+	m_props.m_globalVolume = volume;
+
+	// now call all sources to update its sound-volume
+	if (!m_playingSources.empty())
+	{
+		UTsize i, s, f;
+		Sources::Pointer p;
+
+		i = 0;
+		s = m_playingSources.size();
+		p = m_playingSources.ptr();
+
+		Sources freeNow;
+		freeNow.reserve(s);
+
+
+		while (i < s)
+		{
+			gkSource* src = p[i++];
+			// tell the source to update its properties
+			src->requestUpdateProperties();
+		}
+	}
+
+}
+
+gkScalar gkSoundManager::getGlobalVolume()
+{
+	return m_props.m_globalVolume;
+}
+
 
 UT_IMPLEMENT_SINGLETON(gkSoundManager);

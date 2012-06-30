@@ -990,6 +990,10 @@ public:
 	void     setSoundFile(const gkString& v)     {BRICK_SET( setSoundFile(v) );}
 	gkString getSoundFile(void)                  {BRICK_GET( getSoundFile(), "" );}
 
+	void setVolume(float volume);
+	float getVolume(void);
+	void setPitch(float pitch);
+	float getPitch(void);
 
 	OGRE_KIT_LOGIC_BRICK(SoundActuator);
 };

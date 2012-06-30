@@ -173,3 +173,15 @@ void gkSoundActuator::execute(void)
 	}
 #endif
 }
+
+void gkSoundActuator::updateProperties()
+{
+#ifdef OGREKIT_OPENAL_SOUND
+	if (m_player)
+	{
+		m_player->getProperties().m_pitch=m_props.m_pitch;
+		m_player->getProperties().m_volume=m_props.m_volume;
+		m_player->requestUpdateProperties();
+	}
+#endif
+}

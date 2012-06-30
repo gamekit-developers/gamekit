@@ -463,6 +463,38 @@ void  gsActionActuator::play(void) {
 	get()->playAction();
 }
 
+float gsSoundActuator::getPitch() {
+#ifdef OGREKIT_OPENAL_SOUND
+	return get()->getProperties().m_pitch;
+#else
+	return -1;
+#endif
+}
+
+void gsSoundActuator::setPitch(float pitch){
+#ifdef OGREKIT_OPENAL_SOUND
+	get()->getProperties().m_pitch=pitch;
+	get()->updateProperties();
+#endif
+}
+
+float gsSoundActuator::getVolume() {
+#ifdef OGREKIT_OPENAL_SOUND
+	return get()->getProperties().m_volume;
+#else
+	return -1;
+#endif
+}
+
+void gsSoundActuator::setVolume(float volume){
+#ifdef OGREKIT_OPENAL_SOUND
+	if (volume > 1) volume=1;
+	else if (volume < 0) volume=0;
+	get()->getProperties().m_volume=volume;
+	get()->updateProperties();
+#endif
+}
+
 
 //
 //  Base Actuator impl

@@ -1637,6 +1637,9 @@ SWIGINTERN int SWIG_lua_isnilstring(lua_State *L, int idx) {
 #include "gsPhysics.h"
 
 
+#include "gsSound.h"
+
+
 static int gsGetProperty(lua_State *L, const gsProperty& prop)
 {
 	int SWIG_arg= 0;
@@ -7513,6 +7516,54 @@ fail:
 }
 
 
+static int _wrap_Scene_getMainCamera(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gsCamera *result = 0 ;
+  
+  SWIG_check_num_args("gsScene::getMainCamera",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::getMainCamera",1,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getMainCamera",1,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (gsCamera *)(arg1)->getMainCamera();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCamera,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Scene_getPickRay(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gsRay *result = 0 ;
+  
+  SWIG_check_num_args("gsScene::getPickRay",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::getPickRay",1,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getPickRay",1,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (gsRay *)(arg1)->getPickRay();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsRay,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Scene(void *obj) {
 gsScene *arg1 = (gsScene *) obj;
 delete arg1;
@@ -7524,6 +7575,8 @@ static swig_lua_method swig_gsScene_methods[] = {
     {"cloneObject", _wrap_Scene_cloneObject}, 
     {"getObjectList", _wrap_Scene_getObjectList}, 
     {"getDynamicsWorld", _wrap_Scene_getDynamicsWorld}, 
+    {"getMainCamera", _wrap_Scene_getMainCamera}, 
+    {"getPickRay", _wrap_Scene_getPickRay}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsScene_attributes[] = {
@@ -19114,6 +19167,75 @@ fail:
 }
 
 
+static int _wrap_ActionActuator_reInit(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  
+  SWIG_check_num_args("gsActionActuator::reInit",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::reInit",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_reInit",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  (arg1)->reInit();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ActionActuator_play(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  
+  SWIG_check_num_args("gsActionActuator::play",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::play",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_play",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  (arg1)->play();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ActionActuator_stop(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  
+  SWIG_check_num_args("gsActionActuator::stop",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::stop",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_stop",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  (arg1)->stop();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_ActionActuator_getStart(lua_State* L) {
   int SWIG_arg = 0;
   gsActionActuator *arg1 = (gsActionActuator *) 0 ;
@@ -19310,6 +19432,104 @@ fail:
 }
 
 
+static int _wrap_ActionActuator_setAnimPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("gsActionActuator::setAnimPosition",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::setAnimPosition",1,"gsActionActuator *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsActionActuator::setAnimPosition",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_setAnimPosition",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setAnimPosition(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ActionActuator_getAnimPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("gsActionActuator::getAnimPosition",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::getAnimPosition",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_getAnimPosition",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  result = (float)(arg1)->getAnimPosition();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ActionActuator_getAnimLength(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("gsActionActuator::getAnimLength",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::getAnimLength",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_getAnimLength",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  result = (float)(arg1)->getAnimLength();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ActionActuator_isActionEnded(lua_State* L) {
+  int SWIG_arg = 0;
+  gsActionActuator *arg1 = (gsActionActuator *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("gsActionActuator::isActionEnded",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsActionActuator::isActionEnded",1,"gsActionActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
+    SWIG_fail_ptr("ActionActuator_isActionEnded",1,SWIGTYPE_p_gsActionActuator);
+  }
+  
+  result = (bool)(arg1)->isActionEnded();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_ActionActuator(void *obj) {
 gsActionActuator *arg1 = (gsActionActuator *) obj;
 delete arg1;
@@ -19323,6 +19543,9 @@ static swig_lua_method swig_gsActionActuator_methods[] = {
     {"setAnimation", _wrap_ActionActuator_setAnimation}, 
     {"setProperty", _wrap_ActionActuator_setProperty}, 
     {"setReset", _wrap_ActionActuator_setReset}, 
+    {"reInit", _wrap_ActionActuator_reInit}, 
+    {"play", _wrap_ActionActuator_play}, 
+    {"stop", _wrap_ActionActuator_stop}, 
     {"getStart", _wrap_ActionActuator_getStart}, 
     {"getEnd", _wrap_ActionActuator_getEnd}, 
     {"getBlend", _wrap_ActionActuator_getBlend}, 
@@ -19331,6 +19554,10 @@ static swig_lua_method swig_gsActionActuator_methods[] = {
     {"getAnimation", _wrap_ActionActuator_getAnimation}, 
     {"getProperty", _wrap_ActionActuator_getProperty}, 
     {"getReset", _wrap_ActionActuator_getReset}, 
+    {"setAnimPosition", _wrap_ActionActuator_setAnimPosition}, 
+    {"getAnimPosition", _wrap_ActionActuator_getAnimPosition}, 
+    {"getAnimLength", _wrap_ActionActuator_getAnimLength}, 
+    {"isActionEnded", _wrap_ActionActuator_isActionEnded}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsActionActuator_attributes[] = {
@@ -24328,6 +24555,106 @@ fail:
 }
 
 
+static int _wrap_SoundActuator_setVolume(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSoundActuator *arg1 = (gsSoundActuator *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("gsSoundActuator::setVolume",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSoundActuator::setVolume",1,"gsSoundActuator *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsSoundActuator::setVolume",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSoundActuator,0))){
+    SWIG_fail_ptr("SoundActuator_setVolume",1,SWIGTYPE_p_gsSoundActuator);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setVolume(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_SoundActuator_getVolume(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSoundActuator *arg1 = (gsSoundActuator *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("gsSoundActuator::getVolume",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSoundActuator::getVolume",1,"gsSoundActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSoundActuator,0))){
+    SWIG_fail_ptr("SoundActuator_getVolume",1,SWIGTYPE_p_gsSoundActuator);
+  }
+  
+  result = (float)(arg1)->getVolume();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_SoundActuator_setPitch(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSoundActuator *arg1 = (gsSoundActuator *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("gsSoundActuator::setPitch",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSoundActuator::setPitch",1,"gsSoundActuator *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsSoundActuator::setPitch",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSoundActuator,0))){
+    SWIG_fail_ptr("SoundActuator_setPitch",1,SWIGTYPE_p_gsSoundActuator);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setPitch(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_SoundActuator_getPitch(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSoundActuator *arg1 = (gsSoundActuator *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("gsSoundActuator::getPitch",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSoundActuator::getPitch",1,"gsSoundActuator *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSoundActuator,0))){
+    SWIG_fail_ptr("SoundActuator_getPitch",1,SWIGTYPE_p_gsSoundActuator);
+  }
+  
+  result = (float)(arg1)->getPitch();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_SoundActuator(void *obj) {
 gsSoundActuator *arg1 = (gsSoundActuator *) obj;
 delete arg1;
@@ -24337,6 +24664,10 @@ static swig_lua_method swig_gsSoundActuator_methods[] = {
     {"getType", _wrap_SoundActuator_getType}, 
     {"setSoundFile", _wrap_SoundActuator_setSoundFile}, 
     {"getSoundFile", _wrap_SoundActuator_getSoundFile}, 
+    {"setVolume", _wrap_SoundActuator_setVolume}, 
+    {"getVolume", _wrap_SoundActuator_getVolume}, 
+    {"setPitch", _wrap_SoundActuator_setPitch}, 
+    {"getPitch", _wrap_SoundActuator_getPitch}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsSoundActuator_attributes[] = {
@@ -25523,6 +25854,42 @@ static swig_lua_class *swig_gsCharacter_bases[] = {0};
 static const char *swig_gsCharacter_base_names[] = {0};
 static swig_lua_class _wrap_class_gsCharacter = { "Character", &SWIGTYPE_p_gsCharacter,_wrap_new_Character, swig_delete_Character, swig_gsCharacter_methods, swig_gsCharacter_attributes, swig_gsCharacter_bases, swig_gsCharacter_base_names };
 
+static int _wrap_setGlobalVolume(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("setGlobalVolume",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("setGlobalVolume",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  setGlobalVolume(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getGlobalVolume(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("getGlobalVolume",0,0)
+  result = (float)getGlobalVolume();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_LuaScript_execute(lua_State* L) {
   int SWIG_arg = 0;
   gsLuaScript *arg1 = (gsLuaScript *) 0 ;
@@ -25721,6 +26088,8 @@ static const struct luaL_reg swig_commands[] = {
     { "DebugPrint", _wrap_DebugPrint},
     { "SetCompositorChain", _wrap_SetCompositorChain},
     { "getCurrentController", _wrap_getCurrentController},
+    { "setGlobalVolume", _wrap_setGlobalVolume},
+    { "getGlobalVolume", _wrap_getGlobalVolume},
     {0,0}
 };
 

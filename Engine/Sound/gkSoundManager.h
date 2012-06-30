@@ -89,6 +89,8 @@ public:
 
 	gkSoundSceneProperties& getProperties(void) {return m_props;}
 	void updateSoundProperties(void);
+	gkScalar getGlobalVolume(void);
+	void setGlobalVolume(gkScalar volume);
 
 	static ALCcontext* getCurrentContext(void)
 	{

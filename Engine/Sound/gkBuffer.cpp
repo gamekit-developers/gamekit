@@ -43,7 +43,8 @@ gkBuffer::gkBuffer(gkSource* obj)
 	    m_doSuspend(false),
 	    m_do3D(false),
 	    m_pos(0),
-	    m_eos(false)
+	    m_eos(false),
+	    m_doUpdateProperties(false)
 {
 	if (m_stream != 0)
 	{
@@ -124,10 +125,10 @@ void gkBuffer::doProperties(void)
 	if (m_props.m_pitch > 0)
 		alSourcef(m_source, AL_PITCH, m_props.m_pitch);
 
-	alSourcef(m_source, AL_GAIN, m_props.m_volume);
+	alSourcef(m_source, AL_GAIN, m_props.m_volume * gkSoundManager::getSingleton().getGlobalVolume());
 
 	m_ok = !alErrorThrow("Sound properties");
-
+	m_doUpdateProperties=false;
 }
 
 
@@ -345,6 +346,8 @@ bool gkBuffer::stream(void)
 
 		// update 3D properties
 		if (m_do3D) do3D();
+
+		if (m_doUpdateProperties) doProperties();
 	}
 	else
 	{

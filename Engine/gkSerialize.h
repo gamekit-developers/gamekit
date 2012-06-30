@@ -526,13 +526,15 @@ public:
 	gkSoundSceneProperties()
 		:    m_distModel(DM_INVERSE_CLAMP),
 		     m_dopplerFactor(1.f),
-		     m_sndSpeed(343.3f)
+		     m_sndSpeed(343.3f),
+		     m_globalVolume(1)
 	{
 	}
 
 	int         m_distModel;
 	gkScalar    m_dopplerFactor;
 	gkScalar    m_sndSpeed;
+	gkScalar    m_globalVolume;
 
 };
 

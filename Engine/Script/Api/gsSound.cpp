@@ -24,3 +24,23 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+void setGlobalVolume(float volume){
+	#if OGREKIT_OPENAL_SOUND
+		if (gkSoundManager::getSingletonPtr()){
+			gkSoundManager::getSingleton().setGlobalVolume(volume);
+		}
+	#endif
+}
+
+float getGlobalVolume(void){
+#if OGREKIT_OPENAL_SOUND
+	if (gkSoundManager::getSingletonPtr()){
+		return gkSoundManager::getSingleton().getGlobalVolume();
+	}
+	else {
+		return -1;
+	}
+#else
+	return -1;
+#endif
+}

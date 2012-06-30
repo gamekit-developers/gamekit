@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2012 Thomas Trocha(dertom)
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,3 +24,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+extern void setGlobalVolume(float volume);
+
+extern float getGlobalVolume(void);

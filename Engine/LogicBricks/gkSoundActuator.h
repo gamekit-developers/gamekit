@@ -81,5 +81,7 @@ public:
 	GK_INLINE const gkString&       getSoundFile(void)                  {return m_sndRef;}
 
 	void execute(void);
+
+	void updateProperties();
 };
 #endif//_gkSoundActuator_h_

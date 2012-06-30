@@ -127,7 +127,8 @@ public:
 
 	// Object state for 3D sounds
 	void updatePropsForObject(gkGameObject* obj);
-
+	// e.g. volume or pitch has been changed
+	void requestUpdateProperties(void);
 
 	bool isPaused(void) const;
 
