@@ -1894,3 +1894,10 @@ gkGameObject* gsGroupInstance::getRoot(void)
 	return gobj->getRoot();
 }
 
+void import(const gkString& scriptName)
+{
+	gkLuaScript* script = gkLuaManager::getSingleton().getByName<gkLuaScript>(gkResourceName(scriptName, ""));
+
+	if (script)
+		script->execute();
+}

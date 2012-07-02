@@ -566,4 +566,6 @@ extern void gsDebugPrint(const char* str);
 
 extern bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName);
 
+extern void import(const gkString& scriptName);
+
 #endif//_OgreKitApi_h_

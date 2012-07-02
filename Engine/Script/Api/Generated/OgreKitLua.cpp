@@ -11583,6 +11583,29 @@ fail:
 }
 
 
+static int _wrap_import(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  gkString temp1 ;
+  
+  SWIG_check_num_args("import",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("import",1,"gkString const &");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  import((gkString const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_WhenEvent_when(lua_State* L) {
   int SWIG_arg = 0;
   gsWhenEvent *arg1 = (gsWhenEvent *) 0 ;
@@ -26522,6 +26545,7 @@ static const struct luaL_reg swig_commands[] = {
     { "sendMessage", _wrap_sendMessage},
     { "DebugPrint", _wrap_DebugPrint},
     { "SetCompositorChain", _wrap_SetCompositorChain},
+    { "import", _wrap_import},
     { "getCurrentController", _wrap_getCurrentController},
     { "setGlobalVolume", _wrap_setGlobalVolume},
     { "getGlobalVolume", _wrap_getGlobalVolume},
