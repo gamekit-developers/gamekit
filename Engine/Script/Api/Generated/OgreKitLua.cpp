@@ -7783,7 +7783,127 @@ static swig_lua_class *swig_gsGroupInstance_bases[] = {0};
 static const char *swig_gsGroupInstance_base_names[] = {0};
 static swig_lua_class _wrap_class_gsGroupInstance = { "gsGroupInstance", &SWIGTYPE_p_gsGroupInstance,_wrap_new_gsGroupInstance, swig_delete_gsGroupInstance, swig_gsGroupInstance_methods, swig_gsGroupInstance_attributes, swig_gsGroupInstance_bases, swig_gsGroupInstance_base_names };
 
-static int _wrap_createGroupInstance(lua_State* L) {
+static int _wrap_createGroupInstance__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString arg1 ;
+  gsVector3 arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 *argp2 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",4,4)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkString");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("createGroupInstance",2,"gsVector3");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createGroupInstance",4,"gsVector3");
+  
+  arg1 = gkString((const char*)lua_tostring(L, 1));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",2,SWIGTYPE_p_gsVector3);
+  }
+  arg2 = *argp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString arg1 ;
+  gsVector3 arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 *argp2 ;
+  gsVector3 *argp3 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",3,3)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkString");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("createGroupInstance",2,"gsVector3");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  
+  arg1 = gkString((const char*)lua_tostring(L, 1));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",2,SWIGTYPE_p_gsVector3);
+  }
+  arg2 = *argp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString arg1 ;
+  gsVector3 arg2 ;
+  gsVector3 *argp2 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkString");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("createGroupInstance",2,"gsVector3");
+  
+  arg1 = gkString((const char*)lua_tostring(L, 1));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",2,SWIGTYPE_p_gsVector3);
+  }
+  arg2 = *argp2;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
   gkString arg1 ;
   gsGroupInstance *result = 0 ;
@@ -7802,6 +7922,120 @@ static int _wrap_createGroupInstance(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_createGroupInstance__SWIG_3(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_createGroupInstance__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_createGroupInstance__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_createGroupInstance__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'createGroupInstance'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    createGroupInstance(gkString,gsVector3,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gkString,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gkString,gsVector3)\n"
+    "    createGroupInstance(gkString)\n");
+  lua_error(L);return 0;
 }
 
 
@@ -26284,7 +26518,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getNumJoysticks", _wrap_getNumJoysticks},
     { "getHUD", _wrap_getHUD},
     { "getActiveScene", _wrap_getActiveScene},
-    { "createGroupInstance", _wrap_createGroupInstance},
+    { "createGroupInstance",_wrap_createGroupInstance},
     { "sendMessage", _wrap_sendMessage},
     { "DebugPrint", _wrap_DebugPrint},
     { "SetCompositorChain", _wrap_SetCompositorChain},

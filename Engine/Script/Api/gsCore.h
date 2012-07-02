@@ -367,7 +367,7 @@ private :
 	gkGameObjectInstance* gobj;
 };
 
-extern gsGroupInstance* createGroupInstance(gkString name);
+extern gsGroupInstance* createGroupInstance(gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
 
 class gsGameObject : public gsObject
 {

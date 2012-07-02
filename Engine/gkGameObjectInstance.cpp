@@ -208,11 +208,15 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 
 	const gkMatrix4 plocal = trans.toMatrix();
 
-
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
 		gkGameObject* obj = iter.getNext().second;
+
+		if (obj->hasParent())
+		{
+			continue;
+		}
 
 		gkTransformState* initalTransformState = m_objInitialTransformstates.get(obj);
 
@@ -221,7 +225,6 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 		initalTransformState->toMatrix(clocal);
 		obj->setTransform(plocal * clocal);
 	}
-
 }
 
 

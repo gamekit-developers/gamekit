@@ -1817,7 +1817,7 @@ bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 #endif
 }
 
-gsGroupInstance* createGroupInstance(gkString groupName){
+gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 	if (mgr->exists(groupName))
 	{
@@ -1828,6 +1828,11 @@ gsGroupInstance* createGroupInstance(gkString groupName){
 		if (eng && eng->isInitialized()){
 			gkScene* scene = eng->getActiveScene();
 			gkGameObjectInstance* inst = ggobj->createGroupInstance(scene, gkResourceName(gkUtils::getUniqueName(groupName), ""));
+			gkQuaternion quat;
+			quat = gkEuler(gkVector3(rot.x,rot.y,rot.z)).toQuaternion();
+			gkVector3 pos(loc.x,loc.y,loc.z);
+			gkVector3 scl(scale.x,scale.y,scale.z);
+			inst->getRoot()->getProperties().m_transform =  gkTransformState(pos, quat, scl);
 			bool b = inst->isInstanced();
 			if (!b){
 				inst->createInstance(false);
