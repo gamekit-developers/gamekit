@@ -98,13 +98,26 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 		return;
 	}
 
-
 	gkGameObject* ngobj = gobj->clone(name.str());
+
+	// store the inital-transformstates
+	gkTransformState initalTransformState = ngobj->getTransformState();
+	m_objInitialTransformstates.insert(ngobj,initalTransformState);
+
+	// modify the parent (if there is one) to fit the group's uid
+	gkString propParent = ngobj->getProperties().m_parent;
+	if (!propParent.empty())
+	{
+		ngobj->getProperties().m_parent = propParent + m_uidName;
+	}
+
 	ngobj->setOwner(0);
 
 
 
-	m_objects.insert(name, ngobj);
+	//	store the new object using the original name and not the uid-name
+	//  making it easier to lookup an object by name 
+	m_objects.insert(gobj->getName(), ngobj);
 
 
 	// Lightly attach
@@ -151,6 +164,7 @@ void gkGameObjectInstance::destroyObject(gkGameObject* gobj)
 	}
 
 	m_objects.remove(name);
+	m_objInitialTransformstates.remove(gobj);
 	delete gobj;
 }
 
@@ -172,6 +186,7 @@ void gkGameObjectInstance::destroyObject(const gkHashedString& name)
 
 
 	m_objects.remove(name);
+	m_objInitialTransformstates.remove(gobj);
 	delete gobj;
 }
 
@@ -199,9 +214,11 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 	{
 		gkGameObject* obj = iter.getNext().second;
 
+		gkTransformState* initalTransformState = m_objInitialTransformstates.get(obj);
+
 		// Update transform relative to owner
 		gkMatrix4 clocal;
-		obj->getTransformState().toMatrix(clocal);
+		initalTransformState->toMatrix(clocal);
 		obj->setTransform(plocal * clocal);
 	}
 
@@ -281,6 +298,8 @@ void gkGameObjectInstance::createInstanceImpl(void)
 
 	gkScene* scene = m_owner->getOwner();
 
+	m_owner->createInstance();
+
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
@@ -314,6 +333,7 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 
 		gobj->destroyInstance();
 		gobj->setOwner(0);
+		m_objInitialTransformstates.remove(gobj);
 	}
 }
 

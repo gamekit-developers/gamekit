@@ -352,6 +352,23 @@ public:
 
 extern gkScene* getActiveScene(void);
 
+class gsGroupInstance
+{
+public:
+	gsGroupInstance( gkGameObjectInstance* inst );
+	virtual ~gsGroupInstance();
+
+	int getElementCount();
+	gkGameObject* getElementAt(int pos);
+	gkGameObject* getElementByName(gkString name);
+	gkGameObject* getRoot(void);
+	void destroy();
+private :
+	gkGameObjectInstance* gobj;
+};
+
+extern gsGroupInstance* createGroupInstance(gkString name);
+
 class gsGameObject : public gsObject
 {
 public:

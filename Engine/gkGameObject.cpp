@@ -184,8 +184,9 @@ void gkGameObject::createInstanceImpl(void)
 			GK_ASSERT(parentNode);
 		}
 	}
-
-	m_node = parentNode ? parentNode->createChildSceneNode(m_name.getName()) : manager->getRootSceneNode()->createChildSceneNode(m_name.getName());
+	
+	m_node = parentNode ? parentNode->createChildSceneNode(m_name.getName())
+						: manager->getRootSceneNode()->createChildSceneNode(m_name.getName());
 
 
 	applyTransformState(m_baseProps.m_transform);
@@ -617,7 +618,7 @@ void gkGameObject::setOrientation(const gkEuler& v)
 		}
 		else if (m_ghost)
 		{
-					m_ghost->updateTransform();
+			m_ghost->updateTransform();
 		}
 	}
 }
@@ -656,9 +657,8 @@ void gkGameObject::rotate(const gkQuaternion& dq, int tspace)
 		}
 		else if (m_ghost)
 		{
-					m_ghost->updateTransform();
+			m_ghost->updateTransform();
 		}
-
 	}
 }
 
@@ -685,7 +685,7 @@ void gkGameObject::yaw(const gkRadian& v, int tspace)
 		}
 		else if (m_ghost)
 		{
-					m_ghost->updateTransform();
+			m_ghost->updateTransform();
 		}
 	}
 }

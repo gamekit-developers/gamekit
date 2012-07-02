@@ -1817,3 +1817,75 @@ bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 #endif
 }
 
+gsGroupInstance* createGroupInstance(gkString groupName){
+	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
+	if (mgr->exists(groupName))
+	{
+		gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
+
+
+		gkEngine* eng = gkEngine::getSingletonPtr();
+		if (eng && eng->isInitialized()){
+			gkScene* scene = eng->getActiveScene();
+			gkGameObjectInstance* inst = ggobj->createGroupInstance(scene, gkResourceName(gkUtils::getUniqueName(groupName), ""));
+			bool b = inst->isInstanced();
+			if (!b){
+				inst->createInstance(false);
+
+				gkGameObjectSet objs;
+
+				// hack!? need to be easier
+				for (int i=0;i<inst->getObjects().size();i++)
+				{
+					objs.insert(inst->getObjects().at(i));
+				}
+				scene->_applyBuiltinParents(objs);
+				scene->_applyBuiltinPhysics(objs);
+			}
+
+			gsGroupInstance* result = new gsGroupInstance(inst);
+
+			return result;
+		}
+	}
+	return NULL;
+}
+
+gsGroupInstance::~gsGroupInstance() {
+	if (gobj) {
+		destroy();
+	}
+}
+
+void gsGroupInstance::destroy()
+{
+	gobj->destroyInstance(false);
+	delete gobj;
+	gobj=0;
+}
+
+gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : gobj(inst)
+{
+
+}
+
+int gsGroupInstance::getElementCount()
+{
+	return gobj?gobj->getObjects().size():0;
+}
+
+gkGameObject* gsGroupInstance::getElementAt(int pos)
+{
+	return gobj?gobj->getObjects().at(pos):NULL;
+}
+
+gkGameObject* gsGroupInstance::getElementByName(gkString name)
+{
+	return gobj?gobj->getObject(name):NULL;
+}
+
+gkGameObject* gsGroupInstance::getRoot(void)
+{
+	return gobj->getRoot();
+}
+

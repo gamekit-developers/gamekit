@@ -36,12 +36,12 @@ class gkGameObjectInstance : public gkInstancedObject, public gkGameObject::Noti
 {
 public:
 	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
-
+	typedef utHashTable<utPointerHashKey, gkTransformState> InitialTransformstates;
 
 protected:
 	Objects                 m_objects;
 	gkTransformState        m_transform;
-
+	InitialTransformstates  m_objInitialTransformstates;
 
 	gkGameObjectGroup*      m_parent;
 	gkScene*                m_scene;
