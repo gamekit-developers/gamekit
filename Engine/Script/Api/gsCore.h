@@ -568,4 +568,6 @@ extern bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorNa
 
 extern void import(const gkString& scriptName);
 
+extern gkString getPlatform();
+
 #endif//_OgreKitApi_h_

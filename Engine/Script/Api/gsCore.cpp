@@ -1901,3 +1901,19 @@ void import(const gkString& scriptName)
 	if (script)
 		script->execute();
 }
+
+gkString getPlatform() {
+#if GK_PLATFORM == GK_PLATFORM_WIN32
+	   return "WIN32";
+#elif GK_PLATFORM == GK_PLATFORM_APPLE
+	   return  "APPLE";
+#elif GK_PLATFORM == GK_PLATFORM_APPLE_IOS
+	   return  "APPLE_IOS";
+#elif GK_PLATFORM == GK_PLATFORM_LINUX
+	   return  "LINUX";
+#elif GK_PLATFORM == GK_PLATFORM_ANDROID
+	return "ANDROID";
+#else
+	return "UNKNOWN";
+#endif
+}

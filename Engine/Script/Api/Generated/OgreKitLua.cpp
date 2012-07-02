@@ -11606,6 +11606,25 @@ fail:
 }
 
 
+static int _wrap_getPlatform(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString result;
+  
+  SWIG_check_num_args("getPlatform",0,0)
+  result = getPlatform();
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_WhenEvent_when(lua_State* L) {
   int SWIG_arg = 0;
   gsWhenEvent *arg1 = (gsWhenEvent *) 0 ;
@@ -26546,6 +26565,7 @@ static const struct luaL_reg swig_commands[] = {
     { "DebugPrint", _wrap_DebugPrint},
     { "SetCompositorChain", _wrap_SetCompositorChain},
     { "import", _wrap_import},
+    { "getPlatform", _wrap_getPlatform},
     { "getCurrentController", _wrap_getCurrentController},
     { "setGlobalVolume", _wrap_setGlobalVolume},
     { "getGlobalVolume", _wrap_getGlobalVolume},
