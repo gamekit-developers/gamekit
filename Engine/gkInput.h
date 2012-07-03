@@ -170,6 +170,19 @@ public:
 		return false;
 	}
 
+	GK_INLINE bool isKeyUp(gkScanCode key) const
+	{
+		if (key > KC_NONE && key < KC_MAX)
+			return (keys[(int)key] == GK_Released);
+		return false;
+	}
+
+	void clearKey(gkScanCode key)
+	{
+		if (key > KC_NONE && key < KC_MAX)
+			keys[(int)key] = GK_NullState;
+	}
+
 	void clear(void)
 	{
 		key_count = 0;

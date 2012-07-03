@@ -6230,6 +6230,32 @@ fail:
 }
 
 
+static int _wrap_Keyboard_clearKey(lua_State* L) {
+  int SWIG_arg = 0;
+  gsKeyboard *arg1 = (gsKeyboard *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("gsKeyboard::clearKey",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsKeyboard::clearKey",1,"gsKeyboard *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsKeyboard::clearKey",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsKeyboard,0))){
+    SWIG_fail_ptr("Keyboard_clearKey",1,SWIGTYPE_p_gsKeyboard);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->clearKey(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Keyboard_isKeyDown(lua_State* L) {
   int SWIG_arg = 0;
   gsKeyboard *arg1 = (gsKeyboard *) 0 ;
@@ -6257,13 +6283,42 @@ fail:
 }
 
 
+static int _wrap_Keyboard_isKeyUp(lua_State* L) {
+  int SWIG_arg = 0;
+  gsKeyboard *arg1 = (gsKeyboard *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  SWIG_check_num_args("gsKeyboard::isKeyUp",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsKeyboard::isKeyUp",1,"gsKeyboard *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsKeyboard::isKeyUp",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsKeyboard,0))){
+    SWIG_fail_ptr("Keyboard_isKeyUp",1,SWIGTYPE_p_gsKeyboard);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (bool)(arg1)->isKeyUp(arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Keyboard(void *obj) {
 gsKeyboard *arg1 = (gsKeyboard *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsKeyboard_methods[] = {
     {"capture", _wrap_Keyboard_capture}, 
+    {"clearKey", _wrap_Keyboard_clearKey}, 
     {"isKeyDown", _wrap_Keyboard_isKeyDown}, 
+    {"isKeyUp", _wrap_Keyboard_isKeyUp}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsKeyboard_attributes[] = {

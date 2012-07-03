@@ -205,8 +205,10 @@ public:
 	gsKeyboard();
 	~gsKeyboard();
 	void capture(void) {}
+	void clearKey(int sc);
 
 	bool isKeyDown(int sc);
+	bool isKeyUp(int sc);
 };
 
 

@@ -531,7 +531,17 @@ bool gsKeyboard::isKeyDown(int sc)
 	return gkWindowSystem::getSingleton().getKeyboard()->isKeyDown((gkScanCode)sc);
 }
 
+bool gsKeyboard::isKeyUp(int sc)
+{
+	if (!gkWindowSystem::getSingletonPtr()) return false;
+	return gkWindowSystem::getSingleton().getKeyboard()->isKeyUp((gkScanCode)sc);
+}
 
+void gsKeyboard::clearKey(int sc)
+{
+	if (!gkWindowSystem::getSingletonPtr()) return;
+	return gkWindowSystem::getSingleton().getKeyboard()->clearKey((gkScanCode)sc);
+}
 
 gsEngine::gsEngine()
 {
