@@ -7651,6 +7651,33 @@ fail:
 }
 
 
+static int _wrap_Scene_setUpdateFlags(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("gsScene::setUpdateFlags",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::setUpdateFlags",1,"gsScene *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsScene::setUpdateFlags",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_setUpdateFlags",1,SWIGTYPE_p_gsScene);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  (arg1)->setUpdateFlags(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Scene(void *obj) {
 gsScene *arg1 = (gsScene *) obj;
 delete arg1;
@@ -7664,6 +7691,7 @@ static swig_lua_method swig_gsScene_methods[] = {
     {"getDynamicsWorld", _wrap_Scene_getDynamicsWorld}, 
     {"getMainCamera", _wrap_Scene_getMainCamera}, 
     {"getPickRay", _wrap_Scene_getPickRay}, 
+    {"setUpdateFlags", _wrap_Scene_setUpdateFlags}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsScene_attributes[] = {
@@ -26820,6 +26848,15 @@ static swig_lua_const_info swig_constants[] = {
 { SWIG_LUA_INT,     (char *)"COP_DEL", (long) COP_DEL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"COP_REPLACE", (long) COP_REPLACE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"COP_RESET", (long) COP_RESET, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_NONE", (long) UPDATE_NONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_PHYSICS", (long) UPDATE_PHYSICS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_LOGIC_BRICKS", (long) UPDATE_LOGIC_BRICKS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_NODE_TREES", (long) UPDATE_NODE_TREES, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_ANIMATIONS", (long) UPDATE_ANIMATIONS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_SOUNDS", (long) UPDATE_SOUNDS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_DBVT", (long) UPDATE_DBVT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_DEBUG", (long) UPDATE_DEBUG, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"UPDATE_ALL", (long) UPDATE_ALL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_NONE", (long) KC_NONE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_AKEY", (long) KC_AKEY, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_BKEY", (long) KC_BKEY, 0, 0, 0},

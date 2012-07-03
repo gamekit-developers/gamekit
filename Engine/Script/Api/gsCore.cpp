@@ -1027,7 +1027,13 @@ gsCamera* gsScene::getMainCamera(void){
 	return 0;
 }
 
-
+void gsScene::setUpdateFlags(unsigned int flags)
+{
+	if (m_object)
+	{
+		cast<gkScene>()->setUpdateFlags(flags);
+	}
+}
 
 gkScene* getActiveScene(void)
 {

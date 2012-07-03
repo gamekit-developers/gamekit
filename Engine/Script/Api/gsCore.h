@@ -98,6 +98,19 @@ enum gsCompositorOp
 	COP_RESET 
 };
 
+enum gsSceneUpdateFlags
+{
+UPDATE_NONE			= 0,
+UPDATE_PHYSICS		= 1 << 0,
+UPDATE_LOGIC_BRICKS	= 1 << 1,
+UPDATE_NODE_TREES	= 1 << 2,
+UPDATE_ANIMATIONS	= 1 << 3,
+UPDATE_SOUNDS		= 1 << 4,
+UPDATE_DBVT			= 1 << 5,
+UPDATE_DEBUG		= 1 << 6,
+UPDATE_ALL			= 0xFFFFFFFF
+};
+
 
 class gsProperty
 {
@@ -348,6 +361,8 @@ public:
 	gsCamera* getMainCamera(void);
 
 	gsRay* getPickRay();
+
+	void setUpdateFlags(unsigned int flags);
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
