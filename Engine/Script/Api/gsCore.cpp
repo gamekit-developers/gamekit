@@ -1229,8 +1229,21 @@ void gsGameObject::setOrientation(float w, float x, float y, float z)
 		cast<gkGameObject>()->setOrientation(gkQuaternion(w, x, y, z));
 }
 
+void gsGameObject::setScale(const gsVector3& v)
+{
+	if (m_object)
+	{
+		get()->setScale(gkVector3(v.x,v.y,v.z));
+	}
+}
 
-
+void gsGameObject::setScale(float x,float y,float z)
+{
+	if (m_object)
+	{
+		get()->setScale(gkVector3(x,y,z));
+	}
+}
 
 gsGameObjectTypes gsGameObject::getType(void)
 {

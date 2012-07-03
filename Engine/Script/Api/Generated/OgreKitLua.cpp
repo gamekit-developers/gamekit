@@ -8962,6 +8962,137 @@ static int _wrap_GameObject_setOrientation(lua_State* L) {
 }
 
 
+static int _wrap_GameObject_setScale__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("gsGameObject::setScale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::setScale",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsGameObject::setScale",2,"gsVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setScale",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setScale",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  (arg1)->setScale((gsVector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setScale__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("gsGameObject::setScale",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::setScale",1,"gsGameObject *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsGameObject::setScale",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("gsGameObject::setScale",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("gsGameObject::setScale",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setScale",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (arg1)->setScale(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setScale(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_GameObject_setScale__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_GameObject_setScale__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setScale'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsGameObject::setScale(gsVector3 const &)\n"
+    "    gsGameObject::setScale(float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
 static int _wrap_GameObject_getType(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -10970,6 +11101,7 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"setPosition", _wrap_GameObject_setPosition}, 
     {"setRotation", _wrap_GameObject_setRotation}, 
     {"setOrientation", _wrap_GameObject_setOrientation}, 
+    {"setScale", _wrap_GameObject_setScale}, 
     {"getType", _wrap_GameObject_getType}, 
     {"rotate", _wrap_GameObject_rotate}, 
     {"translate", _wrap_GameObject_translate}, 

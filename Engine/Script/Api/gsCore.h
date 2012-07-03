@@ -400,6 +400,9 @@ public:
 	void setOrientation(const gsQuaternion& quat);
 	void setOrientation(float w, float x, float y, float z);
 
+	void setScale(const gsVector3& v);
+	void setScale(float x,float y,float z);
+
 	gsGameObjectTypes getType(void);
 
 	void rotate(float dx, float dy, float dz);
