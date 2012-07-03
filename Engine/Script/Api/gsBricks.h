@@ -526,7 +526,11 @@ public:
 
 	void      setSubject(const gkString& v) {BRICK_SET(setSubject(v));}
 	gkString  getSubject(void)              {BRICK_GET(getSubject(), "");}
-
+	int	      getMessageCount(void) { BRICK_GET(getMessageCount(),0);}
+	gkString  getMessageSubject(int msgNr) { return get()->getMessage(msgNr).m_subject;}
+	gkString  getMessageBody(int msgNr) { return get()->getMessage(msgNr).m_body;}
+	gkString  getMessageFrom(int msgNr) { return get()->getMessage(msgNr).m_from;}
+	gkString  getMessageTo(int msgNr) { return get()->getMessage(msgNr).m_to;}
 	OGRE_KIT_LOGIC_BRICK(MessageSensor);
 };
 

@@ -16856,6 +16856,146 @@ fail:
 }
 
 
+static int _wrap_MessageSensor_getMessageCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMessageSensor *arg1 = (gsMessageSensor *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsMessageSensor::getMessageCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMessageSensor::getMessageCount",1,"gsMessageSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMessageSensor,0))){
+    SWIG_fail_ptr("MessageSensor_getMessageCount",1,SWIGTYPE_p_gsMessageSensor);
+  }
+  
+  result = (int)(arg1)->getMessageCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_MessageSensor_getMessageSubject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMessageSensor *arg1 = (gsMessageSensor *) 0 ;
+  int arg2 ;
+  gkString result;
+  
+  SWIG_check_num_args("gsMessageSensor::getMessageSubject",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMessageSensor::getMessageSubject",1,"gsMessageSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsMessageSensor::getMessageSubject",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMessageSensor,0))){
+    SWIG_fail_ptr("MessageSensor_getMessageSubject",1,SWIGTYPE_p_gsMessageSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (arg1)->getMessageSubject(arg2);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_MessageSensor_getMessageBody(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMessageSensor *arg1 = (gsMessageSensor *) 0 ;
+  int arg2 ;
+  gkString result;
+  
+  SWIG_check_num_args("gsMessageSensor::getMessageBody",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMessageSensor::getMessageBody",1,"gsMessageSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsMessageSensor::getMessageBody",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMessageSensor,0))){
+    SWIG_fail_ptr("MessageSensor_getMessageBody",1,SWIGTYPE_p_gsMessageSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (arg1)->getMessageBody(arg2);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_MessageSensor_getMessageFrom(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMessageSensor *arg1 = (gsMessageSensor *) 0 ;
+  int arg2 ;
+  gkString result;
+  
+  SWIG_check_num_args("gsMessageSensor::getMessageFrom",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMessageSensor::getMessageFrom",1,"gsMessageSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsMessageSensor::getMessageFrom",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMessageSensor,0))){
+    SWIG_fail_ptr("MessageSensor_getMessageFrom",1,SWIGTYPE_p_gsMessageSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (arg1)->getMessageFrom(arg2);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_MessageSensor_getMessageTo(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMessageSensor *arg1 = (gsMessageSensor *) 0 ;
+  int arg2 ;
+  gkString result;
+  
+  SWIG_check_num_args("gsMessageSensor::getMessageTo",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMessageSensor::getMessageTo",1,"gsMessageSensor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsMessageSensor::getMessageTo",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMessageSensor,0))){
+    SWIG_fail_ptr("MessageSensor_getMessageTo",1,SWIGTYPE_p_gsMessageSensor);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (arg1)->getMessageTo(arg2);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_MessageSensor(void *obj) {
 gsMessageSensor *arg1 = (gsMessageSensor *) obj;
 delete arg1;
@@ -16863,6 +17003,11 @@ delete arg1;
 static swig_lua_method swig_gsMessageSensor_methods[] = {
     {"setSubject", _wrap_MessageSensor_setSubject}, 
     {"getSubject", _wrap_MessageSensor_getSubject}, 
+    {"getMessageCount", _wrap_MessageSensor_getMessageCount}, 
+    {"getMessageSubject", _wrap_MessageSensor_getMessageSubject}, 
+    {"getMessageBody", _wrap_MessageSensor_getMessageBody}, 
+    {"getMessageFrom", _wrap_MessageSensor_getMessageFrom}, 
+    {"getMessageTo", _wrap_MessageSensor_getMessageTo}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsMessageSensor_attributes[] = {
