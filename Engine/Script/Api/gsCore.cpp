@@ -845,7 +845,11 @@ void gsHUDElement::setParameter(const gkString& name, const gkString& value)
 		return m_object->setParameter(name, value);
 }
 
-
+void gsHUDElement::setPosition(float x,float y)
+{
+	if (m_object)
+		m_object->setPosition(x,y);
+}
 
 gsObject::gsObject() : m_object(0)
 {

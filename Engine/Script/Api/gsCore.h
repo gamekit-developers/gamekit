@@ -314,6 +314,7 @@ public:
 	int getMaterialAlphaRejectValue();
 	void setMaterialAlphaRejectValue(int val, bool isGreater);
 
+	void setPosition(float x,float y);
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUDElement, gkHUDElement, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
