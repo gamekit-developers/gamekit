@@ -2,7 +2,7 @@
 
 set MAINFOLDER=%CD%
 
-set ABI="armeabi-v6 with VFP"
+set ABI="armeabi-v7a"
 
 rem - Possible ABIs:
 rem - "armeabi" "armeabi-v6 with VFP" "armeabi-v7a" "armeabi-v7a with NEON" "armeabi-v7a with VFPV3" "x86"

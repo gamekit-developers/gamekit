@@ -2,7 +2,7 @@
 
 export MAINFOLDER=`pwd`
 
-ABI="armeabi-v6 with VFP"
+ABI="armeabi-v7a"
 
 # Possible ABIs:
 # armeabi
