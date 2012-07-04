@@ -201,7 +201,7 @@ bool gkWindowAndroid::touchReleased(const OIS::MultiTouchEvent& arg)
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
-			node->mousePressed(data);
+			node->mouseReleased(data);
 			node = node->getNext();
 		}
 	}
