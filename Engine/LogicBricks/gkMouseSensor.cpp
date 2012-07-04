@@ -51,7 +51,7 @@ void gkMouseDispatch::dispatch(void)
 
 
 gkMouseSensor::gkMouseSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
+	:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_lastResult(false)
 {
 	m_dispatchType = DIS_MOUSE;
 	connect();
@@ -71,6 +71,7 @@ gkLogicBrick* gkMouseSensor::clone(gkLogicLink* link, gkGameObject* dest)
 	gkMouseSensor* sens = new gkMouseSensor(*this);
 	sens->m_rayQuery = 0;
 	sens->cloneImpl(link, dest);
+	sens->m_lastResult = false;
 	return sens;
 }
 
@@ -79,7 +80,6 @@ bool gkMouseSensor::query(void)
 {
 	if (m_type == MOUSE_NILL)
 		return false;
-
 
 	gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 	switch (m_type)
@@ -98,11 +98,17 @@ bool gkMouseSensor::query(void)
 		return mse->wheelDelta < 0;
 	case MOUSE_MOUSE_OVER:
 	case MOUSE_MOUSE_OVER_ANY:
-		// use Ogre viewport to ray query
-		if (m_last && !mse->moved)
-			return m_last;
-		m_last = rayTest();
-		return m_last;
+
+#if GK_PLATFORM == GK_PLATFORM_ANDROID || GK_PLATFORM == GK_PLATFORM_APPLE_IOS
+	// the ray-cast make on a mobile device only sense when the device is touched.
+	// this should work as long as the mouse-touch is mapped to left-click
+	if (!mse->isButtonDown(gkMouse::Left))
+		return false;
+#endif
+		// use Ogre viewport to ray query. Since moveable objects might move under the
+		// mouse the raytest have to be done every tick.
+		m_lastResult = rayTest();
+		return m_lastResult;
 	}
 	return false;
 }
@@ -124,7 +130,6 @@ bool gkMouseSensor::rayTest(void)
 
 	gkScalar ncx = mse->position.x / mse->winsize.x;
 	gkScalar ncy = mse->position.y / mse->winsize.y;
-
 
 	Ogre::Ray dest;
 	oc->getCameraToViewportRay(ncx, ncy, &dest);

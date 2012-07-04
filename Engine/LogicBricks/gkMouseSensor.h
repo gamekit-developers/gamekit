@@ -62,7 +62,7 @@ public:
 protected:
 
 	int m_type;
-	bool m_last;
+	bool m_lastResult;
 
 	Ogre::RaySceneQuery* m_rayQuery;
 	bool rayTest(void);
