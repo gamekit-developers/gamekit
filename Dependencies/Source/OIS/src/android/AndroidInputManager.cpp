@@ -532,10 +532,7 @@ void AndroidAccelerometer::capture(){
 
     if(mListener && mBuffered){
         mListener->axisMoved(JoyStickEvent(this, mState), 0);
-        printf("Android Inp:CAPTURE");
-    } else {
-        printf("NO Android Inp CAP");
-    }
+    } 
 }
 
 
@@ -550,7 +547,6 @@ void AndroidAccelerometer::_initialize(){
 
 void AndroidAccelerometer::injectAcceleration(float x,float y,float z) {
 	mTempState.clear();
-	printf("inject %f %f %f",x,y,z);
 	mTempState.x = x;
 	mTempState.y = y;
 	mTempState.z = z;
