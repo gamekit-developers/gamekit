@@ -1,6 +1,6 @@
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-w)
+if (MSVC)
+        add_definitions(/W0)
 else()
-	add_definitions(/W0)
+        add_definitions(-w)
 endif()
