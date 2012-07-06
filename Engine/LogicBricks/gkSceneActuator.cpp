@@ -30,6 +30,8 @@
 #include "gkScene.h"
 #include "gkSceneManager.h"
 #include "gkEngine.h"
+#include <gkWindow.h>
+#include <gkViewport.h>
 
 
 gkSceneActuator::gkSceneActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
@@ -53,6 +55,7 @@ void gkSceneActuator::execute(void)
 {
 	gkScene* scene = 0;
 	gkGameObject* obj = 0;
+	gkWindow* win;
 
 	if (isPulseOff())
 		return;
@@ -80,10 +83,30 @@ void gkSceneActuator::execute(void)
 			m_object->getOwner()->setMainCamera((gkCamera*)obj);
 		break;
 	case SC_ADD_FRONT:
+		win = m_object->getOwner()->getDisplayWindow();
+		scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+		if (scene)
+		{
+			int zorder = win->getViewport(win->getViewportCount()-1)->getZOrder();
+			scene->destroyInstance(true);
+			scene->setDisplayWindow(win, zorder+1);
+			scene->createInstance(true);
+		}
 		break;
 	case SC_ADD_BACK:
+		win = m_object->getOwner()->getDisplayWindow();
+		scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+		if (scene && !scene->isInstanced())
+		{
+			int zorder = win->getViewport(0)->getZOrder();
+			scene->setDisplayWindow(win, zorder-1);
+			scene->createInstance(true);
+		}
 		break;
 	case SC_REMOVE:
+		scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+		if (scene)
+			scene->destroyInstance(true);
 		break;
 	case SC_SUSPEND:
 		break;

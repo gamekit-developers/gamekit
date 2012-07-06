@@ -174,7 +174,7 @@ public:
 
 
 	gkWindow* getDisplayWindow(void);
-	void setDisplayWindow(gkWindow* window);
+	void setDisplayWindow(gkWindow* window, int zorder=0);
 
 	void _applyBuiltinParents(gkGameObjectSet& instanceObjects);
 	void _applyBuiltinPhysics(gkGameObjectSet& instanceObjects);
@@ -257,6 +257,9 @@ private:
 
 	UTuint32				m_updateFlags;
 	gkBlendFile*			m_blendFile;
+	
+	bool                    m_renderToViewport;
+	int                     m_zorder;
 };
 
 #endif//_gkSceneObject_h_

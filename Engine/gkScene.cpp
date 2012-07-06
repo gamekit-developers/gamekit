@@ -104,7 +104,9 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const 
 	     m_skybox(0),
 		 m_window(0),
 		 m_updateFlags(UF_ALL),
-		 m_blendFile(0)
+		 m_blendFile(0),
+	     m_renderToViewport(true),
+	     m_zorder(0)
 {
 }
 
@@ -143,11 +145,15 @@ gkWindow* gkScene::getDisplayWindow(void)
 	return m_window ? m_window : gkWindowSystem::getSingleton().getMainWindow();
 }
 
-void gkScene::setDisplayWindow(gkWindow* window)
+void gkScene::setDisplayWindow(gkWindow* window, int zorder)
 {
 	m_window = window;
+	m_renderToViewport = true;
+	m_zorder = zorder;
 	if (m_window)
 		m_window->setRenderScene(this);
+	else
+		m_renderToViewport = false;
 }
 
 
@@ -617,7 +623,7 @@ gkGameObject* gkScene::findInstancedObject(const gkString& name)
 
 void gkScene::setMainCamera(gkCamera* cam)
 {
-	if (!cam)
+	if (!cam || !m_renderToViewport)
 		return;
 
 	m_startCam = cam;
@@ -629,7 +635,7 @@ void gkScene::setMainCamera(gkCamera* cam)
 	if (!m_viewport)
 	{
 		gkWindow* window = getDisplayWindow(); GK_ASSERT(window);
-		m_viewport = window->addViewport(cam);
+		m_viewport = window->addViewport(cam, m_zorder);
 	}
 	else
 		m_viewport->getViewport()->setCamera(main);

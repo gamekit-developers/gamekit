@@ -157,7 +157,10 @@ void gkCamera::setOrthoScale(const gkScalar& scale)
 	{
 		m_cameraProps.m_orthoscale = scale;
 		if (m_camera)
-			m_camera->setOrthoWindow(scale, scale);
+		{
+		float ratio = m_camera->getAspectRatio();
+			m_camera->setOrthoWindow(scale, scale/ratio);
+		}
 	}
 }
 
@@ -175,14 +178,15 @@ void gkCamera::setProjType(gkCameraProperties::Type type)
 		m_cameraProps.m_type = type;
 		if (m_camera)
 		{
+			float ratio = m_camera->getAspectRatio();
+			
 			if (type == gkCameraProperties::CA_ORTHOGRAPHIC)
 			{
 				m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-				m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);
+				m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale/ratio);
 			}
 			else
 			{
-				float ratio = m_camera->getAspectRatio();
 				float fovy = 2 * atan(tan(m_cameraProps.m_fov * gkPi / 360) / ratio);
 				m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
 				m_camera->setFOVy(gkRadian(fovy));

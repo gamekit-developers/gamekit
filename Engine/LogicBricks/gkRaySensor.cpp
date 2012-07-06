@@ -82,7 +82,7 @@ bool gkRaySensor::query(void)
 	}
 	else
 	{
-		notMeFilter nmf(m_object);
+		gkRayTest::gkRayTestFilter nmf;
 		result = test.collides(from, to, nmf);
 	}
 	

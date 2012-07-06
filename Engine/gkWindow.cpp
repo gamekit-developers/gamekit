@@ -298,6 +298,10 @@ void gkWindow::removeListener(gkWindowSystem::Listener* l)
 	m_listeners.erase(l);
 }
 
+bool _sortViewports(gkViewport* const& a, gkViewport* const& b){
+	return a->getZOrder() > b->getZOrder();
+}
+
 gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
 {	
 	if (m_rwindow)
@@ -306,7 +310,16 @@ gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
 
 		gkViewport* viewport = new gkViewport(this, vp);
 		viewport->setDimension(m_framingType);
+		
 		m_viewports.push_back(viewport);
+		
+		// Clear only depth in all added viewports
+		vp->setClearEveryFrame(true, Ogre::FBT_DEPTH);
+		
+		// Except the first one
+		m_viewports[0]->getViewport()->setClearEveryFrame(true, Ogre::FBT_DEPTH);
+		m_viewports.sort(_sortViewports);
+		m_viewports[0]->getViewport()->setClearEveryFrame(true);
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 
@@ -334,7 +347,8 @@ void gkWindow::removeViewport(gkViewport* viewport)
 	if (viewport)
 	{		
 		m_viewports.erase(m_viewports.find(viewport));
-		delete viewport;		
+		delete viewport;
+		m_viewports[0]->getViewport()->setClearEveryFrame(true);
 	}
 }
 
@@ -572,6 +586,8 @@ bool gkWindow::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 void gkWindow::windowResized(Ogre::RenderWindow* rw)
 {
 	UTsize i;
+	gkScalar scale, ratio;
+
 	for (i = 0; i < m_viewports.size(); ++i)
 	{
 		m_viewports[i]->setDimension(m_viewports[i]->getFraming());
@@ -579,7 +595,17 @@ void gkWindow::windowResized(Ogre::RenderWindow* rw)
 
 		// We assume all viewports are "main" vieport
 		Ogre::Camera* cam = vp->getCamera();
-		cam->setAspectRatio(gkScalar(vp->getActualWidth()) / gkScalar(vp->getActualHeight()));
+		
+		ratio = gkScalar(vp->getActualWidth()) / gkScalar(vp->getActualHeight());
+		
+		if (cam->getProjectionType() == Ogre::PT_ORTHOGRAPHIC)
+		{
+			scale = cam->getOrthoWindowWidth();
+			cam->setAspectRatio(ratio);
+			cam->setOrthoWindowWidth(scale);
+		}
+		else
+			cam->setAspectRatio(ratio);
 
 		const OIS::MouseState& state = m_imouse->getMouseState();
 

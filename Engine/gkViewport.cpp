@@ -58,14 +58,14 @@ gkViewport::~gkViewport()
 }
 
 
-void gkViewport::setDimension(int framing)
+void gkViewport::_setDimension(int framing, gkScalar left, gkScalar top, gkScalar right, gkScalar bottom)
 {
 	m_framing = framing;
 
-	float l = 0.0;
-	float r = 1.0;
-	float t = 0.0;
-	float b = 1.0;
+	float l = left;
+	float r = right;
+	float t = top;
+	float b = bottom;
 	int w = m_window->getWidth();
 	int h = m_window->getHeight();
 

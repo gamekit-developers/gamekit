@@ -27,6 +27,7 @@
 
 #ifndef _gkViewport_h_
 #define _gkViewport_h_
+#include <OgreViewport.h>
 
 class gkViewport
 {
@@ -49,8 +50,20 @@ public:
 
 	GK_INLINE Ogre::Viewport* getViewport() { return m_viewport; }
 	GK_INLINE int getFraming() { return m_framing; }
+	GK_INLINE int getZOrder() const { return m_viewport->getZOrder(); }
 
-	void setDimension(int framing);
+	GK_INLINE void setDimension(int framing)  {_setDimension(framing, 0.0, 0.0, 1.0, 1.0);}
+	
+	GK_INLINE void setDimension(gkScalar left = 0.0,
+	                            gkScalar top = 0.0,
+	                            gkScalar right = 1.0,
+	                            gkScalar bottom = 1.0) {_setDimension(0, left, top, right, bottom);}
+	
+private:
+	void _setDimension(int framing, gkScalar left,
+	                                gkScalar top,
+	                                gkScalar right,
+	                                gkScalar bottom);
 };
 
 #endif //_gkViewport_h_

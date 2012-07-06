@@ -389,7 +389,8 @@ void gkBlendFile::buildAllFonts(void)
 		Blender::PackedFile* pak = vf->packedfile;
 
 		gkFont* fnt = (gkFont*)fmgr.create(gkResourceName(GKB_IDNAME(vf), m_group));
-		fnt->setData(pak->data, pak->size);
+		if(fnt)
+			fnt->setData(pak->data, pak->size);
 	}
 #endif
 }
