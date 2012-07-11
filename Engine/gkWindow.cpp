@@ -63,8 +63,10 @@ gkWindow::gkWindow()
 		m_requestedHeight(0),
 		m_framingType(0),
 		m_useExternalWindow(false),
-		m_scene(0),
-		m_gui(0)
+		m_scene(0)
+#ifdef OGREKIT_COMPILE_LIBROCKET
+		, m_gui(0)
+#endif
 {
 }
 
