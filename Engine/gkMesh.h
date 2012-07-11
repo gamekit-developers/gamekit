@@ -219,7 +219,9 @@ public:
 	const gkVertex& getMeshVertex(UTsize n);
 
 	UTsize getMeshTriFaceCount(void);
-	gkTriFace getMeshTriFace(UTsize n); 
+	gkTriFace getMeshTriFace(UTsize n);
+	
+	void reload();
 };
 
 #endif//_gkMesh_h_

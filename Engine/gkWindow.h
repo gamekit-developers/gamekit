@@ -97,7 +97,7 @@ protected:
 	
 private:
 	gkGUI* m_gui;
-	gkScene* m_guiscene; // TODO: remove this and add a postDraw listener
+
 public:
 	gkGUI* getGUI();
 	void destroyGUI();

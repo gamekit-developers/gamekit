@@ -33,6 +33,7 @@
 
 #if GK_EXTERNAL_RENDER == GK_EXTERNAL_RENDER_OGREKIT
 #include "External/Ogre/gkOgreMeshLoader.h"
+#include <OgreMeshManager.h>
 #endif
 
 
@@ -420,3 +421,16 @@ gkTriFace gkMesh::getMeshTriFace(UTsize n)
 
 	return f;
 }
+
+void gkMesh::reload()
+{
+	Ogre::MeshManager& mgr = Ogre::MeshManager::getSingleton();
+	const gkString& name = getResourceName().getName();
+
+	Ogre::MeshPtr omesh = mgr.getByName(name);
+	
+	if (!omesh.isNull())
+		omesh.getPointer()->reload();
+}
+
+
