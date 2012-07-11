@@ -36,6 +36,10 @@
 #include "gkInput.h"
 #include "gkWindowSystem.h"
 
+#ifdef OGREKIT_COMPILE_LIBROCKET
+#include "GUI/gkGUI.h"
+#endif
+
 class gkWindow :
 	public OIS::MouseListener,
 	public OIS::KeyListener,
@@ -88,6 +92,18 @@ protected:
 	bool m_useExternalWindow;
 
 	gkWindowSystem::ListenerList m_listeners;
+	
+#ifdef OGREKIT_COMPILE_LIBROCKET
+	
+private:
+	gkGUI* m_gui;
+	gkScene* m_guiscene; // TODO: remove this and add a postDraw listener
+public:
+	gkGUI* getGUI();
+	void destroyGUI();
+	
+#endif
+
 
 public:
 	gkWindow();

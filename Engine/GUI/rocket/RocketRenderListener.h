@@ -47,22 +47,19 @@ class Context;
 class SystemInterfaceOgre3D;
 class RenderInterfaceOgre3D;
 
-
 /**
 	@author Peter Curry
  */
 
-class RocketRenderListener : public Ogre::RenderQueueListener
+class RocketRenderListener : public Ogre::RenderTargetListener
 {
 public:
-	RocketRenderListener(Ogre::RenderWindow* window, Ogre::SceneManager* smgr, Rocket::Core::Context* context);
+	RocketRenderListener(Ogre::RenderWindow* window, Rocket::Core::Context* context);
 	virtual ~RocketRenderListener();
 
 
-	/// Called from Ogre before a queue group is rendered.
-	virtual void renderQueueStarted(Ogre::uint8 queueGroupId, const Ogre::String& invocation, bool& skipThisInvocation);
-	/// Called from Ogre after a queue group is rendered.
-    virtual void renderQueueEnded(Ogre::uint8 queueGroupId, const Ogre::String& invocation, bool& repeatThisInvocation);
+	/// Called from Ogre after viewports are rendered.
+	virtual void postRenderTargetUpdate(const Ogre::RenderTargetEvent &evt);
 
 private:
 	// Configures Ogre's rendering system for rendering Rocket.

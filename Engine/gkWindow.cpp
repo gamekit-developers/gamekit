@@ -63,12 +63,18 @@ gkWindow::gkWindow()
 		m_requestedHeight(0),
 		m_framingType(0),
 		m_useExternalWindow(false),
-		m_scene(0)
+		m_scene(0),
+		m_gui(0)
 {
 }
 
 gkWindow::~gkWindow()
 {
+#ifdef OGREKIT_COMPILE_LIBROCKET
+	if (m_gui)
+		delete m_gui;
+#endif
+	
 	if (m_rwindow)
 	{				
 		Ogre::WindowEventUtilities::removeWindowEventListener(m_rwindow, this);
@@ -354,6 +360,25 @@ void gkWindow::removeViewport(gkViewport* viewport)
 
 
 
+#ifdef OGREKIT_COMPILE_LIBROCKET
+
+gkGUI* gkWindow::getGUI()
+{
+	if (!m_gui)
+		m_gui = new gkGUI(this);
+	return m_gui;
+}
+
+void gkWindow::destroyGUI()
+{
+	if (m_gui)
+		delete m_gui;
+	m_gui = 0;
+}
+
+#endif
+
+
 void gkWindow::dispatch(void)
 {
 	m_mouse.moved = false;
@@ -624,6 +649,11 @@ void gkWindow::windowResized(Ogre::RenderWindow* rw)
 		if (cam)
 			cam->setFov(gkDegree(cam->getFov()));
 	}
+	
+#ifdef OGREKIT_COMPILE_LIBROCKET
+	if (m_gui)
+		m_gui->getContext()->SetDimensions(Rocket::Core::Vector2i(getWidth(), getHeight()));
+#endif
 }
 
 

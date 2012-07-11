@@ -875,11 +875,43 @@ set(Graphics_HEADER
 )
 
 if(APPLE)
-	source_group(Graphics FILES ${Graphics_HEADER} ${Network_SOURCE})
+	source_group(Graphics FILES ${Graphics_HEADER} ${Graphics_SOURCE})
 
 else()
 	source_group(Graphics\\Header FILES ${Graphics_HEADER})
 	source_group(Graphics\\Source FILES ${Graphics_SOURCE})
+endif()
+
+# ---------------------------------------------------------
+# GUI Files
+# ---------------------------------------------------------
+set(GUI_SOURCE
+	# ----- Source -----
+	GUI/rocket/RenderInterfaceOgre3D.cpp
+	GUI/rocket/RocketRenderListener.cpp
+	GUI/rocket/RocketEventListener.cpp
+	GUI/rocket/SystemInterfaceOgre3D.cpp
+	GUI/rocket/FileInterfaceOgre3D.cpp
+	GUI/gkGUIManager.cpp
+	GUI/gkGUI.cpp
+)
+
+set(GUI_HEADER
+	# ----- Header -----
+	GUI/rocket/RenderInterfaceOgre3D.h
+	GUI/rocket/RocketRenderListener.h
+	GUI/rocket/RocketEventListener.h
+	GUI/rocket/SystemInterfaceOgre3D.h
+	GUI/rocket/FileInterfaceOgre3D.h
+	GUI/gkGUIManager.h
+	GUI/gkGUI.h
+)
+
+if(APPLE)
+	source_group(GUI FILES ${GUI_HEADER} ${GUI_SOURCE})
+else()
+	source_group(GUI\\Header FILES ${GUI_HEADER})
+	source_group(GUI\\Source FILES ${GUI_SOURCE})
 endif()
 
 
@@ -1000,6 +1032,7 @@ include_directories(
 	./Thread
 	./Particles
 	./Graphics
+	./GUI
 	)
 	
 if (OGREKIT_USE_BPARSE)
@@ -1041,6 +1074,14 @@ add_definitions(-DSTATIC_LINKED)
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
+endif()
+
+if (OGREKIT_COMPILE_LIBROCKET)
+	set(Extra_SOURCE ${Extra_SOURCE} ${GUI_SOURCE} ${GUI_HEADER})
+	link_libraries(${OGREKIT_LIBROCKET_LIBS})
+
+	#need for libRocket link
+	add_definitions(-DSTATIC_LIB)
 endif()
 
 ogrekit_add_library(OgreKitCore STATIC

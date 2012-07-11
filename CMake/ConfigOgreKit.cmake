@@ -365,11 +365,17 @@ macro (configure_ogrekit ROOT OGREPATH)
 		)
 	endif()
 
-	message(STATUS "DEP_INCLUDES: ${OGREKIT_DEP_INCLUDE}")
-	
 	set(OGREKIT_LIBROCKET_INCLUDE ${OGREKIT_DEP_DIR}/libRocket/Include)
 	set(OGREKIT_LIBROCKET_LIBS RocketCore RocketControls RocketDebugger)
+	
+	if (OGREKIT_COMPILE_LIBROCKET)
+		list(APPEND OGREKIT_DEP_INCLUDE
+			${OGREKIT_LIBROCKET_INCLUDE}
+		)
+	endif()
 
+	message(STATUS "DEP_INCLUDES: ${OGREKIT_DEP_INCLUDE}")
+	
 	if (WIN32 AND NOT OGREKIT_BUILD_ANDROID)
 		# Use static library. No SDK needed at build time.
 		# Must have OpenAL32.dll installed on the system 

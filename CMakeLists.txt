@@ -106,6 +106,7 @@ ENDIF(MSVC)
 set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
                     ${OGREKIT_SOURCE_DIR}/Engine
                     ${OGREKIT_SOURCE_DIR}/Engine/AI
+                    ${OGREKIT_SOURCE_DIR}/GUI
                     ${OGREKIT_BULLET_INCLUDE}
                     ${OGREKIT_DEP_INCLUDE}
                     )

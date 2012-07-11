@@ -26,7 +26,7 @@
 */
 #include "gkSettings.h"
 
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 
 #include "gkFont.h"
 #include "OgreFont.h"

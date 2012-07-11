@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 harkon.kr
 
-    Contributor(s): none yet.
+    Contributor(s): Alberto Torres Ruiz
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,15 +27,9 @@
 
 #include "OgreKit.h"
 
-#include <Rocket/Core.h>
-#include <Rocket/Controls.h>
-#include <Rocket/Debugger.h>
-
-#include "rocket/RocketRenderListener.h"
-#include "rocket/RenderInterfaceOgre3D.h"
-#include "rocket/RocketEventListener.h"
-#include "rocket/SystemInterfaceOgre3D.h"
-#include "rocket/FileInterfaceOgre3D.h"
+#include "GUI/gkGUI.h"
+#include "GUI/gkGUIManager.h"
+#include "Rocket/Controls.h"
 
 #define GUIDEMO_GROUP_NAME	"Rocket"
 #define DEMO_BLEND_FILE		"logo_text.blend"
@@ -44,8 +38,6 @@
 #define ROCKET_DEMO_PAGE	"demo.rml"
 #define DEMO_PAGE_BUTTON_ID "submit1"
 #define DEMO_PAGE_INPUT_ID	"input1"
-
-void installRocketFonts();	//in uifonts.cpp
 
 class GuiDemo : 
 	public gkCoreApplication, 
@@ -56,19 +48,10 @@ protected:
 	gkString    m_blend;
 	gkScene*    m_scene;
 
-	RocketRenderListener*	m_rkRenderListener;
-	RocketEventListener*	m_rkEventListener;	
-
-	Rocket::Core::Context*	m_rkContext;
-
-	FileInterfaceOgre3D*	m_rkFileInterface;
-	SystemInterfaceOgre3D*	m_rkOgreSystem;
-	RenderInterfaceOgre3D*	m_rkOgreRenderer;
-
 	Rocket::Core::ElementDocument* m_document;
 
-	void initRocket();
-	void uninitRocket();
+	void loadGUI();
+	void unloadGUI();
 
 public:
 	GuiDemo();
@@ -90,11 +73,6 @@ private:
 GuiDemo::GuiDemo()
 	:	m_blend(DEMO_BLEND_FILE), 
 		m_scene(0), 
-		m_rkContext(0),
-		m_rkFileInterface(0),
-		m_rkOgreRenderer(0),
-		m_rkRenderListener(0), 
-		m_rkEventListener(0),
 		m_document(0)
 {
 }
@@ -109,7 +87,7 @@ int GuiDemo::setup(int argc, char** argv)
 	int winsize_x		= 800;
 	int winsize_y		= 600;
 	m_prefs.wintitle	= gkString("OgreKit GuiDemo (Press Escape to exit)[") + m_blend + gkString("]");
-	//m_prefs.grabInput = false;
+// 	m_prefs.grabInput = false;
 
 	return 0;
 }
@@ -142,44 +120,36 @@ bool GuiDemo::setup(void)
 
 	//--
 
-	initRocket();
+	loadGUI();
 
 
 	return true;
 }
 
 
-void GuiDemo::initRocket()
+void GuiDemo::loadGUI()
 {
-	GK_ASSERT(m_scene && !m_rkContext);
+	GK_ASSERT(m_scene);
 
-	gkWindow* window = m_scene->getDisplayWindow();
-	// Rocket initialisation.
-	m_rkOgreRenderer = new RenderInterfaceOgre3D(window->getWidth(), window->getHeight());
-	Rocket::Core::SetRenderInterface(m_rkOgreRenderer);
+	// Install fonts
+	gkGUIManager *gm = gkGUIManager::getSingletonPtr();
+	gm->loadFont("Delicious-Roman");
+	gm->loadFont("Delicious-Bold");
+	gm->loadFont("Delicious-Italic");
+	gm->loadFont("Delicious-BoldItalic");
 
-	m_rkOgreSystem = new SystemInterfaceOgre3D();
-	Rocket::Core::SetSystemInterface(m_rkOgreSystem);
-
-	Rocket::Core::Initialise();
-	Rocket::Controls::Initialise();
-
-
-	installRocketFonts();
-
-	m_rkContext = Rocket::Core::CreateContext("main", Rocket::Core::Vector2i(window->getWidth(), window->getHeight()));
-	Rocket::Debugger::Initialise(m_rkContext);
-
-	m_rkFileInterface = new FileInterfaceOgre3D();
-	Rocket::Core::SetFileInterface(m_rkFileInterface);
-
+	// Create context
+	gkGUI *gui = m_scene->getDisplayWindow()->getGUI();
+	
+	// Enable debugger (shift+~)
+	gm->setDebug(gui);
 
 	// Load the mouse cursor and release the caller's reference.
-	Rocket::Core::ElementDocument* cursor = m_rkContext->LoadMouseCursor(ROCKET_CURSOR_PAGE);
+	Rocket::Core::ElementDocument* cursor = gui->getContext()->LoadMouseCursor(ROCKET_CURSOR_PAGE);
 	if (cursor)
 		cursor->RemoveReference();
 
-	m_document = m_rkContext->LoadDocument(ROCKET_DEMO_PAGE);
+	m_document = gui->getContext()->LoadDocument(ROCKET_DEMO_PAGE);
 	if (m_document)
 	{
 		Rocket::Core::Element* button = m_document->GetElementById(DEMO_PAGE_BUTTON_ID);
@@ -187,27 +157,12 @@ void GuiDemo::initRocket()
 			button->AddEventListener("click", this);
 		m_document->Show();		
 	}
-
-	m_rkEventListener  = new RocketEventListener(window, m_rkContext);
-	m_rkRenderListener = new RocketRenderListener(window->getRenderWindow(), m_scene->getManager(), m_rkContext);
 }
 
-void GuiDemo::uninitRocket()
+void GuiDemo::unloadGUI()
 {
 	if (m_document) m_document->RemoveReference();
 	m_document = 0;
-
-	// Shutdown Rocket.
-	if (m_rkContext) m_rkContext->RemoveReference();
-	m_rkContext = 0;
-	Rocket::Core::Shutdown();
-
-	delete m_rkOgreSystem; m_rkOgreSystem = 0;
-	delete m_rkOgreRenderer; m_rkOgreRenderer = 0;
-	delete m_rkFileInterface; m_rkFileInterface = 0;
-
-	delete m_rkEventListener; m_rkEventListener = 0;
-	delete m_rkRenderListener; m_rkRenderListener = 0;
 }
 
 void GuiDemo::ProcessEvent(Rocket::Core::Event& event)
@@ -227,7 +182,7 @@ void GuiDemo::keyReleased(const gkKeyboard& key, const gkScanCode& sc)
 {
 	if (sc == KC_ESCKEY)
 	{
-		uninitRocket();
+		unloadGUI();
 		m_engine->requestExit();
 	}
 }

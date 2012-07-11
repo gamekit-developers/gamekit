@@ -41,36 +41,29 @@
 using namespace Ogre;
 
 
-RocketRenderListener::RocketRenderListener(Ogre::RenderWindow *window, Ogre::SceneManager* smgr, Rocket::Core::Context* context)
+RocketRenderListener::RocketRenderListener(Ogre::RenderWindow *window, Rocket::Core::Context* context)
 	:	m_context(context),
-		m_window(window),
-		m_sceneMgr(smgr)
+		m_window(window)
 {
 	// Add the application as a listener to Ogre's render queue so we can render during the overlay.
-	m_sceneMgr->addRenderQueueListener(this);
+	m_window->addListener(this);
 }
 
 RocketRenderListener::~RocketRenderListener()
 {
-	m_sceneMgr->removeRenderQueueListener(this);
+	m_window->removeListener(this);
 }
 
 
-// Called from Ogre before a queue group is rendered.
-void RocketRenderListener::renderQueueStarted(uint8 queueGroupId, const Ogre::String& invocation, bool& ROCKET_UNUSED(skipThisInvocation))
+void RocketRenderListener::postRenderTargetUpdate(const Ogre::RenderTargetEvent &evt)
 {
-	if (queueGroupId == Ogre::RENDER_QUEUE_OVERLAY && Ogre::Root::getSingleton().getRenderSystem()->_getViewport()->getOverlaysEnabled())
+	if (Ogre::Root::getSingleton().getRenderSystem()->_getViewport()->getOverlaysEnabled())
 	{
 		m_context->Update();
 
 		ConfigureRenderSystem();
 		m_context->Render();
 	}
-}
-
-// Called from Ogre after a queue group is rendered.
-void RocketRenderListener::renderQueueEnded(uint8 ROCKET_UNUSED(queueGroupId), const Ogre::String& ROCKET_UNUSED(invocation), bool& ROCKET_UNUSED(repeatThisInvocation))
-{
 }
 
 // Configures Ogre's rendering system for rendering Rocket.

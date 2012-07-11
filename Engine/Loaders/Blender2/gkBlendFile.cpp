@@ -56,7 +56,7 @@
 # include "Sound/gkSound.h"
 #endif
 
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 #include "gkFontManager.h"
 #include "gkFont.h"
 #endif
@@ -372,7 +372,7 @@ void gkBlendFile::buildAllSounds(void)
 
 void gkBlendFile::buildAllFonts(void)
 {
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 	if (!m_hasBFont)
 		return;
 	

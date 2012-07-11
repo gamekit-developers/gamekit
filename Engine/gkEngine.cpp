@@ -66,11 +66,15 @@
 # include "Sound/gkSoundManager.h"
 #endif
 
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 # include "gkFontManager.h"
 #endif
 
 #include "External/Ogre/gkOgreBlendArchive.h"
+
+#ifdef OGREKIT_COMPILE_LIBROCKET
+#include <gkGUIManager.h>
+#endif
 
 #ifdef OGREKIT_USE_COMPOSITOR
 #include "External/Ogre/gkOgreCompositorManager.h"
@@ -256,8 +260,12 @@ void gkEngine::initialize()
 	new gkLuaManager();
 #endif
 
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 	new gkFontManager();
+#endif
+	
+#ifdef OGREKIT_COMPILE_LIBROCKET
+	new gkGUIManager();
 #endif
 
 #ifdef OGREKIT_OPENAL_SOUND
@@ -375,8 +383,12 @@ void gkEngine::finalize()
 	delete gkLuaManager::getSingletonPtr();
 #endif
 
-#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#if defined(OGREKIT_COMPILE_OGRE_SCRIPTS) || defined(OGREKIT_COMPILE_LIBROCKET)
 	delete gkFontManager::getSingletonPtr();
+#endif
+	
+#ifdef OGREKIT_COMPILE_LIBROCKET
+	delete gkGUIManager::getSingletonPtr();
 #endif
 
 

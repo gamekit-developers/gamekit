@@ -28,6 +28,7 @@
 #ifndef _gkViewport_h_
 #define _gkViewport_h_
 #include <OgreViewport.h>
+#include "gkMathUtils.h"
 
 class gkViewport
 {

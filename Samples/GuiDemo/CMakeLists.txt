@@ -13,33 +13,12 @@ if (APPLE)
 	SET (NibFile MainMenu.nib)
 endif()
 
-set(FONT_TMPL
-	fonts/Delicious_Bold.otf
-	fonts/Delicious_BoldItalic.otf
-	fonts/Delicious_Italic.otf
-	fonts/Delicious_Roman.otf
-)
-
-#generate font file to inl file, turn on OGREKIT_COMPILE_SWIG build option.
-#add_templates(1 GEN_TEMPLATES_OUT fonts/uifonts.inl ${FONT_TMPL})
-
 set(DEMO_SRC
 	main.cpp
-	uifonts.cpp
-	rocket/RenderInterfaceOgre3D.cpp
-	rocket/RocketRenderListener.cpp
-	rocket/RocketEventListener.cpp
-	rocket/SystemInterfaceOgre3D.cpp
-	rocket/FileInterfaceOgre3D.cpp
 	${DEMO_BLEND}
 )
 
 set(DEMO_HDR
-	rocket/RenderInterfaceOgre3D.h
-	rocket/RocketRenderListener.h
-	rocket/RocketEventListener.h
-	rocket/SystemInterfaceOgre3D.h
-	rocket/FileInterfaceOgre3D.h
 	#${GEN_TEMPLATES_OUT}
 )
 
@@ -62,9 +41,6 @@ link_libraries(
 	${OGREKIT_LIB}
 	${OGREKIT_LIBROCKET_LIBS}
 )
-
-#need for libRocket link
-add_definitions(-DSTATIC_LIB)
 
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
