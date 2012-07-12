@@ -151,7 +151,7 @@ void gkBlendFile::loadActive(void)
 		if (sc)
 		{
 			gkBlenderSceneConverter conv(this, sc);
-			conv.convert();
+			conv.convert(false);
 			conv.convertGroupInstances();
 			m_activeScene = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (m_activeScene)
@@ -189,7 +189,7 @@ void gkBlendFile::createInstances(void)
 		if (m_findScene.empty() || m_findScene == GKB_IDNAME(sc))
 		{			
 			gkBlenderSceneConverter conv(this, sc);
-			conv.convert();
+			conv.convert(false);
 
 			gkScene* gks = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (gks)
