@@ -206,7 +206,7 @@ void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup* gobj, Blende
 }
 
 
-void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
+void gkBlenderSceneConverter::convertGroups()
 {
 	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 
@@ -258,32 +258,63 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 			mgr->attachGroupToScene(m_gscene, group);
 
 	}
+}
 
-	// Process user created groups.
-	utArray<Blender::Object*>::Iterator it = groups.iterator();
-	while (it.hasMoreElements())
+// this have to be called after all scenes created their groups
+void gkBlenderSceneConverter::convertGroupInstances()
+{
+	m_gscene = static_cast<gkScene*>(gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(m_bscene), m_groupName)));
+
+	if (m_gscene)
 	{
-		Blender::Object* bobj = it.getNext();
+		gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 
-
-		// Should not fail
-		GK_ASSERT((bobj->transflag& OB_DUPLIGROUP && bobj->dup_group != 0));
-
-
-		// Owning group
-		Blender::Group* bgobj = bobj->dup_group;
-		const gkResourceName groupName(GKB_IDNAME(bgobj), m_groupName);
-
-
-		if (mgr->exists(groupName))
+		utArray<Blender::Object*> groups, armatureLinker;
+		for (Blender::Base* base = (Blender::Base*)m_bscene->base.first; base; base = base->next)
 		{
-			gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
+			if (!base->object)
+				continue;
 
+			Blender::Object* bobj = base->object;
 
-			gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName));
-			if (inst)
-				convertObject(bobj, inst->getRoot());
+			// non - conversion object
+			if (!validObject(bobj))
+				continue;
+
+			// only concentrate on the group-instances
+			if (bobj->transflag& OB_DUPLIGROUP && bobj->dup_group != 0)
+				groups.push_back(bobj);
 		}
+
+
+		// Process user created groups.
+		utArray<Blender::Object*>::Iterator it = groups.iterator();
+		while (it.hasMoreElements())
+		{
+			Blender::Object* bobj = it.getNext();
+
+			// Should not fail
+			GK_ASSERT((bobj->transflag& OB_DUPLIGROUP && bobj->dup_group != 0));
+
+
+			// Owning group
+			Blender::Group* bgobj = bobj->dup_group;
+			const gkResourceName groupName(GKB_IDNAME(bgobj), m_groupName);
+
+
+			if (mgr->exists(groupName))
+			{
+				gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
+
+
+				gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName),bobj->lay);
+				if (inst)
+					convertObject(bobj, inst->getRoot());
+			}
+		}
+	} else
+	{
+		gkLogger::write("CAUTION:Calling gkBlenderSceneConverter::convertGroupInstance() without calling convert(false) before doesn't work! No group-instances created!",true);
 	}
 }
 
@@ -891,8 +922,7 @@ void gkBlenderSceneConverter::convertObjectArmature(gkGameObject* gobj, Blender:
 	}
 }
 
-
-void gkBlenderSceneConverter::convert(void)
+void gkBlenderSceneConverter::convert(bool createGroupInstances)
 {
 	if (m_gscene)
 		return;
@@ -939,8 +969,9 @@ void gkBlenderSceneConverter::convert(void)
 	}
 
 	// build group instances
-	convertGroups(groups);
-
+	convertGroups();
+	if (createGroupInstances)
+		convertGroupInstances();
 
 	if (!armatureLinker.empty())
 	{

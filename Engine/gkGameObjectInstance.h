@@ -47,6 +47,7 @@ protected:
 	gkScene*                m_scene;
 	gkGameObject*           m_owner;
 	const gkString          m_uidName;
+	UTuint32				m_layer;
 
 
 	void notifyGameObjectEvent(gkGameObject* gobj, const gkGameObject::Notifier::Event& id);
@@ -95,6 +96,8 @@ public:
 	GK_INLINE gkGameObjectGroup*     getGroup(void)           {return m_parent;}
 	GK_INLINE Objects&               getObjects(void)         {return m_objects; }
 	GK_INLINE gkGameObject*          getRoot(void)            {return m_owner;}
+	GK_INLINE void			         setLayer(UTuint32 layer) {m_layer = layer;}
+	GK_INLINE UTuint32		         getLayer(void)            {return m_layer;}
 };
 
 #endif //_gkGameObjectInstance_h_

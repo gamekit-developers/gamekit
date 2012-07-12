@@ -39,8 +39,15 @@ class gkBlenderSceneConverter
 public:
 	gkBlenderSceneConverter(gkBlendFile* fp, Blender::Scene* sc);
 	~gkBlenderSceneConverter();
-
-	void convert(void);
+	
+	// if you want to create group-instances from groups that are created in another
+	// scene you have to first create the scene's with the groups suing convert(false)
+	// and afterwards create the instances with convertGroupInstances();
+	// default value to true because of compatibilty reasons
+	void convert(bool createGroupInstances=true);
+	// create the group instances for the corresponding scene. CAUTION: running convert(false) is
+	// mandatory
+	void convertGroupInstances(void);
 
 private:
 	bool validObject(Blender::Object* ob);
@@ -48,8 +55,8 @@ private:
 
 	void convertSoundScene(void);
 	void convertWorld(void);
-	void convertGroups(utArray<Blender::Object*> &groups);
 	void convertObject(Blender::Object* ob, gkGameObject* gobj = 0);
+	void convertGroups();
 
 	void convertObjectGroup(gkGameObjectGroup* gobj, Blender::Object* bobj);
 	void convertObjectGeneral(gkGameObject* gobj, Blender::Object* bobj);

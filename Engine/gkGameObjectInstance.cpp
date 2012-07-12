@@ -38,7 +38,8 @@
 gkGameObjectInstance::gkGameObjectInstance(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
 	:    gkInstancedObject(creator, name, handle),
 	     m_parent(0), m_scene(0), m_owner(0),
-	     m_uidName(gkString("/UID{" + gkToString((int)handle) + "}"))
+	     m_uidName(gkString("/UID{" + gkToString((int)handle) + "}")),
+	     m_layer(0xFFFFFFFF)
 
 {
 }
@@ -56,6 +57,7 @@ gkGameObjectInstance::~gkGameObjectInstance()
 	while (iter.hasMoreElements())
 	{
 		gkGameObject* gobj = iter.getNext().second;
+		m_objInitialTransformstates.remove(gobj);
 		GK_ASSERT(!gobj->isInstanced());
 		delete gobj;
 	}
@@ -123,8 +125,9 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 	// Lightly attach
 	ngobj->_makeGroupInstance(this);
 
-	ngobj->setActiveLayer(true);
-	ngobj->setLayer(0xFFFFFFFF);
+	gkScene* instanceScene = getRoot()->getOwner();
+	ngobj->setActiveLayer((instanceScene->getLayer() & m_layer) != 0);
+	ngobj->setLayer(m_layer);
 }
 
 
@@ -164,7 +167,6 @@ void gkGameObjectInstance::destroyObject(gkGameObject* gobj)
 	}
 
 	m_objects.remove(name);
-	m_objInitialTransformstates.remove(gobj);
 	delete gobj;
 }
 
@@ -186,7 +188,6 @@ void gkGameObjectInstance::destroyObject(const gkHashedString& name)
 
 
 	m_objects.remove(name);
-	m_objInitialTransformstates.remove(gobj);
 	delete gobj;
 }
 
@@ -336,7 +337,6 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 
 		gobj->destroyInstance();
 		gobj->setOwner(0);
-		m_objInitialTransformstates.remove(gobj);
 	}
 }
 

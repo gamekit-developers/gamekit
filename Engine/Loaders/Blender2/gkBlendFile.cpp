@@ -152,7 +152,7 @@ void gkBlendFile::loadActive(void)
 		{
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
-
+			conv.convertGroupInstances();
 			m_activeScene = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (m_activeScene)
 				m_scenes.push_back(m_activeScene);
@@ -194,6 +194,19 @@ void gkBlendFile::createInstances(void)
 			gkScene* gks = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (gks)
 				m_scenes.push_back(gks);
+		}
+	}
+	// a second pass for creating groupinstances. groups from all scenes have to be converted before the
+	// group-instances can be created.
+	iter = m_file->getSceneList();
+	while (iter.hasMoreElements())
+	{
+		Blender::Scene* sc = (Blender::Scene*)iter.getNext();
+
+		if (m_findScene.empty() || m_findScene == GKB_IDNAME(sc))
+		{
+			gkBlenderSceneConverter conv(this, sc);
+			conv.convertGroupInstances();
 		}
 	}
 

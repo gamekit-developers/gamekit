@@ -95,15 +95,16 @@ gkGroupManager::Groups::Iterator gkGroupManager::getAttachedGroupIterator(gkScen
 }
 
 
-
+// instantiate group-instances that should be create in the specified scene
+// for that check all groups from all scenes which will only instantiate valid ones
 void gkGroupManager::createGameObjectInstances(gkScene* scene)
 {
-	UTsize pos;
-	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	GroupAttachements::Iterator it = m_attachements.iterator();
+	while (it.hasMoreElements())
 	{
-		Groups::Iterator it = m_attachements.at(pos).iterator();
-		while (it.hasMoreElements())
-			it.getNext()->createGameObjectInstances(scene);
+		Groups::Iterator sceneGroups = it.getNext().second;
+		while (sceneGroups.hasMoreElements())
+			sceneGroups.getNext()->createGameObjectInstances(scene);
 	}
 }
 
@@ -111,12 +112,12 @@ void gkGroupManager::createGameObjectInstances(gkScene* scene)
 
 void gkGroupManager::destroyGameObjectInstances(gkScene* scene)
 {
-	UTsize pos;
-	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	GroupAttachements::Iterator it = m_attachements.iterator();
+	while (it.hasMoreElements())
 	{
-		Groups::Iterator it = m_attachements.at(pos).iterator();
-		while (it.hasMoreElements())
-			it.getNext()->destroyGameObjectInstances();
+		Groups::Iterator sceneGroups = it.getNext().second;
+		while (sceneGroups.hasMoreElements())
+			sceneGroups.getNext()->destroyGameObjectInstances(scene);
 	}
 }
 

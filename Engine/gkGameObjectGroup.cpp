@@ -144,7 +144,7 @@ void gkGameObjectGroup::destroyAllInstances(void)
 }
 
 
-gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, const gkResourceName& name)
+gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, const gkResourceName& name, UTuint32 layer )
 {
 	GK_ASSERT(m_instanceManager);
 
@@ -154,10 +154,9 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, con
 		return 0;
 	}
 
-
 	gkGameObjectInstance* newInst = m_instanceManager->create<gkGameObjectInstance>(name);
 	newInst->_updateFromGroup(this);
-
+	newInst->setLayer(layer);
 
 	gkGameObject* obj = newInst->getRoot();
 	GK_ASSERT(obj);
@@ -195,7 +194,8 @@ void gkGameObjectGroup::createGameObjectInstances(gkScene* scene)
 	while (it.hasMoreElements())
 	{
 		gkGameObjectInstance* inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
-		if (!inst->isInstanced())
+		// only instantiate groups that aren't already created and lies in an active layer of the specified scene
+		if (!inst->isInstanced() && (inst->getLayer() & scene->getLayer()) && inst->getRoot()->getOwner()==scene)
 		{
 
 			gkGameObject* obj = inst->getRoot();
@@ -211,15 +211,18 @@ void gkGameObjectGroup::createGameObjectInstances(gkScene* scene)
 
 
 
-void gkGameObjectGroup::destroyGameObjectInstances(void)
+void gkGameObjectGroup::destroyGameObjectInstances(gkScene* scene)
 {
 	gkResourceManager::ResourceIterator it = m_instanceManager->getResourceIterator();
+
 	while (it.hasMoreElements())
 	{
 		gkGameObjectInstance* inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
-
-		if (inst->isInstanced())
+		// only destroy the instance if scene is NULL (means destroy all instances) or the instance is owned by this scene
+		if (inst->isInstanced() && (scene == NULL || inst->getRoot()->getOwner()==scene) )
+		{
 			inst->destroyInstance();
+		}
 	}
 }
 

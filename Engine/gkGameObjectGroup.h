@@ -87,7 +87,7 @@ public:
 	gkGameObject*  getObject(const gkHashedString& name);
 
 
-	gkGameObjectInstance* createGroupInstance(gkScene* scene, const gkResourceName& name);
+	gkGameObjectInstance* createGroupInstance(gkScene* scene, const gkResourceName& name, UTuint32 layer=0);
 	void                  destroyGroupInstance(gkGameObjectInstance* inst);
 
 
@@ -105,7 +105,7 @@ public:
 	void createGameObjectInstances(gkScene* scene);
 
 	///Removes all gkGameObjectInstance objects from the Ogre scene
-	void destroyGameObjectInstances(void);
+	void destroyGameObjectInstances(gkScene* scene=0);
 
 
 
