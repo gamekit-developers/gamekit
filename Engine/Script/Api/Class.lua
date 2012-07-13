@@ -29,7 +29,7 @@
 	
 	BaseClass is local code.
 --]]
-
+ 
 -------------------------------------------------------------------------------
 -- 
 -- Derrived functions 
@@ -48,6 +48,49 @@ local pconstructor = function(instance, extends, ...)
     end
 
     instance.base = ret
+
+    local typeCheck = swig_type(instance.base)
+    if(typeCheck ~= "table") then
+        local ptable = getmetatable(instance.base)
+        for i,j in pairs(ptable) do
+            if (type(j) == "table") then
+                for k, parTable in pairs(j) do
+                    if (type(parTable) == "function") then
+                        -- manually overload the function
+                        -- check overload function only overload functions not existed
+                        if not instance[k] then
+                            instance[k] = function(instance, ...)
+         						
+                                local status, ret = pcall(parTable, instance.base)
+                                if (status) then
+                                    return ret
+                                end
+        
+                                status, ret = pcall(parTable, instance.base, ...)
+                                if (not status) then
+                                    error(ret)
+                                end
+                                return ret;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    local itable = getmetatable(instance)
+    local oindex = itable.__index
+    itable.__index= function (table, key)
+        if oindex[key] then
+            return oindex[key]
+        elseif instance.base and instance.base[key] then
+            return instance.base[key]
+        else
+            return nil
+        end
+    end
+    
+    --[[
     local ptable = getmetatable(instance.base)
 
     for i,j in pairs(ptable) do
@@ -74,6 +117,7 @@ local pconstructor = function(instance, extends, ...)
             end
         end
     end
+    ]]
 
     instance:constructor(...)
     return instance
