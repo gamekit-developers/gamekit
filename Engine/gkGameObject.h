@@ -34,6 +34,8 @@
 
 #include "Animation/gkAnimation.h"
 #include "Physics/gkGhost.h"
+#include <OgreSceneNode.h>
+#include <OgreMovableObject.h>
 
 class gkGameObject : public gkInstancedObject
 {
@@ -136,7 +138,7 @@ public:
 	GK_INLINE void           attachCharacter(gkCharacter* character)     {m_character = character;}
 	GK_INLINE gkCharacter*   getAttachedCharacter(void)                 {return m_character;}
 	GK_INLINE void           attachGhost(gkGhost* ghost)     {m_ghost = ghost;}
-	GK_INLINE gkGhost*   getAttachedGhost(void)                 {return m_ghost;}
+	GK_INLINE gkGhost*       getAttachedGhost(void)                 {return m_ghost;}
 
 	gkPhysicsController*     getPhysicsController(void);
 	btCollisionObject*       getCollisionObject(void);
@@ -147,7 +149,7 @@ public:
 	gkVariable* createVariable(const gkString& name, bool debug);
 	gkVariable* getVariable(const gkString& name);
 	bool        hasVariable(const gkString& name);
-	void 	removeVariable(const gkString& name);
+	void        removeVariable(const gkString& name);
 	void        clearVariables(void);
 
 
@@ -249,6 +251,10 @@ public:
 
 	GK_INLINE bool   isStaticGeometry(void)   {return (m_flags & GK_STATIC_GEOM) != 0;}
 	GK_INLINE bool   isImmovable(void)        {return (m_flags & GK_IMMOVABLE) != 0;}
+	
+	GK_INLINE void setVisible(bool v)          {getNode()->setVisible(v, false);}
+	GK_INLINE void setVisibleRecursive(bool v) {getNode()->setVisible(v, true);}
+	GK_INLINE bool getVisible()                {getNode()->getAttachedObject(0)->getVisible();}
 
 
 	// Grouping
@@ -324,7 +330,7 @@ protected:
 	// Physics body instances
 	gkRigidBody*                m_rigidBody;
 	gkCharacter*                m_character;
-	gkGhost*					m_ghost;
+	gkGhost*                    m_ghost;
 
 
 

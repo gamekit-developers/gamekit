@@ -503,12 +503,6 @@ set(Blend_HEADER
 	Loaders/Blender2/Converters/gkSkeletonConverter.h	
 )
 
-# -- include blend2.63-mesh-converter
-if(NOT OGREKIT_USE_BPARSE OR BPARSE_FILE_FORMAT EQUAL 2)
-	list(APPEND Blend_SOURCE Loaders/Blender2/Converters/gkMeshConverter26.cpp)
-	list(APPEND Blend_HEADER Loaders/Blender2/Converters/gkMeshConverter26.h)
-endif()
-
 if(OGREKIT_USE_PARTICLE)
 	list(APPEND Blend_SOURCE Loaders/Blender2/Converters/gkParticleConverter.cpp)
 	list(APPEND Blend_HEADER Loaders/Blender2/Converters/gkParticleConverter.h)

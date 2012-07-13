@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha, Alberto Torres Ruiz.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -44,7 +44,7 @@ struct MTex;
 }
 
 class gkBlendFile;
-
+class gkMeshPair;
 
 
 class gkBlenderMeshConverter
@@ -104,12 +104,15 @@ private:
 	int findTextureLayer(Blender::MTex* te);
 
 
-	unsigned int packColour(const Blender::MCol& col, bool opengl);
+	unsigned int packColourABGR(const Blender::MCol& col);
 
+	void convert_legacy();
+	void convert_bmesh();
 
 	gkMesh*          m_gmesh;
 	Blender::Mesh*   m_bmesh;
 	Blender::Object* m_bobj;
+	utArray<gkMeshPair> m_meshtable;
 };
 
 

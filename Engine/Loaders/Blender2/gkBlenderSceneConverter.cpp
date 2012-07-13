@@ -36,7 +36,6 @@
 #include "gkParticleObject.h"
 #include "gkParticleResource.h"
 #include "OgreKit.h"
-#include "Converters/gkMeshConverter26.h"
 
 #ifndef OGREKIT_USE_BPARSE
 	#define OGREKIT_USE_FBT
@@ -828,30 +827,12 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject* gobj, Blender::Obj
 	// and better efficiency
 	if (!m_gscene->hasMesh(GKB_IDNAME(me)))
 	{
-		bool conversionSucceeded = false;
+// 		bool conversionSucceeded = false;
 
 		props.m_mesh = m_gscene->createMesh(GKB_IDNAME(me));
 
-// if available test blend263-format
-#if !defined OGREKIT_USE_BPARSE || BPARSE_FILE_FORMAT==BPARSE_FILEFORMAT_263
-		if (!conversionSucceeded){
-			//gkLogger::write("try blend263",true);
-			gkBlenderMeshConverter26 meconv263(props.m_mesh, bobj, me);
-			conversionSucceeded = meconv263.convert();
-		}
-#endif
-
-
-// use this only if fbt or bparse is compiled with blender25-format
-#if !defined OGREKIT_USE_BPARSE || BPARSE_FILE_FORMAT==BPARSE_FILEFORMAT_25
-		if (!conversionSucceeded){
-			//gkLogger::write("try blend25",true);
-			gkBlenderMeshConverter meconv25(props.m_mesh, bobj, me);
-			conversionSucceeded = meconv25.convert();
-		}
-#endif
-
-
+		gkBlenderMeshConverter meconv(props.m_mesh, bobj, me);
+		meconv.convert();
 	}
 	else
 		props.m_mesh = m_gscene->getMesh(GKB_IDNAME(me));

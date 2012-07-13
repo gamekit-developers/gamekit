@@ -140,7 +140,7 @@ public:
 	gkMaterialProperties()
 		:   m_name(),
 		    m_mode(MA_RECEIVESHADOWS | MA_LIGHTINGENABLED | MA_DEPTHWRITE),
-			m_rblend(GK_BT_MIXTURE),
+		    m_rblend(GK_BT_MIXTURE),
 		    m_diffuse(1.f, 1.f, 1.f, 1.f),
 		    m_specular(0.f, 0.f, 0.f, 0.f),
 		    m_hardness(0.f),
@@ -150,13 +150,14 @@ public:
 		    m_spec(.0f),
 		    m_alpha(1.f),
 		    m_depthOffset(0.f),
-		    m_totaltex(0)
+		    m_totaltex(0),
+		    m_tangentLayer(-1)
 	{
 	}
 
 	gkString                m_name;
 	unsigned int            m_mode;
-	int						m_rblend;
+	int                     m_rblend;
 	gkColor                 m_diffuse;
 	gkColor                 m_specular;
 	gkScalar                m_hardness;
@@ -168,6 +169,7 @@ public:
 	gkScalar                m_depthOffset;
 	int                     m_totaltex;
 	gkTextureProperties     m_textures[GK_MAX_TEXTURE];
+	int                     m_tangentLayer;
 };
 
 
