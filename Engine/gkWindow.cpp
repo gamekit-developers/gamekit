@@ -361,7 +361,8 @@ void gkWindow::removeViewport(gkViewport* viewport)
 	{		
 		m_viewports.erase(m_viewports.find(viewport));
 		delete viewport;
-		m_viewports[0]->getViewport()->setClearEveryFrame(true);
+		if (m_viewports.size()>0)
+			m_viewports[0]->getViewport()->setClearEveryFrame(true);
 	}
 }
 
