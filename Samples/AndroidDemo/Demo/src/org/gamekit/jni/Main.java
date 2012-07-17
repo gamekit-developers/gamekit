@@ -40,6 +40,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -55,11 +56,15 @@ public class Main
 	
 	private static List<GameKitListener> listener = new LinkedList<Main.GameKitListener>();
 	
+	private String sdcardPath;
 	
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
-	  initArg = "/sdcard/gamekit/gk_android.blend";
+	  
+	  sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+	  
+	  initArg = "/"+sdcardPath+"/gamekit/gk_android.blend";
 	  // copy all files from the assets folder to the specified folder (in this case /sdcard/gamekit
 	  CopyAssets("gamekit");
 	  
@@ -96,9 +101,9 @@ public void onBackPressed() {
 	    } catch (IOException e) {
 	        Log.e("tag", e.getMessage());
 	    }
-	    File f = new File("/sdcard/"+folderName);
+	    File f = new File(sdcardPath+"/"+folderName);
 	    if (f.isFile()) {
-	    	throw new RuntimeException("Folder /sdcard/"+folderName+" is a file");
+	    	throw new RuntimeException("Folder "+sdcardPath+"/"+folderName+" is a file");
 	    } else if (!f.isDirectory()){
 	    	f.mkdir();
 	    }
@@ -109,13 +114,13 @@ public void onBackPressed() {
 	        try {
 	          in = assetManager.open(filename);
 	          
-	          f = new File("/sdcard/"+folderName+"/" + filename);
+	          f = new File(sdcardPath+"/"+folderName+"/" + filename);
 	          if (f.exists()){
 	        	  Log.i("gamekit", "fileexists!");
 //	        	  continue;
 	          }
 	          
-	          out = new FileOutputStream("/sdcard/"+folderName+"/" + filename);
+	          out = new FileOutputStream( sdcardPath+"/"+folderName+"/" + filename);
 	          copyFile(in, out);
 	          in.close();
 	          in = null;
