@@ -140,6 +140,11 @@ bool gkWindow::setupInput(const gkUserDefs& prefs)
 		{
 
 #if GK_PLATFORM == GK_PLATFORM_WIN32
+			size_t parent_handle = (size_t)GetParent((HWND)handle);
+			while(parent_handle){
+				handle = parent_handle;
+				parent_handle = (size_t)GetParent((HWND)handle);
+			}
 			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_FOREGROUND")));
 			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_NONEXCLUSIVE")));
 			params.insert(std::make_pair(std::string("w32_keyboard"),		std::string("DISCL_FOREGROUND")));
