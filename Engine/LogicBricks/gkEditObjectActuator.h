@@ -40,7 +40,8 @@ public:
 		EO_ADDOBJ,
 		EO_ENDOBJ,
 		EO_REPLACEMESH,
-		EO_TRACKTO,
+		EO_TRACKTO_2D,
+		EO_TRACKTO_3D,
 		EO_DYNAMICS,
 	};
 
@@ -64,8 +65,7 @@ private:
 
 	void addObject(void);
 	void endObject(void);
-
-    void trackToObject(void);
+	void trackToObject(void);
 
 public:
 

@@ -131,7 +131,9 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				case ACT_EDOB_ADD_OBJECT:   {mode = gkEditObjectActuator::EO_ADDOBJ;        break;}
 				case ACT_EDOB_END_OBJECT:   {mode = gkEditObjectActuator::EO_ENDOBJ;        break;}
 				case ACT_EDOB_REPLACE_MESH: {mode = gkEditObjectActuator::EO_REPLACEMESH;   break;}
-				case ACT_EDOB_TRACK_TO:     {mode = gkEditObjectActuator::EO_TRACKTO;       break;}
+				case ACT_EDOB_TRACK_TO:     {mode = bea->flag & ACT_TRACK_3D ?
+				                                    gkEditObjectActuator::EO_TRACKTO_3D:
+				                                    gkEditObjectActuator::EO_TRACKTO_2D;    break;}
 				case ACT_EDOB_DYNAMICS:     {mode = gkEditObjectActuator::EO_DYNAMICS;      break;}
 				}
 				ea->setMode(mode);

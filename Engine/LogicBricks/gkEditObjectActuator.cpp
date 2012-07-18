@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Alberto Torres Ruiz
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -143,41 +143,32 @@ void gkEditObjectActuator::endObject(void)
 
 void gkEditObjectActuator::trackToObject(void)
 {
-    if (m_obj.empty())
-        return;
+	if (m_obj.empty())
+		return;
 
-    gkGameObject* trackTarget = m_scene->findInstancedObject(m_obj);
-    if (!trackTarget)
-    {
-        // TODO: Log warning message
-        return;
-    }
+	gkGameObject* trackTarget = m_scene->findInstancedObject(m_obj);
+	if (!trackTarget)
+		return;
 
-    gkGameObjectTypes type = m_object->getType();
-
-    if (GK_CAMERA==type)
-    {
-        gkCamera* camera = m_object->getCamera();
-        if (!camera)
-        {
-            // TODO: Log warning message
-            return;
-        }
-
-        camera->getCamera()->setAutoTracking(true, trackTarget->getNode());
-        camera->getCamera()->setFixedYawAxis(true, Ogre::Vector3::UNIT_Z);
-    }
-    else
-    {
-        Ogre::SceneNode* sceneNode = m_object->getNode();
-        if (!sceneNode)
-        {
-            // TODO: log warning message
-            return;
-        }
-
-        sceneNode->setAutoTracking(true, trackTarget->getNode(), Ogre::Vector3::UNIT_Y);
-    }
+	gkVector3 front = trackTarget->getWorldPosition() - m_object->getWorldPosition();
+	
+	if (m_mode == EO_TRACKTO_2D)
+		front.z=0;
+	
+	gkVector3 up    = gkVector3::UNIT_Z;
+	gkVector3 right = front.crossProduct(up);
+	
+	if (m_mode == EO_TRACKTO_3D)
+		up = right.crossProduct(front);
+	
+	front.normalise();
+	up.normalise();
+	right.normalise();
+	
+	if (m_object->getType()==GK_CAMERA)
+		m_object->setOrientation(gkQuaternion(right, up, -front));
+	else
+		m_object->setOrientation(gkQuaternion(right, front, up));
 }
 
 
@@ -190,17 +181,19 @@ void gkEditObjectActuator::execute(void)
 	{
 	case EO_ADDOBJ:
 		addObject();
+		setPulse(BM_OFF);
 		break;
 	case EO_ENDOBJ:
 		endObject();
+		setPulse(BM_OFF);
 		break;
-    case EO_TRACKTO:
-        trackToObject();
-        break;
-    default:
-        // TODO: Log some warning message
-        break;
+	case EO_TRACKTO_2D:
+	case EO_TRACKTO_3D:
+		trackToObject();
+		break;
+	default:
+		// TODO: Log some warning message
+		break;
 	}
 
-	setPulse(BM_OFF);
 }

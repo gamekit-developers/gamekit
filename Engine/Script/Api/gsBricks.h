@@ -141,7 +141,8 @@ enum gsEditObjectActuatorType
 	EOT_ADDOBJ        = gkEditObjectActuator::EO_ADDOBJ,
 	EOT_ENDOBJ        = gkEditObjectActuator::EO_ENDOBJ,
 	EOT_REPLACEMESH   = gkEditObjectActuator::EO_REPLACEMESH,
-	EOT_TRACKTO       = gkEditObjectActuator::EO_TRACKTO,
+	EOT_TRACKTO_2D    = gkEditObjectActuator::EO_TRACKTO_2D,
+	EOT_TRACKTO_3D    = gkEditObjectActuator::EO_TRACKTO_3D,
 	EOT_DYNAMICS      = gkEditObjectActuator::EO_DYNAMICS,
 };
 
