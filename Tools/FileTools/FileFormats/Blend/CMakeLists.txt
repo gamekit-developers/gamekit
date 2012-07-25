@@ -40,3 +40,5 @@ else()
 endif()
 
 add_library(bfBlend ${bfBlend_SRC} ${bfBlender})
+
+config_target_if_iphone_build(bfBlend  TRUE)

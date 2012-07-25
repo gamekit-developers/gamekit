@@ -154,7 +154,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	if (APPLE)
-	
+		set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")	
 		if (OGRE_BUILD_PLATFORM_IPHONE)
 			option(OGREKIT_USE_COCOA "Use Cocoa" ON)
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/IPhone )
