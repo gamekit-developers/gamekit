@@ -118,7 +118,6 @@ local pconstructor = function(instance, extends, ...)
         end
     end
     ]]
-
     instance:constructor(...)
     return instance
 end
