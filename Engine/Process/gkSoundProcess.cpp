@@ -35,7 +35,7 @@ gkSoundProcess::gkSoundProcess(const gkString& soundName)
 
 gkSoundProcess::~gkSoundProcess()
 {
-	// TODO: check who kills sound-sources
+	// stuff is deleted by soundmanager
 }
 
 
@@ -53,7 +53,9 @@ void gkSoundProcess::init()
 			m_source = m_sound->createSource();
 		}
 	}
+
 	m_soundPlayed = false;
+
 }
 void gkSoundProcess::update(gkScalar delta)
 {
@@ -64,8 +66,4 @@ void gkSoundProcess::update(gkScalar delta)
 	}
 }
 
-void gkSoundProcess::onFinish()
-{
-	gkPrintf("Finished");
-}
 

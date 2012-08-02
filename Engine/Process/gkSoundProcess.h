@@ -41,7 +41,6 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	void onFinish();
 private:
 	gkSound* m_sound;
 	gkSource* m_source;

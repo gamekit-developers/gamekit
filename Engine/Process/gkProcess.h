@@ -28,29 +28,70 @@
 #ifndef _gkProcess_h_
 #define _gkProcess_h_
 #include "gkMathUtils.h"
+#include "Process/gkProcess.h"
 
 class gkProcess {
 	friend class gkProcessManager;
+	friend class gsProcess;
+
 public:
+
+	class Listener
+	{
+	public:
+
+		enum Event
+		{
+			INIT,
+			FINSHED,
+			LOOP_END,
+			SUSPENDED,
+			RESUMED
+		};
+
+	public:
+
+		virtual ~Listener() {}
+
+		virtual void notifyEvent(gkProcess* proc, const Event& id) = 0;
+	};
+
+	typedef utList<Listener*> ProcessListener;
+
 	gkProcess();
 	virtual ~gkProcess();
 
-	virtual bool isFinished();
-	void setFollowUp(gkProcess* followUp);
-	gkProcess* getFollowUp(void){ return m_followUp;}
-	virtual void init();
-	virtual void update(gkScalar delta);
-	virtual void onFinish(bool canceled);
-	GK_INLINE bool deleteAfterFinish() { return m_deleteAfterFinish;}
-	GK_INLINE UTint32 getHandle(void) { return m_handle; }
+	virtual bool isFinished() { return true; }
+	virtual void init() {}
+	virtual void update(gkScalar delta) {}
+	GK_INLINE int getLoopCount(void) { return m_initialLoopCount; }
+	GK_INLINE void setLoopCount(int loopCount) { m_initialLoopCount = loopCount; }
 	GK_INLINE bool isSuspended(void) { return m_suspended;}
-	GK_INLINE void setSuspend(bool suspend) { m_suspended = suspend; }
+	void setSuspend(bool suspend);
+
+	void addListener(Listener* listener);
+	void removeListener(Listener* listener);
+	void sendNotification(const Listener::Event& e);
 
 protected:
-	bool m_deleteAfterFinish;
-	gkProcess* m_followUp;
-	UTint32 m_handle;
+	int m_loopCount,m_initialLoopCount;
 	bool m_suspended;
+	ProcessListener m_listener;
+
+	void _init(void);
+	void _update(gkScalar delta);
+	bool _isFinished(void);
+
+#define CALL_EVENT(METHOD,EVENT)\
+	void _##METHOD() {\
+		sendNotification(EVENT);\
+	}\
+
+	CALL_EVENT(onInit,Listener::INIT)
+	CALL_EVENT(onFinished,Listener::FINSHED)
+	CALL_EVENT(onLoopEnd,Listener::LOOP_END)
+	CALL_EVENT(onSuspend,Listener::SUSPENDED)
+	CALL_EVENT(onResume,Listener::RESUMED)
 };
 
 

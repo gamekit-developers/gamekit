@@ -661,6 +661,13 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/System.lua
 		Script/Api/Class.lua
 	)
+	
+	if (OGREKIT_USE_PROCESSMANAGER)
+		list(APPEND Script_TMPL Script/Api/Process.lua)
+	endif()
+	
+	MESSAGE(STATUS "####SCRIPT-TMPS: ${Script_TMPL}")
+	
 	add_templates(0 GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
 
 	set(Script_HEADER
@@ -691,8 +698,10 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 	set(SWIG_INPUT
 		Script/Api/OgreKit.i
 	)
-
-
+	if (OGREKIT_USE_PROCESSMANAGER)
+		set(SWIG_ARGS "-DOGREKIT_USE_PROCESSMANAGER")
+	endif()
+	
 	swig_source_lua(SWIG_API2_OUTPUT_LUA Script_HEADER ${SWIG_INPUT})
 
 
@@ -714,9 +723,15 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
-		Script/Api/gsProcess.cpp
+		
 
 	)
+	
+	if (OGREKIT_USE_PROCESSMANAGER)
+		list(APPEND Script_SOURCE Script/Api/gsProcess.cpp)	
+		list(APPEND Script_HEADER Script/Api/gsProcess.h)	
+		list(APPEND Script_INC Script/Api/gsProcess.i)	
+	endif()
 	
 	set(Script_SOURCE_2
 		${Script_TMPL}
@@ -759,7 +774,6 @@ else()
 		Script/Api/gsThread.i
 		Script/Api/gsTypes.i
 		Script/Api/gsUtils.i
-		Script/Api/gsProcess.i
 	)
 
 	set(Script_HEADER
@@ -783,7 +797,6 @@ else()
 		Script/Api/gsSound.h
 		Script/Api/gsThread.h
 		Script/Api/gsUtils.h
-		Script/Api/gsProcess.h
 		${Script_INC}
 	)
 
@@ -792,7 +805,10 @@ else()
 		Script/Api/System.lua
 		Script/Api/Class.lua
 	)
-
+	if (OGREKIT_USE_PROCESSMANAGER)
+		list(APPEND Script_TMPL Script/Api/Process.lua)
+	endif()
+	
 	set(Script_SOURCE		
 		Script/Lua/gkLuaManager.cpp
 		Script/Lua/gkLuaScript.cpp
@@ -811,8 +827,13 @@ else()
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
-		Script/Api/gsProcess.cpp
 	)
+	
+	if (OGREKIT_USE_PROCESSMANAGER)
+		list(APPEND Script_SOURCE Script/Api/gsProcess.cpp)	
+		list(APPEND Script_HEADER Script/Api/gsProcess.h)	
+		list(APPEND Script_INC Script/Api/gsProcess.i)	
+	endif()	
 	
 	set(Script_SOURCE_2
 		${Script_TMPL}

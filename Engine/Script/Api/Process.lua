@@ -1,9 +1,9 @@
-/*
+--[[
 -------------------------------------------------------------------------------
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2012 Thomas Trocha
+    Copyright (c) 2006-2012 Thomas Trocha(dertom)
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,39 +23,30 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-*/
+--]]
 
-#ifndef GKPARALLELPROCESS_H_
-#define GKPARALLELPROCESS_H_
+Gk = OgreKit
 
-#include "Process/gkProcess.h"
-#include "gkMathUtils.h"
+function sequence(list,procM)
+    if (procM==nil) then
+        procM = OgreKit.getActiveScene():getProcessManager()
+    end
+    local seqList = OgreKit.ProcessList()
+    for i=1,#list do
+         seqList:push(list[i])
+    end
+    local sequence = procM:createSequence(seqList)
+    return sequence
+end
 
-class gkParallelProcess : public gkProcess {
-
-public:
-	gkParallelProcess(gkScalar maxTime=0);
-	virtual ~gkParallelProcess() {}
-
-	void append(gkProcess* childProcess);
-	void remove(gkProcess* childProcess);
-	void setMasterProcess(gkProcess* masterProcess);
-
-	bool isFinished();
-	void init();
-	void update(gkScalar delta);
-
-
-private:
-	typedef utList<gkProcess*> ProcessList;
-
-	gkGameObject* m_object;
-
-	gkProcess* m_masterProcess;
-	ProcessList m_initalProcessList,m_processList;
-	gkScalar m_maxTime;
-	gkScalar m_currentTime;
-
-};
-
-#endif /* GKPARALLELPROCESS_H_ */
+function parallel(list, procM)
+    if (procM==nil) then
+        procM = OgreKit.getActiveScene():getProcessManager()
+    end
+    local parList = OgreKit.ProcessList()
+    for i=1,#list do
+         parList:push(list[i])
+    end
+    local parallel = procM:createParallel(parList)
+    return parallel
+end

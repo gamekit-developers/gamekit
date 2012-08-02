@@ -101,8 +101,9 @@ GS_SCRIPT_NAME(SetCompositorChain)
 
 // Arrays
 GS_ARRAY_WRAP(gsGameObject,  gkGameObject, ObjectList, ObjectIterator)
+#ifdef OGREKIT_USE_PROCESSMANAGER
 GS_ARRAY_WRAP(gsProcess,  gkProcess, ProcessList, ProcessIterator)
-
+#endif
 
 %include "gsCore.h"
 

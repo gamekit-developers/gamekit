@@ -2678,6 +2678,43 @@ static swig_lua_class *swig_gsVector3_bases[] = {0};
 static const char *swig_gsVector3_base_names[] = {0};
 static swig_lua_class _wrap_class_gsVector3 = { "Vector3", &SWIGTYPE_p_gsVector3,_wrap_new_Vector3, swig_delete_Vector3, swig_gsVector3_methods, swig_gsVector3_attributes, swig_gsVector3_bases, swig_gsVector3_base_names };
 
+static int _wrap_lerp(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  float arg3 ;
+  gsVector3 result;
+  
+  SWIG_check_num_args("lerp",3,3)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("lerp",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("lerp",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("lerp",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("lerp",1,SWIGTYPE_p_gsVector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("lerp",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  result = lerp((gsVector3 const &)*arg1,(gsVector3 const &)*arg2,arg3);
+  {
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Quaternion_w_set(lua_State* L) {
   int SWIG_arg = 0;
   gsQuaternion *arg1 = (gsQuaternion *) 0 ;
@@ -8181,7 +8218,66 @@ fail:
 }
 
 
-static int _wrap_HUDElement_setPosition(lua_State* L) {
+static int _wrap_HUDElement_getPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  gsVector3 result;
+  
+  SWIG_check_num_args("getPosition",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"gsHUDElement *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("HUDElement_getPosition",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  result = (arg1)->getPosition();
+  {
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_HUDElement_setPosition__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsHUDElement *arg1 = (gsHUDElement *) 0 ;
+  gsVector3 arg2 ;
+  gsVector3 *argp2 ;
+  
+  SWIG_check_num_args("setPosition",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"gsHUDElement *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsHUDElement,0))){
+    SWIG_fail_ptr("HUDElement_setPosition",1,SWIGTYPE_p_gsHUDElement);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("HUDElement_setPosition",2,SWIGTYPE_p_gsVector3);
+  }
+  arg2 = *argp2;
+  
+  (arg1)->setPosition(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_HUDElement_setPosition__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsHUDElement *arg1 = (gsHUDElement *) 0 ;
   float arg2 ;
@@ -8210,6 +8306,70 @@ fail:
 }
 
 
+static int _wrap_HUDElement_setPosition(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsHUDElement, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_HUDElement_setPosition__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsHUDElement, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_HUDElement_setPosition__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'HUDElement_setPosition'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setPosition(gsHUDElement *,gsVector3)\n"
+    "    setPosition(gsHUDElement *,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
 static void swig_delete_HUDElement(void *obj) {
 gsHUDElement *arg1 = (gsHUDElement *) obj;
 delete arg1;
@@ -8227,6 +8387,7 @@ static swig_lua_method swig_gsHUDElement_methods[] = {
     {"setMaterialAlpha", _wrap_HUDElement_setMaterialAlpha}, 
     {"getMaterialAlphaRejectValue", _wrap_HUDElement_getMaterialAlphaRejectValue}, 
     {"setMaterialAlphaRejectValue", _wrap_HUDElement_setMaterialAlphaRejectValue}, 
+    {"getPosition", _wrap_HUDElement_getPosition}, 
     {"setPosition", _wrap_HUDElement_setPosition}, 
     {0,0}
 };
@@ -29110,11 +29271,12 @@ static int _wrap_new_Process(lua_State* L) {
 }
 
 
-static int _wrap_Process_setInit(lua_State* L) {
+static int _wrap_Process_setInit__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
   gsSelf arg2 ;
   gsFunction arg3 ;
+  gsProcess *result = 0 ;
   
   SWIG_check_num_args("setInit",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setInit",1,"gsProcess *");
@@ -29127,8 +29289,8 @@ static int _wrap_Process_setInit(lua_State* L) {
   
   (&arg2)->m_id = 2; (&arg2)->L = L; 
   (&arg3)->m_id = 3; (&arg3)->L = L; 
-  (arg1)->setInit(arg2,arg3);
-  
+  result = (gsProcess *)(arg1)->setInit(arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -29139,11 +29301,12 @@ fail:
 }
 
 
-static int _wrap_Process_setUpdate(lua_State* L) {
+static int _wrap_Process_setUpdate__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
   gsSelf arg2 ;
   gsFunction arg3 ;
+  gsProcess *result = 0 ;
   
   SWIG_check_num_args("setUpdate",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setUpdate",1,"gsProcess *");
@@ -29156,8 +29319,8 @@ static int _wrap_Process_setUpdate(lua_State* L) {
   
   (&arg2)->m_id = 2; (&arg2)->L = L; 
   (&arg3)->m_id = 3; (&arg3)->L = L; 
-  (arg1)->setUpdate(arg2,arg3);
-  
+  result = (gsProcess *)(arg1)->setUpdate(arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -29168,11 +29331,12 @@ fail:
 }
 
 
-static int _wrap_Process_setIsFinished(lua_State* L) {
+static int _wrap_Process_setIsFinished__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
   gsSelf arg2 ;
   gsFunction arg3 ;
+  gsProcess *result = 0 ;
   
   SWIG_check_num_args("setIsFinished",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setIsFinished",1,"gsProcess *");
@@ -29185,7 +29349,273 @@ static int _wrap_Process_setIsFinished(lua_State* L) {
   
   (&arg2)->m_id = 2; (&arg2)->L = L; 
   (&arg3)->m_id = 3; (&arg3)->L = L; 
-  (arg1)->setIsFinished(arg2,arg3);
+  result = (gsProcess *)(arg1)->setIsFinished(arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Process_setInit__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcess *arg1 = (gsProcess *) 0 ;
+  gsFunction arg2 ;
+  gsProcess *result = 0 ;
+  
+  SWIG_check_num_args("setInit",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setInit",1,"gsProcess *");
+  if(!lua_isfunction(L,2)) SWIG_fail_arg("setInit",2,"gsFunction");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("Process_setInit",1,SWIGTYPE_p_gsProcess);
+  }
+  
+  (&arg2)->m_id = 2; (&arg2)->L = L; 
+  result = (gsProcess *)(arg1)->setInit(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Process_setInit(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_isfunction(L, argv[1]); 
+      if (_v) {
+        return _wrap_Process_setInit__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_istable(L, argv[1]); 
+      if (_v) {
+        _v = lua_isfunction(L, argv[2]); 
+        if (_v) {
+          return _wrap_Process_setInit__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Process_setInit'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setInit(gsProcess *,gsSelf,gsFunction)\n"
+    "    setInit(gsProcess *,gsFunction)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Process_setUpdate__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcess *arg1 = (gsProcess *) 0 ;
+  gsFunction arg2 ;
+  gsProcess *result = 0 ;
+  
+  SWIG_check_num_args("setUpdate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setUpdate",1,"gsProcess *");
+  if(!lua_isfunction(L,2)) SWIG_fail_arg("setUpdate",2,"gsFunction");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("Process_setUpdate",1,SWIGTYPE_p_gsProcess);
+  }
+  
+  (&arg2)->m_id = 2; (&arg2)->L = L; 
+  result = (gsProcess *)(arg1)->setUpdate(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Process_setUpdate(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_isfunction(L, argv[1]); 
+      if (_v) {
+        return _wrap_Process_setUpdate__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_istable(L, argv[1]); 
+      if (_v) {
+        _v = lua_isfunction(L, argv[2]); 
+        if (_v) {
+          return _wrap_Process_setUpdate__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Process_setUpdate'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setUpdate(gsProcess *,gsSelf,gsFunction)\n"
+    "    setUpdate(gsProcess *,gsFunction)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Process_setIsFinished__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcess *arg1 = (gsProcess *) 0 ;
+  gsFunction arg2 ;
+  gsProcess *result = 0 ;
+  
+  SWIG_check_num_args("setIsFinished",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setIsFinished",1,"gsProcess *");
+  if(!lua_isfunction(L,2)) SWIG_fail_arg("setIsFinished",2,"gsFunction");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("Process_setIsFinished",1,SWIGTYPE_p_gsProcess);
+  }
+  
+  (&arg2)->m_id = 2; (&arg2)->L = L; 
+  result = (gsProcess *)(arg1)->setIsFinished(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Process_setIsFinished(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_isfunction(L, argv[1]); 
+      if (_v) {
+        return _wrap_Process_setIsFinished__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_istable(L, argv[1]); 
+      if (_v) {
+        _v = lua_isfunction(L, argv[2]); 
+        if (_v) {
+          return _wrap_Process_setIsFinished__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Process_setIsFinished'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setIsFinished(gsProcess *,gsSelf,gsFunction)\n"
+    "    setIsFinished(gsProcess *,gsFunction)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Process_setLoopCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcess *arg1 = (gsProcess *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("setLoopCount",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLoopCount",1,"gsProcess *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLoopCount",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("Process_setLoopCount",1,SWIGTYPE_p_gsProcess);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->setLoopCount(arg2);
   
   return SWIG_arg;
   
@@ -29197,25 +29627,20 @@ fail:
 }
 
 
-static int _wrap_Process_setOnFinish(lua_State* L) {
+static int _wrap_Process_getLoopCount(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
-  gsSelf arg2 ;
-  gsFunction arg3 ;
+  int result;
   
-  SWIG_check_num_args("setOnFinish",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOnFinish",1,"gsProcess *");
-  if(!lua_istable(L,2)) SWIG_fail_arg("setOnFinish",2,"gsSelf");
-  if(!lua_isfunction(L,3)) SWIG_fail_arg("setOnFinish",3,"gsFunction");
+  SWIG_check_num_args("getLoopCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLoopCount",1,"gsProcess *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
-    SWIG_fail_ptr("Process_setOnFinish",1,SWIGTYPE_p_gsProcess);
+    SWIG_fail_ptr("Process_getLoopCount",1,SWIGTYPE_p_gsProcess);
   }
   
-  (&arg2)->m_id = 2; (&arg2)->L = L; 
-  (&arg3)->m_id = 3; (&arg3)->L = L; 
-  (arg1)->setOnFinish(arg2,arg3);
-  
+  result = (int)(arg1)->getLoopCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -29375,90 +29800,10 @@ fail:
 }
 
 
-static int _wrap_Process_onFinish(lua_State* L) {
-  int SWIG_arg = 0;
-  gsProcess *arg1 = (gsProcess *) 0 ;
-  bool arg2 ;
-  
-  SWIG_check_num_args("onFinish",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onFinish",1,"gsProcess *");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("onFinish",2,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
-    SWIG_fail_ptr("Process_onFinish",1,SWIGTYPE_p_gsProcess);
-  }
-  
-  arg2 = (lua_toboolean(L, 2)!=0);
-  (arg1)->onFinish(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Process_setFollowUp(lua_State* L) {
-  int SWIG_arg = 0;
-  gsProcess *arg1 = (gsProcess *) 0 ;
-  gsProcess *arg2 = (gsProcess *) 0 ;
-  
-  SWIG_check_num_args("setFollowUp",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setFollowUp",1,"gsProcess *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("setFollowUp",2,"gsProcess *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
-    SWIG_fail_ptr("Process_setFollowUp",1,SWIGTYPE_p_gsProcess);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsProcess,0))){
-    SWIG_fail_ptr("Process_setFollowUp",2,SWIGTYPE_p_gsProcess);
-  }
-  
-  (arg1)->setFollowUp(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Process_proc(lua_State* L) {
-  int SWIG_arg = 0;
-  gsProcess *arg1 = (gsProcess *) 0 ;
-  gsProcess *result = 0 ;
-  
-  SWIG_check_num_args("proc",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("proc",1,"gsProcess *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
-    SWIG_fail_ptr("Process_proc",1,SWIGTYPE_p_gsProcess);
-  }
-  
-  result = (gsProcess *)(arg1)->proc();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
 static int _wrap_Process_get(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
-  gkProcess *result = 0 ;
+  gsProcess *result = 0 ;
   
   SWIG_check_num_args("get",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("get",1,"gsProcess *");
@@ -29467,10 +29812,8 @@ static int _wrap_Process_get(lua_State* L) {
     SWIG_fail_ptr("Process_get",1,SWIGTYPE_p_gsProcess);
   }
   
-  result = (gkProcess *)(arg1)->get();
-  if (result) {
-    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
-  } 
+  result = (gsProcess *)(arg1)->get();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -29489,16 +29832,14 @@ static swig_lua_method swig_gsProcess_methods[] = {
     {"setInit", _wrap_Process_setInit}, 
     {"setUpdate", _wrap_Process_setUpdate}, 
     {"setIsFinished", _wrap_Process_setIsFinished}, 
-    {"setOnFinish", _wrap_Process_setOnFinish}, 
+    {"setLoopCount", _wrap_Process_setLoopCount}, 
+    {"getLoopCount", _wrap_Process_getLoopCount}, 
     {"suspend", _wrap_Process_suspend}, 
     {"resume", _wrap_Process_resume}, 
     {"isSuspended", _wrap_Process_isSuspended}, 
     {"isFinished", _wrap_Process_isFinished}, 
     {"init", _wrap_Process_init}, 
     {"update", _wrap_Process_update}, 
-    {"onFinish", _wrap_Process_onFinish}, 
-    {"setFollowUp", _wrap_Process_setFollowUp}, 
-    {"proc", _wrap_Process_proc}, 
     {"get", _wrap_Process_get}, 
     {0,0}
 };
@@ -29537,7 +29878,6 @@ static int _wrap_ProcessManager_addProcess(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   gsProcess *arg2 = (gsProcess *) 0 ;
-  int result;
   
   SWIG_check_num_args("addProcess",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addProcess",1,"gsProcessManager *");
@@ -29552,35 +29892,8 @@ static int _wrap_ProcessManager_addProcess(lua_State* L) {
     SWIG_fail_ptr("ProcessManager_addProcess",2,SWIGTYPE_p_gsProcess);
   }
   
-  result = (int)(arg1)->addProcess(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
+  (arg1)->addProcess(arg2);
   
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ProcessManager_getProcessByHandle(lua_State* L) {
-  int SWIG_arg = 0;
-  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
-  int arg2 ;
-  gsProcess *result = 0 ;
-  
-  SWIG_check_num_args("getProcessByHandle",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getProcessByHandle",1,"gsProcessManager *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("getProcessByHandle",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_getProcessByHandle",1,SWIGTYPE_p_gsProcessManager);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  result = (gsProcess *)(arg1)->getProcessByHandle(arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProcess,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -29610,32 +29923,6 @@ static int _wrap_ProcessManager_removeProcess(lua_State* L) {
   }
   
   (arg1)->removeProcess(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ProcessManager_removeProcessByHandle(lua_State* L) {
-  int SWIG_arg = 0;
-  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
-  int arg2 ;
-  
-  SWIG_check_num_args("removeProcessByHandle",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("removeProcessByHandle",1,"gsProcessManager *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("removeProcessByHandle",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_removeProcessByHandle",1,SWIGTYPE_p_gsProcessManager);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  (arg1)->removeProcessByHandle(arg2);
   
   return SWIG_arg;
   
@@ -30441,9 +30728,7 @@ delete arg1;
 }
 static swig_lua_method swig_gsProcessManager_methods[] = {
     {"addProcess", _wrap_ProcessManager_addProcess}, 
-    {"getProcessByHandle", _wrap_ProcessManager_getProcessByHandle}, 
     {"removeProcess", _wrap_ProcessManager_removeProcess}, 
-    {"removeProcessByHandle", _wrap_ProcessManager_removeProcessByHandle}, 
     {"createWait", _wrap_ProcessManager_createWait}, 
     {"createTranslation", _wrap_ProcessManager_createTranslation}, 
     {"createOrientation", _wrap_ProcessManager_createOrientation}, 
@@ -30465,6 +30750,7 @@ static swig_lua_class _wrap_class_gsProcessManager = { "ProcessManager", &SWIGTY
 #endif
 
 static const struct luaL_reg swig_commands[] = {
+    { "lerp", _wrap_lerp},
     { "Vec3Negate", _wrap_Vec3Negate},
     { "Vec3AddVec3", _wrap_Vec3AddVec3},
     { "Vec3SubVec3", _wrap_Vec3SubVec3},

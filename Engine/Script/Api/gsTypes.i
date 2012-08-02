@@ -106,6 +106,8 @@
 %typemap(out) gkLogicActuator* 
 %{ if ($1) { SWIG_arg += gsWrapActuator(L, $1); } %}
 
+
+#ifdef OGREKIT_USE_PROCESSMANAGER
 // Processes
 
 %typemap(out) gkProcessManager*
@@ -113,6 +115,7 @@
 
 %typemap(out) gkProcess*
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Process); } %}
+#endif
 
 #else
 

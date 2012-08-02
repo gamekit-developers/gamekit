@@ -28,6 +28,7 @@
 #include "Process/gkOrientationProcess.h"
 #include "gkLogger.h"
 #include "gkGameObject.h"
+#include "gkValue.h"
 
 
 gkOrientationProcess::gkOrientationProcess(gkGameObject* obj,gkScalar time,const gkQuaternion& destOrientation)
@@ -87,9 +88,5 @@ void gkOrientationProcess::update(gkScalar delta)
 	}
 }
 
-void gkOrientationProcess::onFinish()
-{
-	gkPrintf("Trans Finished");
-}
 
 

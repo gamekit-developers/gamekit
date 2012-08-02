@@ -141,12 +141,13 @@ gkScene::~gkScene()
 		m_constraintManager = 0;
 	}
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
 	if (m_processManager)
 	{
 		delete m_processManager;
 		m_processManager=0;
 	}
-
+#endif
 	if (m_logicBrickManager)
 	{
 		delete m_logicBrickManager;

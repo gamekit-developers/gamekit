@@ -28,9 +28,9 @@
 #define _gkScriptController_h_
 
 #include "gkLogicController.h"
-#include "Script/Lua/gkLuaUtils.h"
-#ifdef OGREKIT_USE_LUA
 
+#ifdef OGREKIT_USE_LUA
+#include "Script/Lua/gkLuaUtils.h"
 
 class gkScriptController : public gkLogicController
 {

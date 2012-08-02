@@ -43,7 +43,6 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	void onFinish();
 
 private:
 	typedef utList<gkProcess*> ProcessList;

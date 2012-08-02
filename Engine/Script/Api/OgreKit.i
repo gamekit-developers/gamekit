@@ -59,5 +59,7 @@
 %include "gsThread.i"
 %include "gsTypeConverters.i"
 %include "gsScript.i"
-%include "gsProcess.i"
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
+%include "gsProcess.i"
+#endif

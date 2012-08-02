@@ -39,7 +39,7 @@ gkSequenceProcess::gkSequenceProcess(gkScalar maxTime)
 
 void gkSequenceProcess::append(gkProcess* childProcess)
 {
-	if (childProcess && m_processList.find(childProcess)==0)
+	if (childProcess)
 	{
 		m_processList.push_back(childProcess);
 	}
@@ -48,7 +48,7 @@ void gkSequenceProcess::remove(gkProcess* childProcess)
 {
 	if (childProcess)
 	{
-		m_processList.erase(childProcess,false);
+		m_processList.erase(childProcess);
 	}
 }
 
@@ -79,10 +79,8 @@ bool gkSequenceProcess::isFinished()
 		m_currentProcessNr++;
 		// did we reach the end of the sequential list?
 		if (m_currentProcessNr >= m_processList.size()){
-			gkLogger::write("end "+gkToString(m_currentProcessNr));
 			return true;
 		} else {
-			gkLogger::write("next "+gkToString(m_currentProcessNr));
 			m_currentProcess = m_processList.at(m_currentProcessNr);
 			m_currentProcess->init();
 		}
@@ -96,9 +94,6 @@ bool gkSequenceProcess::isFinished()
 }
 
 
-void gkSequenceProcess::onFinish()
-{
-	gkPrintf("Trans Finished");
-}
+
 
 

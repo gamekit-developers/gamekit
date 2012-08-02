@@ -35,20 +35,20 @@ gkParallelProcess::gkParallelProcess(gkScalar maxTime)
 	:	gkProcess(), m_masterProcess(0), m_currentTime(0),m_maxTime(maxTime),m_object(0)
 {}
 
-
-
 void gkParallelProcess::append(gkProcess* childProcess)
 {
 	if (childProcess && m_initalProcessList.find(childProcess)==0)
 	{
 		m_initalProcessList.push_back(childProcess);
+	} else {
+		gkLogger::write("Tried to apply a process to gkParallelProcess that was already in the processlist! This is not allowed!",true);
 	}
 }
 void gkParallelProcess::remove(gkProcess* childProcess)
 {
 	if (childProcess)
 	{
-		m_initalProcessList.erase(childProcess,false);
+		m_initalProcessList.erase(childProcess);
 	}
 }
 void gkParallelProcess::setMasterProcess(gkProcess* masterProcess)
@@ -60,6 +60,7 @@ void gkParallelProcess::init()
 {
 	m_currentTime = 0;
 	// reinit process-list
+	m_processList.clear();
 	for (int i=0;i<m_initalProcessList.size();i++)
 	{
 		gkProcess* proc = m_initalProcessList.at(i);
@@ -79,12 +80,11 @@ void gkParallelProcess::update(gkScalar delta)
 	while (iter.hasMoreElements())
 	{
 		count++;
-//		gkLogger::write("in "+gkToString(count));
 		gkProcess* proc = iter.getNext();
 		proc->update(delta);
 
 		if (proc->isFinished())
-			m_processList.erase(proc,false);
+			m_processList.erase(proc);
 	}
 
 }
@@ -98,11 +98,4 @@ bool gkParallelProcess::isFinished()
 	else
 		return false;
 }
-
-
-void gkParallelProcess::onFinish()
-{
-	gkPrintf("Parallel Finished");
-}
-
 

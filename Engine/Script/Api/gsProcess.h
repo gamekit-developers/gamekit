@@ -40,7 +40,6 @@ private:
 	gkLuaEvent* m_init;
 	gkLuaEvent* m_update;
 	gkLuaEvent* m_isFinished;
-	gkLuaEvent* m_onFinished;
 
 public:
 #ifndef SWIG
@@ -50,12 +49,17 @@ public:
 	gsProcess(gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish);
 	gsProcess(gsSelf self,gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish);
 	virtual ~gsProcess();
+	// lua class-methods
+	gsProcess* setInit(gsSelf self,gsFunction init);
+	gsProcess* setUpdate(gsSelf self,gsFunction update);
+	gsProcess* setIsFinished(gsSelf self,gsFunction isFinished);
+	// lua functions
+	gsProcess* setInit(gsFunction init);
+	gsProcess* setUpdate(gsFunction update);
+	gsProcess* setIsFinished(gsFunction isFinished);
 
-	void setInit(gsSelf self,gsFunction init);
-	void setUpdate(gsSelf self,gsFunction update);
-	void setIsFinished(gsSelf self,gsFunction isFinished);
-	void setOnFinish(gsSelf self,gsFunction onFinish);
-
+	void setLoopCount(int loopCount);
+	int  getLoopCount();
 	void suspend();
 	void resume();
 	bool isSuspended();
@@ -63,10 +67,8 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	void onFinish(bool canceled);
-	void setFollowUp(gsProcess* followUp);
-	gsProcess* proc() { return this;}
-	gkProcess* get() { return m_process?m_process:this;}
+
+	gkProcess* get() { return this;}
 };
 
 class gsProcessManager
@@ -75,10 +77,8 @@ public:
 	gsProcessManager(gkProcessManager* processManager);
 	~gsProcessManager();
 
-	int addProcess(gsProcess* process);
-	gsProcess* getProcessByHandle(int handle);
+	void addProcess(gsProcess* process);
 	void removeProcess(gsProcess* proc);
-	void removeProcessByHandle(int handle);
 
 	gkProcess* createWait(float time);
 	gkProcess* createTranslation(gsGameObject* obj, float time, const gsVector3& to);

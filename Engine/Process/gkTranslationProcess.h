@@ -40,7 +40,6 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	void onFinish();
 
 private:
 	gkGameObject* m_object;

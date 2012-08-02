@@ -37,6 +37,9 @@ void install_Templates(lua_State* L)
 	lua_pushvalue(L, LUA_GLOBALSINDEX);
 	luaL_dostring(L, SYSTEM); // printf, dPrintf
 	luaL_dostring(L, CLASS);  // Class, BaseClass
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	luaL_dostring(L, PROCESS);  // Process-Helpers
+#endif
 	lua_pop(L, 1);
 }
 

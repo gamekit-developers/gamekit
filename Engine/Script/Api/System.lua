@@ -39,3 +39,6 @@ if _G["dPrintf"] == nil then
         OgreKit.DebugPrint(string.format(...))
     end
 end
+
+-- convenience
+Gk = OgreKit;

@@ -1016,12 +1016,18 @@ gkString gsObject::getName(void)
 
 
 
-gsScene::gsScene() : m_pickRay(0), m_processManager(0)
+gsScene::gsScene() : m_pickRay(0)
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	, m_processManager(0)
+#endif
 {
 }
 
 
-gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob),m_pickRay(0),m_processManager(0)
+gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob),m_pickRay(0)
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	,m_processManager(0)
+#endif
 {
 }
 
@@ -1050,6 +1056,7 @@ gkScene* gsScene::getOwner()
 	return 0;
 }
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
 gkProcessManager* gsScene::getProcessManager()
 {
 	if (m_object)
@@ -1060,7 +1067,7 @@ gkProcessManager* gsScene::getProcessManager()
 	}
 	return 0;
 }
-
+#endif
 
 gkGameObject* gsScene::getObject(const gkString& name)
 {

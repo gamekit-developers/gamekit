@@ -30,7 +30,12 @@
 
 %rename(ProcessManager)	gsProcessManager;
 %rename(Process)		gsProcess;
-%newobject gsProcessManager::waitProcess;
+%newobject gsProcessManager::createTranslation;
+%newobject gsProcessManager::createOrientation;
+%newobject gsProcessManager::createParallel;
+%newobject gsProcessManager::createSequence;
+%newobject gsProcessManager::createSound;
+
 
 
 %include "gsProcess.h"

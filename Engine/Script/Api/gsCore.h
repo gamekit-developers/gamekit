@@ -30,8 +30,10 @@
 #include "gsCommon.h"
 #include "gsMath.h"
 #include "gsUtils.h"
-#include "gsProcess.h"
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
+#include "gsProcess.h"
+#endif
 
 
 enum gsRenderSystem
@@ -365,7 +367,9 @@ class gsScene : public gsObject
 private:
 	gsArray<gsGameObject, gkGameObject> m_objectCache;
 	gsRay* m_pickRay;
+#ifdef OGREKIT_USE_PROCESSMANAGER
 	gkProcessManager* m_processManager;
+#endif
 
 public:
 	gsScene();
@@ -388,7 +392,9 @@ public:
 
 	void setUpdateFlags(unsigned int flags);
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
 	gkProcessManager* getProcessManager(void);
+#endif
 
 	gkLogicManager* getLogicBrickManager(void);
 

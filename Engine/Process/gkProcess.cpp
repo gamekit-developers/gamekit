@@ -27,26 +27,80 @@
 
 #include "Process/gkProcess.h"
 
-gkProcess::gkProcess() : m_deleteAfterFinish(false),m_followUp(0),m_handle(0),m_suspended(false) {}
-gkProcess::~gkProcess() {}
+gkProcess::gkProcess()
+	:	m_suspended(false),m_loopCount(1),m_initialLoopCount(1)
+{}
 
-bool gkProcess::isFinished(){
+gkProcess::~gkProcess() {
+}
+
+void gkProcess::_init()
+{
+	m_loopCount = m_initialLoopCount;
+	init();
+	_onInit();
+}
+
+void gkProcess::_update(gkScalar delta)
+{
+	if (!m_suspended)
+		update(delta);
+}
+
+void gkProcess::setSuspend(bool suspend)
+{
+	if (suspend!=m_suspended)
+	{
+		m_suspended = suspend;
+		if (suspend)
+			_onSuspend();
+		else
+			_onResume();
+	}
+
+}
+
+bool gkProcess::_isFinished() {
+
+	// call virtual method
+	bool procResult = isFinished();
+
+	if (procResult)
+	{
+		// loopCount=0 means infinite
+		if (m_loopCount==0)
+		{
+			init();
+			return false;
+		}
+
+		m_loopCount--;
+		// still loops to do?
+		if (m_loopCount>0) {
+			_onLoopEnd();
+			init();
+			return false;
+		}
+		_onFinished();
+		return true;
+	}
 	return false;
 }
 
-void gkProcess::init(){
-//	gkLogger::write("Process init!",true);
-}
-
-void gkProcess::update(gkScalar delta){
-//	gkLogger::write("Process update!",true);
-}
-
-void gkProcess::onFinish(bool cancled) {
-//	gkLogger::write("Process finish!",true);
-}
-
-void gkProcess::setFollowUp(gkProcess* followUp)
+void gkProcess::addListener(Listener* listener)
 {
-	m_followUp = followUp;
+	if (!m_listener.find(listener))
+		m_listener.push_back(listener);
+}
+
+void gkProcess::removeListener(Listener* listener)
+{
+	m_listener.erase(listener);
+}
+
+void gkProcess::sendNotification(const Listener::Event& e)
+{
+	ProcessListener::Iterator iter(m_listener);
+	while (iter.hasMoreElements())
+		iter.getNext()->notifyEvent(this,e);
 }

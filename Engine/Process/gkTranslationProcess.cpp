@@ -75,9 +75,6 @@ void gkTranslationProcess::update(gkScalar delta)
 	}
 }
 
-void gkTranslationProcess::onFinish()
-{
-	gkPrintf("Trans Finished");
-}
+
 
 

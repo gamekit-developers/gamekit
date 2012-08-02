@@ -31,7 +31,7 @@
 
 
 
-gkProcessManager::gkProcessManager() : m_pause(false), m_handleCounter(0) {
+gkProcessManager::gkProcessManager() : m_pause(false) {
 
 }
 
@@ -51,86 +51,35 @@ void gkProcessManager::update(gkScalar delta)
 
 	if (!m_pause && m_processList.size()>0)
 	{
-		// remove stopped process
-		utListIterator<ProcessList> iter(m_removeProcessList);
-		while (iter.hasMoreElements())
-		{
-			gkProcess* proc = iter.getNext();
-			// call finish-hook (canceled-finish)
-			proc->onFinish(true);
-			m_processList.erase(proc,false);
-		}
 
 		if (m_processList.size()==0)
 			return;
-		// update all processes
-		utList<gkProcess*>::Pointer start = m_processList.begin();
-		utList<gkProcess*>::Pointer end = m_processList.end();
 
-		while(1)
+		ProcessList::Iterator iter(m_processList);
+
+		while (iter.hasMoreElements())
 		{
-			temp = start->getLink();
+			temp = iter.getNext();
 
-			// skip all this when the process is suspended
-			if (!temp->isSuspended())
-			{
-				temp->update(delta);
-				if (temp->isFinished())
-				{
-					// call finish-hook (normal finish)
-					temp->onFinish(false);
-					if (temp->getFollowUp())
-					{
-						// replace the finished process by its followup and set the handler
-						// that let us keep track of this process-chain
-						start->link=temp->getFollowUp();
-						start->link->init();
-						start->link->m_handle=temp->m_handle;
-					}
-					else
-					{
-						m_processList.erase(temp,false);
-					}
-					if (temp->deleteAfterFinish()){
-						delete temp;
-					}
-				}
-
-			}
-
-
-			// reached the end?
-			if (start==end)
-			{
-				break;
-			}
-			start = start->getNext();
-
+			temp->_update(delta);
+			if (temp->_isFinished())
+				m_processList.erase(temp);
 		};
 	}
 }
 
-int gkProcessManager::addProcess(gkProcess* proc)
+void gkProcessManager::addProcess(gkProcess* proc,bool overwrite)
 {
-	int procHandle = m_handleCounter++;
-	proc->m_handle = procHandle;
-	m_processList.push_back(proc);
-	proc->init();
-	return 0;
-}
-
-gkProcess* gkProcessManager::getProcessByHandle(UTint32 handle)
-{
-	utListIterator<ProcessList> iter(m_processList);
-	while (iter.hasMoreElements())
+	if (m_processList.find(proc))
 	{
-		gkProcess* proc = iter.getNext();
-		if (proc->getHandle() == handle)
-		{
-			return proc;
-		}
+		if (overwrite)
+			proc->_init();
 	}
-	return NULL;
+	else
+	{
+		m_processList.push_back(proc);
+		proc->_init();
+	}
 }
 
 void gkProcessManager::removeProcess(gkProcess* proc)
@@ -138,19 +87,6 @@ void gkProcessManager::removeProcess(gkProcess* proc)
 	m_processList.erase(proc);
 }
 
-void gkProcessManager::removeProcessByHandle(UTint32 handle)
-{
-	utListIterator<ProcessList> iter(m_processList);
-	while (iter.hasMoreElements())
-	{
-		gkProcess* proc = iter.getNext();
-		if (proc->getHandle() == handle)
-		{
-			m_removeProcessList.push_back(proc);
-			break;
-		}
-	}
-}
 
 int gkProcessManager::processCount(void)
 {

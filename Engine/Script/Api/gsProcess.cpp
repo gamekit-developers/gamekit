@@ -33,10 +33,10 @@
 #include "Process/gkSoundProcess.h"
 
 
-gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0)
+gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_process(0)
 {}
 
-gsProcess::gsProcess(gkProcess* proc) : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(proc)
+gsProcess::gsProcess(gkProcess* proc) : m_init(0),m_update(0),m_isFinished(0),m_process(proc)
 {
 }
 
@@ -45,7 +45,6 @@ gsProcess::gsProcess(gsFunction init,gsFunction update,gsFunction isFinished, gs
 	m_init = new gkLuaEvent(init);
 	m_update = new gkLuaEvent(update);
 	m_isFinished = new gkLuaEvent(isFinished);
-	m_onFinished = new gkLuaEvent(onFinish);
 }
 
 gsProcess::gsProcess(gsSelf self,gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish) : m_process(0)
@@ -53,58 +52,54 @@ gsProcess::gsProcess(gsSelf self,gsFunction init,gsFunction update,gsFunction is
 	m_init = new gkLuaEvent(self,init);
 	m_update = new gkLuaEvent(self,update);
 	m_isFinished = new gkLuaEvent(self,isFinished);
-	m_onFinished = new gkLuaEvent(self,onFinish);
 }
 
 gsProcess::~gsProcess()
 {
-	if (m_init)
+ 	if (m_init)
 		delete m_init;
 	if (m_update)
 		delete m_update;
 	if (m_isFinished)
 		delete m_isFinished;
-	if (m_onFinished)
-		delete m_onFinished;
 
-	// TODO: should the wrapper really kill the object?
+	// TODO: should the wrapper really kill the object? Makes absoletly sense,
+	//       but the garbage-collector kills from time to time still needed classes.
+	//       Therefore you have to keep references...
 	if (m_process)
 		delete m_process;
 
-	gkPrintf("released gsProcess");
 }
 
-void gsProcess::setInit(gsSelf self,gsFunction init)
-{
-	if (m_init){
-		delete m_init;
-	}
-	m_init = new gkLuaEvent(self,init);
+//set lua-class-functions
+#define WRAP_HOOK_SETTER(NAME,LOWERNAME)\
+gsProcess* NAME(gsSelf self,gsFunction func)\
+{\
+	if ( m_##LOWERNAME ){\
+		delete m_##LOWERNAME;\
+	}\
+	m_##LOWERNAME = new gkLuaEvent(self,func);\
+	return this;\
 }
 
-void gsProcess::setUpdate(gsSelf self,gsFunction update)
-{
-	if (m_update){
-		delete m_init;
-	}
-	m_update = new gkLuaEvent(self,update);
+WRAP_HOOK_SETTER(gsProcess::setInit,init)
+WRAP_HOOK_SETTER(gsProcess::setUpdate,update)
+WRAP_HOOK_SETTER(gsProcess::setIsFinished,isFinished)
+
+// set lua-functions
+#define WRAP_HOOK_SETTER_FUNC(NAME,LOWERNAME)\
+gsProcess* NAME(gsFunction func)\
+{\
+	if ( m_##LOWERNAME ){\
+		delete m_##LOWERNAME;\
+	}\
+	m_##LOWERNAME = new gkLuaEvent(func);\
+	return this;\
 }
 
-void gsProcess::setIsFinished(gsSelf self,gsFunction isFinished)
-{
-	if (m_isFinished){
-		delete m_isFinished;
-	}
-	m_isFinished = new gkLuaEvent(self,isFinished);
-}
-
-void gsProcess::setOnFinish(gsSelf self,gsFunction onFinished)
-{
-	if (m_onFinished){
-		delete m_onFinished;
-	}
-	m_onFinished = new gkLuaEvent(self,onFinished);
-}
+WRAP_HOOK_SETTER_FUNC(gsProcess::setInit,init)
+WRAP_HOOK_SETTER_FUNC(gsProcess::setUpdate,update)
+WRAP_HOOK_SETTER_FUNC(gsProcess::setIsFinished,isFinished)
 
 
 void gsProcess::init()
@@ -112,7 +107,7 @@ void gsProcess::init()
 	// is it a wrapped gkProcess?
 	if (m_process)
 	{
-		m_process->init();
+		m_process->_init();
 		return;
 	}
 
@@ -130,7 +125,7 @@ void gsProcess::update(gkScalar delta)
 	// is it a wrapped gkProcess?
 	if (m_process)
 	{
-		m_process->update(delta);
+		m_process->_update(delta);
 		return;
 	}
 
@@ -143,6 +138,19 @@ void gsProcess::update(gkScalar delta)
 	}
 }
 
+int gsProcess::getLoopCount()
+{
+	return m_process?m_process->getLoopCount():m_loopCount;
+}
+
+void gsProcess::setLoopCount(int loopCount)
+{
+	if (m_process)
+		m_process->setLoopCount(loopCount);
+	else
+		setLoopCount(loopCount);
+}
+
 bool gsProcess::isFinished()
 {
 	bool result =  true;
@@ -150,7 +158,7 @@ bool gsProcess::isFinished()
 	// is it a wrapped gkProcess?
 	if (m_process)
 	{
-		return m_process->isFinished();
+		return m_process->_isFinished();
 	}
 
 	// is there a lua-function?
@@ -164,29 +172,6 @@ bool gsProcess::isFinished()
 	return result;
 }
 
-void gsProcess::onFinish(bool canceled)
-{
-	// is it a wrapped gkProcess?
-	if (m_process)
-	{
-		m_process->onFinish(canceled);
-		return;
-	}
-
-	// is there a lua-function?
-	if (m_onFinished)
-	{
-		m_onFinished->beginCall();
-		m_onFinished->addArgument(true);
-		m_onFinished->call();
-	}
-}
-
-
-void gsProcess::setFollowUp(gsProcess* followUp)
-{
-	gkProcess::setFollowUp(followUp);
-}
 
 void gsProcess::suspend()
 {
@@ -214,36 +199,18 @@ gsProcessManager::~gsProcessManager()
 	}
 }
 
-gsProcess* gsProcessManager::getProcessByHandle(int handle)
-{
-	gkProcess* proc = m_processManager->getProcessByHandle(handle);
-	// TODO: are there use-cases where the cast will not work?
-	gsProcess* gsProc = static_cast<gsProcess*>( proc);
-	return gsProc;
-}
 
 void gsProcessManager::removeProcess(gsProcess* proc)
 {
 	m_processManager->removeProcess(proc);
 }
-void gsProcessManager::removeProcessByHandle(int handle)
-{
-	m_processManager->removeProcessByHandle(handle);
-}
 
-int gsProcessManager::addProcess(gsProcess* process)
+void gsProcessManager::addProcess(gsProcess* process)
 {
 	if (process)
 	{
-//		if (process->m_process)
-//			return m_processManager.addProcess(process->m_process);
-//		else
-//			return m_processManager.addProcess(process);
-
 		return m_processManager->addProcess(process);
 	}
-
-	return 0;
 }
 
 
@@ -295,7 +262,8 @@ gkProcess* gsProcessManager::createSequence(gsArray<gsProcess,gkProcess>& proces
 	gkSequenceProcess* seqProcesses = new gkSequenceProcess(maxTime);
 
 	for (int i=0;i<processes.size();i++) {
-		seqProcesses->append(processes.at(i));
+		gkProcess* proc = processes.at(i);
+		seqProcesses->append(proc);
 	}
 
 	return seqProcesses;
@@ -305,7 +273,8 @@ gkProcess* gsProcessManager::createSound(const gkString& soundName)
 {
 	if (!soundName.empty())
 	{
-		return new gkSoundProcess(soundName);
+		gkSoundProcess* sound = new gkSoundProcess(soundName);
+		return sound;
 	}
 
 	return 0;

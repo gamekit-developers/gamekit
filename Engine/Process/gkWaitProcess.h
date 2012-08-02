@@ -39,7 +39,6 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	void onFinish();
 private:
 	gkScalar m_initialTime;
 	gkScalar m_timeCounter;

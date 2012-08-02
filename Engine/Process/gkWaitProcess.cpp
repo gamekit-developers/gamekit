@@ -55,8 +55,4 @@ void gkWaitProcess::update(gkScalar delta)
 		m_func->update(delta);
 }
 
-void gkWaitProcess::onFinish()
-{
-	gkPrintf("Finished");
-}
 

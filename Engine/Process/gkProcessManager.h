@@ -48,16 +48,14 @@ public:
 	gkProcessManager();
 	virtual ~gkProcessManager();
 
-	int addProcess(gkProcess* proc);
-
-	gkProcess* getProcessByHandle(UTint32 handle);
+	void addProcess(gkProcess* proc, bool overwrite=true);
 
 	void removeProcess(gkProcess* proc);
-	void removeProcessByHandle(UTint32 handle);
 
 	void update(gkScalar delta);
 
 	int processCount(void);
+	gkProcess* getProcessAt(int idx);
 
 	void pause() { m_pause = true;}
 	void resume() { m_pause = false;}
@@ -70,8 +68,6 @@ private:
 	ProcessList m_processList;
 	ProcessList m_removeProcessList;
 	bool m_pause;
-	UTint32 m_handleCounter;
-
 };
 
 
