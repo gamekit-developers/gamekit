@@ -28,6 +28,7 @@
 #define _gkScriptController_h_
 
 #include "gkLogicController.h"
+#include "Script/Lua/gkLuaUtils.h"
 #ifdef OGREKIT_USE_LUA
 
 
@@ -36,17 +37,20 @@ class gkScriptController : public gkLogicController
 protected:
 	class gkLuaScript* m_script;
 	bool m_error, m_isModule;
+	gkLuaEvent* m_event;
 
 public:
 
 	gkScriptController(gkGameObject* object, gkLogicLink* link, const gkString& name);
-	virtual ~gkScriptController() {}
+	virtual ~gkScriptController();
 
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	void execute(void);
 	void setScript(const gkString& str);
 	void setScriptByString(const gkString& str);
+	void setLuaScript(const gkLuaCurState& self, const gkLuaCurState& function);
+	void setLuaScript(const gkLuaCurState& function);
 
 	GK_INLINE void setModule(bool v)            {m_isModule = v;}
 	GK_INLINE bool isModule(void)               {return m_isModule;}

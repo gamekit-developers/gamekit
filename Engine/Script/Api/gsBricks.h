@@ -725,7 +725,8 @@ public:
 
 	void setScript(const gkString& name)  { BRICK_SET( setScript(name) ); }
 	void setScriptByString(const gkString& script) { BRICK_SET(  setScriptByString(script) );}
-
+	void setLuaScript(gsFunction function) { BRICK_SET( setLuaScript(function) );};
+	void setLuaScript(gsSelf self, gsFunction function){ BRICK_SET( setLuaScript(self,function) ); };
 	OGRE_KIT_LOGIC_BRICK(ScriptController);
 };
 

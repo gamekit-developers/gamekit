@@ -39,10 +39,15 @@
 
 
 gkScriptController::gkScriptController(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
+	:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false), m_event(0)
 {
 }
 
+gkScriptController::~gkScriptController()
+{
+	if (m_event)
+		delete m_event;
+}
 
 
 gkLogicBrick* gkScriptController::clone(gkLogicLink* link, gkGameObject* dest)
@@ -82,7 +87,15 @@ void gkScriptController::setScriptByString(const gkString& str)
 		m_script = scrpt;
 }
 
+void gkScriptController::setLuaScript(const gkLuaCurState& self, const gkLuaCurState& function)
+{
+	m_event = new gkLuaEvent(self,function);
+}
 
+void gkScriptController::setLuaScript(const gkLuaCurState& function)
+{
+	m_event = new gkLuaEvent(function);
+}
 
 
 void gkScriptController::execute(void)
@@ -94,6 +107,14 @@ void gkScriptController::execute(void)
 	if (m_script != 0)
 		m_error = !m_script->execute();
 
+	if (m_event)
+	{
+		m_event->beginCall();
+		m_event->addArgument(true);
+		bool result = true;
+		m_event->call(result);
+//		m_error = !
+	}
 }
 
 

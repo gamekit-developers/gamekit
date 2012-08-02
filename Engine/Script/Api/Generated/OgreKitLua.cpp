@@ -20858,6 +20858,114 @@ fail:
 }
 
 
+static int _wrap_ScriptController_setLuaScript__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScriptController *arg1 = (gsScriptController *) 0 ;
+  gsFunction arg2 ;
+  
+  SWIG_check_num_args("gsScriptController::setLuaScript",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScriptController::setLuaScript",1,"gsScriptController *");
+  if(!lua_isfunction(L,2)) SWIG_fail_arg("gsScriptController::setLuaScript",2,"gsFunction");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScriptController,0))){
+    SWIG_fail_ptr("ScriptController_setLuaScript",1,SWIGTYPE_p_gsScriptController);
+  }
+  
+  (&arg2)->m_id = 2; (&arg2)->L = L; 
+  (arg1)->setLuaScript(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ScriptController_setLuaScript__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScriptController *arg1 = (gsScriptController *) 0 ;
+  gsSelf arg2 ;
+  gsFunction arg3 ;
+  
+  SWIG_check_num_args("gsScriptController::setLuaScript",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScriptController::setLuaScript",1,"gsScriptController *");
+  if(!lua_istable(L,2)) SWIG_fail_arg("gsScriptController::setLuaScript",2,"gsSelf");
+  if(!lua_isfunction(L,3)) SWIG_fail_arg("gsScriptController::setLuaScript",3,"gsFunction");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScriptController,0))){
+    SWIG_fail_ptr("ScriptController_setLuaScript",1,SWIGTYPE_p_gsScriptController);
+  }
+  
+  (&arg2)->m_id = 2; (&arg2)->L = L; 
+  (&arg3)->m_id = 3; (&arg3)->L = L; 
+  (arg1)->setLuaScript(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ScriptController_setLuaScript(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScriptController, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_isfunction(L, argv[1]); 
+      if (_v) {
+        return _wrap_ScriptController_setLuaScript__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScriptController, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      _v = lua_istable(L, argv[1]); 
+      if (_v) {
+        _v = lua_isfunction(L, argv[2]); 
+        if (_v) {
+          return _wrap_ScriptController_setLuaScript__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'ScriptController_setLuaScript'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsScriptController::setLuaScript(gsFunction)\n"
+    "    gsScriptController::setLuaScript(gsSelf,gsFunction)\n");
+  lua_error(L);return 0;
+}
+
+
 static void swig_delete_ScriptController(void *obj) {
 gsScriptController *arg1 = (gsScriptController *) obj;
 delete arg1;
@@ -20865,6 +20973,7 @@ delete arg1;
 static swig_lua_method swig_gsScriptController_methods[] = {
     {"setScript", _wrap_ScriptController_setScript}, 
     {"setScriptByString", _wrap_ScriptController_setScriptByString}, 
+    {"setLuaScript", _wrap_ScriptController_setLuaScript}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsScriptController_attributes[] = {

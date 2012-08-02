@@ -54,7 +54,10 @@ gkLogicLink* gsLogicManager::newObject(gsGameObject* obj)
 
 		lnk->setObject(obj->get());
 		lnk->setState(1);
-        lnk->setExternalOwner(true);
+		// setting this true let the lua-garbagecollector destroy the link as well
+		// eventhough it was still be used.
+        lnk->setExternalOwner(false);
+//        lnk->setExternalOwner(true);
 		return lnk;
 	}
 
@@ -375,7 +378,7 @@ gkGameObject* gsBrick::getOwner(){
 
 
 #define GS_IMPLEMENT_DEFAULT_BRICK(base, cls) \
-    cls::~cls() {}\
+    cls::~cls() { }\
     cls::cls() {}\
     cls::cls(gkLogicBrick *brk) : base(brk) {}
 
