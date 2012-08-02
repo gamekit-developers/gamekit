@@ -76,7 +76,14 @@ void gkScriptController::setScript(const gkString& str)
 	}
 }
 
-
+void gkScriptController::setScriptByString(const gkString& str)
+{
+	gkLuaScript* scrpt;
+	scrpt = gkLuaManager::getSingleton().createFromText(
+			gkResourceName(gkUtils::getUniqueName("customscript"),getObjectGroupName()),str);
+	if (scrpt)
+		m_script = scrpt;
+}
 
 gkScriptController* gkScriptController::getCurrent(void)
 {
@@ -97,4 +104,6 @@ void gkScriptController::execute(void)
 
 	scriptContext = 0;
 }
+
+
 #endif //OGREKIT_USE_LUA

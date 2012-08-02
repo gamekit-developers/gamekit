@@ -724,7 +724,7 @@ public:
 	~gsScriptController();
 
 	void setScript(const gkString& name)  { BRICK_SET( setScript(name) ); }
-
+	void setScriptByString(const gkString& script) { BRICK_SET(  setScriptByString(script) );}
 
 	OGRE_KIT_LOGIC_BRICK(ScriptController);
 };

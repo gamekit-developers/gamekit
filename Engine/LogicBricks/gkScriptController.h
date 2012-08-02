@@ -46,6 +46,7 @@ public:
 
 	void execute(void);
 	void setScript(const gkString& str);
+	void setScriptByString(const gkString& str);
 
 	GK_INLINE void setModule(bool v)            {m_isModule = v;}
 	GK_INLINE bool isModule(void)               {return m_isModule;}
