@@ -730,7 +730,44 @@ gkScene* gsEngine::getActiveScene(void)
 	return 0;
 }
 
+void gsEngine::addOverlayScene(const gkString& m_sceneName)
+{
+	gkScene* scene = 0;
+	gkGameObject* obj = 0;
+	gkWindow* win;
+	win = m_engine->getActiveScene()->getDisplayWindow();
+	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+	if (scene && !scene->isInstanced())
+	{
+		int zorder = win->getViewport(win->getViewportCount()-1)->getZOrder();
+		scene->destroyInstance(true);
+		scene->setDisplayWindow(win, zorder+1);
+		scene->createInstance(true);
+	}
+}
 
+void gsEngine::addBackgroundScene(const gkString& m_sceneName)
+{
+	gkScene* scene = 0;
+	gkGameObject* obj = 0;
+	gkWindow* win;
+	win = m_engine->getActiveScene()->getDisplayWindow();
+	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+	if (scene && !scene->isInstanced())
+	{
+		int zorder = win->getViewport(0)->getZOrder();
+		scene->setDisplayWindow(win, zorder-1);
+		scene->createInstance(true);
+	}
+}
+
+void gsEngine::removeScene(const gkString& m_sceneName)
+{
+	gkScene* scene = 0;
+	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+	if (scene)
+		scene->destroyInstance(true);
+}
 
 void gsEngine::run(void)
 {

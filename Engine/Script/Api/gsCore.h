@@ -262,6 +262,10 @@ public:
 	gkScene* loadBlendFile(const gkString& name);
 	gkScene* getActiveScene(void);
 
+	void addOverlayScene(const gkString& name);
+	void addBackgroundScene(const gkString& name);
+	void removeScene(const gkString& name);
+
 	void unloadBlendFile(const gkString& name);
 	void unloadAllBlendFiles();
 

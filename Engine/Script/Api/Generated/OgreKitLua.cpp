@@ -6640,6 +6640,96 @@ fail:
 }
 
 
+static int _wrap_Engine_addOverlayScene(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("gsEngine::addOverlayScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addOverlayScene",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsEngine::addOverlayScene",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_addOverlayScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->addOverlayScene((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_addBackgroundScene(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("gsEngine::addBackgroundScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addBackgroundScene",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsEngine::addBackgroundScene",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_addBackgroundScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->addBackgroundScene((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_removeScene(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("gsEngine::removeScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::removeScene",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsEngine::removeScene",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_removeScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->removeScene((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Engine_unloadBlendFile(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
@@ -6729,6 +6819,9 @@ static swig_lua_method swig_gsEngine_methods[] = {
     {"connect", _wrap_Engine_connect}, 
     {"loadBlendFile", _wrap_Engine_loadBlendFile}, 
     {"getActiveScene", _wrap_Engine_getActiveScene}, 
+    {"addOverlayScene", _wrap_Engine_addOverlayScene}, 
+    {"addBackgroundScene", _wrap_Engine_addBackgroundScene}, 
+    {"removeScene", _wrap_Engine_removeScene}, 
     {"unloadBlendFile", _wrap_Engine_unloadBlendFile}, 
     {"unloadAllBlendFiles", _wrap_Engine_unloadAllBlendFiles}, 
     {"getUserDefs", _wrap_Engine_getUserDefs}, 
