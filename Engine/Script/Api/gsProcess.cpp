@@ -247,33 +247,47 @@ int gsProcessManager::addProcess(gsProcess* process)
 
 /*	using %newobject-command in gsProcess.i tells swig that this
 	method creates a new object. Swig/Lua will delete it at an appropriate time */
-gkProcess* gsProcessManager::createWaitProcess(float time)
+gkProcess* gsProcessManager::createWait(float time)
 {
 	gkWaitProcess* waitProc = new gkWaitProcess(time);
 	return waitProc;
 }
 
-gkProcess* gsProcessManager::createTranslationProcess(gsGameObject* obj, float time, const gsVector3& to)
+gkProcess* gsProcessManager::createTranslation(gsGameObject* obj, float time, const gsVector3& to)
 {
 	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
 	return translationProcess;
 }
 
-gkProcess* gsProcessManager::createTranslationProcess(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
+gkProcess* gsProcessManager::createTranslation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
 {
 	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
 	return translationProcess;
 }
 
-gkProcess* gsProcessManager::createOrientationProcess(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
+gkProcess* gsProcessManager::createOrientation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
 {
 	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
 	return orientationProcess;
 }
 
-gkProcess* gsProcessManager::createOrientationProcess(gsGameObject* obj, float time,  const gsVector3& to)
+gkProcess* gsProcessManager::createOrientation(gsGameObject* obj, float time,  const gsVector3& to)
 {
 	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
 	return orientationProcess;
 }
 
+gkProcess* gsProcessManager::createParallel(float maxTime,gsProcess* proc1, gsProcess* proc2, gsProcess* proc3, gsProcess* proc4)
+{
+	gkParallelProcess* parallelProoc = new gkParallelProcess(maxTime);
+	if (proc1)
+		parallelProoc->append(proc1);
+	if (proc2)
+		parallelProoc->append(proc2);
+	if (proc3)
+		parallelProoc->append(proc3);
+	if (proc4)
+		parallelProoc->append(proc4);
+
+	return parallelProoc;
+}

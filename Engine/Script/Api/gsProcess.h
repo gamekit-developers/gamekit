@@ -79,14 +79,15 @@ public:
 	void removeProcess(gsProcess* proc);
 	void removeProcessByHandle(int handle);
 
-	gkProcess* createWaitProcess(float time);
-	gkProcess* createTranslationProcess(gsGameObject* obj, float time, const gsVector3& to);
-	gkProcess* createTranslationProcess(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to);
-	gkProcess* createOrientationProcess(gsGameObject* obj, float time, const gsVector3& toOrientation);
-	gkProcess* createOrientationProcess(gsGameObject* obj, float time, const gsVector3& fromOrientation, const gsVector3& toOrientation);
-
+	gkProcess* createWait(float time);
+	gkProcess* createTranslation(gsGameObject* obj, float time, const gsVector3& to);
+	gkProcess* createTranslation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to);
+	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& toOrientation);
+	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& fromOrientation, const gsVector3& toOrientation);
+	gkProcess* createParallel(float maxTime=0,gsProcess* proc1=0, gsProcess* proc2=0, gsProcess* proc3=0, gsProcess* proc4=0);
 	gkProcessManager* m_processManager;
 
 };
+
 
 #endif//_gsProcess_h_

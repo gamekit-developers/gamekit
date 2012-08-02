@@ -193,6 +193,7 @@
 #include "Process/gkWaitProcess.h"
 #include "Process/gkTranslationProcess.h"
 #include "Process/gkOrientationProcess.h"
+#include "Process/gkParallelProcess.h"
 
 #endif
 

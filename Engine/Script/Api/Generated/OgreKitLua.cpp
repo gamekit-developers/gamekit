@@ -29170,22 +29170,22 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createWaitProcess(lua_State* L) {
+static int _wrap_ProcessManager_createWait(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   float arg2 ;
   gkProcess *result = 0 ;
   
-  SWIG_check_num_args("createWaitProcess",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createWaitProcess",1,"gsProcessManager *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("createWaitProcess",2,"float");
+  SWIG_check_num_args("createWait",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createWait",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createWait",2,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_createWaitProcess",1,SWIGTYPE_p_gsProcessManager);
+    SWIG_fail_ptr("ProcessManager_createWait",1,SWIGTYPE_p_gsProcessManager);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  result = (gkProcess *)(arg1)->createWaitProcess(arg2);
+  result = (gkProcess *)(arg1)->createWait(arg2);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
   } 
@@ -29199,7 +29199,7 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createTranslationProcess__SWIG_0(lua_State* L) {
+static int _wrap_ProcessManager_createTranslation__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   gsGameObject *arg2 = (gsGameObject *) 0 ;
@@ -29207,28 +29207,28 @@ static int _wrap_ProcessManager_createTranslationProcess__SWIG_0(lua_State* L) {
   gsVector3 *arg4 = 0 ;
   gkProcess *result = 0 ;
   
-  SWIG_check_num_args("createTranslationProcess",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createTranslationProcess",1,"gsProcessManager *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createTranslationProcess",2,"gsGameObject *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("createTranslationProcess",3,"float");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createTranslationProcess",4,"gsVector3 const &");
+  SWIG_check_num_args("createTranslation",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createTranslation",1,"gsProcessManager *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createTranslation",2,"gsGameObject *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("createTranslation",3,"float");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createTranslation",4,"gsVector3 const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",1,SWIGTYPE_p_gsProcessManager);
+    SWIG_fail_ptr("ProcessManager_createTranslation",1,SWIGTYPE_p_gsProcessManager);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",2,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("ProcessManager_createTranslation",2,SWIGTYPE_p_gsGameObject);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createTranslation",4,SWIGTYPE_p_gsVector3);
   }
   
-  result = (gkProcess *)(arg1)->createTranslationProcess(arg2,arg3,(gsVector3 const &)*arg4);
+  result = (gkProcess *)(arg1)->createTranslation(arg2,arg3,(gsVector3 const &)*arg4);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
   } 
@@ -29242,7 +29242,7 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createTranslationProcess__SWIG_1(lua_State* L) {
+static int _wrap_ProcessManager_createTranslation__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   gsGameObject *arg2 = (gsGameObject *) 0 ;
@@ -29251,34 +29251,34 @@ static int _wrap_ProcessManager_createTranslationProcess__SWIG_1(lua_State* L) {
   gsVector3 *arg5 = 0 ;
   gkProcess *result = 0 ;
   
-  SWIG_check_num_args("createTranslationProcess",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createTranslationProcess",1,"gsProcessManager *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createTranslationProcess",2,"gsGameObject *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("createTranslationProcess",3,"float");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createTranslationProcess",4,"gsVector3 const &");
-  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createTranslationProcess",5,"gsVector3 const &");
+  SWIG_check_num_args("createTranslation",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createTranslation",1,"gsProcessManager *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createTranslation",2,"gsGameObject *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("createTranslation",3,"float");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createTranslation",4,"gsVector3 const &");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createTranslation",5,"gsVector3 const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",1,SWIGTYPE_p_gsProcessManager);
+    SWIG_fail_ptr("ProcessManager_createTranslation",1,SWIGTYPE_p_gsProcessManager);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",2,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("ProcessManager_createTranslation",2,SWIGTYPE_p_gsGameObject);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createTranslation",4,SWIGTYPE_p_gsVector3);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&arg5,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createTranslationProcess",5,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createTranslation",5,SWIGTYPE_p_gsVector3);
   }
   
-  result = (gkProcess *)(arg1)->createTranslationProcess(arg2,arg3,(gsVector3 const &)*arg4,(gsVector3 const &)*arg5);
+  result = (gkProcess *)(arg1)->createTranslation(arg2,arg3,(gsVector3 const &)*arg4,(gsVector3 const &)*arg5);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
   } 
@@ -29292,7 +29292,7 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createTranslationProcess(lua_State* L) {
+static int _wrap_ProcessManager_createTranslation(lua_State* L) {
   int argc;
   int argv[6]={
     1,2,3,4,5,6
@@ -29332,7 +29332,7 @@ static int _wrap_ProcessManager_createTranslationProcess(lua_State* L) {
             }
           }
           if (_v) {
-            return _wrap_ProcessManager_createTranslationProcess__SWIG_0(L);
+            return _wrap_ProcessManager_createTranslation__SWIG_0(L);
           }
         }
       }
@@ -29380,7 +29380,7 @@ static int _wrap_ProcessManager_createTranslationProcess(lua_State* L) {
               }
             }
             if (_v) {
-              return _wrap_ProcessManager_createTranslationProcess__SWIG_1(L);
+              return _wrap_ProcessManager_createTranslation__SWIG_1(L);
             }
           }
         }
@@ -29388,15 +29388,15 @@ static int _wrap_ProcessManager_createTranslationProcess(lua_State* L) {
     }
   }
   
-  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createTranslationProcess'\n"
+  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createTranslation'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    createTranslationProcess(gsProcessManager *,gsGameObject *,float,gsVector3 const &)\n"
-    "    createTranslationProcess(gsProcessManager *,gsGameObject *,float,gsVector3 const &,gsVector3 const &)\n");
+    "    createTranslation(gsProcessManager *,gsGameObject *,float,gsVector3 const &)\n"
+    "    createTranslation(gsProcessManager *,gsGameObject *,float,gsVector3 const &,gsVector3 const &)\n");
   lua_error(L);return 0;
 }
 
 
-static int _wrap_ProcessManager_createOrientationProcess__SWIG_0(lua_State* L) {
+static int _wrap_ProcessManager_createOrientation__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   gsGameObject *arg2 = (gsGameObject *) 0 ;
@@ -29404,28 +29404,28 @@ static int _wrap_ProcessManager_createOrientationProcess__SWIG_0(lua_State* L) {
   gsVector3 *arg4 = 0 ;
   gkProcess *result = 0 ;
   
-  SWIG_check_num_args("createOrientationProcess",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createOrientationProcess",1,"gsProcessManager *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createOrientationProcess",2,"gsGameObject *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("createOrientationProcess",3,"float");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createOrientationProcess",4,"gsVector3 const &");
+  SWIG_check_num_args("createOrientation",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createOrientation",1,"gsProcessManager *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createOrientation",2,"gsGameObject *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("createOrientation",3,"float");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createOrientation",4,"gsVector3 const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",1,SWIGTYPE_p_gsProcessManager);
+    SWIG_fail_ptr("ProcessManager_createOrientation",1,SWIGTYPE_p_gsProcessManager);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",2,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("ProcessManager_createOrientation",2,SWIGTYPE_p_gsGameObject);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createOrientation",4,SWIGTYPE_p_gsVector3);
   }
   
-  result = (gkProcess *)(arg1)->createOrientationProcess(arg2,arg3,(gsVector3 const &)*arg4);
+  result = (gkProcess *)(arg1)->createOrientation(arg2,arg3,(gsVector3 const &)*arg4);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
   } 
@@ -29439,7 +29439,7 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createOrientationProcess__SWIG_1(lua_State* L) {
+static int _wrap_ProcessManager_createOrientation__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
   gsGameObject *arg2 = (gsGameObject *) 0 ;
@@ -29448,34 +29448,34 @@ static int _wrap_ProcessManager_createOrientationProcess__SWIG_1(lua_State* L) {
   gsVector3 *arg5 = 0 ;
   gkProcess *result = 0 ;
   
-  SWIG_check_num_args("createOrientationProcess",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createOrientationProcess",1,"gsProcessManager *");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createOrientationProcess",2,"gsGameObject *");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("createOrientationProcess",3,"float");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createOrientationProcess",4,"gsVector3 const &");
-  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createOrientationProcess",5,"gsVector3 const &");
+  SWIG_check_num_args("createOrientation",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createOrientation",1,"gsProcessManager *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("createOrientation",2,"gsGameObject *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("createOrientation",3,"float");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createOrientation",4,"gsVector3 const &");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createOrientation",5,"gsVector3 const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",1,SWIGTYPE_p_gsProcessManager);
+    SWIG_fail_ptr("ProcessManager_createOrientation",1,SWIGTYPE_p_gsProcessManager);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",2,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("ProcessManager_createOrientation",2,SWIGTYPE_p_gsGameObject);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createOrientation",4,SWIGTYPE_p_gsVector3);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&arg5,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("ProcessManager_createOrientationProcess",5,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("ProcessManager_createOrientation",5,SWIGTYPE_p_gsVector3);
   }
   
-  result = (gkProcess *)(arg1)->createOrientationProcess(arg2,arg3,(gsVector3 const &)*arg4,(gsVector3 const &)*arg5);
+  result = (gkProcess *)(arg1)->createOrientation(arg2,arg3,(gsVector3 const &)*arg4,(gsVector3 const &)*arg5);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
   } 
@@ -29489,7 +29489,7 @@ fail:
 }
 
 
-static int _wrap_ProcessManager_createOrientationProcess(lua_State* L) {
+static int _wrap_ProcessManager_createOrientation(lua_State* L) {
   int argc;
   int argv[6]={
     1,2,3,4,5,6
@@ -29529,7 +29529,7 @@ static int _wrap_ProcessManager_createOrientationProcess(lua_State* L) {
             }
           }
           if (_v) {
-            return _wrap_ProcessManager_createOrientationProcess__SWIG_0(L);
+            return _wrap_ProcessManager_createOrientation__SWIG_0(L);
           }
         }
       }
@@ -29577,7 +29577,7 @@ static int _wrap_ProcessManager_createOrientationProcess(lua_State* L) {
               }
             }
             if (_v) {
-              return _wrap_ProcessManager_createOrientationProcess__SWIG_1(L);
+              return _wrap_ProcessManager_createOrientation__SWIG_1(L);
             }
           }
         }
@@ -29585,10 +29585,480 @@ static int _wrap_ProcessManager_createOrientationProcess(lua_State* L) {
     }
   }
   
-  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createOrientationProcess'\n"
+  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createOrientation'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    createOrientationProcess(gsProcessManager *,gsGameObject *,float,gsVector3 const &)\n"
-    "    createOrientationProcess(gsProcessManager *,gsGameObject *,float,gsVector3 const &,gsVector3 const &)\n");
+    "    createOrientation(gsProcessManager *,gsGameObject *,float,gsVector3 const &)\n"
+    "    createOrientation(gsProcessManager *,gsGameObject *,float,gsVector3 const &,gsVector3 const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  float arg2 ;
+  gsProcess *arg3 = (gsProcess *) 0 ;
+  gsProcess *arg4 = (gsProcess *) 0 ;
+  gsProcess *arg5 = (gsProcess *) 0 ;
+  gsProcess *arg6 = (gsProcess *) 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createParallel",2,"float");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("createParallel",3,"gsProcess *");
+  if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("createParallel",4,"gsProcess *");
+  if(!SWIG_isptrtype(L,5)) SWIG_fail_arg("createParallel",5,"gsProcess *");
+  if(!SWIG_isptrtype(L,6)) SWIG_fail_arg("createParallel",6,"gsProcess *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",3,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",4,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&arg5,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",5,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&arg6,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",6,SWIGTYPE_p_gsProcess);
+  }
+  
+  result = (gkProcess *)(arg1)->createParallel(arg2,arg3,arg4,arg5,arg6);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  float arg2 ;
+  gsProcess *arg3 = (gsProcess *) 0 ;
+  gsProcess *arg4 = (gsProcess *) 0 ;
+  gsProcess *arg5 = (gsProcess *) 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createParallel",2,"float");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("createParallel",3,"gsProcess *");
+  if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("createParallel",4,"gsProcess *");
+  if(!SWIG_isptrtype(L,5)) SWIG_fail_arg("createParallel",5,"gsProcess *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",3,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",4,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&arg5,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",5,SWIGTYPE_p_gsProcess);
+  }
+  
+  result = (gkProcess *)(arg1)->createParallel(arg2,arg3,arg4,arg5);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  float arg2 ;
+  gsProcess *arg3 = (gsProcess *) 0 ;
+  gsProcess *arg4 = (gsProcess *) 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createParallel",2,"float");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("createParallel",3,"gsProcess *");
+  if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("createParallel",4,"gsProcess *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",3,SWIGTYPE_p_gsProcess);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",4,SWIGTYPE_p_gsProcess);
+  }
+  
+  result = (gkProcess *)(arg1)->createParallel(arg2,arg3,arg4);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  float arg2 ;
+  gsProcess *arg3 = (gsProcess *) 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createParallel",2,"float");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("createParallel",3,"gsProcess *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsProcess,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",3,SWIGTYPE_p_gsProcess);
+  }
+  
+  result = (gkProcess *)(arg1)->createParallel(arg2,arg3);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  float arg2 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("createParallel",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  result = (gkProcess *)(arg1)->createParallel(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createParallel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createParallel",1,"gsProcessManager *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createParallel",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  result = (gkProcess *)(arg1)->createParallel();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createParallel(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_ProcessManager_createParallel__SWIG_5(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_ProcessManager_createParallel__SWIG_4(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_ProcessManager_createParallel__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (SWIG_isptrtype(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_ProcessManager_createParallel__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (SWIG_isptrtype(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (SWIG_isptrtype(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_ProcessManager_createParallel__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (SWIG_isptrtype(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (SWIG_isptrtype(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              {
+                void *ptr;
+                if (SWIG_isptrtype(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_gsProcess, 0)) {
+                  _v = 0;
+                } else {
+                  _v = 1;
+                }
+              }
+              if (_v) {
+                return _wrap_ProcessManager_createParallel__SWIG_0(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createParallel'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    createParallel(gsProcessManager *,float,gsProcess *,gsProcess *,gsProcess *,gsProcess *)\n"
+    "    createParallel(gsProcessManager *,float,gsProcess *,gsProcess *,gsProcess *)\n"
+    "    createParallel(gsProcessManager *,float,gsProcess *,gsProcess *)\n"
+    "    createParallel(gsProcessManager *,float,gsProcess *)\n"
+    "    createParallel(gsProcessManager *,float)\n"
+    "    createParallel(gsProcessManager *)\n");
   lua_error(L);return 0;
 }
 
@@ -29658,9 +30128,10 @@ static swig_lua_method swig_gsProcessManager_methods[] = {
     {"getProcessByHandle", _wrap_ProcessManager_getProcessByHandle}, 
     {"removeProcess", _wrap_ProcessManager_removeProcess}, 
     {"removeProcessByHandle", _wrap_ProcessManager_removeProcessByHandle}, 
-    {"createWaitProcess", _wrap_ProcessManager_createWaitProcess}, 
-    {"createTranslationProcess", _wrap_ProcessManager_createTranslationProcess}, 
-    {"createOrientationProcess", _wrap_ProcessManager_createOrientationProcess}, 
+    {"createWait", _wrap_ProcessManager_createWait}, 
+    {"createTranslation", _wrap_ProcessManager_createTranslation}, 
+    {"createOrientation", _wrap_ProcessManager_createOrientation}, 
+    {"createParallel", _wrap_ProcessManager_createParallel}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsProcessManager_attributes[] = {
