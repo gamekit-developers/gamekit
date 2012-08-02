@@ -465,17 +465,16 @@ public:
 		if (m_first == link) m_first = link->next;
 
 		m_size -= 1;
-		if (deletePntr)
-			delete link;
+		delete link;
 		if (m_size == 0)
 			clear();
 	}
 
-	void erase(const T &v, bool deletePntr=true)
+	void erase(const T &v)
 	{
 		Pointer fnd = find(v);
 		if (fnd)
-			erase(fnd,deletePntr);
+			erase(fnd);
 	}
 
 	void sort(bool (*cmp)(const T &a, const T &b))
