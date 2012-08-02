@@ -41,7 +41,7 @@ private:
 	gkLuaEvent* m_update;
 	gkLuaEvent* m_isFinished;
 	gkLuaEvent* m_onFinished;
-	int			m_handle;
+
 public:
 #ifndef SWIG
 	gsProcess(gkProcess* proc);
@@ -79,7 +79,7 @@ public:
 	void removeProcess(gsProcess* proc);
 	void removeProcessByHandle(int handle);
 
-	gsProcess* waitProcess(float time);
+	gkProcess* waitProcess(float time);
 
 	gkProcessManager* m_processManager;
 

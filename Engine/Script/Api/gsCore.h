@@ -361,7 +361,7 @@ class gsScene : public gsObject
 private:
 	gsArray<gsGameObject, gkGameObject> m_objectCache;
 	gsRay* m_pickRay;
-	gsProcessManager* m_processManager;
+	gkProcessManager* m_processManager;
 
 public:
 	gsScene();
@@ -376,15 +376,15 @@ public:
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
-	gsDynamicsWorld* getDynamicsWorld(void);
+	gkDynamicsWorld* getDynamicsWorld(void);
 
-	gsCamera* getMainCamera(void);
+	gkCamera* getMainCamera(void);
 
 	gsRay* getPickRay();
 
 	void setUpdateFlags(unsigned int flags);
 
-	gsProcessManager* getProcessManager(void);
+	gkProcessManager* getProcessManager(void);
 
 	gkLogicManager* getLogicBrickManager(void);
 
@@ -396,11 +396,11 @@ public:
 extern gkScene* getActiveScene(void);
 extern gkScene* getScene(const gkString& sceneName);
 
-class gsGroupInstance
+class gsGameObjectInstance
 {
 public:
-	gsGroupInstance( gkGameObjectInstance* inst );
-	virtual ~gsGroupInstance();
+	gsGameObjectInstance( gkGameObjectInstance* inst );
+	virtual ~gsGameObjectInstance();
 
 	int getElementCount();
 	gkGameObject* getElementAt(int pos);
@@ -414,9 +414,9 @@ private :
 	gkGameObjectInstance* m_gobj;
 };
 
-extern gsGroupInstance* createGroupInstance(gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
-extern gsGroupInstance* createGroupInstance(gsScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
-extern gsGroupInstance* createGroupInstance(gkScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+extern gkGameObjectInstance* createGroupInstance(gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+extern gkGameObjectInstance* createGroupInstance(gsScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+extern gkGameObjectInstance* createGroupInstance(gkScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
 
 class gsGameObject : public gsObject
 {
@@ -519,7 +519,7 @@ public:
 	void        __setitem__(const gkString& prop, const char* v);
 
 
-	gsGroupInstance* getGroupInstance();
+	gkGameObjectInstance* getGroupInstance();
 	bool             isGroupInstance();
 
 

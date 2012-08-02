@@ -76,7 +76,8 @@
 %{ $1 = lua_istable(L, $input); %}
 
 
-
+%typemap(out) gkDynamicsWorld*
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, DynamicsWorld); } %}
 
 
 // Brick -> derrived conversion.
@@ -96,6 +97,8 @@
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_WRAP_STORE($1, LogicLink, LogicObject); } %}
 %typemap(out) gkGameObject* 
 %{ if ($1) { SWIG_arg += gsWrapGameObject(L, $1); } %}
+%typemap(out) gkGameObjectInstance*
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, GameObjectInstance); } %}
 %typemap(out) gkLogicSensor* 
 %{ if ($1) { SWIG_arg += gsWrapSensor(L, $1); } %}
 %typemap(out) gkLogicController* 
@@ -103,7 +106,13 @@
 %typemap(out) gkLogicActuator* 
 %{ if ($1) { SWIG_arg += gsWrapActuator(L, $1); } %}
 
+// Processes
 
+%typemap(out) gkProcessManager*
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, ProcessManager); } %}
+
+%typemap(out) gkProcess*
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Process); } %}
 
 #else
 

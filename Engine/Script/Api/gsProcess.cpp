@@ -29,14 +29,14 @@
 #include "Process/gkWaitProcess.h"
 
 
-gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0),m_handle(0)
+gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0)
 {}
 
-gsProcess::gsProcess(gkProcess* proc) : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(proc),m_handle(0)
+gsProcess::gsProcess(gkProcess* proc) : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(proc)
 {
 }
 
-gsProcess::gsProcess(gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish) : m_process(0), m_handle(0)
+gsProcess::gsProcess(gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish) : m_process(0)
 {
 	m_init = new gkLuaEvent(init);
 	m_update = new gkLuaEvent(update);
@@ -44,7 +44,7 @@ gsProcess::gsProcess(gsFunction init,gsFunction update,gsFunction isFinished, gs
 	m_onFinished = new gkLuaEvent(onFinish);
 }
 
-gsProcess::gsProcess(gsSelf self,gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish) : m_process(0), m_handle(0)
+gsProcess::gsProcess(gsSelf self,gsFunction init,gsFunction update,gsFunction isFinished, gsFunction onFinish) : m_process(0)
 {
 	m_init = new gkLuaEvent(self,init);
 	m_update = new gkLuaEvent(self,update);
@@ -213,6 +213,7 @@ gsProcessManager::~gsProcessManager()
 gsProcess* gsProcessManager::getProcessByHandle(int handle)
 {
 	gkProcess* proc = m_processManager->getProcessByHandle(handle);
+	// TODO: are there use-cases where the cast will not work?
 	gsProcess* gsProc = static_cast<gsProcess*>( proc);
 	return gsProc;
 }
@@ -244,11 +245,10 @@ int gsProcessManager::addProcess(gsProcess* process)
 
 /*	using %newobject-command in gsProcess.i tells swig that this
 	method creates a new object. Swig/Lua will delete it at an appropriate time */
-gsProcess* gsProcessManager::waitProcess(float time)
+gkProcess* gsProcessManager::waitProcess(float time)
 {
 	gkWaitProcess* waitProc = new gkWaitProcess(time);
-	gsProcess* wrappedProcess = new gsProcess(waitProc);
-	return wrappedProcess;
+	return waitProc;
 }
 
 

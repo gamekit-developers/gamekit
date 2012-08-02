@@ -1017,10 +1017,6 @@ gsScene::~gsScene()
 	if (m_pickRay){
 		delete m_pickRay;
 	}
-
-	if (m_processManager) {
-		delete m_processManager;
-	}
 }
 
 bool gsScene::hasObject(const gkString& name)
@@ -1039,15 +1035,12 @@ gkScene* gsScene::getOwner()
 	return 0;
 }
 
-// TODO: this have to cached, so only one gsProcessManager is created for this processmanager
-gsProcessManager* gsScene::getProcessManager()
+gkProcessManager* gsScene::getProcessManager()
 {
-	if (m_processManager)
-		return m_processManager;
-
 	if (m_object)
 	{
-		m_processManager = new gsProcessManager(cast<gkScene>()->getProcessManager());
+		if (!m_processManager)
+			m_processManager = cast<gkScene>()->getProcessManager();
 		return m_processManager;
 	}
 	return 0;
@@ -1128,22 +1121,22 @@ gkGameObject* gsScene::cloneObject(gsGameObject* obj, int lifeSpan, bool instant
 }
 
 
-gsDynamicsWorld* gsScene::getDynamicsWorld(void)
+gkDynamicsWorld* gsScene::getDynamicsWorld(void)
 {
 	if (m_object)
 	{
 		gkScene* scene = cast<gkScene>();
 		gkDynamicsWorld* world = scene->getDynamicsWorld();
-		return new gsDynamicsWorld(world);
+		return world;
 	}
 
 	return 0;
 }
 
-gsCamera* gsScene::getMainCamera(void){
+gkCamera* gsScene::getMainCamera(void){
 	if (m_object) {
 		gkScene* scene = cast<gkScene>();
-		return new gsCamera(scene->getMainCamera());
+		return scene->getMainCamera();
 	}
 	return 0;
 }
@@ -1816,12 +1809,12 @@ gkGameObject* gsGameObject::getChildByName(const gkString& name)
 	return 0;
 }
 
-gsGroupInstance* gsGameObject::getGroupInstance()
+gkGameObjectInstance* gsGameObject::getGroupInstance()
 {
 	if (m_object)
 	{
 		gkGameObjectInstance* ginst = get()->getGroupInstance();
-		return new gsGroupInstance(ginst);
+		return ginst;
 	}
 	return 0;
 }
@@ -2028,7 +2021,7 @@ bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 #endif
 }
 
-gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
+gkGameObjectInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkEngine* eng = gkEngine::getSingletonPtr();
 	if (eng && eng->isInitialized()){
 		gkScene* scene = eng->getActiveScene();
@@ -2037,7 +2030,7 @@ gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 
 	return 0;
 }
 
-gsGroupInstance* createGroupInstance(gsScene* gScene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
+gkGameObjectInstance* createGroupInstance(gsScene* gScene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	if (gScene)
 	{
 		gkScene* scene = gScene->getOwner();
@@ -2047,7 +2040,7 @@ gsGroupInstance* createGroupInstance(gsScene* gScene,gkString groupName,gsVector
 	return 0;
 }
 
-gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
+gkGameObjectInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 	if (mgr->exists(groupName))
 	{
@@ -2069,62 +2062,61 @@ gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3
 				inst->createInstance(false);
 			}
 
-			gsGroupInstance* result = new gsGroupInstance(inst);
-
-			return result;
+			return inst;
 		}
 	}
 	return NULL;
 }
 
 
-gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : m_gobj(inst)
+gsGameObjectInstance::gsGameObjectInstance( gkGameObjectInstance* inst ) : m_gobj(inst)
 {
 }
 
-gsGroupInstance::~gsGroupInstance() {
+gsGameObjectInstance::~gsGameObjectInstance() {
+	gsDebugPrint("destructor gsGameObject...");
 	// m_gobj the group-instance is finalized by the groupmanager!?
 }
 
-void gsGroupInstance::destroyInstance()
+void gsGameObjectInstance::destroyInstance()
 {
 	if (m_gobj)
 		m_gobj->destroyInstance();
 }
 
-void gsGroupInstance::createInstance()
+void gsGameObjectInstance::createInstance()
 {
 	if (m_gobj)
 		m_gobj->createInstance();
 }
-void gsGroupInstance::reinstance()
+void gsGameObjectInstance::reinstance()
 {
 	if (m_gobj)
 		m_gobj->reinstance();
 }
 
 
-int gsGroupInstance::getElementCount()
+int gsGameObjectInstance::getElementCount()
 {
 	return m_gobj?m_gobj->getObjects().size():0;
 }
 
-gkGameObject* gsGroupInstance::getElementAt(int pos)
+gkGameObject* gsGameObjectInstance::getElementAt(int pos)
 {
 	return m_gobj?m_gobj->getObjects().at(pos):NULL;
 }
 
-gkGameObject* gsGroupInstance::getElementByName(gkString name)
+gkGameObject* gsGameObjectInstance::getElementByName(gkString name)
 {
 	return m_gobj?m_gobj->getObject(name):NULL;
 }
 
-gkGameObject* gsGroupInstance::getRoot(void)
+gkGameObject* gsGameObjectInstance::getRoot(void)
 {
 	return m_gobj->getRoot();
 }
 
-gkString gsGroupInstance::getName()
+gkString gsGameObjectInstance::getName()
 {
 	return m_gobj?m_gobj->getName():"";
 }
