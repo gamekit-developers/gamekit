@@ -100,6 +100,14 @@ void gkLogicManager::clearActive(gkLogicLink* link)
 	{
 		UTsize fnd;
 
+		utListIterator<gkLogicLink::BrickList> sensorIter(link->getSensors());
+		while (sensorIter.hasMoreElements())
+		{
+			gkLogicSensor* sens = (gkLogicSensor*)sensorIter.getNext();
+			// reset sensor
+			sens->reset();
+		}
+
 		utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
 		while (iter.hasMoreElements())
 		{
