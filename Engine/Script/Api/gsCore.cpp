@@ -1897,7 +1897,7 @@ gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 
 		gkEngine* eng = gkEngine::getSingletonPtr();
 		if (eng && eng->isInitialized()){
 			gkScene* scene = eng->getActiveScene();
-			gkGameObjectInstance* inst = ggobj->createGroupInstance(scene, gkResourceName(gkUtils::getUniqueName(groupName), ""));
+			gkGameObjectInstance* inst = ggobj->createGroupInstance(scene, gkResourceName(gkUtils::getUniqueName("gi"+groupName), ""));
 			gkQuaternion quat;
 			quat = gkEuler(gkVector3(rot.x,rot.y,rot.z)).toQuaternion();
 			gkVector3 pos(loc.x,loc.y,loc.z);
