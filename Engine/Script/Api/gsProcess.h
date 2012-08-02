@@ -68,7 +68,7 @@ public:
 	void init();
 	void update(gkScalar delta);
 
-	gkProcess* get() { return this;}
+	gsProcess* get();
 };
 
 class gsProcessManager

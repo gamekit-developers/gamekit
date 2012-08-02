@@ -173,6 +173,10 @@ bool gsProcess::isFinished()
 }
 
 
+gsProcess*  gsProcess::get() {
+	return this;
+}
+
 void gsProcess::suspend()
 {
 	setSuspend(true);
@@ -269,13 +273,21 @@ gkProcess* gsProcessManager::createSequence(gsArray<gsProcess,gkProcess>& proces
 	return seqProcesses;
 }
 
+
+
 gkProcess* gsProcessManager::createSound(const gkString& soundName)
 {
+#ifdef OGREKIT_OPENAL_SOUND
 	if (!soundName.empty())
 	{
 		gkSoundProcess* sound = new gkSoundProcess(soundName);
+		if (!sound)
+			gsDebugPrint(gkString("Unknown Sound:"+soundName).c_str());
 		return sound;
 	}
-
 	return 0;
+#else
+	return new gkWaitProcess(0.15f);
+#endif
+
 }

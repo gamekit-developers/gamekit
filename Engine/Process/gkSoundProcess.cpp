@@ -25,6 +25,8 @@
 -------------------------------------------------------------------------------
 */
 
+#ifdef OGREKIT_OPENAL_SOUND
+
 #include "Process/gkSoundProcess.h"
 #include "gkLogger.h"
 #include "Sound/gkSoundManager.h"
@@ -59,11 +61,11 @@ void gkSoundProcess::init()
 }
 void gkSoundProcess::update(gkScalar delta)
 {
-	if (m_source && !m_soundPlayed)
+	if (m_sound && m_source && !m_soundPlayed)
 	{
 		m_source->play();
 		m_soundPlayed = true;
 	}
 }
 
-
+#endif

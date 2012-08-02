@@ -28,6 +28,7 @@
 #ifndef GKSOUNDPROCESS_H_
 #define GKSOUNDPROCESS_H_
 
+#ifdef OGREKIT_OPENAL_SOUND
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
 #include "Sound/gkSound.h"
@@ -47,5 +48,7 @@ private:
 	const gkString m_soundName;
 	bool m_soundPlayed;
 };
+#endif /* openal sound */
+
 
 #endif /* GKWAITPROCESS_H_ */
