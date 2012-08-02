@@ -737,14 +737,7 @@ gkScene* gsEngine::getScene(const gkString& sceneName)
 }
 
 
-gkScene* gsScene::getOwner()
-{
-	if (m_object)
-	{
-		return cast<gkScene>();
-	}
-	return 0;
-}
+
 
 gkScene* gsEngine::addOverlayScene(gsScene* scene)
 {
@@ -1013,7 +1006,7 @@ gsScene::gsScene() : m_pickRay(0)
 }
 
 
-gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob),m_pickRay(0)
+gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob),m_pickRay(0),m_processManager(0)
 {
 }
 
@@ -1024,6 +1017,10 @@ gsScene::~gsScene()
 	if (m_pickRay){
 		delete m_pickRay;
 	}
+
+	if (m_processManager) {
+		delete m_processManager;
+	}
 }
 
 bool gsScene::hasObject(const gkString& name)
@@ -1033,7 +1030,27 @@ bool gsScene::hasObject(const gkString& name)
 	return false;
 }
 
+gkScene* gsScene::getOwner()
+{
+	if (m_object)
+	{
+		return cast<gkScene>();
+	}
+	return 0;
+}
 
+gsProcessManager* gsScene::getProcessManager()
+{
+	if (m_processManager)
+		return m_processManager;
+
+	if (m_object)
+	{
+		m_processManager = new gsProcessManager(cast<gkScene>()->getProcessManager());
+		return m_processManager;
+	}
+	return 0;
+}
 
 
 gkGameObject* gsScene::getObject(const gkString& name)
@@ -2059,16 +2076,25 @@ gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : m_gobj(inst)
 }
 
 gsGroupInstance::~gsGroupInstance() {
-	if (m_gobj) {
-		destroy();
-	}
+	// m_gobj the group-instance is finalized by the groupmanager!?
 }
 
-void gsGroupInstance::destroy()
+void gsGroupInstance::destroyInstance()
 {
-	// m_gobj the group-instance is finalized by the groupmanager
+	if (m_gobj)
+		m_gobj->destroyInstance();
 }
 
+void gsGroupInstance::createInstance()
+{
+	if (m_gobj)
+		m_gobj->createInstance();
+}
+void gsGroupInstance::reinstance()
+{
+	if (m_gobj)
+		m_gobj->reinstance();
+}
 
 
 int gsGroupInstance::getElementCount()

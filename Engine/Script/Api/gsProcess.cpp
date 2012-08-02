@@ -199,20 +199,31 @@ bool gsProcess::isSuspended()
 	return gkProcess::isSuspended();
 }
 
+gsProcessManager::gsProcessManager(gkProcessManager* procManager) : m_processManager(procManager)
+{}
+
+gsProcessManager::~gsProcessManager()
+{
+	if (m_processManager)
+	{
+		m_processManager = 0;
+	}
+}
+
 gsProcess* gsProcessManager::getProcessByHandle(int handle)
 {
-	gkProcess* proc = gkProcessManager::getSingleton().getProcessByHandle(handle);
+	gkProcess* proc = m_processManager->getProcessByHandle(handle);
 	gsProcess* gsProc = static_cast<gsProcess*>( proc);
 	return gsProc;
 }
 
 void gsProcessManager::removeProcess(gsProcess* proc)
 {
-	gkProcessManager::getSingleton().removeProcess(proc);
+	m_processManager->removeProcess(proc);
 }
 void gsProcessManager::removeProcessByHandle(int handle)
 {
-	gkProcessManager::getSingleton().removeProcessByHandle(handle);
+	m_processManager->removeProcessByHandle(handle);
 }
 
 int gsProcessManager::addProcess(gsProcess* process)
@@ -220,14 +231,12 @@ int gsProcessManager::addProcess(gsProcess* process)
 	if (process)
 	{
 //		if (process->m_process)
-//			return gkProcessManager::getSingleton().addProcess(process->m_process);
+//			return m_processManager.addProcess(process->m_process);
 //		else
-//			return gkProcessManager::getSingleton().addProcess(process);
+//			return m_processManager.addProcess(process);
 
-		return gkProcessManager::getSingleton().addProcess(process);
-
+		return m_processManager->addProcess(process);
 	}
-
 
 	return 0;
 }

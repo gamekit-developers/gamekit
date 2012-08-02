@@ -80,11 +80,6 @@
 #include "External/Ogre/gkOgreCompositorManager.h"
 #endif
 
-#ifdef OGREKIT_USE_PROCESSMANAGER
-#include "Process/gkProcessManager.h"
-#include "Process/gkWaitProcess.h"
-#endif
-
 #include "OgreRoot.h"
 #include "OgreConfigFile.h"
 #include "OgreRenderSystem.h"
@@ -259,29 +254,6 @@ void gkEngine::initialize()
 	new gkGroupManager();
 	new gkGameObjectManager();
 
-#ifdef OGREKIT_USE_PROCESSMANAGER
-	new gkProcessManager();
-
-//	class Func : public gkProcessFunction
-//	{
-//	public:
-//		Func() {}
-//		virtual ~Func() {}
-//		void update(gkScalar delta){ gkPrintf("func!");};
-//	};
-//
-//	Func* f = new Func();
-//
-//	gkWaitProcess* waitProc;
-//	waitProc = new gkWaitProcess(2.0f);
-//
-//	gkWaitProcess* waitProc2;
-//	waitProc2 = new gkWaitProcess(4.0f,f);
-//	waitProc2->setFollowUp(waitProc);
-//	waitProc->setFollowUp(waitProc2);
-
-#endif
-
 	new gkAnimationManager();
 
 #ifdef OGREKIT_USE_LUA
@@ -405,10 +377,6 @@ void gkEngine::finalize()
 #endif
 	delete gkHUDManager::getSingletonPtr();
 	delete gkAnimationManager::getSingletonPtr();
-
-#ifdef OGREKIT_USE_PROCESSMANAGER
-	delete gkProcessManager::getSingletonPtr();
-#endif
 
 #ifdef OGREKIT_USE_LUA
 	delete gkLuaManager::getSingletonPtr();

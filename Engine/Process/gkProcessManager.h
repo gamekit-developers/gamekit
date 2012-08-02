@@ -22,7 +22,7 @@ public:
 	virtual void update(gkScalar delta){};
 };
 
-class gkProcessManager: public utSingleton<gkProcessManager> {
+class gkProcessManager {
 
 public:
 	gkProcessManager();
@@ -52,7 +52,6 @@ private:
 	bool m_pause;
 	UTint32 m_handleCounter;
 
-    UT_DECLARE_SINGLETON(gkProcessManager);
 };
 
 

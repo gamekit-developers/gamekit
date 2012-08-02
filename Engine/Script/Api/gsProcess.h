@@ -71,8 +71,8 @@ public:
 class gsProcessManager
 {
 public:
-	gsProcessManager() {}
-	~gsProcessManager() {}
+	gsProcessManager(gkProcessManager* processManager);
+	~gsProcessManager();
 
 	int addProcess(gsProcess* process);
 	gsProcess* getProcessByHandle(int handle);
@@ -80,6 +80,8 @@ public:
 	void removeProcessByHandle(int handle);
 
 	gsProcess* waitProcess(float time);
+
+	gkProcessManager* m_processManager;
 
 };
 

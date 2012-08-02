@@ -17,15 +17,12 @@ gkProcessManager::gkProcessManager() : m_pause(false), m_handleCounter(0) {
 
 gkProcessManager::~gkProcessManager()
 {
-	m_processList.clear();
+	clear();
 }
 
 void gkProcessManager::clear() {
-	for (int i=0;i<m_processList.size();i++)
-		delete m_processList.at(i);
 	m_processList.clear();
 }
-
 
 
 void gkProcessManager::update(gkScalar delta)
@@ -138,4 +135,3 @@ int gkProcessManager::processCount(void)
 	return m_processList.size();
 }
 
-UT_IMPLEMENT_SINGLETON(gkProcessManager);

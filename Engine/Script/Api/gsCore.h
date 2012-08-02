@@ -30,6 +30,7 @@
 #include "gsCommon.h"
 #include "gsMath.h"
 #include "gsUtils.h"
+#include "gsProcess.h"
 
 
 
@@ -360,6 +361,8 @@ class gsScene : public gsObject
 private:
 	gsArray<gsGameObject, gkGameObject> m_objectCache;
 	gsRay* m_pickRay;
+	gsProcessManager* m_processManager;
+
 public:
 	gsScene();
 	~gsScene();
@@ -381,6 +384,8 @@ public:
 
 	void setUpdateFlags(unsigned int flags);
 
+	gsProcessManager* getProcessManager(void);
+
 	gkScene* getOwner();
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
@@ -398,7 +403,9 @@ public:
 	gkGameObject* getElementAt(int pos);
 	gkGameObject* getElementByName(gkString name);
 	gkGameObject* getRoot(void);
-	void destroy();
+	void destroyInstance();
+	void createInstance();
+	void reinstance();
 private :
 	gkGameObjectInstance* m_gobj;
 };

@@ -216,7 +216,7 @@ public:
 	GK_INLINE void setLoadBlendFile(gkBlendFile* blendFile)	{ m_blendFile = blendFile;	}
 
 #ifdef OGREKIT_USE_PROCESSMANAGER
-	GK_INLINE gkProcessManager* getProcessManager(void) {return m_processManager;}
+	gkProcessManager* getProcessManager(void);
 #endif
 
 private:

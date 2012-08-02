@@ -107,6 +107,9 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const 
 		 m_blendFile(0),
 	     m_renderToViewport(true),
 	     m_zorder(0)
+#ifdef OGREKIT_USE_PROCESSMANAGER
+		,m_processManager(0)
+#endif
 {
 }
 
@@ -134,6 +137,12 @@ gkScene::~gkScene()
 
 		delete m_constraintManager;
 		m_constraintManager = 0;
+	}
+
+	if (m_processManager)
+	{
+		delete m_processManager;
+		m_processManager=0;
 	}
 
 	m_objects.clear();
@@ -1512,10 +1521,10 @@ void gkScene::update(gkScalar tickRate)
 	}
 
 #ifdef OGREKIT_USE_PROCESSMANAGER
-	if (m_updateFlags & UF_PROCESS)
+	if (m_processManager && m_updateFlags & UF_PROCESS)
 	{
 		gkStats::getSingleton().startClock();
-		gkProcessManager::getSingleton().update(tickRate);
+		m_processManager->update(tickRate);
 		gkStats::getSingleton().stopProcessClock();
 	}
 #endif
@@ -1578,6 +1587,16 @@ void gkScene::update(gkScalar tickRate)
 	endObjects();
 }
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	gkProcessManager* gkScene::getProcessManager(void)
+	{
+		if (!m_processManager)
+		{
+			m_processManager = new gkProcessManager();
+		}
+		return m_processManager;
+	}
+#endif
 
 
 #ifdef OGREKIT_COMPILE_RECAST
