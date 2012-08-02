@@ -1750,6 +1750,58 @@ void gsGameObject::playAnimation(const gkString& name, float blend)
 }
 
 
+gkGameObject* gsGameObject::getChildAt(int pos)
+{
+	if (m_object)
+	{
+		return get()->getChildren().at(pos);
+	}
+	return 0;
+}
+
+int gsGameObject::getChildCount(void)
+{
+	if (m_object)
+	{
+		return get()->getChildren().size();
+	}
+	return 0;
+}
+
+gkGameObject* gsGameObject::getChildByName(const gkString& name)
+{
+	if (m_object)
+	{
+		gkGameObjectArray::Iterator it = get()->getChildren().iterator();
+		while (it.hasMoreElements())
+		{
+			gkGameObject* gobj = it.getNext();
+			if (gobj->getName() == name)
+				return gobj;
+		}
+	}
+	return 0;
+}
+
+gsGroupInstance* gsGameObject::getGroupInstance()
+{
+	if (m_object)
+	{
+		gkGameObjectInstance* ginst = get()->getGroupInstance();
+		return new gsGroupInstance(ginst);
+	}
+	return 0;
+}
+
+bool  gsGameObject::isGroupInstance()
+{
+	if (m_object)
+	{
+		return get()->isGroupInstance();
+	}
+	return false;
+}
+
 gsEntity::gsEntity()
 {
 }
@@ -2002,42 +2054,41 @@ gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3
 	return NULL;
 }
 
+gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : m_gobj(inst)
+{
+}
+
 gsGroupInstance::~gsGroupInstance() {
-	if (gobj) {
+	if (m_gobj) {
 		destroy();
 	}
 }
 
 void gsGroupInstance::destroy()
 {
-	gobj->destroyInstance(false);
-	delete gobj;
-	gobj=0;
+	// m_gobj the group-instance is finalized by the groupmanager
 }
 
-gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : gobj(inst)
-{
 
-}
 
 int gsGroupInstance::getElementCount()
 {
-	return gobj?gobj->getObjects().size():0;
+	return m_gobj?m_gobj->getObjects().size():0;
 }
 
 gkGameObject* gsGroupInstance::getElementAt(int pos)
 {
-	return gobj?gobj->getObjects().at(pos):NULL;
+	return m_gobj?m_gobj->getObjects().at(pos):NULL;
 }
 
 gkGameObject* gsGroupInstance::getElementByName(gkString name)
 {
-	return gobj?gobj->getObject(name):NULL;
+	return m_gobj?m_gobj->getObject(name):NULL;
 }
 
 gkGameObject* gsGroupInstance::getRoot(void)
 {
-	return gobj->getRoot();
+	return m_gobj->getRoot();
 }
 
 void import(const gkString& scriptName)

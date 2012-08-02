@@ -52,6 +52,8 @@
 %newobject gsScene::createEmpty;
 %newobject gsScene::cloneObject;
 %newobject gsScene::getDynamicsWorld;
+%newobject gsGameObject::getGroupInstance;
+%newobject createGroupInstance;
 
 
 // Classes

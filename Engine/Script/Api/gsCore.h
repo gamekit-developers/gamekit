@@ -400,7 +400,7 @@ public:
 	gkGameObject* getRoot(void);
 	void destroy();
 private :
-	gkGameObjectInstance* gobj;
+	gkGameObjectInstance* m_gobj;
 };
 
 extern gsGroupInstance* createGroupInstance(gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
@@ -481,6 +481,9 @@ public:
 	void clearParentInPlace(void);
 	void addChild(gsGameObject* chi);
 	void removeChild(gsGameObject* chi);
+	gkGameObject* getChildAt(int pos);
+	int getChildCount(void);
+	gkGameObject* getChildByName(const gkString& name);
 
 
 	gkGameObject* getParent(void);
@@ -503,6 +506,10 @@ public:
 	void        __setitem__(const gkString& prop, bool  v);
 	void        __setitem__(const gkString& prop, float v);
 	void        __setitem__(const gkString& prop, const char* v);
+
+
+	gsGroupInstance* getGroupInstance();
+	bool             isGroupInstance();
 
 
 	// internal

@@ -8374,7 +8374,7 @@ static int _wrap_createGroupInstance__SWIG_0(lua_State* L) {
   arg4 = *argp4;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8414,7 +8414,7 @@ static int _wrap_createGroupInstance__SWIG_1(lua_State* L) {
   arg3 = *argp3;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8445,7 +8445,7 @@ static int _wrap_createGroupInstance__SWIG_2(lua_State* L) {
   arg2 = *argp2;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8467,7 +8467,7 @@ static int _wrap_createGroupInstance__SWIG_3(lua_State* L) {
   arg1 = gkString((const char*)lua_tostring(L, 1));
   
   result = (gsGroupInstance *)createGroupInstance(arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8523,7 +8523,7 @@ static int _wrap_createGroupInstance__SWIG_4(lua_State* L) {
   arg5 = *argp5;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4,arg5);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8570,7 +8570,7 @@ static int _wrap_createGroupInstance__SWIG_5(lua_State* L) {
   arg4 = *argp4;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8608,7 +8608,7 @@ static int _wrap_createGroupInstance__SWIG_6(lua_State* L) {
   arg3 = *argp3;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8637,7 +8637,7 @@ static int _wrap_createGroupInstance__SWIG_7(lua_State* L) {
   arg2 = gkString((const char*)lua_tostring(L, 2));
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8693,7 +8693,7 @@ static int _wrap_createGroupInstance__SWIG_8(lua_State* L) {
   arg5 = *argp5;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4,arg5);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8740,7 +8740,7 @@ static int _wrap_createGroupInstance__SWIG_9(lua_State* L) {
   arg4 = *argp4;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8778,7 +8778,7 @@ static int _wrap_createGroupInstance__SWIG_10(lua_State* L) {
   arg3 = *argp3;
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8807,7 +8807,7 @@ static int _wrap_createGroupInstance__SWIG_11(lua_State* L) {
   arg2 = gkString((const char*)lua_tostring(L, 2));
   
   result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11649,6 +11649,92 @@ fail:
 }
 
 
+static int _wrap_GameObject_getChildAt(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  int arg2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsGameObject::getChildAt",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getChildAt",1,"gsGameObject *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsGameObject::getChildAt",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getChildAt",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkGameObject *)(arg1)->getChildAt(arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_getChildCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("gsGameObject::getChildCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getChildCount",1,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getChildCount",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  result = (int)(arg1)->getChildCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_getChildByName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("gsGameObject::getChildByName",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getChildByName",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsGameObject::getChildByName",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getChildByName",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gkGameObject *)(arg1)->getChildByName((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObject_getParent(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -12255,6 +12341,54 @@ static int _wrap_GameObject___setitem(lua_State* L) {
 }
 
 
+static int _wrap_GameObject_getGroupInstance(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("gsGameObject::getGroupInstance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::getGroupInstance",1,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getGroupInstance",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  result = (gsGroupInstance *)(arg1)->getGroupInstance();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_isGroupInstance(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("gsGameObject::isGroupInstance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGameObject::isGroupInstance",1,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_isGroupInstance",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  result = (bool)(arg1)->isGroupInstance();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_GameObject(void *obj) {
 gsGameObject *arg1 = (gsGameObject *) obj;
 delete arg1;
@@ -12291,6 +12425,9 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"clearParentInPlace", _wrap_GameObject_clearParentInPlace}, 
     {"addChild", _wrap_GameObject_addChild}, 
     {"removeChild", _wrap_GameObject_removeChild}, 
+    {"getChildAt", _wrap_GameObject_getChildAt}, 
+    {"getChildCount", _wrap_GameObject_getChildCount}, 
+    {"getChildByName", _wrap_GameObject_getChildByName}, 
     {"getParent", _wrap_GameObject_getParent}, 
     {"enableContacts", _wrap_GameObject_enableContacts}, 
     {"hasContacts", _wrap_GameObject_hasContacts}, 
@@ -12301,6 +12438,8 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"setProperty", _wrap_GameObject_setProperty}, 
     {"__getitem", _wrap_GameObject___getitem}, 
     {"__setitem", _wrap_GameObject___setitem}, 
+    {"getGroupInstance", _wrap_GameObject_getGroupInstance}, 
+    {"isGroupInstance", _wrap_GameObject_isGroupInstance}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsGameObject_attributes[] = {

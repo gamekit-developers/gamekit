@@ -28,7 +28,7 @@
 #include "gsProcess.h"
 %}
 
-%rename(ProcessManager)			gsProcessManager;
+%rename(ProcessManager)	gsProcessManager;
 %rename(Process)		gsProcess;
 %newobject gsProcessManager::waitProcess;
 
