@@ -101,6 +101,7 @@ GS_SCRIPT_NAME(SetCompositorChain)
 
 // Arrays
 GS_ARRAY_WRAP(gsGameObject,  gkGameObject, ObjectList, ObjectIterator)
+GS_ARRAY_WRAP(gsProcess,  gkProcess, ProcessList, ProcessIterator)
 
 
 %include "gsCore.h"

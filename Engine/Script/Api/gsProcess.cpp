@@ -277,17 +277,13 @@ gkProcess* gsProcessManager::createOrientation(gsGameObject* obj, float time,  c
 	return orientationProcess;
 }
 
-gkProcess* gsProcessManager::createParallel(float maxTime,gsProcess* proc1, gsProcess* proc2, gsProcess* proc3, gsProcess* proc4)
+gkProcess* gsProcessManager::createParallel(gsArray<gsProcess,gkProcess>& processes,float maxTime)
 {
-	gkParallelProcess* parallelProoc = new gkParallelProcess(maxTime);
-	if (proc1)
-		parallelProoc->append(proc1);
-	if (proc2)
-		parallelProoc->append(proc2);
-	if (proc3)
-		parallelProoc->append(proc3);
-	if (proc4)
-		parallelProoc->append(proc4);
+	gkParallelProcess* parallelProc = new gkParallelProcess(maxTime);
 
-	return parallelProoc;
+	for (int i=0;i<processes.size();i++) {
+		parallelProc->append(processes.at(i));
+	}
+
+	return parallelProc;
 }

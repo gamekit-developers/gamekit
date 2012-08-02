@@ -66,6 +66,7 @@ public:
 	void onFinish(bool canceled);
 	void setFollowUp(gsProcess* followUp);
 	gsProcess* proc() { return this;}
+	gkProcess* get() { return m_process?m_process:this;}
 };
 
 class gsProcessManager
@@ -84,7 +85,7 @@ public:
 	gkProcess* createTranslation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to);
 	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& toOrientation);
 	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& fromOrientation, const gsVector3& toOrientation);
-	gkProcess* createParallel(float maxTime=0,gsProcess* proc1=0, gsProcess* proc2=0, gsProcess* proc3=0, gsProcess* proc4=0);
+	gkProcess* createParallel(gsArray<gsProcess,gkProcess>& processes,float maxTime=0);
 	gkProcessManager* m_processManager;
 
 };
