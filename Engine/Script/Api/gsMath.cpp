@@ -24,3 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
+ gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t)
+ {
+	 return gsVector3(gkMathUtils::interp(gkVector3(vec1),gkVector3(vec2),t));
+ }

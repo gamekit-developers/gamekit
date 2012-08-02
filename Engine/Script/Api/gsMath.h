@@ -72,6 +72,7 @@ public:
 	gsVector3 operator/ (float v)             { return ((const gkVector3&) * this).operator / (v); }
 };
 
+extern gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t);
 
 class gsQuaternion
 #ifndef SWIG
