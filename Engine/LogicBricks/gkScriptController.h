@@ -53,7 +53,6 @@ public:
 	GK_INLINE void setScript(gkLuaScript* sc)   {m_script = sc;}
 	GK_INLINE gkLuaScript* getScript(void)      {return m_script;}
 
-	static gkScriptController* getCurrent(void);
 };
 
 #endif//OGREKIT_USE_LUA

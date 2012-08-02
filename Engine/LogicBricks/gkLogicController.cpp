@@ -30,7 +30,10 @@
 #include "gkLogicLink.h"
 #include "gkGameObject.h"
 
-
+// Context in the current blender script.
+// For fuzzy compatibility with BGE methods
+// OgreKit.getCurrentController()
+static gkLogicController* controllerContext = 0;
 
 gkLogicController::gkLogicController(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicBrick(object, link, name), m_activeState(false)
@@ -52,11 +55,20 @@ void gkLogicController::_execute(void)
 	if (m_listener)
 	{
 		if (m_listener->executeEvent(this) && 
-				m_listener->m_mode != gkLogicBrick::Listener::OVERIDE)
+				m_listener->m_mode != gkLogicBrick::Listener::OVERIDE){
+
+			controllerContext = this;
 			execute();
+			controllerContext = 0;
+
+		}
 	}
 	else
+	{
+		controllerContext = this;
 		execute();
+		controllerContext = 0;
+	}
 }
 
 
@@ -121,4 +133,9 @@ void gkLogicController::link(gkLogicActuator* v)
 	olink->setState(m_link->getState());
 	m_link->notifyLink(olink);
 	olink->notifyLink(m_link);
+}
+
+gkLogicController* gkLogicController::getCurrent(void)
+{
+	return controllerContext;
 }

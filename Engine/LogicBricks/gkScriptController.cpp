@@ -33,10 +33,7 @@
 #include "Script/Lua/gkLuaManager.h"
 #include "Script/Lua/gkLuaUtils.h"
 
-// Context in the current blender script.
-// For fuzzy compatibility with BGE methods
-// OgreKit.getCurrentController()
-static gkScriptController* scriptContext = 0;
+
 
 
 
@@ -85,10 +82,7 @@ void gkScriptController::setScriptByString(const gkString& str)
 		m_script = scrpt;
 }
 
-gkScriptController* gkScriptController::getCurrent(void)
-{
-	return scriptContext;
-}
+
 
 
 void gkScriptController::execute(void)
@@ -96,13 +90,10 @@ void gkScriptController::execute(void)
 	if (m_error || m_sensors.empty())
 		return;
 
-	scriptContext = this;
-
 	// Main script, can be null.
 	if (m_script != 0)
 		m_error = !m_script->execute();
 
-	scriptContext = 0;
 }
 
 

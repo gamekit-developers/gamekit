@@ -53,6 +53,7 @@ public:
 	gkSensors&      getSensors(void)        {return m_sensors;}
 	gkActuators&    getActuators(void)      {return m_actuators;}
 
+	static gkLogicController* getCurrent(void);
 };
 
 

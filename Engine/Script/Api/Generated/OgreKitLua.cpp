@@ -19776,11 +19776,11 @@ static swig_lua_class _wrap_class_gsScriptController = { "ScriptController", &SW
 
 static int _wrap_getCurrentController(lua_State* L) {
   int SWIG_arg = 0;
-  gsScriptController *result = 0 ;
+  gsController *result = 0 ;
   
   SWIG_check_num_args("getCurrentController",0,0)
-  result = (gsScriptController *)getCurrentController();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScriptController,1); SWIG_arg++; 
+  result = (gsController *)getCurrentController();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsController,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;

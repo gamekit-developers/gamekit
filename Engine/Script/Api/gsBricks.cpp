@@ -452,10 +452,14 @@ GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, ScriptController);
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, ExpressionController);
 
 
-gsScriptController* getCurrentController(void)
+gsController* getCurrentController(void)
 {
-	gkScriptController* ctx = gkScriptController::getCurrent();
+	gkScriptController* ctx = static_cast<gkScriptController*>(gkScriptController::getCurrent());
 	if (ctx) return new gsScriptController(ctx);
+
+	gkExpressionController* ctxExp = static_cast<gkExpressionController*>(gkExpressionController::getCurrent());
+	if (ctx) return new gsExpressionController(ctxExp);
+
 	return 0;
 }
 

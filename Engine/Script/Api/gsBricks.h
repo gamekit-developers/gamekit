@@ -730,7 +730,7 @@ public:
 };
 
 // global context
-extern gsScriptController* getCurrentController(void);
+extern gsController* getCurrentController(void);
 
 
 
