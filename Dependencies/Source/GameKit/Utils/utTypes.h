@@ -455,7 +455,7 @@ public:
 		return 0;
 	}
 
-	void erase(Pointer link)
+	void erase(Pointer link, bool deletePntr=true)
 	{
 		if (!link || m_size == 0)
 			return;
@@ -465,16 +465,17 @@ public:
 		if (m_first == link) m_first = link->next;
 
 		m_size -= 1;
-		delete link;
+		if (deletePntr)
+			delete link;
 		if (m_size == 0)
 			clear();
 	}
 
-	void erase(const T &v)
+	void erase(const T &v, bool deletePntr=true)
 	{
 		Pointer fnd = find(v);
 		if (fnd)
-			erase(fnd);
+			erase(fnd,deletePntr);
 	}
 
 	void sort(bool (*cmp)(const T &a, const T &b))
@@ -500,8 +501,8 @@ public:
 		while (swapped && n != UT_NPOS);
 	}
 
-	UT_INLINE void pop_back(void)       { erase(end()); }
-	UT_INLINE void pop_front(void)      { erase(begin()); }
+	UT_INLINE void pop_back(bool deletePntr=true)       { erase(end(),deletePntr); }
+	UT_INLINE void pop_front(bool deletePntr=true)      { erase(begin(),deletePntr); }
 
 
 	UT_INLINE bool empty(void) const    { return m_size == 0; }

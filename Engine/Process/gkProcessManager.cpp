@@ -38,9 +38,11 @@ void gkProcessManager::update(gkScalar delta)
 			gkProcess* proc = iter.getNext();
 			// call finish-hook (canceled-finish)
 			proc->onFinish(true);
-			m_processList.erase(proc);
+			m_processList.erase(proc,false);
 		}
 
+		if (m_processList.size()==0)
+			return;
 		// update all processes
 		utList<gkProcess*>::Pointer start = m_processList.begin();
 		utList<gkProcess*>::Pointer end = m_processList.end();
@@ -67,7 +69,7 @@ void gkProcessManager::update(gkScalar delta)
 					}
 					else
 					{
-						m_processList.erase(temp);
+						m_processList.erase(temp,false);
 					}
 					if (temp->deleteAfterFinish()){
 						delete temp;
