@@ -28,6 +28,7 @@
 #include "Process/gkProcessManager.h"
 #include "Process/gkWaitProcess.h"
 #include "Process/gkTranslationProcess.h"
+#include "Process/gkOrientationProcess.h"
 
 
 gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0)
@@ -252,17 +253,27 @@ gkProcess* gsProcessManager::createWaitProcess(float time)
 	return waitProc;
 }
 
-gkProcess* gsProcessManager::createTranslationProcessTo(gsGameObject* obj, float time, const gsVector3& to)
+gkProcess* gsProcessManager::createTranslationProcess(gsGameObject* obj, float time, const gsVector3& to)
 {
 	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
 	return translationProcess;
 }
 
-gkProcess* gsProcessManager::createTranslationProcessFromTo(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
+gkProcess* gsProcessManager::createTranslationProcess(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
 {
 	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
 	return translationProcess;
 }
 
+gkProcess* gsProcessManager::createOrientationProcess(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
+{
+	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
+	return orientationProcess;
+}
 
+gkProcess* gsProcessManager::createOrientationProcess(gsGameObject* obj, float time,  const gsVector3& to)
+{
+	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
+	return orientationProcess;
+}
 
