@@ -268,7 +268,7 @@ void gkGameObject::destroyInstanceImpl(void)
 
 			for (unsigned short i = 0; i < n; i++)
 			{
-				Ogre::Node* pChildNode = m_node->removeChild(i);
+				Ogre::Node* pChildNode = m_node->removeChild((unsigned short)0);
 
 				pParentNode->addChild(pChildNode);
 

@@ -2074,8 +2074,6 @@ gsGameObjectInstance::gsGameObjectInstance( gkGameObjectInstance* inst ) : m_gob
 }
 
 gsGameObjectInstance::~gsGameObjectInstance() {
-	gsDebugPrint("destructor gsGameObject...");
-	// m_gobj the group-instance is finalized by the groupmanager!?
 }
 
 void gsGameObjectInstance::destroyInstance()
