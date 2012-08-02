@@ -35,7 +35,7 @@ class gkTranslationProcess : public gkProcess {
 
 public:
 	gkTranslationProcess(gkGameObject* obj,gkScalar timeToWait,const gkVector3& toPos);
-	gkTranslationProcess(gkGameObject* obj,gkScalar timeToWait,const gkVector3& toPos, const gkVector3& startPos);
+	gkTranslationProcess(gkGameObject* obj,gkScalar timeToWait,const gkVector3& fromPos, const gkVector3& toPos);
 	virtual ~gkTranslationProcess();
 	bool isFinished();
 	void init();

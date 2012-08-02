@@ -25,37 +25,28 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKPARALLELPROCESS_H_
-#define GKPARALLELPROCESS_H_
+#ifndef GKSOUNDPROCESS_H_
+#define GKSOUNDPROCESS_H_
 
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
+#include "Sound/gkSound.h"
+#include "Sound/gkSource.h"
 
-class gkParallelProcess : public gkProcess {
+class gkSoundProcess : public gkProcess {
 
 public:
-	gkParallelProcess(gkScalar maxTime=0);
-	virtual ~gkParallelProcess() {}
-
-	void append(gkProcess* childProcess);
-	void remove(gkProcess* childProcess);
-	void setMasterProcess(gkProcess* masterProcess);
-
+	gkSoundProcess(const gkString& soundName);
+	virtual ~gkSoundProcess();
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
 	void onFinish();
-
 private:
-	typedef utList<gkProcess*> ProcessList;
-
-	gkGameObject* m_object;
-
-	gkProcess* m_masterProcess;
-	ProcessList m_initalProcessList,m_processList;
-	gkScalar m_maxTime;
-	gkScalar m_currentTime;
-
+	gkSound* m_sound;
+	gkSource* m_source;
+	const gkString m_soundName;
+	bool m_soundPlayed;
 };
 
-#endif /* GKPARALLELPROCESS_H_ */
+#endif /* GKWAITPROCESS_H_ */

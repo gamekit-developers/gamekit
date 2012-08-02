@@ -25,37 +25,47 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKPARALLELPROCESS_H_
-#define GKPARALLELPROCESS_H_
+#include "Process/gkSoundProcess.h"
+#include "gkLogger.h"
+#include "Sound/gkSoundManager.h"
 
-#include "Process/gkProcess.h"
-#include "gkMathUtils.h"
+gkSoundProcess::gkSoundProcess(const gkString& soundName)
+	:	m_soundName(soundName),  m_source(0), m_sound(0), m_soundPlayed(false)
+{}
 
-class gkParallelProcess : public gkProcess {
+gkSoundProcess::~gkSoundProcess()
+{
+	// TODO: check who kills sound-sources
+}
 
-public:
-	gkParallelProcess(gkScalar maxTime=0);
-	virtual ~gkParallelProcess() {}
 
-	void append(gkProcess* childProcess);
-	void remove(gkProcess* childProcess);
-	void setMasterProcess(gkProcess* masterProcess);
+bool gkSoundProcess::isFinished()
+{
+	return m_soundPlayed && !m_source->isPlaying();
+}
 
-	bool isFinished();
-	void init();
-	void update(gkScalar delta);
-	void onFinish();
+void gkSoundProcess::init()
+{
+	if (!m_source) {
+		m_sound = static_cast<gkSound*>(gkSoundManager::getSingleton().getByName(m_soundName));
+		if (m_sound)
+		{
+			m_source = m_sound->createSource();
+		}
+	}
+	m_soundPlayed = false;
+}
+void gkSoundProcess::update(gkScalar delta)
+{
+	if (m_source && !m_soundPlayed)
+	{
+		m_source->play();
+		m_soundPlayed = true;
+	}
+}
 
-private:
-	typedef utList<gkProcess*> ProcessList;
+void gkSoundProcess::onFinish()
+{
+	gkPrintf("Finished");
+}
 
-	gkGameObject* m_object;
-
-	gkProcess* m_masterProcess;
-	ProcessList m_initalProcessList,m_processList;
-	gkScalar m_maxTime;
-	gkScalar m_currentTime;
-
-};
-
-#endif /* GKPARALLELPROCESS_H_ */

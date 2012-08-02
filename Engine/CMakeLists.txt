@@ -263,6 +263,8 @@ if (OGREKIT_USE_PROCESSMANAGER)
 			Process/gkTranslationProcess.cpp
 			Process/gkOrientationProcess.cpp
 			Process/gkParallelProcess.cpp
+			Process/gkSequenceProcess.cpp
+			Process/gkSoundProcess.cpp
 	)
 	
 	set(Process_HEADER
@@ -272,6 +274,8 @@ if (OGREKIT_USE_PROCESSMANAGER)
 			Process/gkTranslationProcess.h
 			Process/gkOrientationProcess.h
 			Process/gkParallelProcess.h
+			Process/gkSequenceProcess.h
+			Process/gkSoundProcess.h
 	)
 	
 	if(APPLE)

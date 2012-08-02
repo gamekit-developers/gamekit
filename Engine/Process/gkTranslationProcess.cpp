@@ -36,9 +36,9 @@ gkTranslationProcess::gkTranslationProcess(gkGameObject* obj,gkScalar time,const
 {
 }
 
-gkTranslationProcess::gkTranslationProcess(gkGameObject* obj,gkScalar time,const gkVector3& toPos, const gkVector3& startPos)
+gkTranslationProcess::gkTranslationProcess(gkGameObject* obj,gkScalar time,const gkVector3& fromPos, const gkVector3& toPos)
 	: 	m_object(obj), m_toOnly(false), m_translationTime(time), m_timeCounter(0),
-	  	m_destPos(toPos), m_initalPos(startPos)
+	  	m_destPos(toPos), m_initalPos(fromPos)
 {
 
 }

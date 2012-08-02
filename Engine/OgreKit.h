@@ -194,7 +194,8 @@
 #include "Process/gkTranslationProcess.h"
 #include "Process/gkOrientationProcess.h"
 #include "Process/gkParallelProcess.h"
-
+#include "Process/gkSequenceProcess.h"
+#include "Process/gkSoundProcess.h"
 #endif
 
 #ifdef OGREKIT_USE_LUA

@@ -25,84 +25,80 @@
 -------------------------------------------------------------------------------
 */
 
-#include "Process/gkParallelProcess.h"
+#include "Process/gkSequenceProcess.h"
 #include "gkLogger.h"
 #include "gkGameObject.h"
 #include "gkValue.h"
 
 
-gkParallelProcess::gkParallelProcess(gkScalar maxTime)
-	:	gkProcess(), m_masterProcess(0), m_currentTime(0),m_maxTime(maxTime),m_object(0)
+gkSequenceProcess::gkSequenceProcess(gkScalar maxTime)
+	:	gkProcess(),  m_currentTime(0),m_maxTime(maxTime), m_currentProcessNr(0), m_currentProcess(0),m_isFinished(false)
 {}
 
 
 
-void gkParallelProcess::append(gkProcess* childProcess)
+void gkSequenceProcess::append(gkProcess* childProcess)
 {
-	if (childProcess && m_initalProcessList.find(childProcess)==0)
+	if (childProcess && m_processList.find(childProcess)==0)
 	{
-		m_initalProcessList.push_back(childProcess);
+		m_processList.push_back(childProcess);
 	}
 }
-void gkParallelProcess::remove(gkProcess* childProcess)
+void gkSequenceProcess::remove(gkProcess* childProcess)
 {
 	if (childProcess)
 	{
-		m_initalProcessList.erase(childProcess,false);
+		m_processList.erase(childProcess,false);
 	}
 }
-void gkParallelProcess::setMasterProcess(gkProcess* masterProcess)
-{
-	m_masterProcess = masterProcess;
-}
 
-void gkParallelProcess::init()
+
+void gkSequenceProcess::init()
 {
+	m_isFinished = false;
 	m_currentTime = 0;
-	// reinit process-list
-	for (int i=0;i<m_initalProcessList.size();i++)
+	m_currentProcessNr = 0;
+	m_currentProcess = m_processList.at(0);
+	m_currentProcess->init();
+}
+
+void gkSequenceProcess::update(gkScalar delta)
+{
+	if (!m_isFinished)
 	{
-		gkProcess* proc = m_initalProcessList.at(i);
-		proc->init();
-		m_processList.push_back(proc);
+		m_currentTime += delta;
+
+		m_currentProcess->update(delta);
 	}
 
 }
 
-void gkParallelProcess::update(gkScalar delta)
+bool gkSequenceProcess::isFinished()
 {
-	m_currentTime += delta;
-
-	ProcessList::Iterator iter(m_processList);
-
-	int count=0;
-	while (iter.hasMoreElements())
-	{
-		count++;
-//		gkLogger::write("in "+gkToString(count));
-		gkProcess* proc = iter.getNext();
-		proc->update(delta);
-
-		if (proc->isFinished())
-			m_processList.erase(proc,false);
+	if (m_currentProcess->isFinished()) {
+		m_currentProcessNr++;
+		// did we reach the end of the sequential list?
+		if (m_currentProcessNr >= m_processList.size()){
+			gkLogger::write("end "+gkToString(m_currentProcessNr));
+			return true;
+		} else {
+			gkLogger::write("next "+gkToString(m_currentProcessNr));
+			m_currentProcess = m_processList.at(m_currentProcessNr);
+			m_currentProcess->init();
+		}
 	}
 
-}
-
-bool gkParallelProcess::isFinished()
-{
-	if (m_processList.size()==0 ||
-		(m_maxTime!=0 && m_currentTime >= m_maxTime) ||
-		(m_masterProcess && m_masterProcess->isFinished()))
+	// did we ran out of time?
+	if (m_maxTime!=0 && m_currentTime >= m_maxTime)
 		return true;
 	else
 		return false;
 }
 
 
-void gkParallelProcess::onFinish()
+void gkSequenceProcess::onFinish()
 {
-	gkPrintf("Parallel Finished");
+	gkPrintf("Trans Finished");
 }
 
 

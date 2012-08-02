@@ -30208,6 +30208,177 @@ static int _wrap_ProcessManager_createParallel(lua_State* L) {
 }
 
 
+static int _wrap_ProcessManager_createSequence__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  gsArray< gsProcess,gkProcess > *arg2 = 0 ;
+  float arg3 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createSequence",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createSequence",1,"gsProcessManager *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("createSequence",2,"gsArray< gsProcess,gkProcess > &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("createSequence",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createSequence",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t,0))){
+    SWIG_fail_ptr("ProcessManager_createSequence",2,SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t);
+  }
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  result = (gkProcess *)(arg1)->createSequence(*arg2,arg3);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createSequence__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  gsArray< gsProcess,gkProcess > *arg2 = 0 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createSequence",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createSequence",1,"gsProcessManager *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("createSequence",2,"gsArray< gsProcess,gkProcess > &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createSequence",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t,0))){
+    SWIG_fail_ptr("ProcessManager_createSequence",2,SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t);
+  }
+  
+  result = (gkProcess *)(arg1)->createSequence(*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ProcessManager_createSequence(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_ProcessManager_createSequence__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProcessManager, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_ProcessManager_createSequence__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'ProcessManager_createSequence'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    createSequence(gsProcessManager *,gsArray< gsProcess,gkProcess > &,float)\n"
+    "    createSequence(gsProcessManager *,gsArray< gsProcess,gkProcess > &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_ProcessManager_createSound(lua_State* L) {
+  int SWIG_arg = 0;
+  gsProcessManager *arg1 = (gsProcessManager *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gkProcess *result = 0 ;
+  
+  SWIG_check_num_args("createSound",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createSound",1,"gsProcessManager *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createSound",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcessManager,0))){
+    SWIG_fail_ptr("ProcessManager_createSound",1,SWIGTYPE_p_gsProcessManager);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gkProcess *)(arg1)->createSound((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Process); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_ProcessManager_m_processManager_set(lua_State* L) {
   int SWIG_arg = 0;
   gsProcessManager *arg1 = (gsProcessManager *) 0 ;
@@ -30277,6 +30448,8 @@ static swig_lua_method swig_gsProcessManager_methods[] = {
     {"createTranslation", _wrap_ProcessManager_createTranslation}, 
     {"createOrientation", _wrap_ProcessManager_createOrientation}, 
     {"createParallel", _wrap_ProcessManager_createParallel}, 
+    {"createSequence", _wrap_ProcessManager_createSequence}, 
+    {"createSound", _wrap_ProcessManager_createSound}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsProcessManager_attributes[] = {

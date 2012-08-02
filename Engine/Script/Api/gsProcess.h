@@ -86,6 +86,8 @@ public:
 	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& toOrientation);
 	gkProcess* createOrientation(gsGameObject* obj, float time, const gsVector3& fromOrientation, const gsVector3& toOrientation);
 	gkProcess* createParallel(gsArray<gsProcess,gkProcess>& processes,float maxTime=0);
+	gkProcess* createSequence(gsArray<gsProcess,gkProcess>& processes,float maxTime=0);
+	gkProcess* createSound(const gkString& soundName);
 	gkProcessManager* m_processManager;
 
 };

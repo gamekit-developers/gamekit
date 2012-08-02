@@ -29,6 +29,8 @@
 #include "Process/gkWaitProcess.h"
 #include "Process/gkTranslationProcess.h"
 #include "Process/gkOrientationProcess.h"
+#include "Process/gkSequenceProcess.h"
+#include "Process/gkSoundProcess.h"
 
 
 gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0)
@@ -286,4 +288,25 @@ gkProcess* gsProcessManager::createParallel(gsArray<gsProcess,gkProcess>& proces
 	}
 
 	return parallelProc;
+}
+
+gkProcess* gsProcessManager::createSequence(gsArray<gsProcess,gkProcess>& processes,float maxTime)
+{
+	gkSequenceProcess* seqProcesses = new gkSequenceProcess(maxTime);
+
+	for (int i=0;i<processes.size();i++) {
+		seqProcesses->append(processes.at(i));
+	}
+
+	return seqProcesses;
+}
+
+gkProcess* gsProcessManager::createSound(const gkString& soundName)
+{
+	if (!soundName.empty())
+	{
+		return new gkSoundProcess(soundName);
+	}
+
+	return 0;
 }

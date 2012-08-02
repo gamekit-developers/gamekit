@@ -25,21 +25,20 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKPARALLELPROCESS_H_
-#define GKPARALLELPROCESS_H_
+#ifndef GKSEQUENCEPROCESS_H_
+#define GKSEQUENCEPROCESS_H_
 
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
 
-class gkParallelProcess : public gkProcess {
+class gkSequenceProcess : public gkProcess {
 
 public:
-	gkParallelProcess(gkScalar maxTime=0);
-	virtual ~gkParallelProcess() {}
+	gkSequenceProcess(gkScalar maxTime=0);
+	virtual ~gkSequenceProcess() {}
 
 	void append(gkProcess* childProcess);
 	void remove(gkProcess* childProcess);
-	void setMasterProcess(gkProcess* masterProcess);
 
 	bool isFinished();
 	void init();
@@ -49,12 +48,12 @@ public:
 private:
 	typedef utList<gkProcess*> ProcessList;
 
-	gkGameObject* m_object;
-
-	gkProcess* m_masterProcess;
+	int m_currentProcessNr;
+	gkProcess* m_currentProcess;
 	ProcessList m_initalProcessList,m_processList;
 	gkScalar m_maxTime;
 	gkScalar m_currentTime;
+	bool m_isFinished;
 
 };
 
