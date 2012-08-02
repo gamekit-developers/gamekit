@@ -82,7 +82,7 @@ void gkStateActuator::execute(void)
 		m_object->setState(newState);
 		m_link->notifyState();
 
-		gkLogicManager::getSingleton().notifyState(newState, m_link);
+		m_link->getLogicManager()->notifyState(newState, m_link);
 	}
 	setPulse(BM_OFF);
 

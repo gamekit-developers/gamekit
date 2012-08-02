@@ -63,7 +63,7 @@ gkActionActuator::gkActionActuator(gkGameObject* object, gkLogicLink* link, cons
 gkActionActuator::~gkActionActuator()
 {
 	if (m_isPlaying)
-		gkLogicManager::getSingleton().removeUpdate(this);
+		m_link->getLogicManager()->removeUpdate(this);
 }
 
 
@@ -146,7 +146,7 @@ void gkActionActuator::playAction(void)
 	if (isPulseOn() && m_mode != AA_LOOP_STOP) //ignore on until next off
 		m_ignorePulseOn = true;
 
-	gkLogicManager::getSingleton().requestUpdate(this);
+	m_link->getLogicManager()->requestUpdate(this);
 }
 
 void gkActionActuator::stopAction(void)
@@ -156,7 +156,7 @@ void gkActionActuator::stopAction(void)
 
 	DEBUG_PRINT("stop: %s %d\n", m_startAct.c_str(), m_ignorePulseOn);
 
-	gkLogicManager::getSingleton().removeUpdate(this);
+	m_link->getLogicManager()->removeUpdate(this);
 }
 
 bool gkActionActuator::isActionEnded(void)

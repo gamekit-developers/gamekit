@@ -79,7 +79,7 @@ gkString gkLogicLoader_formatText(const gkString& in)
 
 
 
-void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
+void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj, gkLogicManager* rlm)
 {
 	GK_ASSERT(gobj && bobj);
 
@@ -88,8 +88,6 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 
 	if (!bobj->sensors.first && !bobj->controllers.first && !bobj->actuators.first)
 		return;
-
-	gkLogicManager* rlm = gkLogicManager::getSingletonPtr();
 
 	// new link buffer
 	gkLogicLink* lnk = rlm->createLink();

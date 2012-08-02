@@ -82,12 +82,12 @@ void gkExpressionController::execute(void)
 		if (!m_error && !m_actuators.empty())
 		{
 			bool ret = m_script->getReturnBoolValue();
-			gkLogicManager& mgr = gkLogicManager::getSingleton();
+			gkLogicManager* mgr = m_link->getLogicManager();
 			gkActuatorIterator it(m_actuators);
 			while (it.hasMoreElements())
 			{
 				gkLogicActuator* act = it.getNext();
-				mgr.push(this, act, ret);
+				mgr->push(this, act, ret);
 			}
 		}
 	}

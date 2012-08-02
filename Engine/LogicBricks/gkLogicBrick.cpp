@@ -50,7 +50,7 @@ void gkLogicBrick::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 	m_isActive      = false;
 	m_link          = link;
 
-	gkLogicManager::getSingleton().notifySort();
+	m_link->getLogicManager()->notifySort();
 }
 
 
@@ -71,7 +71,7 @@ void gkLogicBrick::setPriority(bool v)
 	int op = m_priority;
 	m_priority = v ? 1 : 0;
 	if (op != m_priority)
-		gkLogicManager::getSingleton().notifySort();
+		m_object->getOwner()->getLogicBrickManager()->notifySort();
 }
 
 
@@ -80,7 +80,7 @@ void gkLogicBrick::setPriority(int v)
 	int op = m_priority;
 	m_priority = v;
 	if (op != m_priority)
-		gkLogicManager::getSingleton().notifySort();
+		m_object->getOwner()->getLogicBrickManager()->notifySort();
 }
 
 

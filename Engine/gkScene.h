@@ -215,6 +215,8 @@ public:
 	GK_INLINE gkBlendFile* getLoadBlendFile(void)			{ return m_blendFile;		}
 	GK_INLINE void setLoadBlendFile(gkBlendFile* blendFile)	{ m_blendFile = blendFile;	}
 
+	gkLogicManager* getLogicBrickManager(void)			{ return m_logicBrickManager; }
+
 #ifdef OGREKIT_USE_PROCESSMANAGER
 	gkProcessManager* getProcessManager(void);
 #endif
@@ -269,6 +271,9 @@ private:
 	
 	bool                    m_renderToViewport;
 	int                     m_zorder;
+
+	gkLogicManager*			m_logicBrickManager;
+
 #ifdef OGREKIT_USE_PROCESSMANAGER
 	gkProcessManager*		m_processManager;
 #endif

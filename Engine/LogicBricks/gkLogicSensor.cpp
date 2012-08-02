@@ -79,14 +79,15 @@ void gkLogicSensor::reset(void)
 void gkLogicSensor::connect(void)
 {
 	if (m_dispatchType != -1)
-		gkLogicManager::getSingleton().getDispatcher(m_dispatchType).connect(this);
+		m_link->getLogicManager()->getDispatcher(m_dispatchType).connect(this);
 }
 
 
 void gkLogicSensor::disconnect(void)
 {
-	if (m_dispatchType != -1)
-		gkLogicManager::getSingleton().getDispatcher(m_dispatchType).disconnect(this);
+	if (m_dispatchType != -1){
+		m_link->getLogicManager()->getDispatcher(m_dispatchType).disconnect(this);
+	}
 }
 
 
@@ -257,14 +258,14 @@ void gkLogicSensor::dispatch(void)
 	{
 		bool value = isPositive();
 
-		gkLogicManager& mgr = gkLogicManager::getSingleton();
+		gkLogicManager* mgr = m_link->getLogicManager();
 
 		gkControllerIterator it(m_controllers);
 		while (it.hasMoreElements())
 		{
 			gkLogicController* cont = it.getNext();
 			// fire pulse
-			mgr.push(this, cont, value);
+			mgr->push(this, cont, value);
 		}
 	}
 }

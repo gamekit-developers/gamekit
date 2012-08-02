@@ -32,7 +32,7 @@
 #include "gkLogicManager.h"
 
 
-gkLogicLink::gkLogicLink() : m_state(0), m_debug(0), m_object(0), m_externalOwner(false)
+gkLogicLink::gkLogicLink(gkLogicManager* lmgr) : m_state(0), m_debug(0), m_object(0), m_externalOwner(false), m_logicBrickManager(lmgr)
 {
 }
 
@@ -64,7 +64,7 @@ gkLogicLink::~gkLogicLink()
 
 gkLogicLink* gkLogicLink::clone(gkGameObject* dest)
 {
-	gkLogicLink* link = gkLogicManager::getSingleton().createLink();
+	gkLogicLink* link = m_logicBrickManager->createLink();
 	link->m_object = dest;
 	link->m_state = m_state;
 
@@ -130,11 +130,10 @@ gkLogicLink* gkLogicLink::clone(gkGameObject* dest)
 
 void gkLogicLink::destroyInstance(void)
 {
-	gkLogicManager& mgr = gkLogicManager::getSingleton();
-	mgr.notifyLinkInstanceDestroyed(this);
+	m_logicBrickManager->notifyLinkInstanceDestroyed(this);
 
 	for (UTsize i = 0; i < m_others.size(); ++i)
-		mgr.notifyLinkInstanceDestroyed(m_others[i]);
+		m_logicBrickManager->notifyLinkInstanceDestroyed(m_others[i]);
 }
 
 

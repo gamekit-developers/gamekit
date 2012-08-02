@@ -249,13 +249,17 @@ enum gsVisibilityActuatorType
 class gsLogicManager
 {
 public:
-	gsLogicManager();
+	// default to active-scene
+	gsLogicManager(gsScene* scene=0);
 	~gsLogicManager();
 
 
 	gkLogicLink* newObject(gsGameObject* obj);
 	gkLogicLink* getObject(const gkString& name);
 	gsArray<gsLogicObject, gkLogicLink> getObjectList();
+
+private:
+	gkScene* m_scene;
 };
 
 

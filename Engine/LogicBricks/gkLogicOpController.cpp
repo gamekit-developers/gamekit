@@ -138,11 +138,12 @@ void gkLogicOpController::execute(void)
 		break;
 	}
 
-	gkLogicManager& mgr = gkLogicManager::getSingleton();
+	gkLogicManager* mgr = m_link->getLogicManager();
+
 	gkActuatorIterator it(m_actuators);
 	while (it.hasMoreElements())
 	{
 		gkLogicActuator* act = it.getNext();
-		mgr.push(this, act, doUpdate);
+		mgr->push(this, act, doUpdate);
 	}
 }

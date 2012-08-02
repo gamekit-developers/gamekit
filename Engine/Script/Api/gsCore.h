@@ -386,12 +386,15 @@ public:
 
 	gsProcessManager* getProcessManager(void);
 
+	gkLogicManager* getLogicBrickManager(void);
+
 	gkScene* getOwner();
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
 };
 
 extern gkScene* getActiveScene(void);
+extern gkScene* getScene(const gkString& sceneName);
 
 class gsGroupInstance
 {

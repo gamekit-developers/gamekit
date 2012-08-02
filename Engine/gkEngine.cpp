@@ -238,7 +238,6 @@ void gkEngine::initialize()
 	// gk Managers
 	new gkResourceGroupManager();
 	new gkSceneManager();
-	new gkLogicManager();
 #ifdef OGREKIT_USE_NNODE
 	new gkNodeManager();
 #endif
@@ -367,7 +366,6 @@ void gkEngine::finalize()
 	delete gkGameObjectManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
 	delete gkTextManager::getSingletonPtr();
-	delete gkLogicManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();
 	delete gkMessageManager::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();

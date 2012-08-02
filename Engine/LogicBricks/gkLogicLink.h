@@ -57,9 +57,11 @@ protected:
 	gkGameObject* m_object;
     bool        m_externalOwner;
 
+    gkLogicManager* m_logicBrickManager;
+
 public:
 
-	gkLogicLink();
+	gkLogicLink(gkLogicManager* lmgr);
 	~gkLogicLink();
 
 	gkLogicLink*     clone(gkGameObject* dest);
@@ -95,6 +97,7 @@ public:
 	GK_INLINE int           getDebug(void)              const {return m_debug;}
 	GK_INLINE gkGameObject* getObject(void)             const {return m_object;}
 	GK_INLINE bool          getExternalOwner(void)      const {return m_externalOwner;}
+	GK_INLINE gkLogicManager* getLogicManager(void)     const {return m_logicBrickManager;}
 };
 
 #endif//_gkLogicLink_h_

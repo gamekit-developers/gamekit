@@ -65,7 +65,7 @@ public:
 	gkLogicLoader();
 	~gkLogicLoader();
 
-	void convertObject(Blender::Object* bobj, gkGameObject* gobj);
+	void convertObject(Blender::Object* bobj, gkGameObject* gobj, gkLogicManager* rlm);
 	void resolveLinks(void);
 
 	static int getKey(int kc);

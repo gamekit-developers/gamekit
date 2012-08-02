@@ -82,7 +82,7 @@ gkGameObject::~gkGameObject()
 
 	if (m_bricks)
 	{
-		gkLogicManager::getSingleton().destroy(m_bricks);
+		m_bricks->getLogicManager()->destroy(m_bricks);
 		m_bricks = 0;
 	}
 
@@ -1285,6 +1285,6 @@ void gkGameObject::changeState(int v)
 		m_bricks->setState(v);
 
 		m_bricks->notifyState();
-		gkLogicManager::getSingleton().notifyState(v, m_bricks);
+		m_scene->getLogicBrickManager()->notifyState(v, m_bricks);
 	}
 }

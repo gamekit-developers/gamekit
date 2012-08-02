@@ -106,11 +106,13 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const 
 		 m_updateFlags(UF_ALL),
 		 m_blendFile(0),
 	     m_renderToViewport(true),
-	     m_zorder(0)
+	     m_zorder(0),
+	     m_logicBrickManager(0)
 #ifdef OGREKIT_USE_PROCESSMANAGER
 		,m_processManager(0)
 #endif
 {
+	m_logicBrickManager = new gkLogicManager();
 }
 
 
@@ -143,6 +145,12 @@ gkScene::~gkScene()
 	{
 		delete m_processManager;
 		m_processManager=0;
+	}
+
+	if (m_logicBrickManager)
+	{
+		delete m_logicBrickManager;
+		m_logicBrickManager=0;
 	}
 
 	m_objects.clear();
@@ -1136,7 +1144,7 @@ void gkScene::destroyInstanceImpl(void)
 		m_viewport = 0;		
 	}
 
-	gkLogicManager::getSingleton().notifySceneInstanceDestroyed();
+	m_logicBrickManager->notifySceneInstanceDestroyed();
 	gkWindowSystem::getSingleton().clearStates();
 
 	
@@ -1516,7 +1524,7 @@ void gkScene::update(gkScalar tickRate)
 	if (m_updateFlags & UF_LOGIC_BRICKS)
 	{
 		gkStats::getSingleton().startClock();
-		gkLogicManager::getSingleton().update(tickRate);
+		m_logicBrickManager->update(tickRate);
 		gkStats::getSingleton().stopLogicBricksClock();
 	}
 

@@ -153,7 +153,7 @@ void gkLogicManager::destroy(gkLogicLink* link)
 
 gkLogicLink* gkLogicManager::createLink(void)
 {
-	gkLogicLink* link = new gkLogicLink();
+	gkLogicLink* link = new gkLogicLink(this);
 	m_links.push_back(link);
 	return link;
 }
@@ -378,4 +378,17 @@ void gkLogicManager::update(gkScalar delta)
 }
 
 
-UT_IMPLEMENT_SINGLETON(gkLogicManager);
+template<> gkLogicManager* utSingleton<gkLogicManager>::m_singleton= 0;
+// this is kept due to compatibility-reasons. now every scene has its own logicbrick-manager. using the
+// singleton always uses the logicmanager of the active scene.
+gkLogicManager& gkLogicManager::getSingleton(void) {
+	gkLogicManager* activeSceneLogicBrickManager = gkEngine::getSingleton().getActiveScene()->getLogicBrickManager();
+    return *activeSceneLogicBrickManager;
+}
+// this is kept due to compatibility-reasons. now every scene has its own logicbrick-manager. using the
+// singleton always uses the logicmanager of the active scene.
+gkLogicManager* gkLogicManager::getSingletonPtr(void){
+	gkLogicManager* activeSceneLogicBrickManager = gkEngine::getSingleton().getActiveScene()->getLogicBrickManager();
+    return activeSceneLogicBrickManager;
+}
+

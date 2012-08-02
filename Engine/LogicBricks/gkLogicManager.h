@@ -123,7 +123,7 @@ public:
 	void GK_INLINE requestUpdate(gkLogicBrick* b) { if (b) m_updateBricks.insert(b); }
 	void GK_INLINE removeUpdate(gkLogicBrick* b)  { if (b) m_updateBricks.erase(b);  }
 
-	UT_DECLARE_SINGLETON(gkLogicManager);
+	UT_DECLARE_SINGLETON(gkLogicManager)
 };
 
 

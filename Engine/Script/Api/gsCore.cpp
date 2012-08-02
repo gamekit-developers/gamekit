@@ -733,7 +733,7 @@ gkScene* gsEngine::getActiveScene(void)
 
 gkScene* gsEngine::getScene(const gkString& sceneName)
 {
-	return (gkScene*)gkSceneManager::getSingleton().getByName(sceneName);
+	return static_cast<gkScene*>(gkSceneManager::getSingleton().getByName(sceneName));
 }
 
 
@@ -751,7 +751,7 @@ gkScene* gsEngine::addOverlayScene(const gkString& sceneName)
 {
 	gkScene* scene = 0;
 
-	scene = (gkScene*)gkSceneManager::getSingleton().getByName(sceneName);
+	scene = static_cast<gkScene*>(gkSceneManager::getSingleton().getByName(sceneName));
 	addOverlayScene(scene);
 	return scene;
 }
@@ -1001,7 +1001,7 @@ gkString gsObject::getName(void)
 
 
 
-gsScene::gsScene() : m_pickRay(0)
+gsScene::gsScene() : m_pickRay(0), m_processManager(0)
 {
 }
 
@@ -1039,6 +1039,7 @@ gkScene* gsScene::getOwner()
 	return 0;
 }
 
+// TODO: this have to cached, so only one gsProcessManager is created for this processmanager
 gsProcessManager* gsScene::getProcessManager()
 {
 	if (m_processManager)
@@ -1080,6 +1081,16 @@ gkGameObject* gsScene::createEmpty(const gkString& name)
 	return 0;
 }
 
+gkLogicManager* gsScene::getLogicBrickManager()
+{
+	if (m_object)
+	{
+		gkScene* scene = cast<gkScene>();
+		return scene->getLogicBrickManager();
+	}
+
+	return 0;
+}
 
 gsRay* gsScene::getPickRay(){
 	if (m_object){
@@ -1151,6 +1162,11 @@ gkScene* getActiveScene(void)
 	if (eng && eng->isInitialized())
 		return eng->getActiveScene();
 	return 0;
+}
+
+gkScene* getScene(const gkString& sceneName)
+{
+	return static_cast<gkScene*>(gkSceneManager::getSingleton().getByName(sceneName));
 }
 
 gkHUD* getHUD(const gkString& name)

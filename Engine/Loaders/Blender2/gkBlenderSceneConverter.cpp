@@ -737,7 +737,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 
 void gkBlenderSceneConverter::convertObjectLogic(gkGameObject* gobj, Blender::Object* bobj)
 {
-	m_logic->convertObject(bobj, gobj);
+	m_logic->convertObject(bobj, gobj, m_gscene->getLogicBrickManager());
 }
 
 

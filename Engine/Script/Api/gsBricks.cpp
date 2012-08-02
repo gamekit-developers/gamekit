@@ -33,8 +33,12 @@
 
 
 
-gsLogicManager::gsLogicManager()
+gsLogicManager::gsLogicManager(gsScene* scene) : m_scene(0)
 {
+	if (scene)
+		m_scene = scene->getOwner();
+	else
+		m_scene = gkEngine::getSingleton().getActiveScene();
 }
 
 
@@ -46,7 +50,10 @@ gsLogicManager::~gsLogicManager()
 
 gkLogicLink* gsLogicManager::newObject(gsGameObject* obj)
 {
-	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
+	if (!m_scene)
+		return 0;
+
+	gkLogicManager* lptr = m_scene->getLogicBrickManager();
 
 	if (lptr && obj)
 	{
@@ -67,8 +74,9 @@ gkLogicLink* gsLogicManager::newObject(gsGameObject* obj)
 
 gkLogicLink* gsLogicManager::getObject(const gkString& name)
 {
-	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
+	gkLogicManager* lptr = m_scene->getLogicBrickManager();
 
+	gkSceneManager::Resources scenes = gkSceneManager::getSingleton().getResources();
 	if (lptr)
 	{
 		gkLogicManager::Links& lnks = lptr->getLinks();
@@ -93,7 +101,7 @@ gkLogicLink* gsLogicManager::getObject(const gkString& name)
 
 gsArray<gsLogicObject, gkLogicLink> gsLogicManager::getObjectList()
 {
-	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
+	gkLogicManager* lptr = m_scene->getLogicBrickManager();
 
 	if (lptr)
 	{
@@ -141,7 +149,7 @@ gsLogicObject::~gsLogicObject()
 {
 	if (m_link && m_link->getExternalOwner())
 	{
-		gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
+		gkLogicManager* lptr = m_link->getObject()->getOwner()->getLogicBrickManager();
 		if (lptr)
 			lptr->destroy(m_link);
 
