@@ -39,7 +39,7 @@ gkOrientationProcess::gkOrientationProcess(gkGameObject* obj,gkScalar time,const
 
 
 gkOrientationProcess::gkOrientationProcess(gkGameObject* obj,gkScalar time,const gkQuaternion& startOrientation, const gkQuaternion& destOrientation)
-:	m_object(obj), m_toOnly(true), m_translationTime(time), m_timeCounter(0),
+:	m_object(obj), m_toOnly(false), m_translationTime(time), m_timeCounter(0),
  	m_initalOrientation(startOrientation), m_destOrientation(destOrientation)
 {}
 
@@ -50,7 +50,7 @@ gkOrientationProcess::gkOrientationProcess(gkGameObject* obj,gkScalar time,const
 
 
 gkOrientationProcess::gkOrientationProcess(gkGameObject* obj,gkScalar time,const gkVector3& startOrientation, const gkVector3& destOrientation)
-:	m_object(obj), m_toOnly(true), m_translationTime(time), m_timeCounter(0),
+:	m_object(obj), m_toOnly(false), m_translationTime(time), m_timeCounter(0),
  	m_initalOrientation(gkEuler(startOrientation).toQuaternion()), m_destOrientation(gkEuler(destOrientation).toQuaternion())
 {}
 
