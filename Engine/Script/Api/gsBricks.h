@@ -806,6 +806,8 @@ public:
 
 	gkGameObject* getLastCreatedObject(void) {BRICK_GET( getLastCreatedObject(),0);}
 
+	void refreshTrackTo()	{ get()->trackToObject(); }
+
 	OGRE_KIT_LOGIC_BRICK(EditObjectActuator);
 };
 

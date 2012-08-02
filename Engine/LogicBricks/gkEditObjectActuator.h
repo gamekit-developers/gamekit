@@ -65,7 +65,6 @@ private:
 
 	void addObject(void);
 	void endObject(void);
-	void trackToObject(void);
 
 public:
 
@@ -100,7 +99,7 @@ public:
 			m_lastCreatedObject=NULL;
 		}
 	}
-
+    	void trackToObject(void);
 	void execute(void);
 };
 
