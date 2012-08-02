@@ -307,6 +307,7 @@ void gkBlenderSceneConverter::convertGroupInstances()
 
 
 				gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName),bobj->lay);
+				inst->getRoot()->_makeGroupInstance(inst);
 				if (inst)
 					convertObject(bobj, inst->getRoot());
 			}
