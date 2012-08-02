@@ -40,7 +40,14 @@ gkHUDElement::gkHUDElement(const gkString& name)
 	:    m_name(name), m_element(0), m_parent(0), m_alphaBlend(2.f)
 {
 	if (Ogre::OverlayManager::getSingleton().hasOverlayElement(name))
+	{
 		m_element = Ogre::OverlayManager::getSingleton().getOverlayElement(name);
+		if (m_element)
+		{
+			m_position.x = m_element->getLeft();
+			m_position.y = m_element->getTop();
+		}
+	}
 }
 
 
@@ -214,4 +221,17 @@ void gkHUDElement::show(bool v)
 		m_element->show();
 	else
 		m_element->hide();
+}
+
+gkVector2 gkHUDElement::getPosition()
+{
+
+	if (m_element)
+	{
+		m_position.x = m_element->getLeft();
+		m_position.y = m_element->getTop();
+
+	}
+
+	return m_position;
 }

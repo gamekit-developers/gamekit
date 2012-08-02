@@ -346,12 +346,16 @@ public:
 
 	int getMaterialAlphaRejectValue();
 	void setMaterialAlphaRejectValue(int val, bool isGreater);
-
+	gsVector3 getPosition();
+	void setPosition(gsVector3 pos);
 	void setPosition(float x,float y);
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsHUDElement, gkHUDElement, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
 	//OGRE_KIT_TEMPLATE_NEW_INLINE(gsHUDElement, gkHUDElement);
+
+private:
+	gsVector3 mPosition;
 };
 
 extern gkHUD* getHUD(const gkString& name);

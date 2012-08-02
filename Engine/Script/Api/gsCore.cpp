@@ -941,6 +941,21 @@ void gsHUDElement::setParameter(const gkString& name, const gkString& value)
 		return m_object->setParameter(name, value);
 }
 
+gsVector3 gsHUDElement::getPosition()
+{
+	if (m_object){
+		const gkVector2& vec2 = m_object->getPosition();
+		mPosition.x = vec2.x;
+		mPosition.y = vec2.y;
+	}
+	return mPosition;
+}
+
+void gsHUDElement::setPosition(gsVector3 vec)
+{
+	setPosition(vec.x,vec.y);
+}
+
 void gsHUDElement::setPosition(float x,float y)
 {
 	if (m_object)

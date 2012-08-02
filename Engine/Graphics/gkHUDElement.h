@@ -53,6 +53,7 @@ public:
 	gkString getParameter(const gkString& name);
 	void setParameter(const gkString& name, const gkString& value);
 
+	gkVector2 getPosition(void);
 	void setPosition(float x, float y);
 
 	void show(bool v);
@@ -77,6 +78,7 @@ protected:
 	Ogre::OverlayElement* m_element;
 	gkHUD* m_parent;
 	float m_alphaBlend;
+	gkVector2 m_position;
 };
 
 #endif//_gkHUDElement_h_
