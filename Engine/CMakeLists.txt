@@ -256,7 +256,6 @@ endif()
 # ---------------------------------------------------------
 
 if (OGREKIT_USE_PROCESSMANAGER)
-
 	set(Process_SOURCE
 			Process/gkProcess.cpp
 			Process/gkProcessManager.cpp
@@ -270,7 +269,7 @@ if (OGREKIT_USE_PROCESSMANAGER)
 	)
 	
 	if(APPLE)
-		source_group(Process FILES ${Particles_HEADER}  ${Particles_SOURCE})
+		source_group(Process FILES ${Process_HEADER}  ${Process_SOURCE})
 	
 	else()
 		source_group(Process\\Header FILES ${Process_HEADER})
@@ -750,6 +749,7 @@ else()
 		Script/Api/gsThread.i
 		Script/Api/gsTypes.i
 		Script/Api/gsUtils.i
+		Script/Api/gsProcess.i
 	)
 
 	set(Script_HEADER
@@ -773,6 +773,7 @@ else()
 		Script/Api/gsSound.h
 		Script/Api/gsThread.h
 		Script/Api/gsUtils.h
+		Script/Api/gsProcess.h
 		${Script_INC}
 	)
 
@@ -800,6 +801,7 @@ else()
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
+		Script/Api/gsProcess.cpp
 	)
 	
 	set(Script_SOURCE_2
