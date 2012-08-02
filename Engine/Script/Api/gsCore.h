@@ -262,9 +262,22 @@ public:
 	gkScene* loadBlendFile(const gkString& name);
 	gkScene* getActiveScene(void);
 
-	void addOverlayScene(const gkString& name);
-	void addBackgroundScene(const gkString& name);
+	gkScene* getScene(const gkString& sceneName);
+
+	gkScene* addOverlayScene(gsScene* scene);
+	gkScene* addOverlayScene(const gkString& name);
+
+	gkScene* addBackgroundScene(gsScene* scene);
+	gkScene* addBackgroundScene(const gkString& name);
+
+	void removeScene(gsScene* scene);
 	void removeScene(const gkString& name);
+
+#ifndef SWIG
+	gkScene* addOverlayScene(gkScene* scene);
+	gkScene* addBackgroundScene(gkScene* scene);
+	void removeScene(gkScene* scene);
+#endif
 
 	void unloadBlendFile(const gkString& name);
 	void unloadAllBlendFiles();
@@ -368,6 +381,7 @@ public:
 
 	void setUpdateFlags(unsigned int flags);
 
+	gkScene* getOwner();
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
 };
@@ -390,6 +404,8 @@ private :
 };
 
 extern gsGroupInstance* createGroupInstance(gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+extern gsGroupInstance* createGroupInstance(gsScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+extern gsGroupInstance* createGroupInstance(gkScene* scene,gkString name,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
 
 class gsGameObject : public gsObject
 {

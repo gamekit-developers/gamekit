@@ -723,6 +723,7 @@ void gsEngine::unloadAllBlendFiles()
 }
 
 
+
 gkScene* gsEngine::getActiveScene(void)
 {
 	if (m_engine && m_engine->isInitialized())
@@ -730,43 +731,98 @@ gkScene* gsEngine::getActiveScene(void)
 	return 0;
 }
 
-void gsEngine::addOverlayScene(const gkString& m_sceneName)
+gkScene* gsEngine::getScene(const gkString& sceneName)
+{
+	return (gkScene*)gkSceneManager::getSingleton().getByName(sceneName);
+}
+
+
+gkScene* gsScene::getOwner()
+{
+	if (m_object)
+	{
+		return cast<gkScene>();
+	}
+	return 0;
+}
+
+gkScene* gsEngine::addOverlayScene(gsScene* scene)
+{
+	if (scene)
+		return addOverlayScene(scene->getOwner());
+	return 0;
+}
+
+
+gkScene* gsEngine::addOverlayScene(const gkString& sceneName)
 {
 	gkScene* scene = 0;
-	gkGameObject* obj = 0;
-	gkWindow* win;
-	win = m_engine->getActiveScene()->getDisplayWindow();
-	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+
+	scene = (gkScene*)gkSceneManager::getSingleton().getByName(sceneName);
+	addOverlayScene(scene);
+	return scene;
+}
+
+gkScene* gsEngine::addOverlayScene(gkScene* scene)
+{
 	if (scene && !scene->isInstanced())
 	{
+		gkWindow* win;
+		win = m_engine->getActiveScene()->getDisplayWindow();
 		int zorder = win->getViewport(win->getViewportCount()-1)->getZOrder();
 		scene->destroyInstance(true);
 		scene->setDisplayWindow(win, zorder+1);
 		scene->createInstance(true);
 	}
+	return scene;
 }
 
-void gsEngine::addBackgroundScene(const gkString& m_sceneName)
+gkScene* gsEngine::addBackgroundScene(const gkString& sceneName)
 {
 	gkScene* scene = 0;
-	gkGameObject* obj = 0;
-	gkWindow* win;
-	win = m_engine->getActiveScene()->getDisplayWindow();
-	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+	scene = (gkScene*)gkSceneManager::getSingleton().getByName(sceneName);
+	addBackgroundScene(scene);
+	return scene;
+}
+
+gkScene* gsEngine::addBackgroundScene(gsScene* scene)
+{
+	if (scene)
+		return addBackgroundScene(scene->getOwner());
+	return 0;
+}
+
+gkScene*  gsEngine::addBackgroundScene(gkScene* scene)
+{
 	if (scene && !scene->isInstanced())
 	{
+		gkWindow* win;
+		win = m_engine->getActiveScene()->getDisplayWindow();
 		int zorder = win->getViewport(0)->getZOrder();
 		scene->setDisplayWindow(win, zorder-1);
 		scene->createInstance(true);
 	}
+	return scene;
 }
+
 
 void gsEngine::removeScene(const gkString& m_sceneName)
 {
 	gkScene* scene = 0;
 	scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+	removeScene(scene);
+}
+
+void  gsEngine::removeScene(gkScene* scene)
+{
 	if (scene)
 		scene->destroyInstance(true);
+}
+
+void  gsEngine::removeScene(gsScene* scene)
+{
+	if (scene)
+		removeScene(scene->getOwner());
 }
 
 void gsEngine::run(void)
@@ -1888,6 +1944,25 @@ bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 }
 
 gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
+	gkEngine* eng = gkEngine::getSingletonPtr();
+	if (eng && eng->isInitialized()){
+		gkScene* scene = eng->getActiveScene();
+		return createGroupInstance(scene,groupName,loc,rot,scale);
+	}
+	return 0;
+}
+
+gsGroupInstance* createGroupInstance(gsScene* gScene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
+	if (gScene)
+	{
+		gkScene* scene = gScene->getOwner();
+		if (scene)
+			return createGroupInstance(scene,groupName,loc,rot,scale);
+	}
+	return 0;
+}
+
+gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 	if (mgr->exists(groupName))
 	{
@@ -1896,7 +1971,8 @@ gsGroupInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 
 
 		gkEngine* eng = gkEngine::getSingletonPtr();
 		if (eng && eng->isInitialized()){
-			gkScene* scene = eng->getActiveScene();
+			if (!scene)
+				scene = eng->getActiveScene();
 			gkGameObjectInstance* inst = ggobj->createGroupInstance(scene, gkResourceName(gkUtils::getUniqueName("gi"+groupName), ""));
 			gkQuaternion quat;
 			quat = gkEuler(gkVector3(rot.x,rot.y,rot.z)).toQuaternion();

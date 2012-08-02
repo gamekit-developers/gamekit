@@ -1514,88 +1514,89 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gkGameObjectInstance swig_types[5]
 #define SWIGTYPE_p_gkLuaCurState swig_types[6]
 #define SWIGTYPE_p_gkScalar swig_types[7]
-#define SWIGTYPE_p_gsActionActuator swig_types[8]
-#define SWIGTYPE_p_gsActuator swig_types[9]
-#define SWIGTYPE_p_gsActuatorSensor swig_types[10]
-#define SWIGTYPE_p_gsAlwaysSensor swig_types[11]
-#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[12]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[13]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[14]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[15]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[16]
-#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[17]
-#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[18]
-#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[19]
-#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[20]
-#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[21]
-#define SWIGTYPE_p_gsBrick swig_types[22]
-#define SWIGTYPE_p_gsCamera swig_types[23]
-#define SWIGTYPE_p_gsCharacter swig_types[24]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[25]
-#define SWIGTYPE_p_gsController swig_types[26]
-#define SWIGTYPE_p_gsDebugger swig_types[27]
-#define SWIGTYPE_p_gsDelaySensor swig_types[28]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[29]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[30]
-#define SWIGTYPE_p_gsEngine swig_types[31]
-#define SWIGTYPE_p_gsEntity swig_types[32]
-#define SWIGTYPE_p_gsExpressionController swig_types[33]
-#define SWIGTYPE_p_gsFSM swig_types[34]
-#define SWIGTYPE_p_gsGameActuator swig_types[35]
-#define SWIGTYPE_p_gsGameObject swig_types[36]
-#define SWIGTYPE_p_gsGroupInstance swig_types[37]
-#define SWIGTYPE_p_gsHUD swig_types[38]
-#define SWIGTYPE_p_gsHUDElement swig_types[39]
-#define SWIGTYPE_p_gsJoystick swig_types[40]
-#define SWIGTYPE_p_gsKeyboard swig_types[41]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[42]
-#define SWIGTYPE_p_gsLight swig_types[43]
-#define SWIGTYPE_p_gsLogicManager swig_types[44]
-#define SWIGTYPE_p_gsLogicObject swig_types[45]
-#define SWIGTYPE_p_gsLogicOpController swig_types[46]
-#define SWIGTYPE_p_gsLuaManager swig_types[47]
-#define SWIGTYPE_p_gsLuaScript swig_types[48]
-#define SWIGTYPE_p_gsMessageActuator swig_types[49]
-#define SWIGTYPE_p_gsMessageSensor swig_types[50]
-#define SWIGTYPE_p_gsMotionActuator swig_types[51]
-#define SWIGTYPE_p_gsMouse swig_types[52]
-#define SWIGTYPE_p_gsMouseSensor swig_types[53]
-#define SWIGTYPE_p_gsNearSensor swig_types[54]
-#define SWIGTYPE_p_gsObject swig_types[55]
-#define SWIGTYPE_p_gsParentActuator swig_types[56]
-#define SWIGTYPE_p_gsParticles swig_types[57]
-#define SWIGTYPE_p_gsProcess swig_types[58]
-#define SWIGTYPE_p_gsProcessManager swig_types[59]
-#define SWIGTYPE_p_gsProperty swig_types[60]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[61]
-#define SWIGTYPE_p_gsPropertySensor swig_types[62]
-#define SWIGTYPE_p_gsQuaternion swig_types[63]
-#define SWIGTYPE_p_gsRadarSensor swig_types[64]
-#define SWIGTYPE_p_gsRandomActuator swig_types[65]
-#define SWIGTYPE_p_gsRandomSensor swig_types[66]
-#define SWIGTYPE_p_gsRay swig_types[67]
-#define SWIGTYPE_p_gsRaySensor swig_types[68]
-#define SWIGTYPE_p_gsRayTest swig_types[69]
-#define SWIGTYPE_p_gsScene swig_types[70]
-#define SWIGTYPE_p_gsSceneActuator swig_types[71]
-#define SWIGTYPE_p_gsScriptController swig_types[72]
-#define SWIGTYPE_p_gsSensor swig_types[73]
-#define SWIGTYPE_p_gsSkeleton swig_types[74]
-#define SWIGTYPE_p_gsSoundActuator swig_types[75]
-#define SWIGTYPE_p_gsStateActuator swig_types[76]
-#define SWIGTYPE_p_gsSweptTest swig_types[77]
-#define SWIGTYPE_p_gsTouchSensor swig_types[78]
-#define SWIGTYPE_p_gsUserDefs swig_types[79]
-#define SWIGTYPE_p_gsVector3 swig_types[80]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[81]
-#define SWIGTYPE_p_gsWhenEvent swig_types[82]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[83]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[84]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[85]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[86]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[87]
-static swig_type_info *swig_types[89];
-static swig_module_info swig_module = {swig_types, 88, 0, 0, 0, 0};
+#define SWIGTYPE_p_gkScene swig_types[8]
+#define SWIGTYPE_p_gsActionActuator swig_types[9]
+#define SWIGTYPE_p_gsActuator swig_types[10]
+#define SWIGTYPE_p_gsActuatorSensor swig_types[11]
+#define SWIGTYPE_p_gsAlwaysSensor swig_types[12]
+#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[13]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[14]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[15]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[16]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[17]
+#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[18]
+#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[19]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[20]
+#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[21]
+#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[22]
+#define SWIGTYPE_p_gsBrick swig_types[23]
+#define SWIGTYPE_p_gsCamera swig_types[24]
+#define SWIGTYPE_p_gsCharacter swig_types[25]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[26]
+#define SWIGTYPE_p_gsController swig_types[27]
+#define SWIGTYPE_p_gsDebugger swig_types[28]
+#define SWIGTYPE_p_gsDelaySensor swig_types[29]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[30]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[31]
+#define SWIGTYPE_p_gsEngine swig_types[32]
+#define SWIGTYPE_p_gsEntity swig_types[33]
+#define SWIGTYPE_p_gsExpressionController swig_types[34]
+#define SWIGTYPE_p_gsFSM swig_types[35]
+#define SWIGTYPE_p_gsGameActuator swig_types[36]
+#define SWIGTYPE_p_gsGameObject swig_types[37]
+#define SWIGTYPE_p_gsGroupInstance swig_types[38]
+#define SWIGTYPE_p_gsHUD swig_types[39]
+#define SWIGTYPE_p_gsHUDElement swig_types[40]
+#define SWIGTYPE_p_gsJoystick swig_types[41]
+#define SWIGTYPE_p_gsKeyboard swig_types[42]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[43]
+#define SWIGTYPE_p_gsLight swig_types[44]
+#define SWIGTYPE_p_gsLogicManager swig_types[45]
+#define SWIGTYPE_p_gsLogicObject swig_types[46]
+#define SWIGTYPE_p_gsLogicOpController swig_types[47]
+#define SWIGTYPE_p_gsLuaManager swig_types[48]
+#define SWIGTYPE_p_gsLuaScript swig_types[49]
+#define SWIGTYPE_p_gsMessageActuator swig_types[50]
+#define SWIGTYPE_p_gsMessageSensor swig_types[51]
+#define SWIGTYPE_p_gsMotionActuator swig_types[52]
+#define SWIGTYPE_p_gsMouse swig_types[53]
+#define SWIGTYPE_p_gsMouseSensor swig_types[54]
+#define SWIGTYPE_p_gsNearSensor swig_types[55]
+#define SWIGTYPE_p_gsObject swig_types[56]
+#define SWIGTYPE_p_gsParentActuator swig_types[57]
+#define SWIGTYPE_p_gsParticles swig_types[58]
+#define SWIGTYPE_p_gsProcess swig_types[59]
+#define SWIGTYPE_p_gsProcessManager swig_types[60]
+#define SWIGTYPE_p_gsProperty swig_types[61]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[62]
+#define SWIGTYPE_p_gsPropertySensor swig_types[63]
+#define SWIGTYPE_p_gsQuaternion swig_types[64]
+#define SWIGTYPE_p_gsRadarSensor swig_types[65]
+#define SWIGTYPE_p_gsRandomActuator swig_types[66]
+#define SWIGTYPE_p_gsRandomSensor swig_types[67]
+#define SWIGTYPE_p_gsRay swig_types[68]
+#define SWIGTYPE_p_gsRaySensor swig_types[69]
+#define SWIGTYPE_p_gsRayTest swig_types[70]
+#define SWIGTYPE_p_gsScene swig_types[71]
+#define SWIGTYPE_p_gsSceneActuator swig_types[72]
+#define SWIGTYPE_p_gsScriptController swig_types[73]
+#define SWIGTYPE_p_gsSensor swig_types[74]
+#define SWIGTYPE_p_gsSkeleton swig_types[75]
+#define SWIGTYPE_p_gsSoundActuator swig_types[76]
+#define SWIGTYPE_p_gsStateActuator swig_types[77]
+#define SWIGTYPE_p_gsSweptTest swig_types[78]
+#define SWIGTYPE_p_gsTouchSensor swig_types[79]
+#define SWIGTYPE_p_gsUserDefs swig_types[80]
+#define SWIGTYPE_p_gsVector3 swig_types[81]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[82]
+#define SWIGTYPE_p_gsWhenEvent swig_types[83]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[84]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[85]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[86]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[87]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[88]
+static swig_type_info *swig_types[90];
+static swig_module_info swig_module = {swig_types, 89, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -6640,11 +6641,78 @@ fail:
 }
 
 
-static int _wrap_Engine_addOverlayScene(lua_State* L) {
+static int _wrap_Engine_getScene(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
+  gkScene *result = 0 ;
+  
+  SWIG_check_num_args("gsEngine::getScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::getScene",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsEngine::getScene",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_getScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gkScene *)(arg1)->getScene((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_addOverlayScene__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gsScene *arg2 = (gsScene *) 0 ;
+  gkScene *result = 0 ;
+  
+  SWIG_check_num_args("gsEngine::addOverlayScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addOverlayScene",1,"gsEngine *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("gsEngine::addOverlayScene",2,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_addOverlayScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Engine_addOverlayScene",2,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (gkScene *)(arg1)->addOverlayScene(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_addOverlayScene__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("gsEngine::addOverlayScene",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addOverlayScene",1,"gsEngine *");
@@ -6658,8 +6726,10 @@ static int _wrap_Engine_addOverlayScene(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  (arg1)->addOverlayScene((gkString const &)*arg2);
-  
+  result = (gkScene *)(arg1)->addOverlayScene((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6670,11 +6740,104 @@ fail:
 }
 
 
-static int _wrap_Engine_addBackgroundScene(lua_State* L) {
+static int _wrap_Engine_addOverlayScene(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Engine_addOverlayScene__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Engine_addOverlayScene__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Engine_addOverlayScene'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsEngine::addOverlayScene(gsScene *)\n"
+    "    gsEngine::addOverlayScene(gkString const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Engine_addBackgroundScene__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gsScene *arg2 = (gsScene *) 0 ;
+  gkScene *result = 0 ;
+  
+  SWIG_check_num_args("gsEngine::addBackgroundScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addBackgroundScene",1,"gsEngine *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("gsEngine::addBackgroundScene",2,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_addBackgroundScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Engine_addBackgroundScene",2,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (gkScene *)(arg1)->addBackgroundScene(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_addBackgroundScene__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
+  gkScene *result = 0 ;
   
   SWIG_check_num_args("gsEngine::addBackgroundScene",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::addBackgroundScene",1,"gsEngine *");
@@ -6688,7 +6851,98 @@ static int _wrap_Engine_addBackgroundScene(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  (arg1)->addBackgroundScene((gkString const &)*arg2);
+  result = (gkScene *)(arg1)->addBackgroundScene((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_addBackgroundScene(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Engine_addBackgroundScene__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Engine_addBackgroundScene__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Engine_addBackgroundScene'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsEngine::addBackgroundScene(gsScene *)\n"
+    "    gsEngine::addBackgroundScene(gkString const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Engine_removeScene__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gsScene *arg2 = (gsScene *) 0 ;
+  
+  SWIG_check_num_args("gsEngine::removeScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsEngine::removeScene",1,"gsEngine *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("gsEngine::removeScene",2,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_removeScene",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Engine_removeScene",2,SWIGTYPE_p_gsScene);
+  }
+  
+  (arg1)->removeScene(arg2);
   
   return SWIG_arg;
   
@@ -6700,7 +6954,7 @@ fail:
 }
 
 
-static int _wrap_Engine_removeScene(lua_State* L) {
+static int _wrap_Engine_removeScene__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
   gkString *arg2 = 0 ;
@@ -6727,6 +6981,65 @@ static int _wrap_Engine_removeScene(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_Engine_removeScene(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Engine_removeScene__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Engine_removeScene__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Engine_removeScene'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsEngine::removeScene(gsScene *)\n"
+    "    gsEngine::removeScene(gkString const &)\n");
+  lua_error(L);return 0;
 }
 
 
@@ -6819,6 +7132,7 @@ static swig_lua_method swig_gsEngine_methods[] = {
     {"connect", _wrap_Engine_connect}, 
     {"loadBlendFile", _wrap_Engine_loadBlendFile}, 
     {"getActiveScene", _wrap_Engine_getActiveScene}, 
+    {"getScene", _wrap_Engine_getScene}, 
     {"addOverlayScene", _wrap_Engine_addOverlayScene}, 
     {"addBackgroundScene", _wrap_Engine_addBackgroundScene}, 
     {"removeScene", _wrap_Engine_removeScene}, 
@@ -7777,6 +8091,32 @@ fail:
 }
 
 
+static int _wrap_Scene_getOwner(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkScene *result = 0 ;
+  
+  SWIG_check_num_args("gsScene::getOwner",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsScene::getOwner",1,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getOwner",1,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (gkScene *)(arg1)->getOwner();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Scene(void *obj) {
 gsScene *arg1 = (gsScene *) obj;
 delete arg1;
@@ -7791,6 +8131,7 @@ static swig_lua_method swig_gsScene_methods[] = {
     {"getMainCamera", _wrap_Scene_getMainCamera}, 
     {"getPickRay", _wrap_Scene_getPickRay}, 
     {"setUpdateFlags", _wrap_Scene_setUpdateFlags}, 
+    {"getOwner", _wrap_Scene_getOwner}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsScene_attributes[] = {
@@ -8137,10 +8478,350 @@ fail:
 }
 
 
+static int _wrap_createGroupInstance__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createGroupInstance",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createGroupInstance",5,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gsScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4,arg5);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createGroupInstance",4,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gsScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_6(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 *argp3 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gsScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_7(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString arg2 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gsScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_8(lua_State* L) {
+  int SWIG_arg = 0;
+  gkScene *arg1 = (gkScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createGroupInstance",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("createGroupInstance",5,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gkScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4,arg5);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_9(lua_State* L) {
+  int SWIG_arg = 0;
+  gkScene *arg1 = (gkScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("createGroupInstance",4,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gkScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_10(lua_State* L) {
+  int SWIG_arg = 0;
+  gkScene *arg1 = (gkScene *) 0 ;
+  gkString arg2 ;
+  gsVector3 arg3 ;
+  gsVector3 *argp3 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("createGroupInstance",3,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gkScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("createGroupInstance",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_createGroupInstance__SWIG_11(lua_State* L) {
+  int SWIG_arg = 0;
+  gkScene *arg1 = (gkScene *) 0 ;
+  gkString arg2 ;
+  gsGroupInstance *result = 0 ;
+  
+  SWIG_check_num_args("createGroupInstance",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createGroupInstance",1,"gkScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createGroupInstance",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkScene,0))){
+    SWIG_fail_ptr("createGroupInstance",1,SWIGTYPE_p_gkScene);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  result = (gsGroupInstance *)createGroupInstance(arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGroupInstance,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_createGroupInstance(lua_State* L) {
   int argc;
-  int argv[5]={
-    1,2,3,4,5
+  int argv[6]={
+    1,2,3,4,5,6
   };
   
   argc = lua_gettop(L);
@@ -8151,6 +8832,44 @@ static int _wrap_createGroupInstance(lua_State* L) {
     }
     if (_v) {
       return _wrap_createGroupInstance__SWIG_3(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_createGroupInstance__SWIG_7(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gkScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_createGroupInstance__SWIG_11(L);
+      }
     }
   }
   if (argc == 2) {
@@ -8169,6 +8888,64 @@ static int _wrap_createGroupInstance(lua_State* L) {
       }
       if (_v) {
         return _wrap_createGroupInstance__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gkScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_createGroupInstance__SWIG_10(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_createGroupInstance__SWIG_6(L);
+        }
       }
     }
   }
@@ -8197,6 +8974,84 @@ static int _wrap_createGroupInstance(lua_State* L) {
         }
         if (_v) {
           return _wrap_createGroupInstance__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gkScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_createGroupInstance__SWIG_9(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_createGroupInstance__SWIG_5(L);
+          }
         }
       }
     }
@@ -8240,13 +9095,119 @@ static int _wrap_createGroupInstance(lua_State* L) {
       }
     }
   }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gkScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_createGroupInstance__SWIG_8(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsScene, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_createGroupInstance__SWIG_4(L);
+            }
+          }
+        }
+      }
+    }
+  }
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'createGroupInstance'\n"
     "  Possible C/C++ prototypes are:\n"
     "    createGroupInstance(gkString,gsVector3,gsVector3,gsVector3)\n"
     "    createGroupInstance(gkString,gsVector3,gsVector3)\n"
     "    createGroupInstance(gkString,gsVector3)\n"
-    "    createGroupInstance(gkString)\n");
+    "    createGroupInstance(gkString)\n"
+    "    createGroupInstance(gsScene *,gkString,gsVector3,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gsScene *,gkString,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gsScene *,gkString,gsVector3)\n"
+    "    createGroupInstance(gsScene *,gkString)\n"
+    "    createGroupInstance(gkScene *,gkString,gsVector3,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gkScene *,gkString,gsVector3,gsVector3)\n"
+    "    createGroupInstance(gkScene *,gkString,gsVector3)\n"
+    "    createGroupInstance(gkScene *,gkString)\n");
   lua_error(L);return 0;
 }
 
@@ -28237,6 +29198,7 @@ static swig_type_info _swigt__p_gkDynamicsWorld = {"_p_gkDynamicsWorld", "gkDyna
 static swig_type_info _swigt__p_gkGameObjectInstance = {"_p_gkGameObjectInstance", "gkGameObjectInstance *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "gsSelf *|gsFunction *|gkLuaCurState *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkScalar = {"_p_gkScalar", "gkScalar *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkScene = {"_p_gkScene", "gkScene *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gsActionActuator = {"_p_gsActionActuator", "gsActionActuator *", 0, 0, (void*)&_wrap_class_gsActionActuator, 0};
 static swig_type_info _swigt__p_gsActuator = {"_p_gsActuator", "gsActuator *", 0, 0, (void*)&_wrap_class_gsActuator, 0};
 static swig_type_info _swigt__p_gsActuatorSensor = {"_p_gsActuatorSensor", "gsActuatorSensor *", 0, 0, (void*)&_wrap_class_gsActuatorSensor, 0};
@@ -28327,6 +29289,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gkGameObjectInstance,
   &_swigt__p_gkLuaCurState,
   &_swigt__p_gkScalar,
+  &_swigt__p_gkScene,
   &_swigt__p_gsActionActuator,
   &_swigt__p_gsActuator,
   &_swigt__p_gsActuatorSensor,
@@ -28417,6 +29380,7 @@ static swig_cast_info _swigc__p_gkDynamicsWorld[] = {  {&_swigt__p_gkDynamicsWor
 static swig_cast_info _swigc__p_gkGameObjectInstance[] = {  {&_swigt__p_gkGameObjectInstance, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLuaCurState[] = {  {&_swigt__p_gkLuaCurState, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkScalar[] = {  {&_swigt__p_gkScalar, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkScene[] = {  {&_swigt__p_gkScene, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActionActuator[] = {  {&_swigt__p_gsActionActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuator[] = {  {&_swigt__p_gsActuator, 0, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsActuator, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuatorSensor[] = {  {&_swigt__p_gsActuatorSensor, 0, 0, 0},{0, 0, 0, 0}};
@@ -28507,6 +29471,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gkGameObjectInstance,
   _swigc__p_gkLuaCurState,
   _swigc__p_gkScalar,
+  _swigc__p_gkScene,
   _swigc__p_gsActionActuator,
   _swigc__p_gsActuator,
   _swigc__p_gsActuatorSensor,
