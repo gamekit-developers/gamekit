@@ -312,6 +312,17 @@ void gkGameObjectInstance::createInstanceImpl(void)
 		gobj->setOwner(scene);
 		gobj->createInstance();
 	}
+
+	gkGameObjectSet objs;
+
+	// hack!? need to be easier
+	for (int i=0;i<getObjects().size();i++)
+	{
+		objs.insert(getObjects().at(i));
+	}
+	scene->_applyBuiltinParents(objs);
+	scene->_applyBuiltinPhysics(objs);
+
 }
 
 void gkGameObjectInstance::postCreateInstanceImpl(void)
@@ -337,6 +348,7 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 
 		gobj->destroyInstance();
 		gobj->setOwner(0);
+		gobj->setParent(0);
 	}
 }
 

@@ -2067,16 +2067,6 @@ gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3
 			bool b = inst->isInstanced();
 			if (!b){
 				inst->createInstance(false);
-
-				gkGameObjectSet objs;
-
-				// hack!? need to be easier
-				for (int i=0;i<inst->getObjects().size();i++)
-				{
-					objs.insert(inst->getObjects().at(i));
-				}
-				scene->_applyBuiltinParents(objs);
-				scene->_applyBuiltinPhysics(objs);
 			}
 
 			gsGroupInstance* result = new gsGroupInstance(inst);
@@ -2086,6 +2076,7 @@ gsGroupInstance* createGroupInstance(gkScene* scene,gkString groupName,gsVector3
 	}
 	return NULL;
 }
+
 
 gsGroupInstance::gsGroupInstance( gkGameObjectInstance* inst ) : m_gobj(inst)
 {
