@@ -187,6 +187,11 @@
 #include "Particles/gkParticleResource.h"
 #include "Particles/gkParticleObject.h"
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
+#include "Process/gkProcess.h"
+#include "Process/gkProcessManager.h"
+#endif
+
 #ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
 #endif

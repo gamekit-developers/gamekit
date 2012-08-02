@@ -1021,7 +1021,6 @@ void gkScene::createInstanceImpl(void)
 
 #endif
 
-
 	// notify main scene
 	gkEngine::getSingleton().registerActiveScene(this);
 }
@@ -1511,6 +1510,15 @@ void gkScene::update(gkScalar tickRate)
 		gkLogicManager::getSingleton().update(tickRate);
 		gkStats::getSingleton().stopLogicBricksClock();
 	}
+
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	if (m_updateFlags & UF_PROCESS)
+	{
+		gkStats::getSingleton().startClock();
+		gkProcessManager::getSingleton().update(tickRate);
+		gkStats::getSingleton().stopProcessClock();
+	}
+#endif
 
 #ifdef OGREKIT_USE_NNODE
 	// update node trees

@@ -252,6 +252,33 @@ endif()
 
 
 # ---------------------------------------------------------
+# Process Manager Files
+# ---------------------------------------------------------
+
+if (OGREKIT_USE_PROCESSMANAGER)
+
+	set(Process_SOURCE
+			Process/gkProcess.cpp
+			Process/gkProcessManager.cpp
+			Process/gkWaitProcess.cpp
+	)
+	
+	set(Process_HEADER
+			Process/gkProcess.h
+			Process/gkProcessManager.h
+			Process/gkWaitProcess.h
+	)
+	
+	if(APPLE)
+		source_group(Process FILES ${Particles_HEADER}  ${Particles_SOURCE})
+	
+	else()
+		source_group(Process\\Header FILES ${Process_HEADER})
+		source_group(Process\\Source FILES ${Process_SOURCE})
+	endif()	
+endif()
+
+# ---------------------------------------------------------
 # Particles Files
 # ---------------------------------------------------------
 
@@ -618,6 +645,7 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsThread.i
 		Script/Api/gsTypes.i
 		Script/Api/gsUtils.i
+		Script/Api/gsProcess.i
 	)
 
 	set(Script_TMPL
@@ -646,6 +674,7 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsSound.h
 		Script/Api/gsThread.h
 		Script/Api/gsUtils.h
+		Script/Api/gsProcess.h
 		${Script_INC}
 		${GEN_TEMPLATES_OUT}
 	)
@@ -676,6 +705,7 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
+		Script/Api/gsProcess.cpp
 
 	)
 	
@@ -1096,6 +1126,7 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Extra_SOURCE}
 			${Resources_FILES}
 			${Script_SOURCE}     ${Script_HEADER}
+			${Process_SOURCE}	 ${Process_HEADER}
 			
 			SEPARATE
 			

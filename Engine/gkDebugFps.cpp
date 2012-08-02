@@ -174,6 +174,9 @@ void gkDebugFps::draw(void)
 	float dbvt = gkStats::getSingleton().getLastDbvtMicroSeconds() / 1000.0f;
 	float bufswaplod = gkStats::getSingleton().getLastBufSwapLodMicroSeconds() / 1000.0f;
 	float animations = gkStats::getSingleton().getLastAnimationsMicroSeconds() / 1000.0f;
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	float process = gkStats::getSingleton().getLastProcessMicroSeconds() / 1000.0f;
+#endif
 
 	gkString vals = "";
 
@@ -216,6 +219,11 @@ void gkDebugFps::draw(void)
 
 	vals += Ogre::StringConverter::toString(animations, 3, 7, '0', std::ios::fixed) + "ms ";
 	vals += Ogre::StringConverter::toString( int(100 * animations / swap), 3 ) + "%\n";
+
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	vals += Ogre::StringConverter::toString(process, 3, 7, '0', std::ios::fixed) + "ms ";
+	vals += Ogre::StringConverter::toString( int(100 * process / swap), 3 ) + "%\n";
+#endif
 
 	if (!m_keys.empty() && !vals.empty())
 	{

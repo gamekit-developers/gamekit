@@ -35,6 +35,10 @@
 #include "AI/gkNavMeshData.h"
 #include "Thread/gkAsyncResult.h"
 
+#ifdef OGREKIT_USE_PROCESSMANAGER
+#include "Process/gkProcessManager.h"
+#endif
+
 #ifdef OGREKIT_COMPILE_RECAST
 #include "gkRecast.h"
 #endif
@@ -201,6 +205,7 @@ public:
 		UF_SOUNDS		= 1 << 4,
 		UF_DBVT			= 1 << 5,
 		UF_DEBUG		= 1 << 6,
+		UF_PROCESS      = 1 << 7,
 		UF_ALL			= 0xFFFFFFFF
 	};
 
@@ -209,6 +214,10 @@ public:
 
 	GK_INLINE gkBlendFile* getLoadBlendFile(void)			{ return m_blendFile;		}
 	GK_INLINE void setLoadBlendFile(gkBlendFile* blendFile)	{ m_blendFile = blendFile;	}
+
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	GK_INLINE gkProcessManager* getProcessManager(void) {return m_processManager;}
+#endif
 
 private:
 
@@ -260,6 +269,9 @@ private:
 	
 	bool                    m_renderToViewport;
 	int                     m_zorder;
+#ifdef OGREKIT_USE_PROCESSMANAGER
+	gkProcessManager*		m_processManager;
+#endif
 };
 
 #endif//_gkSceneObject_h_

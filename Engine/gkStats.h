@@ -45,6 +45,7 @@ private:
 	unsigned long m_sound;
 	unsigned long m_bufswaplod;
 	unsigned long m_animations;
+	unsigned long m_process;
 
 	unsigned long m_lastRender;
 	unsigned long m_lastLogicBricks;
@@ -54,6 +55,7 @@ private:
 	unsigned long m_lastSound;
 	unsigned long m_lastBufswaplod;
 	unsigned long m_lastAnimations;
+	unsigned long m_lastProcess;
 	unsigned long m_lastTotal;
 public:
 	gkStats();
@@ -72,6 +74,7 @@ public:
 	void stopSoundClock(void);
 	void stopBufSwapLodClock(void);
 	void stopAnimationsClock(void);
+	void stopProcessClock(void);
 
 	unsigned long getLastRenderMicroSeconds(void)      {return m_lastRender; }
 	unsigned long getLastLogicBricksMicroSeconds(void) {return m_lastLogicBricks; }
@@ -81,6 +84,7 @@ public:
 	unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
 	unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
 	unsigned long getLastAnimationsMicroSeconds(void)  {return m_lastAnimations;}
+	unsigned long getLastProcessMicroSeconds(void)     {return m_lastProcess;}
 	unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
 
 	UT_DECLARE_SINGLETON(gkStats);
