@@ -27,6 +27,7 @@
 #include "gsProcess.h"
 #include "Process/gkProcessManager.h"
 #include "Process/gkWaitProcess.h"
+#include "Process/gkTranslationProcess.h"
 
 
 gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_onFinished(0),m_process(0)
@@ -245,10 +246,22 @@ int gsProcessManager::addProcess(gsProcess* process)
 
 /*	using %newobject-command in gsProcess.i tells swig that this
 	method creates a new object. Swig/Lua will delete it at an appropriate time */
-gkProcess* gsProcessManager::waitProcess(float time)
+gkProcess* gsProcessManager::createWaitProcess(float time)
 {
 	gkWaitProcess* waitProc = new gkWaitProcess(time);
 	return waitProc;
+}
+
+gkProcess* gsProcessManager::createTranslationProcessTo(gsGameObject* obj, float time, const gsVector3& to)
+{
+	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
+	return translationProcess;
+}
+
+gkProcess* gsProcessManager::createTranslationProcessFromTo(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
+{
+	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
+	return translationProcess;
 }
 
 

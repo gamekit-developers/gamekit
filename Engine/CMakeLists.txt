@@ -260,12 +260,14 @@ if (OGREKIT_USE_PROCESSMANAGER)
 			Process/gkProcess.cpp
 			Process/gkProcessManager.cpp
 			Process/gkWaitProcess.cpp
+			Process/gkTranslationProcess.cpp
 	)
 	
 	set(Process_HEADER
 			Process/gkProcess.h
 			Process/gkProcessManager.h
 			Process/gkWaitProcess.h
+			Process/gkTranslationProcess.h
 	)
 	
 	if(APPLE)

@@ -190,6 +190,8 @@
 #ifdef OGREKIT_USE_PROCESSMANAGER
 #include "Process/gkProcess.h"
 #include "Process/gkProcessManager.h"
+#include "Process/gkWaitProcess.h"
+#include "Process/gkTranslationProcess.h"
 #endif
 
 #ifdef OGREKIT_USE_LUA

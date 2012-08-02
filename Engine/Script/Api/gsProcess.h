@@ -79,7 +79,9 @@ public:
 	void removeProcess(gsProcess* proc);
 	void removeProcessByHandle(int handle);
 
-	gkProcess* waitProcess(float time);
+	gkProcess* createWaitProcess(float time);
+	gkProcess* createTranslationProcessTo(gsGameObject* obj, float time, const gsVector3& to);
+	gkProcess* createTranslationProcessFromTo(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to);
 
 	gkProcessManager* m_processManager;
 
