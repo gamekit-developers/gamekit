@@ -2117,6 +2117,11 @@ gkGameObject* gsGroupInstance::getRoot(void)
 	return m_gobj->getRoot();
 }
 
+gkString gsGroupInstance::getName()
+{
+	return m_gobj?m_gobj->getName():"";
+}
+
 void import(const gkString& scriptName)
 {
 	gkLuaScript* script = gkLuaManager::getSingleton().getByName<gkLuaScript>(gkResourceName(scriptName, ""));

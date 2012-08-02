@@ -406,6 +406,7 @@ public:
 	void destroyInstance();
 	void createInstance();
 	void reinstance();
+	gkString getName();
 private :
 	gkGameObjectInstance* m_gobj;
 };

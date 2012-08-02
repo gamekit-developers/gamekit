@@ -8389,6 +8389,32 @@ fail:
 }
 
 
+static int _wrap_gsGroupInstance_getName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGroupInstance *arg1 = (gsGroupInstance *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("gsGroupInstance::getName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsGroupInstance::getName",1,"gsGroupInstance *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGroupInstance,0))){
+    SWIG_fail_ptr("gsGroupInstance_getName",1,SWIGTYPE_p_gsGroupInstance);
+  }
+  
+  result = (arg1)->getName();
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_gsGroupInstance(void *obj) {
 gsGroupInstance *arg1 = (gsGroupInstance *) obj;
 delete arg1;
@@ -8401,6 +8427,7 @@ static swig_lua_method swig_gsGroupInstance_methods[] = {
     {"destroyInstance", _wrap_gsGroupInstance_destroyInstance}, 
     {"createInstance", _wrap_gsGroupInstance_createInstance}, 
     {"reinstance", _wrap_gsGroupInstance_reinstance}, 
+    {"getName", _wrap_gsGroupInstance_getName}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsGroupInstance_attributes[] = {
