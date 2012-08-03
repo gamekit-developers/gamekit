@@ -48,6 +48,7 @@ gkLogicManager::gkLogicManager()
 	m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
 	m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
 	m_dispatchers[DIS_JOY]          = new gkJoyDispatch;
+	m_logicManagers->push_back(this);
 }
 
 
@@ -60,9 +61,19 @@ gkLogicManager::~gkLogicManager()
 
 	delete []m_dispatchers;
 	m_dispatchers = 0;
+	m_logicManagers->erase(this);
 }
 
 
+void gkLogicManager::deleteManagers() {
+	if (m_logicManagers->size()>0)
+	{
+		LogicManagerList::Iterator iter(*m_logicManagers);
+		while (iter.hasMoreElements())
+			delete iter.getNext();
+	}
+	delete m_logicManagers;
+}
 
 void gkLogicManager::clear(void)
 {
@@ -400,3 +411,4 @@ gkLogicManager* gkLogicManager::getSingletonPtr(void){
     return activeSceneLogicBrickManager;
 }
 
+gkLogicManager::LogicManagerList* gkLogicManager::m_logicManagers = new LogicManagerList();

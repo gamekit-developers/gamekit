@@ -62,8 +62,10 @@ public:
 	typedef utArray<gkLogicBrick*>   Bricks;
 	typedef utHashSet<gkLogicBrick*> BrickSet;
 	typedef utList<gkLogicActuator*> TickActuators;
-
+	typedef utList<gkLogicManager*>	LogicManagerList;
 protected:
+
+	static LogicManagerList* m_logicManagers;
 
 	Links m_links;
 
@@ -122,6 +124,8 @@ public:
 
 	void GK_INLINE requestUpdate(gkLogicBrick* b) { if (b) m_updateBricks.insert(b); }
 	void GK_INLINE removeUpdate(gkLogicBrick* b)  { if (b) m_updateBricks.erase(b);  }
+
+	static void deleteManagers(void);
 
 	UT_DECLARE_SINGLETON(gkLogicManager)
 };

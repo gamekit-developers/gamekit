@@ -365,6 +365,9 @@ void gkEngine::finalize()
 	delete gkGroupManager::getSingletonPtr();
 	delete gkGameObjectManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
+
+	gkLogicManager::deleteManagers();
+
 	delete gkTextManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();
 	delete gkMessageManager::getSingletonPtr();
