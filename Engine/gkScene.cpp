@@ -141,17 +141,10 @@ gkScene::~gkScene()
 		m_constraintManager = 0;
 	}
 
-#ifdef OGREKIT_USE_PROCESSMANAGER
 	if (m_processManager)
 	{
 		delete m_processManager;
 		m_processManager=0;
-	}
-#endif
-	if (m_logicBrickManager)
-	{
-		delete m_logicBrickManager;
-		m_logicBrickManager=0;
 	}
 
 	m_objects.clear();
@@ -953,11 +946,22 @@ void gkScene::createInstanceImpl(void)
 		gkGroupManager::getSingleton().createStaticBatches(this);
 
 
+	gkGameObjectSet objs;
+
+	// hack!? need to be easier
+	gkGameObjectSet::Iterator iter(m_instanceObjects);
+
+	while (iter.hasMoreElements()){
+		gkGameObject* obj = iter.getNext();
+		if (!obj->isGroupInstance()){
+			objs.insert(obj);
+		}
+	}
 	// Build parent / child hierarchy.
-	_applyBuiltinParents(m_instanceObjects);
+	_applyBuiltinParents(objs);
 
 	// Build physics.
-	_applyBuiltinPhysics(m_instanceObjects);
+	_applyBuiltinPhysics(objs);
 
 	if (!m_viewport)
 	{
