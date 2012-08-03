@@ -217,6 +217,9 @@ void gsProcessManager::addProcess(gsProcess* process)
 	}
 }
 
+#define RETURN_DEFAULTPROCESS(MSG)\
+	gsDebugPrint(gkString("Process-Error::"+MSG).c_str());\
+	return new gkWaitProcess(2);
 
 /*	using %newobject-command in gsProcess.i tells swig that this
 	method creates a new object. Swig/Lua will delete it at an appropriate time */
@@ -228,26 +231,42 @@ gkProcess* gsProcessManager::createWait(float time)
 
 gkProcess* gsProcessManager::createTranslation(gsGameObject* obj, float time, const gsVector3& to)
 {
-	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
-	return translationProcess;
+	if (obj)
+	{
+		gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
+		return translationProcess;
+	}
+	RETURN_DEFAULTPROCESS(gkString("Problem creating Translation-Process!"))
 }
 
 gkProcess* gsProcessManager::createTranslation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
 {
-	gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
-	return translationProcess;
+	if (obj)
+	{
+		gkTranslationProcess* translationProcess = new gkTranslationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
+		return translationProcess;
+	}
+	RETURN_DEFAULTPROCESS(gkString("Problem creating Translation-Process!"))
 }
 
 gkProcess* gsProcessManager::createOrientation(gsGameObject* obj, float time, const gsVector3& from, const gsVector3& to)
 {
-	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
-	return orientationProcess;
+	if (obj)
+	{
+		gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(from),gkVector3(to));
+		return orientationProcess;
+	}
+	RETURN_DEFAULTPROCESS(gkString("Problem creating Orientation-Process!"))
 }
 
 gkProcess* gsProcessManager::createOrientation(gsGameObject* obj, float time,  const gsVector3& to)
 {
-	gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
-	return orientationProcess;
+	if (obj)
+	{
+		gkOrientationProcess* orientationProcess = new gkOrientationProcess(obj->cast<gkGameObject>(),time,gkVector3(to));
+		return orientationProcess;
+	}
+	RETURN_DEFAULTPROCESS(gkString("Problem creating Orientation-Process!"))
 }
 
 gkProcess* gsProcessManager::createParallel(gsArray<gsProcess,gkProcess>& processes,float maxTime)
@@ -255,7 +274,9 @@ gkProcess* gsProcessManager::createParallel(gsArray<gsProcess,gkProcess>& proces
 	gkParallelProcess* parallelProc = new gkParallelProcess(maxTime);
 
 	for (int i=0;i<processes.size();i++) {
-		parallelProc->append(processes.at(i));
+		gkProcess* proc = processes.at(i);
+		if (proc)
+			parallelProc->append(proc);
 	}
 
 	return parallelProc;
@@ -267,7 +288,8 @@ gkProcess* gsProcessManager::createSequence(gsArray<gsProcess,gkProcess>& proces
 
 	for (int i=0;i<processes.size();i++) {
 		gkProcess* proc = processes.at(i);
-		seqProcesses->append(proc);
+		if (proc)
+			seqProcesses->append(proc);
 	}
 
 	return seqProcesses;
@@ -281,13 +303,13 @@ gkProcess* gsProcessManager::createSound(const gkString& soundName)
 	if (!soundName.empty())
 	{
 		gkSoundProcess* sound = new gkSoundProcess(soundName);
-		if (!sound)
-			gsDebugPrint(gkString("Unknown Sound:"+soundName).c_str());
+
+		if (!sound || !sound->hasValidSound())
+			RETURN_DEFAULTPROCESS(gkString("Problem creating Sound-Process with name:"+soundName))
+
 		return sound;
 	}
-	return 0;
-#else
-	return new gkWaitProcess(0.15f);
+	RETURN_DEFAULTPROCESS(gkString("Problem creating Sound-Process with empty name"))
 #endif
 
 }
