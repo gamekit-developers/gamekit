@@ -52,7 +52,7 @@ enum gkDispatchedTypes
 
 
 
-class gkLogicManager : public utSingleton<gkLogicManager>
+class gkLogicManager 
 {
 public:
 
