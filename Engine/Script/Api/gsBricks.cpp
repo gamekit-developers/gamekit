@@ -147,13 +147,18 @@ gsLogicObject::gsLogicObject(gkLogicLink* lnk)  : m_link(lnk), m_incr(0)
 
 gsLogicObject::~gsLogicObject()
 {
-	if (m_link && m_link->getExternalOwner())
-	{
-		gkLogicManager* lptr = m_link->getObject()->getOwner()->getLogicBrickManager();
-		if (lptr)
-			lptr->destroy(m_link);
-
-	}
+	// actually I wonder if gsLogicObject should destroy also the gk-object?
+	// this is done when gkGameObject is destroyed. Here we shouldn't trust the
+	// lua-garbagecollector as we know that a lua-ref is not need for the gamelogic still to work
+	// I only comment this out. Maybe there was something I did not think of, then we can bring this
+	// back to work
+	//
+	//if (m_link && m_link->getExternalOwner())
+	//{
+	//	gkLogicManager* lptr = m_link->getLogicManager();
+	//	if (lptr)
+	//		lptr->destroy(m_link);
+	//}
 }
 
 
