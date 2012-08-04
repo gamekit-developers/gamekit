@@ -303,7 +303,7 @@ void gkGameObjectInstance::createInstanceImpl(void)
 	gkScene* scene = m_owner->getOwner();
 
 	m_owner->createInstance();
-
+	gkGameObjectSet parentingPhysicsObjs;
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
@@ -311,17 +311,11 @@ void gkGameObjectInstance::createInstanceImpl(void)
 
 		gobj->setOwner(scene);
 		gobj->createInstance();
+		parentingPhysicsObjs.insert(gobj);
 	}
 
-	gkGameObjectSet objs;
-
-	// hack!? need to be easier
-	for (int i=0;i<getObjects().size();i++)
-	{
-		objs.insert(getObjects().at(i));
-	}
-	scene->_applyBuiltinParents(objs);
-	scene->_applyBuiltinPhysics(objs);
+	scene->_applyBuiltinParents(parentingPhysicsObjs);
+	scene->_applyBuiltinPhysics(parentingPhysicsObjs);
 
 }
 
