@@ -30,6 +30,7 @@
 
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
+#include "Process/gkProcessManager.h"
 
 class gkWaitProcess : public gkProcess {
 
