@@ -32,6 +32,7 @@
 #include "gkTextFile.h"
 #include "Script/Lua/gkLuaManager.h"
 #include "Script/Lua/gkLuaUtils.h"
+#include "gkUtils.h"
 
 
 

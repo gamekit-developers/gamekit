@@ -35,6 +35,7 @@
 #include "gkJoystickSensor.h"
 #include "gkLogger.h"
 #include "gkDebugScreen.h"
+#include "gkEngine.h"
 
 
 

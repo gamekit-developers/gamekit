@@ -30,8 +30,9 @@
 #include "Process/gkTranslationProcess.h"
 #include "Process/gkOrientationProcess.h"
 #include "Process/gkSequenceProcess.h"
+#if OGREKIT_OPENAL_SOUND
 #include "Process/gkSoundProcess.h"
-
+#endif
 
 gsProcess::gsProcess() : m_init(0),m_update(0),m_isFinished(0),m_process(0)
 {}

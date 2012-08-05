@@ -28,6 +28,13 @@
 #define _gsProcess_h_
 
 #include "Process/gkProcess.h"
+#include "Script/Lua/gkLuaUtils.h"
+#include "gsCommon.h"
+#include "gsProcess.h"
+#include "gsCore.h"
+#include "gsMath.h"
+#include "gkString.h"
+#include "Process/gkProcessManager.h"
 
 class gsProcess
 #ifndef SWIG

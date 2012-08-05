@@ -28,7 +28,6 @@
 #ifndef GKSOUNDPROCESS_H_
 #define GKSOUNDPROCESS_H_
 
-#ifdef OGREKIT_OPENAL_SOUND
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
 #include "Sound/gkSound.h"
@@ -42,14 +41,16 @@ public:
 	bool isFinished();
 	void init();
 	void update(gkScalar delta);
-	bool hasValidSound() { return m_sound!=0; }
+	bool hasValidSound();
 private:
+
+	#ifdef OGREKIT_OPENAL_SOUND
 	gkSound* m_sound;
 	gkSource* m_source;
+#endif
 	const gkString m_soundName;
 	bool m_soundPlayed;
 };
-#endif /* openal sound */
 
 
 #endif /* GKWAITPROCESS_H_ */

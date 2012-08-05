@@ -30,6 +30,8 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 #include "gkString.h"
+#include "gkLogicLink.h"
+#include "gkScene.h"
 
 class gkLogicSensor;
 class gkLogicController;

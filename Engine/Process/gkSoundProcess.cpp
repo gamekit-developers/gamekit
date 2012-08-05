@@ -25,14 +25,16 @@
 -------------------------------------------------------------------------------
 */
 
-#ifdef OGREKIT_OPENAL_SOUND
 
 #include "Process/gkSoundProcess.h"
 #include "gkLogger.h"
 #include "Sound/gkSoundManager.h"
 
 gkSoundProcess::gkSoundProcess(const gkString& soundName)
-	:	m_soundName(soundName),  m_source(0), m_sound(0), m_soundPlayed(false)
+	:	m_soundName(soundName), m_soundPlayed(false)
+#ifdef OGREKIT_OPENAL_SOUND
+	,  m_source(0), m_sound(0)
+#endif
 {}
 
 gkSoundProcess::~gkSoundProcess()
@@ -43,11 +45,16 @@ gkSoundProcess::~gkSoundProcess()
 
 bool gkSoundProcess::isFinished()
 {
+#ifdef OGREKIT_OPENAL_SOUND
 	return m_soundPlayed && !m_source->isPlaying();
+#else
+	return true;
+#endif
 }
 
 void gkSoundProcess::init()
 {
+#ifdef OGREKIT_OPENAL_SOUND
 	if (!m_source) {
 		m_sound = static_cast<gkSound*>(gkSoundManager::getSingleton().getByName(m_soundName));
 		if (m_sound)
@@ -57,15 +64,24 @@ void gkSoundProcess::init()
 	}
 
 	m_soundPlayed = false;
-
+#endif
 }
 void gkSoundProcess::update(gkScalar delta)
 {
+#ifdef OGREKIT_OPENAL_SOUND
 	if (m_sound && m_source && !m_soundPlayed)
 	{
 		m_source->play();
 		m_soundPlayed = true;
 	}
+#endif
 }
 
+bool gkSoundProcess::hasValidSound()
+{
+#ifdef OGREKIT_OPENAL_SOUND
+	return m_sound!=0;
+#else
+	return false;
 #endif
+}
