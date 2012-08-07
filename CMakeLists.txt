@@ -19,6 +19,10 @@ if (MSVC)
 	add_definitions( -DNOMINMAX)
 endif()
 
+if (OGREKIT_BUILD_IPHONE)    
+	add_definitions(-DARM_NEON_GCC_COMPATIBILITY=1)
+endif()
+
 # ---------------------------------------------------------
 set(CMAKE_MODULE_PATH
     ${OGREKIT_SOURCE_DIR}/CMake
