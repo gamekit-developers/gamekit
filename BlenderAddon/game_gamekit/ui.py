@@ -27,6 +27,7 @@ from bpy.props import *
 import os
 from . import config
 
+
 # Use some of the existing buttons.
 #import properties_game
 from bl_ui import properties_game
@@ -41,6 +42,8 @@ properties_game.RENDER_PT_game_shading.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.WORLD_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_game.SCENE_PT_game_navmesh.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+
 del properties_game
 
 from bl_ui import properties_particle
@@ -128,11 +131,14 @@ properties_texture.TextureSlotPanel.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_texture.TextureTypePanel.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_texture
 
+
 from bl_ui import properties_data_camera
+properties_data_camera.DATA_PT_lens.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_camera_display.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_context_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_custom_props_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_data_camera.DATA_PT_camera_dof.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_camera
 
 from bl_ui import properties_data_lamp
@@ -444,3 +450,11 @@ def addProperties():
                     soft_min=0.0,
                     soft_max=1.0,
                     default =0.0)
+
+from bl_ui import properties_scene
+properties_scene.SCENE_PT_scene.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+del properties_scene
+
+from bl_ui import properties_render
+properties_render.RENDER_PT_bake.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+del properties_render
