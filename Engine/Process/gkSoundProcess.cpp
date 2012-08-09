@@ -28,7 +28,10 @@
 
 #include "Process/gkSoundProcess.h"
 #include "gkLogger.h"
+
+#ifdef OGREKIT_OPENAL_SOUND
 #include "Sound/gkSoundManager.h"
+#endif
 
 gkSoundProcess::gkSoundProcess(const gkString& soundName)
 	:	m_soundName(soundName), m_soundPlayed(false)

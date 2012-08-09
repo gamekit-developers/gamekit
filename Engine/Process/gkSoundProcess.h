@@ -30,8 +30,11 @@
 
 #include "Process/gkProcess.h"
 #include "gkMathUtils.h"
+
+#ifdef OGREKIT_OPENAL_SOUND
 #include "Sound/gkSound.h"
 #include "Sound/gkSource.h"
+#endif
 
 class gkSoundProcess : public gkProcess {
 
@@ -44,7 +47,7 @@ public:
 	bool hasValidSound();
 private:
 
-	#ifdef OGREKIT_OPENAL_SOUND
+#ifdef OGREKIT_OPENAL_SOUND
 	gkSound* m_sound;
 	gkSource* m_source;
 #endif
