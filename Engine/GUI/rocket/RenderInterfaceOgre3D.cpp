@@ -27,6 +27,7 @@
 
 #include "RenderInterfaceOgre3D.h"
 #include <Ogre.h>
+#include "gkGUI.h"
 
 struct RocketOgre3DVertex
 {
@@ -82,9 +83,15 @@ RenderInterfaceOgre3D::~RenderInterfaceOgre3D()
 }
 
 // Called by Rocket when it wants to render geometry that it does not wish to optimise.
-void RenderInterfaceOgre3D::RenderGeometry(Rocket::Core::Vertex* ROCKET_UNUSED(vertices), int ROCKET_UNUSED(num_vertices), int* ROCKET_UNUSED(indices), int ROCKET_UNUSED(num_indices), Rocket::Core::TextureHandle ROCKET_UNUSED(texture), const Rocket::Core::Vector2f& ROCKET_UNUSED(translation))
+void RenderInterfaceOgre3D::RenderGeometry(Rocket::Core::Vertex* vertices, int num_vertices, int* indices, int num_indices, Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
 {
 	// We've chosen to not support non-compiled geometry in the Ogre3D renderer.
+	// But if you want, you can uncomment this code, so borders will be shown.
+	/*
+	Rocket::Core::CompiledGeometryHandle gh = CompileGeometry(vertices, num_vertices, indices, num_indices, texture);
+	RenderCompiledGeometry(gh, translation);
+	ReleaseCompiledGeometry(gh);
+	*/
 }
 
 // Called by Rocket when it wants to compile geometry it believes will be static for the forseeable future.
@@ -214,9 +221,9 @@ bool RenderInterfaceOgre3D::LoadTexture(Rocket::Core::TextureHandle& texture_han
 	if (ogre_texture.isNull())
 	{
 		ogre_texture = texture_manager->load(Ogre::String(source.CString()),
-											 "Rocket",
-											 Ogre::TEX_TYPE_2D,
-											 0);
+							DEFAULT_ROCKET_RESOURCE_GROUP,
+							Ogre::TEX_TYPE_2D,
+							0);
 	}
 
 	if (ogre_texture.isNull())
@@ -236,14 +243,14 @@ bool RenderInterfaceOgre3D::GenerateTexture(Rocket::Core::TextureHandle& texture
 
     Ogre::DataStreamPtr stream(OGRE_NEW Ogre::MemoryDataStream((void*) source, source_dimensions.x * source_dimensions.y * sizeof(unsigned int)));
 	Ogre::TexturePtr ogre_texture = Ogre::TextureManager::getSingleton().loadRawData(
-                                                                                     Rocket::Core::String(16, "%d", texture_id++).CString(),
-																					 "Rocket",
-																					 stream,
-																					 (Ogre::ushort)source_dimensions.x,
-																					 (Ogre::ushort)source_dimensions.y,
-																					 Ogre::PF_A8B8G8R8,
-																					 Ogre::TEX_TYPE_2D,
-																					 0);
+										Rocket::Core::String(16, "%d", texture_id++).CString(),
+										DEFAULT_ROCKET_RESOURCE_GROUP,
+										stream,
+										(Ogre::ushort)source_dimensions.x,
+										(Ogre::ushort)source_dimensions.y,
+										Ogre::PF_A8B8G8R8,
+										Ogre::TEX_TYPE_2D,
+										0);
 
 	if (ogre_texture.isNull())
 		return false;

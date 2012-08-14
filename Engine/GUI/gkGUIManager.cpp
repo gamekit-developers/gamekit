@@ -42,6 +42,8 @@ gkGUIManager::gkGUIManager()
 {
 	// Rocket initialisation.
 
+	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(DEFAULT_ROCKET_RESOURCE_GROUP);
+
 	m_rkOgreSystem = new SystemInterfaceOgre3D();
 	Rocket::Core::SetSystemInterface(m_rkOgreSystem);
 
@@ -50,7 +52,6 @@ gkGUIManager::gkGUIManager()
 
 	m_rkFileInterface = new FileInterfaceOgre3D();
 	Rocket::Core::SetFileInterface(m_rkFileInterface);
-
 }
 
 
@@ -60,12 +61,20 @@ gkGUIManager::~gkGUIManager()
 
 	delete m_rkOgreSystem;
 	delete m_rkFileInterface;
+
+	Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup(DEFAULT_ROCKET_RESOURCE_GROUP);
 }
 
 void gkGUIManager::loadFont(const gkString& name){
 	gkFont *fnt = gkFontManager::getSingleton().getByName<gkFont>(name);
-	if (fnt){
+	
+	if (fnt)
+	{
 		Rocket::Core::FontDatabase::LoadFontFace((const unsigned char*)fnt->getData(), fnt->getSize());
+	}
+	else
+	{
+		Rocket::Core::FontDatabase::LoadFontFace(name.c_str());
 	}
 }
 

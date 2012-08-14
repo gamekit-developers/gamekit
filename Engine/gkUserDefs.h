@@ -52,7 +52,7 @@ public:
 	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
 	bool                    blendermat;         // convert meshes using blender materials
-	bool					matblending;		// Eanable material blending mode
+	bool                    matblending;        // Eanable material blending mode
 	bool                    grabInput;          // hide & grab the mouse
 	bool                    debugFps;           // show fps and profiling information
 	bool                    debugPhysics;       // enable / disable physics debugging
@@ -66,18 +66,18 @@ public:
 	int                     fsaaSamples;        // Anti aliasing samples.
 	bool                    enableshadows;
 	int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
-	gkString				shaderCachePath;	// RTShaderSystem cache file path
+	gkString                shaderCachePath;    // RTShaderSystem cache file path
 
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;
 	gkScalar                fardistanceshadow;
 
 	gkString                extWinhandle;       // External Window Handle
-	gkScalar				animFps;			// Default animation fps
-	bool					rtss;				// Enable RTShadingSystem
-	bool					hasFixedCapability; // Renderer supports fixed-function pipeline
+	gkScalar                animFps;            // Default animation fps
+	bool                    rtss;               // Enable RTShadingSystem
+	bool                    hasFixedCapability; // Renderer supports fixed-function pipeline
 
-	GK_INLINE bool			isD3DRenderSystem() { return isD3DRenderSystem(rendersystem); }
+	GK_INLINE bool          isD3DRenderSystem() { return isD3DRenderSystem(rendersystem); }
 
 	static OgreRenderSystem getOgreRenderSystem(const gkString& val);
 	static bool isD3DRenderSystem(OgreRenderSystem rs);

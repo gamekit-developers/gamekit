@@ -36,12 +36,14 @@ SystemInterface::SystemInterface(ElementLog* _log)
 {
 	log = _log;
 	application_interface = Core::GetSystemInterface();
+	application_interface->AddReference();
 	Core::SetSystemInterface(this);
 }
 
 SystemInterface::~SystemInterface()
 {
 	Core::SetSystemInterface(application_interface);
+	application_interface->RemoveReference();
 }
 
 // Get the number of seconds elapsed since the start of the application.
@@ -62,6 +64,18 @@ bool SystemInterface::LogMessage(Core::Log::Type type, const Core::String& messa
 	log->AddLogMessage(type, message);
 
 	return application_interface->LogMessage(type, message);
+}
+	
+// Activate keyboard (for touchscreen devices)
+void SystemInterface::ActivateKeyboard()
+{
+	application_interface->ActivateKeyboard();
+}
+	
+// Deactivate keyboard (for touchscreen devices)
+void SystemInterface::DeactivateKeyboard()
+{
+	application_interface->DeactivateKeyboard();
 }
 
 }

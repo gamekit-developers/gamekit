@@ -28,14 +28,14 @@
 #ifndef _gkGUI_h_
 #define _gkGUI_h_
 
-#include <Rocket/Core.h>
+#define DEFAULT_ROCKET_RESOURCE_GROUP "Rocket"
 
+#include <Rocket/Core.h>
 #include "utSingleton.h"
 #include "gkCommon.h"
 
 class RocketRenderListener;
 class RocketEventListener;
-
 
 class gkGUI
 {

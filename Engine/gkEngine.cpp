@@ -276,6 +276,8 @@ void gkEngine::initialize()
 #endif
 
 	initializeWindow();
+	if (!defs.resources.empty())
+		loadResources(defs.resources);
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM	
 	defs.hasFixedCapability = renderers[0]->getCapabilities()->hasCapability(Ogre::RSC_FIXED_FUNCTION);
@@ -325,8 +327,6 @@ void gkEngine::initializeWindow(void)
 		gkUserDefs& defs = getUserDefs();
 
 		m_window = sys->createWindow(defs);
-		if (!defs.resources.empty())
-			loadResources(defs.resources);
 	}
 }
 

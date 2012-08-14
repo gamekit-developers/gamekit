@@ -91,7 +91,6 @@ set(Core_HDR_FILES
 
 set(Core_PUB_HDR_FILES
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/FontEffect.h
-    ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/StringStorage.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/TypeConverter.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/ElementScroll.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/SystemInterface.h
@@ -115,7 +114,6 @@ set(Core_PUB_HDR_FILES
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/Texture.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/PropertyDictionary.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/StyleSheet.h
-    ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/Pool.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/FontGlyph.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/ReferenceCountable.h
     ${PROJECT_SOURCE_DIR}/Include/Rocket/Core/StringUtilities.h
@@ -255,7 +253,6 @@ set(Core_SRC_FILES
     ${PROJECT_SOURCE_DIR}/Source/Core/DecoratorTiledImage.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/EventInstancer.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/TextureLayoutRow.cpp
-    ${PROJECT_SOURCE_DIR}/Source/Core/StringStorage.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/PropertySpecification.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/FontFaceHandle.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/SystemInterface.cpp

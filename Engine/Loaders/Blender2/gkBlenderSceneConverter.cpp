@@ -828,8 +828,6 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject* gobj, Blender::Obj
 	// and better efficiency
 	if (!m_gscene->hasMesh(GKB_IDNAME(me)))
 	{
-// 		bool conversionSucceeded = false;
-
 		props.m_mesh = m_gscene->createMesh(GKB_IDNAME(me));
 
 		gkBlenderMeshConverter meconv(props.m_mesh, bobj, me);
