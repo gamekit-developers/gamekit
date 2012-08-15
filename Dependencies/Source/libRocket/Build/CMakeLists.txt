@@ -67,14 +67,7 @@ ENDIF(WIN32)
 # Find dependencies ================
 #===================================
 
-# FreeType
-find_package(Freetype REQUIRED)	
-if(FREETYPE_FOUND)
-		include_directories(${FREETYPE_INCLUDE_DIRS})
-		link_directories(${FREETYPE_LINK_DIRS})
-		list(APPEND CORE_LINK_LIBS ${FREETYPE_LIBRARY})
-endif()
-mark_as_advanced(FREETYPE_INCLUDE_DIRS FREETYPE_LIBRARY FREETYPE_LINK_DIRECTORIES)
+include_directories(${OGREKIT_FREETYPE_INCLUDE})
 
 # Boost and Python
 if(BUILD_PYTHON_BINDINGS)
@@ -167,9 +160,9 @@ endif()
 # Link libraries ===================
 #===================================
 
-target_link_libraries(RocketCore ${CORE_LINK_LIBS})
-target_link_libraries(RocketControls RocketCore)
-target_link_libraries(RocketDebugger RocketCore)
+#target_link_libraries(RocketCore ${CORE_LINK_LIBS})
+#target_link_libraries(RocketControls RocketCore)
+#target_link_libraries(RocketDebugger RocketCore)
 
 if(BUILD_PYTHON_BINDINGS)
     target_link_libraries(_rocketcore RocketCore ${PY_BINDINGS_LINK_LIBS})
@@ -273,5 +266,7 @@ if(BUILD_SAMPLES)
     	BUNDLE DESTINATION ${SAMPLES_DIR})
 endif()
 
-
+config_target_if_iphone_build(RocketCore TRUE)
+config_target_if_iphone_build(RocketControls TRUE)
+config_target_if_iphone_build(RocketDebugger TRUE)
 
