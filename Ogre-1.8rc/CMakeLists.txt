@@ -164,6 +164,7 @@ include_directories(${OGREKIT_FREETYPE_INCLUDE} ${OGREKIT_FREEIMAGE_INCLUDE} ${O
 if (APPLE)
   if (OGRE_BUILD_PLATFORM_IPHONE)
 	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/iPhone)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
   else ()
 	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
   endif()
