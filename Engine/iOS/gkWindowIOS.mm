@@ -243,9 +243,27 @@ void gkWindowIOS::transformInputState(OIS::MultiTouchState& state)
 
 bool gkWindowIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 {
+// untested patch by afterbeta
+// see: http://code.google.com/p/gamekit/issues/detail?id=264
 	{
-		m_mouse.buttons[gkMouse::Left] = GK_Pressed;
+		gkMouse& data = m_mouse;		
+ 		OIS::MultiTouchState state = arg.state;
+		
+		transformInputState(state);
+		
+		data.position.x = (gkScalar)state.X.abs;
+		data.position.y = (gkScalar)state.Y.abs;
+		data.relative.x = (gkScalar)state.X.rel;
+		data.relative.y = (gkScalar)state.Y.rel;
+        	data.buttons[gkMouse::Left] = GK_Pressed;
+		data.moved = false;
+		
+		data.wheelDelta = 0;
 	}
+// on problems fall back to this:
+//	{
+//		m_mouse.buttons[gkMouse::Left] = GK_Pressed;
+//	}
 	
 	int fid = arg.state.fingerID+1;
 	if (fid == 0)
