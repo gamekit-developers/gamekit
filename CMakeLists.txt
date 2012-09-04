@@ -41,17 +41,17 @@ configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 
  set(GAMEKIT_GRAPHIC_BACKEND 1 CACHE STRING 
 	"Select the graphic backend for GameKit. Possible values:
-		 1 - Ogre 1.8
-		 2 - Ogre 1.7
+		 1 - Ogre 1.9a
+		 2 - Ogre 1.8rc
 	"
 	)
 	
 if (GAMEKIT_GRAPHIC_BACKEND EQUAL 1)
-	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8rc)	
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.9a)
 elseif (GAMEKIT_GRAPHIC_BACKEND EQUAL 2)	
-	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.7)
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8rc)	
 else()
-	message(FATAL_ERROR "Invalid graphice backend or not supported yet.")
+	message(FATAL_ERROR "Invalid graphics backend or not supported yet.")
 endif()
 
 message(STATUS "-----------------------------------------------------------------------------")

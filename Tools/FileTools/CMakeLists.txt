@@ -44,7 +44,7 @@ else()
 	message(STATUS "Can't found ZLib: ftbFile don't support compressed file.")
 endif()
 
-option(FBT_BLEND_STRIP "Compile .blend file stripper" OFF)
+option(FBT_BLEND_STRIP "Compile .blend file stripper" ON)
 
 if (FBT_USE_ZLIB)
     add_definitions(-DFBT_USE_GZ_FILE=1)
