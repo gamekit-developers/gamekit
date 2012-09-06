@@ -32,7 +32,7 @@
 #include "gkLogicManager.h"
 
 
-gkLogicLink::gkLogicLink(gkLogicManager* lmgr) : m_state(0), m_debug(0), m_object(0), m_externalOwner(false), m_logicBrickManager(lmgr)
+gkLogicLink::gkLogicLink(gkLogicManager* lmgr) : m_state(0), m_debug(0), m_object(0), m_externalOwner(false), m_logicBrickManager(lmgr), m_cloneScene(0)
 {
 }
 
@@ -60,11 +60,19 @@ gkLogicLink::~gkLogicLink()
 	}
 }
 
-
+gkLogicLink* gkLogicLink::cloneToScene(gkGameObject* dest, gkScene* scene) {
+	m_cloneScene = scene;
+	gkLogicLink* clone = this->clone(dest);
+	m_cloneScene = 0;
+	return clone;
+}
 
 gkLogicLink* gkLogicLink::clone(gkGameObject* dest)
 {
-	gkLogicLink* link = m_logicBrickManager->createLink();
+	gkLogicLink* link = m_cloneScene?
+							m_cloneScene->getLogicBrickManager()->createLink():
+							m_logicBrickManager->createLink();
+
 	link->m_object = dest;
 	link->m_state = m_state;
 

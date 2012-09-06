@@ -65,6 +65,7 @@ public:
 	~gkLogicLink();
 
 	gkLogicLink*     clone(gkGameObject* dest);
+	gkLogicLink* 	 cloneToScene(gkGameObject* dest,gkScene* scene);
 	void            destroyInstance(void);
 
 
@@ -98,6 +99,10 @@ public:
 	GK_INLINE gkGameObject* getObject(void)             const {return m_object;}
 	GK_INLINE bool          getExternalOwner(void)      const {return m_externalOwner;}
 	GK_INLINE gkLogicManager* getLogicManager(void)     const {return m_logicBrickManager;}
+private:
+	// this is used during the clone to a specified scene
+	gkScene* m_cloneScene;
+
 };
 
 #endif//_gkLogicLink_h_

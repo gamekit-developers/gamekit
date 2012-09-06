@@ -126,7 +126,7 @@ public:
 	GK_INLINE void     setLayer(UTuint32 v) {m_layer = v; }
 	GK_INLINE UTuint32 getLayer(void)       {return m_layer;}
 
-
+	gkGameObject*	cloneToScene(const gkString& name, gkScene* scene);
 	virtual gkGameObject* clone(const gkString& name);
 
 
@@ -366,6 +366,8 @@ protected:
 private:
 
 	NavMeshData m_navMeshData;
+	// this is used during clone-process to a specified scene
+	gkScene* m_cloneToScene;
 };
 
 #endif//_gkGameObject_h_

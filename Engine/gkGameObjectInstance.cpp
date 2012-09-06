@@ -100,7 +100,7 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 		return;
 	}
 
-	gkGameObject* ngobj = gobj->clone(name.str());
+	gkGameObject* ngobj = gobj->cloneToScene(name.str(),m_owner->getOwner());
 
 	// store the inital-transformstates
 	gkTransformState initalTransformState = ngobj->getTransformState();

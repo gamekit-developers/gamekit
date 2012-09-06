@@ -68,7 +68,8 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 	     m_layer(0xFFFFFFFF),
 	     m_isClone(false),
 	     m_flags(0),
-	     m_actionBlender(0)
+	     m_actionBlender(0),
+	     m_cloneToScene(0)
 {
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
@@ -112,7 +113,12 @@ void gkGameObject::attachLogic(gkLogicLink* bricks)
 	m_bricks = bricks;
 }
 
-
+gkGameObject* gkGameObject::cloneToScene(const gkString& name, gkScene* scene) {
+	m_cloneToScene = scene;
+	gkGameObject* gobj = clone(name);
+	m_cloneToScene = 0;
+	return gobj;
+}
 
 gkGameObject* gkGameObject::clone(const gkString& name)
 {
@@ -158,7 +164,10 @@ void gkGameObject::cloneImpl(gkGameObject* clob)
 
 	// clone logic bricks
 	if (m_bricks != 0)
-		clob->m_bricks = m_bricks->clone(clob);
+		if (m_cloneToScene)
+			clob->m_bricks = m_bricks->cloneToScene(clob,m_cloneToScene);
+		else
+			clob->m_bricks = m_bricks->clone(clob);
 }
 
 
