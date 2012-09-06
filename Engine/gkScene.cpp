@@ -839,7 +839,8 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 		if (pobj)
 		{
 
-			if (gobj->getProperties().hasBoneParent()){
+			if (gobj->getProperties().hasBoneParent())
+			{
 				int boneParent = 0;
 
 				GK_ASSERT(pobj->getType()==GK_SKELETON);
@@ -852,13 +853,13 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 
 				// if the skeleton is attached to an entity parent the attached obj to the entity
 				// due to calculation of the proper delta-translation between the bone and the attached-object
-				if (skel->getController()){
+				if (skel->getController())
+				{
 					skel->getController()->addChild(gobj);
 					gkMatrix4 omat, pmat;
 
 					gobj->getProperties().m_transform.toMatrix(omat);
 					skel->getController()->getProperties().m_transform.toMatrix(pmat);
-
 					omat = pmat.inverse() * omat;
 
 					gkTransformState st;
@@ -869,7 +870,7 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 					gobj->setTransform(st);
 
 //  calculate the delta-position to the bone to keep the distance :D
-//					if (!gobj->_getBoneTransform())
+					if (!gobj->_getBoneTransform())
 					{
 
 						gkMatrix4 objMat = st.toMatrix();
@@ -878,8 +879,6 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 						// get the transformation of this bone in restposition (you have to save all animations
 						// that should be attached in rest position
 						gkMatrix4 boneMat = bone->getRestTransform();
-//						gkMatrix4 boneMat = bone->getTransform();
-
 						gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
 						gkTransformState* ts = new gkTransformState(objInBoneSpace);
 						gobj->_setBoneTransform(ts);
@@ -891,6 +890,12 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 
 
 			pobj->addChild(gobj);
+			const gkTransformState& gobjTrans = gobj->getProperties().m_transform;
+			const gkTransformState& pobjTrans = pobj->getProperties().m_transform;
+
+			gkLogger::write("GObj:"+gobj->getName()+" Pos:"+gkToString(gobj->getPosition()));
+
+			gkLogger::write("PObj:"+pobj->getName()+" Pos:"+gkToString(pobj->getPosition()));
 
 			// m_transform no longer contains
 			// parent information, we must do it here.
@@ -1042,7 +1047,8 @@ void gkScene::createInstanceImpl(void)
 
 	while (iter.hasMoreElements()){
 		gkGameObject* obj = iter.getNext();
-		if (!obj->isGroupInstance()){
+		if (!obj->isGroupInstance())
+		{
 			objs.insert(obj);
 		}
 	}

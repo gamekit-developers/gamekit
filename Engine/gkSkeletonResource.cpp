@@ -65,13 +65,14 @@ void gkSkeletonResource::copyBones(gkSkeletonResource& other)
 		{
 			gkBone* sBone = biter.getNext().second;
 			gkBone* sParent = sBone->getParent();
+
+			gkBone* dBone = getBone(sBone->getName());     GK_ASSERT(dBone);
 			if (sParent)
 			{
-				gkBone* dBone = getBone(sBone->getName());     GK_ASSERT(dBone);
 				gkBone* dParent = getBone(sParent->getName()); GK_ASSERT(dParent);
 				dBone->setParent(dParent);
-				dBone->setRestPosition(sBone->getRest());
 			}
+			dBone->setRestPosition(sBone->getRest());
 		}
 	}
 	{

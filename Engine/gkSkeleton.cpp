@@ -109,3 +109,54 @@ gkBone* gkSkeleton::getBone(const gkHashedString& name)
 		return m_resource->getBone(name);
 	return 0;
 }
+
+// attach a gameobject to the specified bone with optional transformation
+void gkSkeleton::attachObjectToBone(gkString boneName,gkGameObject* gobj,gkTransformState* transform)
+{
+	gkBone* bone = getBone(boneName);
+	if (bone)
+	{
+		// if there is an entity add the attached object there otherwise on the skeleton itself
+		if (m_controller)
+			m_controller->addChild(gobj);
+		else
+			addChild(gobj);
+
+		bone->attachObject(gobj);
+		if (transform)
+			gobj->_setBoneTransform(transform);
+	}
+	else
+	{
+		gkLogger::write("unknown bone-name:"+boneName+" to attach "+gobj->getName()+" to "+getName(),true);
+	}
+}
+
+// attach a gameobject inplace to a specified bone
+void gkSkeleton::attachObjectToBoneInPlace(gkString boneName,gkGameObject* gobj)
+{
+	gkBone* bone = getBone(boneName);
+	if (bone)
+	{
+		if (m_controller)
+			gobj->setParentInPlace(m_controller);
+		else
+			gobj->setParentInPlace(this);
+
+		bone->attachObject(gobj);
+
+		gkMatrix4 objMat = gobj->getTransform();
+
+		// get the current transformation of this bone
+		gkMatrix4 boneMat = bone->getTransform();
+
+		gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
+		gkTransformState* ts = new gkTransformState(objInBoneSpace);
+		gobj->_setBoneTransform(ts);
+	}
+	else
+	{
+		gkLogger::write("unknown bone-name:"+boneName+" to attach "+gobj->getName()+" to "+getName(),true);
+	}
+}
+

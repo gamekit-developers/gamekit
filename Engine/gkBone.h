@@ -70,6 +70,11 @@ public:
 
 	void attachObject(gkGameObject* gobj);
 	void detachObject(gkGameObject* gobj);
+
+	bool isManuallyControlled();
+
+	void setManuallyControlled(bool pManualControl);
+
 private:
 
 	const gkString m_name;
@@ -78,6 +83,8 @@ private:
 
 	gkBone*      m_parent;
 	BoneList    m_children;
+
+	bool m_manualControl;
 
 	gkTransformState m_bind;
 

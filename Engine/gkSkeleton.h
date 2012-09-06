@@ -50,6 +50,11 @@ public:
 
 	gkBone*              getBone(const gkHashedString& name);
 
+	// attach a gameobject to the specified bone with optional transformation
+	void attachObjectToBone(gkString boneName,gkGameObject* gobj,gkTransformState* transform=0);
+	// attach a gameobject inplace to a specified bone
+	void attachObjectToBoneInPlace(gkString boneName,gkGameObject* gobj);
+
 protected:
 
 	gkGameObject* clone(const gkString& name);

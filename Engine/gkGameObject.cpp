@@ -1309,5 +1309,6 @@ void gkGameObject::_setBoneTransform(gkTransformState* transform)
 		return;
 	if (m_boneTransform)
 		delete m_boneTransform;
+	gkLogger::write(getName()+" - Set Bonetransform loc:("+gkToString(transform->loc)+") rot("+gkToString(transform->rot)+") scl("+gkToString(transform->scl)+")");
 	m_boneTransform = transform;
 }

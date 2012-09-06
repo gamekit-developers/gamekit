@@ -13606,9 +13606,42 @@ fail:
 }
 
 
-static int _wrap_Entity_attachObjectToBone__SWIG_0(lua_State* L) {
+static void swig_delete_Entity(void *obj) {
+gsEntity *arg1 = (gsEntity *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsEntity_methods[] = {
+    {"hasCharacter", _wrap_Entity_hasCharacter}, 
+    {"getCharacter", _wrap_Entity_getCharacter}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsEntity_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsEntity_bases[] = {0,0};
+static const char *swig_gsEntity_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsEntity = { "Entity", &SWIGTYPE_p_gsEntity,_wrap_new_Entity, swig_delete_Entity, swig_gsEntity_methods, swig_gsEntity_attributes, swig_gsEntity_bases, swig_gsEntity_base_names };
+
+static int _wrap_new_Skeleton(lua_State* L) {
   int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsSkeleton *result = 0 ;
+  
+  SWIG_check_num_args("gsSkeleton",0,0)
+  result = (gsSkeleton *)new gsSkeleton();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSkeleton,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_attachObjectToBone__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
   gkString *arg2 = 0 ;
   gsGameObject *arg3 = (gsGameObject *) 0 ;
   gsVector3 arg4 ;
@@ -13620,15 +13653,15 @@ static int _wrap_Entity_attachObjectToBone__SWIG_0(lua_State* L) {
   gsVector3 *argp6 ;
   
   SWIG_check_num_args("attachObjectToBone",6,6)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsSkeleton *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
   if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
   if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
   if(!lua_isuserdata(L,5)) SWIG_fail_arg("attachObjectToBone",5,"gsVector3");
   if(!lua_isuserdata(L,6)) SWIG_fail_arg("attachObjectToBone",6,"gsVector3");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",1,SWIGTYPE_p_gsSkeleton);
   }
   
   
@@ -13637,24 +13670,24 @@ static int _wrap_Entity_attachObjectToBone__SWIG_0(lua_State* L) {
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
   }
   arg4 = *argp4;
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
   }
   arg5 = *argp5;
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",6,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",6,SWIGTYPE_p_gsVector3);
   }
   arg6 = *argp6;
   
@@ -13670,9 +13703,9 @@ fail:
 }
 
 
-static int _wrap_Entity_attachObjectToBone__SWIG_1(lua_State* L) {
+static int _wrap_Skeleton_attachObjectToBone__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
   gkString *arg2 = 0 ;
   gsGameObject *arg3 = (gsGameObject *) 0 ;
   gsVector3 arg4 ;
@@ -13682,14 +13715,14 @@ static int _wrap_Entity_attachObjectToBone__SWIG_1(lua_State* L) {
   gsVector3 *argp5 ;
   
   SWIG_check_num_args("attachObjectToBone",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsSkeleton *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
   if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
   if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
   if(!lua_isuserdata(L,5)) SWIG_fail_arg("attachObjectToBone",5,"gsVector3");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",1,SWIGTYPE_p_gsSkeleton);
   }
   
   
@@ -13698,18 +13731,18 @@ static int _wrap_Entity_attachObjectToBone__SWIG_1(lua_State* L) {
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
   }
   arg4 = *argp4;
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
   }
   arg5 = *argp5;
   
@@ -13725,9 +13758,9 @@ fail:
 }
 
 
-static int _wrap_Entity_attachObjectToBone__SWIG_2(lua_State* L) {
+static int _wrap_Skeleton_attachObjectToBone__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
   gkString *arg2 = 0 ;
   gsGameObject *arg3 = (gsGameObject *) 0 ;
   gsVector3 arg4 ;
@@ -13735,13 +13768,13 @@ static int _wrap_Entity_attachObjectToBone__SWIG_2(lua_State* L) {
   gsVector3 *argp4 ;
   
   SWIG_check_num_args("attachObjectToBone",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsSkeleton *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
   if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
   if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",1,SWIGTYPE_p_gsSkeleton);
   }
   
   
@@ -13750,12 +13783,12 @@ static int _wrap_Entity_attachObjectToBone__SWIG_2(lua_State* L) {
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
   }
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
   }
   arg4 = *argp4;
   
@@ -13771,20 +13804,20 @@ fail:
 }
 
 
-static int _wrap_Entity_attachObjectToBone__SWIG_3(lua_State* L) {
+static int _wrap_Skeleton_attachObjectToBone__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
   gkString *arg2 = 0 ;
   gsGameObject *arg3 = (gsGameObject *) 0 ;
   gkString temp2 ;
   
   SWIG_check_num_args("attachObjectToBone",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsSkeleton *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
   if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",1,SWIGTYPE_p_gsSkeleton);
   }
   
   
@@ -13793,7 +13826,7 @@ static int _wrap_Entity_attachObjectToBone__SWIG_3(lua_State* L) {
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("Skeleton_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
   }
   
   (arg1)->attachObjectToBone((gkString const &)*arg2,arg3);
@@ -13808,7 +13841,7 @@ fail:
 }
 
 
-static int _wrap_Entity_attachObjectToBone(lua_State* L) {
+static int _wrap_Skeleton_attachObjectToBone(lua_State* L) {
   int argc;
   int argv[7]={
     1,2,3,4,5,6,7
@@ -13819,7 +13852,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -13839,7 +13872,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
           }
         }
         if (_v) {
-          return _wrap_Entity_attachObjectToBone__SWIG_3(L);
+          return _wrap_Skeleton_attachObjectToBone__SWIG_3(L);
         }
       }
     }
@@ -13848,7 +13881,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -13877,7 +13910,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
             }
           }
           if (_v) {
-            return _wrap_Entity_attachObjectToBone__SWIG_2(L);
+            return _wrap_Skeleton_attachObjectToBone__SWIG_2(L);
           }
         }
       }
@@ -13887,7 +13920,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -13925,7 +13958,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
               }
             }
             if (_v) {
-              return _wrap_Entity_attachObjectToBone__SWIG_1(L);
+              return _wrap_Skeleton_attachObjectToBone__SWIG_1(L);
             }
           }
         }
@@ -13936,7 +13969,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -13983,7 +14016,7 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
                 }
               }
               if (_v) {
-                return _wrap_Entity_attachObjectToBone__SWIG_0(L);
+                return _wrap_Skeleton_attachObjectToBone__SWIG_0(L);
               }
             }
           }
@@ -13992,30 +14025,30 @@ static int _wrap_Entity_attachObjectToBone(lua_State* L) {
     }
   }
   
-  lua_pushstring(L,"Wrong arguments for overloaded function 'Entity_attachObjectToBone'\n"
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Skeleton_attachObjectToBone'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3,gsVector3,gsVector3)\n"
-    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3,gsVector3)\n"
-    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3)\n"
-    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *)\n");
+    "    attachObjectToBone(gsSkeleton *,gkString const &,gsGameObject *,gsVector3,gsVector3,gsVector3)\n"
+    "    attachObjectToBone(gsSkeleton *,gkString const &,gsGameObject *,gsVector3,gsVector3)\n"
+    "    attachObjectToBone(gsSkeleton *,gkString const &,gsGameObject *,gsVector3)\n"
+    "    attachObjectToBone(gsSkeleton *,gkString const &,gsGameObject *)\n");
   lua_error(L);return 0;
 }
 
 
-static int _wrap_Entity_attachObjectToBoneInPlace(lua_State* L) {
+static int _wrap_Skeleton_attachObjectToBoneInPlace(lua_State* L) {
   int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
   gkString *arg2 = 0 ;
   gsGameObject *arg3 = (gsGameObject *) 0 ;
   gkString temp2 ;
   
   SWIG_check_num_args("attachObjectToBoneInPlace",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBoneInPlace",1,"gsEntity *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBoneInPlace",1,"gsSkeleton *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBoneInPlace",2,"gkString const &");
   if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBoneInPlace",3,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBoneInPlace",1,SWIGTYPE_p_gsEntity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_attachObjectToBoneInPlace",1,SWIGTYPE_p_gsSkeleton);
   }
   
   
@@ -14024,7 +14057,7 @@ static int _wrap_Entity_attachObjectToBoneInPlace(lua_State* L) {
   
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
-    SWIG_fail_ptr("Entity_attachObjectToBoneInPlace",3,SWIGTYPE_p_gsGameObject);
+    SWIG_fail_ptr("Skeleton_attachObjectToBoneInPlace",3,SWIGTYPE_p_gsGameObject);
   }
   
   (arg1)->attachObjectToBoneInPlace((gkString const &)*arg2,arg3);
@@ -14039,31 +14072,60 @@ fail:
 }
 
 
-static void swig_delete_Entity(void *obj) {
-gsEntity *arg1 = (gsEntity *) obj;
-delete arg1;
-}
-static swig_lua_method swig_gsEntity_methods[] = {
-    {"hasCharacter", _wrap_Entity_hasCharacter}, 
-    {"getCharacter", _wrap_Entity_getCharacter}, 
-    {"attachObjectToBone", _wrap_Entity_attachObjectToBone}, 
-    {"attachObjectToBoneInPlace", _wrap_Entity_attachObjectToBoneInPlace}, 
-    {0,0}
-};
-static swig_lua_attribute swig_gsEntity_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_gsEntity_bases[] = {0,0};
-static const char *swig_gsEntity_base_names[] = {"gsGameObject *",0};
-static swig_lua_class _wrap_class_gsEntity = { "Entity", &SWIGTYPE_p_gsEntity,_wrap_new_Entity, swig_delete_Entity, swig_gsEntity_methods, swig_gsEntity_attributes, swig_gsEntity_bases, swig_gsEntity_base_names };
-
-static int _wrap_new_Skeleton(lua_State* L) {
+static int _wrap_Skeleton_setBoneManual(lua_State* L) {
   int SWIG_arg = 0;
-  gsSkeleton *result = 0 ;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  bool arg3 ;
+  gkString temp2 ;
   
-  SWIG_check_num_args("gsSkeleton",0,0)
-  result = (gsSkeleton *)new gsSkeleton();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSkeleton,1); SWIG_arg++; 
+  SWIG_check_num_args("setBoneManual",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setBoneManual",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setBoneManual",2,"gkString const &");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("setBoneManual",3,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_setBoneManual",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  arg3 = (lua_toboolean(L, 3)!=0);
+  (arg1)->setBoneManual((gkString const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_isBoneManual(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  bool result;
+  
+  SWIG_check_num_args("isBoneManual",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isBoneManual",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("isBoneManual",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_isBoneManual",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (bool)(arg1)->isBoneManual((gkString const &)*arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -14079,6 +14141,10 @@ gsSkeleton *arg1 = (gsSkeleton *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsSkeleton_methods[] = {
+    {"attachObjectToBone", _wrap_Skeleton_attachObjectToBone}, 
+    {"attachObjectToBoneInPlace", _wrap_Skeleton_attachObjectToBoneInPlace}, 
+    {"setBoneManual", _wrap_Skeleton_setBoneManual}, 
+    {"isBoneManual", _wrap_Skeleton_isBoneManual}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsSkeleton_attributes[] = {

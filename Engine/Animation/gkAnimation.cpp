@@ -34,7 +34,6 @@
 
 #include "gkAnimationManager.h"
 
-
 gkTransformChannel::gkTransformChannel(const gkString& name, gkAnimation* parent)
 		:	akAnimationChannel(name, parent->getInternal()), m_isEulerRotation(false)
 {
@@ -94,7 +93,7 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 		else
 			channel.rot.normalise();
 	}
-	
+
 	GK_ASSERT(!channel.loc.isNaN());
 	GK_ASSERT(!channel.rot.isNaN());
 	GK_ASSERT(!channel.scl.isNaN());

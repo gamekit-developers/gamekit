@@ -37,6 +37,7 @@ gkBone::gkBone(const gkString& name)
 {
 	m_bind.setIdentity();
 	m_pose.setIdentity();
+	m_manualControl = false;
 }
 
 
@@ -50,6 +51,7 @@ gkBone::~gkBone()
 void gkBone::setRestPosition(const gkTransformState& st)
 {
 	m_bind = st;
+	m_manualControl = false;
 }
 
 
@@ -66,21 +68,25 @@ void gkBone::applyRootTransform(const gkTransformState& root)
 
 void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar weight)
 {
-	// save previous pose
-	m_tempBlendMat = m_pose;
-
-	// combine relative to binding position
-	m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
-	m_pose.rot = m_bind.rot * channel.rot;
-	m_pose.scl = m_bind.scl * channel.scl;
-
-	if (weight < 1.0)
+	if (!isManuallyControlled())
 	{
-		// blend poses
-		m_pose.loc = gkMathUtils::interp(m_tempBlendMat.loc, m_pose.loc, weight);
-		m_pose.rot = gkMathUtils::interp(m_tempBlendMat.rot, m_pose.rot, weight);
-		m_pose.rot.normalise();
-		m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
+		// save previous pose
+		m_tempBlendMat = m_pose;
+
+		// combine relative to binding position
+		m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
+		m_pose.rot = m_bind.rot * channel.rot;
+		m_pose.scl = m_bind.scl * channel.scl;
+
+		if (weight < 1.0)
+		{
+			// blend poses
+			m_pose.loc = gkMathUtils::interp(m_tempBlendMat.loc, m_pose.loc, weight);
+			m_pose.rot = gkMathUtils::interp(m_tempBlendMat.rot, m_pose.rot, weight);
+			m_pose.rot.normalise();
+			m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
+		}
+
 	}
 
 	m_bone->setPosition(m_pose.loc);
@@ -147,8 +153,15 @@ void gkBone::setParent(gkBone* bone)
 	}
 }
 
+bool gkBone::isManuallyControlled()
+{
+	return m_manualControl;
+}  // gkBone::getManualControl
 
-
+void gkBone::setManuallyControlled(bool pManualControl)
+{
+	m_manualControl = pManualControl;
+}  // gkBone::setManualControl
 
 void gkBone::_setOgreBone(Ogre::Bone* bone)
 {
