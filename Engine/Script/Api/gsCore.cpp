@@ -1817,10 +1817,17 @@ bool gsGameObject::hasContact(const gkString& object)
 
 void gsGameObject::playAnimation(const gkString& name, float blend)
 {
-	if (m_object)
+	if (m_object && m_object->isInstanced())
 	{
 		if (get()->getAnimationPlayer(name) == 0)
-			get()->addAnimation(name);
+		{
+			gkAnimationPlayer* player = get()->addAnimation(name);
+			if (!player)
+			{
+				gsDebugPrint(gkString("Couldn't find animation with name:"+name).c_str());
+				return;
+			}
+		}
 
 		get()->playAnimation(name, blend);
 	}
@@ -1831,7 +1838,14 @@ gkGameObject* gsGameObject::getChildAt(int pos)
 {
 	if (m_object)
 	{
-		return get()->getChildren().at(pos);
+		if (pos < get()->getChildren().size())
+			return get()->getChildren().at(pos);
+		else
+		{
+			gkString error = gkString("Index out of bounds ")+gkToString(pos)+" in "+get()->getName();
+			gsDebugPrint(error.c_str());
+			return 0;
+		}
 	}
 	return 0;
 }
