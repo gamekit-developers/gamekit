@@ -445,7 +445,8 @@ public:
 		    m_state(0),
 		    m_physics(),
 		    m_findPathFlag(0xFF),
-		    m_parent("")
+		    m_parent(""),
+		    m_boneParent("")
 	{
 		m_transform.setIdentity();
 	}
@@ -457,6 +458,7 @@ public:
 	gkPhysicsProperties m_physics;
 	unsigned char       m_findPathFlag;
 	gkString            m_parent;
+	gkString			m_boneParent;
 	utArray<gkString>	m_particleObjs;
 
 
@@ -464,7 +466,7 @@ public:
 	GK_INLINE bool isDosser(void)             const { return m_physics.isDosser(); }	
 	GK_INLINE bool isRigidOrDynamic(void)     const { return m_physics.isRigidOrDynamic();}
 	GK_INLINE bool isRigidOrStatic(void)      const { return m_physics.isRigidOrStatic();}
-	
+	GK_INLINE bool hasBoneParent(void)		  const { return !m_boneParent.empty();}
 	GK_INLINE bool isPhysicsObject(void)      const { return m_physics.isPhysicsObject(); }
 	GK_INLINE bool isStatic(void)             const { return m_physics.isStatic(); }
 	GK_INLINE bool isDynamic(void)            const { return m_physics.isDynamic(); }

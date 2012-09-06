@@ -81,6 +81,11 @@
 #endif
 #include "Physics/gkGhost.h"
 #include "gkValue.h"
+#include "OgreEntity.h"
+#include "gkBone.h"
+#include "OgreTagPoint.h"
+
+using Ogre::TagPoint;
 
 //using namespace Ogre;
 
@@ -834,6 +839,57 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 		if (pobj)
 		{
 
+			if (gobj->getProperties().hasBoneParent()){
+				int boneParent = 0;
+
+				GK_ASSERT(pobj->getType()==GK_SKELETON);
+
+				gkSkeleton* skel = static_cast<gkSkeleton*>(pobj);
+				gkBone* parentBone = skel->getBone(gobj->getProperties().m_boneParent);
+
+
+				parentBone->attachObject(gobj);
+
+				// if the skeleton is attached to an entity parent the attached obj to the entity
+				// due to calculation of the proper delta-translation between the bone and the attached-object
+				if (skel->getController()){
+					skel->getController()->addChild(gobj);
+					gkMatrix4 omat, pmat;
+
+					gobj->getProperties().m_transform.toMatrix(omat);
+					skel->getController()->getProperties().m_transform.toMatrix(pmat);
+
+					omat = pmat.inverse() * omat;
+
+					gkTransformState st;
+					gkMathUtils::extractTransform(omat, st.loc, st.rot, st.scl);
+
+
+					// apply
+					gobj->setTransform(st);
+
+//  calculate the delta-position to the bone to keep the distance :D
+//					if (!gobj->_getBoneTransform())
+					{
+
+						gkMatrix4 objMat = st.toMatrix();
+						gkBone* bone = skel->getBone(gobj->getProperties().m_boneParent);
+
+						// get the transformation of this bone in restposition (you have to save all animations
+						// that should be attached in rest position
+						gkMatrix4 boneMat = bone->getRestTransform();
+//						gkMatrix4 boneMat = bone->getTransform();
+
+						gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
+						gkTransformState* ts = new gkTransformState(objInBoneSpace);
+						gobj->_setBoneTransform(ts);
+
+					}
+					continue;
+				}
+			}
+
+
 			pobj->addChild(gobj);
 
 			// m_transform no longer contains
@@ -850,9 +906,9 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 			gkTransformState st;
 			gkMathUtils::extractTransform(omat, st.loc, st.rot, st.scl);
 
-
 			// apply
 			gobj->setTransform(st);
+
 		}
 	}
 }

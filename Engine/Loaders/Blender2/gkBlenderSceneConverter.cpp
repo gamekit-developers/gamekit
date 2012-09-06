@@ -84,7 +84,7 @@ void gkBlenderSceneConverter::applyParents(utArray<Blender::Object*> &children)
 		if (gchild)
 		{
 			gkGameObject* gpar = m_gscene->getObject(GKB_IDNAME(bchild->parent));
-			if (gpar)
+			if (gpar && !gpar->getProperties().hasBoneParent())
 				gchild->setParent(gpar);
 		}
 	}
@@ -387,8 +387,15 @@ void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject* gobj, Blender::
 
 	gkGameObjectProperties& props = gobj->getProperties();
 
-	if (bobj->parent && validObject(bobj->parent))
+	if (bobj->parent && validObject(bobj->parent)) {
 		props.m_parent = GKB_IDNAME(bobj->parent);
+		if ( bobj->parent->type==OB_ARMATURE){
+			gkString parentBoneName(bobj->parsubstr);
+			if (!parentBoneName.empty()){
+				props.m_boneParent = parentBoneName;
+			}
+		}
+	}
 
 
 	props.m_transform = gkTransformState(loc, quat, scale);
@@ -939,13 +946,21 @@ void gkBlenderSceneConverter::convert(bool createGroupInstances)
 		if (!validObject(bobj))
 			continue;
 
-		if (bobj->transflag& OB_DUPLIGROUP && bobj->dup_group != 0)
+		if ((bobj->transflag& OB_DUPLIGROUP) && bobj->dup_group != 0)
 			groups.push_back(bobj);
 		else
 			convertObject(bobj);
 
 		if (bobj->type == OB_MESH && bobj->parent != 0 && bobj->parent->type == OB_ARMATURE)
 			armatureLinker.push_back(bobj);
+
+		if (bobj->parent) {
+			short parentType = bobj->parent->type;
+			short parentParType = bobj->parent->partype;
+		}
+		short parType = bobj->partype;
+
+		int i=0;
 	}
 
 	// build group instances
@@ -970,7 +985,7 @@ void gkBlenderSceneConverter::convert(bool createGroupInstances)
 			gkEntity* gobjEn = gomgr.getEntity(GKB_IDNAME(obMe));
 			gkSkeleton* gobjSk = gomgr.getSkeleton(GKB_IDNAME(obAr));
 
-			if (gobjEn && gobjSk)
+			if (gobjEn && gobjSk && !gobjEn->getProperties().hasBoneParent())
 			{
 				gobjEn->setSkeleton(gobjSk);
 

@@ -293,7 +293,8 @@ public:
 	void getAnimationNames(utArray<gkHashedString>& names);
 
 
-
+	void _setBoneTransform(gkTransformState* transform);
+	gkTransformState* _getBoneTransform() { return m_boneTransform; }
 protected:
 
 
@@ -351,6 +352,9 @@ protected:
 
 	gkAnimationBlender*         m_actionBlender;
 	Animations                  m_actions;
+
+	gkTransformState* m_boneTransform;
+
 
 
 	virtual void createInstanceImpl(void);

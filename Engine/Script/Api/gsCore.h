@@ -586,6 +586,9 @@ public:
 	bool hasCharacter(void);
 	gkCharacter* getCharacter(void);
 
+	void attachObjectToBone(const gkString& bone, gsGameObject* gsobj,gsVector3 loc=gsVector3(0,0,0),gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1));
+	void attachObjectToBoneInPlace(const gkString& bone, gsGameObject* gsobj);
+
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
 };

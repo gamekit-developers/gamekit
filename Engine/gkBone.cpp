@@ -26,6 +26,9 @@
 */
 #include "gkBone.h"
 #include "OgreBone.h"
+#include "gkGameObject.h"
+#include "gkLogger.h"
+#include "gkValue.h"
 
 
 
@@ -64,7 +67,7 @@ void gkBone::applyRootTransform(const gkTransformState& root)
 void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar weight)
 {
 	// save previous pose
-	gkTransformState blendmat = m_pose;
+	m_tempBlendMat = m_pose;
 
 	// combine relative to binding position
 	m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
@@ -74,15 +77,48 @@ void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar wei
 	if (weight < 1.0)
 	{
 		// blend poses
-		m_pose.loc = gkMathUtils::interp(blendmat.loc, m_pose.loc, weight);
-		m_pose.rot = gkMathUtils::interp(blendmat.rot, m_pose.rot, weight);
+		m_pose.loc = gkMathUtils::interp(m_tempBlendMat.loc, m_pose.loc, weight);
+		m_pose.rot = gkMathUtils::interp(m_tempBlendMat.rot, m_pose.rot, weight);
 		m_pose.rot.normalise();
-		m_pose.scl = gkMathUtils::interp(blendmat.scl, m_pose.scl, weight);
+		m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
 	}
 
 	m_bone->setPosition(m_pose.loc);
 	m_bone->setOrientation(m_pose.rot);
 	m_bone->setScale(m_pose.scl);
+
+	AttachedObjectList::Iterator iter(m_attachedObjects);
+	while (iter.hasMoreElements())
+	{
+		const gkMatrix4& boneMat = getTransform();
+		gkTransformState boneState(boneMat);
+
+		gkGameObject* attachedObj = iter.getNext();
+
+		gkTransformState newBoneState(attachedObj->_getBoneTransform()?   boneMat * attachedObj->_getBoneTransform()->toMatrix()
+																		: boneMat);
+
+		attachedObj->applyTransformState(newBoneState,1.0f);
+	}
+
+}
+
+const gkMatrix4 gkBone::getTransform()
+{
+	if (!m_parent) {
+		return m_pose.toMatrix();
+	} else {
+		return getParent()->getTransform() * m_pose.toMatrix();
+	}
+}
+
+const gkMatrix4 gkBone::getRestTransform()
+{
+	if (!m_parent) {
+		return m_bind.toMatrix();
+	} else {
+		return getParent()->getRestTransform() * m_bind.toMatrix();
+	}
 }
 
 
@@ -127,4 +163,14 @@ UTsize gkBone::_getBoneIndex(void)
 		return UT_NPOS;
 
 	return m_bone->getHandle();
+}
+
+void gkBone::attachObject(gkGameObject* gobj)
+{
+	m_attachedObjects.push_back(gobj);
+}
+
+void gkBone::detachObject(gkGameObject* gobj)
+{
+	m_attachedObjects.erase(gobj);
 }

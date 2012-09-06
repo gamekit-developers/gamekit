@@ -1901,6 +1901,24 @@ gkCharacter* gsEntity::getCharacter(void)
 	return get()->getAttachedCharacter();
 }
 
+void gsEntity::attachObjectToBone(const gkString& boneName, gsGameObject* gsobj,gsVector3 loc,gsVector3 orientation,gsVector3 scale)
+{
+	if (m_object)
+	{
+		gkEntity* ent = static_cast<gkEntity*>(m_object);
+		gkTransformState* trans = new gkTransformState(loc,gkEuler(orientation).toQuaternion(),scale);
+		ent->attachObjectToBone(boneName,gsobj->cast<gkGameObject>(),trans);
+	}
+}
+
+void gsEntity::attachObjectToBoneInPlace(const gkString& boneName, gsGameObject* gsobj)
+{
+	if (m_object)
+	{
+		gkEntity* ent = static_cast<gkEntity*>(m_object);
+		ent->attachObjectToBoneInPlace(boneName,gsobj->cast<gkGameObject>());
+	}
+}
 
 
 gsLight::gsLight()

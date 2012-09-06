@@ -69,7 +69,8 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 	     m_isClone(false),
 	     m_flags(0),
 	     m_actionBlender(0),
-	     m_cloneToScene(0)
+	     m_cloneToScene(0),
+	     m_boneTransform(0)
 {
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
@@ -89,6 +90,9 @@ gkGameObject::~gkGameObject()
 
 	if(m_actionBlender)
 		delete m_actionBlender;
+
+	if(m_boneTransform)
+		delete m_boneTransform;
 
 	Animations::Iterator it = m_actions.iterator();
 	while (it.hasMoreElements())
@@ -504,6 +508,8 @@ void gkGameObject::applyTransformState(const gkTransformState& newstate, const g
 		else if (m_ghost){
 			m_ghost->setTransformState(state);
 		}
+
+		notifyUpdate();
 	}
 }
 
@@ -519,7 +525,6 @@ void gkGameObject::setTransform(const gkMatrix4& v)
 		gkTransformState st;
 		gkMathUtils::extractTransform(v, st.loc, st.rot, st.scl);
 		applyTransformState(st);
-		notifyUpdate();
 	}
 }
 
@@ -1296,4 +1301,13 @@ void gkGameObject::changeState(int v)
 		m_bricks->notifyState();
 		m_scene->getLogicBrickManager()->notifyState(v, m_bricks);
 	}
+}
+
+void gkGameObject::_setBoneTransform(gkTransformState* transform)
+{
+	if (transform == m_boneTransform)
+		return;
+	if (m_boneTransform)
+		delete m_boneTransform;
+	m_boneTransform = transform;
 }

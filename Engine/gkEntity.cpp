@@ -184,3 +184,59 @@ gkBoundingBox gkEntity::getAabb() const
 {
 	return m_entityProps->m_mesh ? m_entityProps->m_mesh->getBoundingBox() : gkGameObject::getAabb();
 }
+
+// attach a gameobject to the specified bone with optional transformation
+void gkEntity::attachObjectToBone(gkString boneName,gkGameObject* gobj,gkTransformState* transform)
+{
+	if (m_skeleton)
+	{
+
+		gkBone* bone = m_skeleton->getBone(boneName);
+		if (bone)
+		{
+			addChild(gobj);
+			bone->attachObject(gobj);
+			if (transform)
+				gobj->_setBoneTransform(transform);
+		}
+		else
+		{
+			gkLogger::write("unknown bone-name:"+boneName+" to attach "+gobj->getName()+" to "+getName(),true);
+		}
+	}
+	else
+	{
+		gkLogger::write("Tried to attach "+gobj->getName()+" to "+getName()+" but it do not have a skeleton!?",true);
+	}
+}
+
+// attach a gameobject inplace to a specified bone
+void gkEntity::attachObjectToBoneInPlace(gkString boneName,gkGameObject* gobj)
+{
+	if (m_skeleton)
+	{
+		gkBone* bone = m_skeleton->getBone(boneName);
+		if (bone)
+		{
+			gobj->setParentInPlace(this);
+			bone->attachObject(gobj);
+
+			gkMatrix4 objMat = gobj->getTransform();
+
+			// get the current transformation of this bone
+			gkMatrix4 boneMat = bone->getTransform();
+
+			gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
+			gkTransformState* ts = new gkTransformState(objInBoneSpace);
+			gobj->_setBoneTransform(ts);
+		}
+		else
+		{
+			gkLogger::write("unknown bone-name:"+boneName+" to attach "+gobj->getName()+" to "+getName(),true);
+		}
+	}
+	else
+	{
+		gkLogger::write("Tried to attach "+gobj->getName()+" to "+getName()+" but it do not have a skeleton!?",true);
+	}
+}

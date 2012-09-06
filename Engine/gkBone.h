@@ -34,7 +34,7 @@ class gkBone
 {
 public:
 	typedef utArray<gkBone*> BoneList;
-
+	typedef utList<gkGameObject*> AttachedObjectList;
 public:
 
 	gkBone(const gkString& name);
@@ -59,11 +59,17 @@ public:
 
 	const gkString&          getName(void)      {return m_name;}
 
+	// returns the transformation-matrix for the current bone
+	const gkMatrix4			 getTransform();
+	// returns the transformation-matrix for this bone in rest-position
+	const gkMatrix4			 getRestTransform();
 
 	// Internal use
 	UTsize                  _getBoneIndex(void);
 	void                    _setOgreBone(Ogre::Bone* bone);
 
+	void attachObject(gkGameObject* gobj);
+	void detachObject(gkGameObject* gobj);
 private:
 
 	const gkString m_name;
@@ -77,6 +83,10 @@ private:
 
 	// The current pose matrix, calculated in applyChannelTransform
 	gkTransformState m_pose;
+
+	AttachedObjectList m_attachedObjects;
+
+	gkTransformState m_tempBlendMat;
 };
 
 

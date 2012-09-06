@@ -13606,6 +13606,439 @@ fail:
 }
 
 
+static int _wrap_Entity_attachObjectToBone__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
+  gsGameObject *arg3 = (gsGameObject *) 0 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gsVector3 arg6 ;
+  gkString temp2 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  gsVector3 *argp6 ;
+  
+  SWIG_check_num_args("attachObjectToBone",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("attachObjectToBone",5,"gsVector3");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("attachObjectToBone",6,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",6,SWIGTYPE_p_gsVector3);
+  }
+  arg6 = *argp6;
+  
+  (arg1)->attachObjectToBone((gkString const &)*arg2,arg3,arg4,arg5,arg6);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_attachObjectToBone__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
+  gsGameObject *arg3 = (gsGameObject *) 0 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gkString temp2 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  
+  SWIG_check_num_args("attachObjectToBone",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("attachObjectToBone",5,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  (arg1)->attachObjectToBone((gkString const &)*arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_attachObjectToBone__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
+  gsGameObject *arg3 = (gsGameObject *) 0 ;
+  gsVector3 arg4 ;
+  gkString temp2 ;
+  gsVector3 *argp4 ;
+  
+  SWIG_check_num_args("attachObjectToBone",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("attachObjectToBone",4,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  (arg1)->attachObjectToBone((gkString const &)*arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_attachObjectToBone__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
+  gsGameObject *arg3 = (gsGameObject *) 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("attachObjectToBone",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBone",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBone",2,"gkString const &");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBone",3,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBone",3,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->attachObjectToBone((gkString const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_attachObjectToBone(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_Entity_attachObjectToBone__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_Entity_attachObjectToBone__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_Entity_attachObjectToBone__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEntity, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (SWIG_isptrtype(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              {
+                void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                  _v = 0;
+                } else {
+                  _v = 1;
+                }
+              }
+              if (_v) {
+                return _wrap_Entity_attachObjectToBone__SWIG_0(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Entity_attachObjectToBone'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3,gsVector3,gsVector3)\n"
+    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3,gsVector3)\n"
+    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *,gsVector3)\n"
+    "    attachObjectToBone(gsEntity *,gkString const &,gsGameObject *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Entity_attachObjectToBoneInPlace(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
+  gsGameObject *arg3 = (gsGameObject *) 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("attachObjectToBoneInPlace",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("attachObjectToBoneInPlace",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("attachObjectToBoneInPlace",2,"gkString const &");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("attachObjectToBoneInPlace",3,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBoneInPlace",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Entity_attachObjectToBoneInPlace",3,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->attachObjectToBoneInPlace((gkString const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Entity(void *obj) {
 gsEntity *arg1 = (gsEntity *) obj;
 delete arg1;
@@ -13613,6 +14046,8 @@ delete arg1;
 static swig_lua_method swig_gsEntity_methods[] = {
     {"hasCharacter", _wrap_Entity_hasCharacter}, 
     {"getCharacter", _wrap_Entity_getCharacter}, 
+    {"attachObjectToBone", _wrap_Entity_attachObjectToBone}, 
+    {"attachObjectToBoneInPlace", _wrap_Entity_attachObjectToBoneInPlace}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsEntity_attributes[] = {
