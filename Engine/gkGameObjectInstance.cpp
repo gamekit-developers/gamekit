@@ -335,26 +335,32 @@ void gkGameObjectInstance::createInstanceImpl(void)
 					skel = static_cast<gkSkeleton*>(parent);
 					gkEntity* ent;
 					ent = static_cast<gkEntity*>(gobj);
-					ent->setSkeleton(skel);
 
-					gkSkeletonResource* skelRes = skel->getInternalSkeleton();
 
-					gkBone::BoneList::Iterator roots = skelRes->getRootBoneList().iterator();
-
-					while (roots.hasMoreElements())
+					if (!gobj->getProperties().hasBoneParent())
 					{
-						gkBone* bone = roots.getNext();
-						gkTransformState transform;
+						ent->setSkeleton(skel);
 
-						// TODO and FIXME: For some reason the skeleton/bones seem to be rotate 180deg
-						// to the original. Couldn't find out yet why. Applying this rotation 'back'
-						// on the root-transform seems to do the job. Actually this is more a hack
-						// and should be replaced by cleaner code someday...(dertom)
-						gkEuler euler = gkEuler(0,0,180);
-						gkTransformState trans(gkVector3(1,1,1),euler.toQuaternion(),gkVector3(1,1,1));
-						bone->applyRootTransform(trans);
+						gkSkeletonResource* skelRes = skel->getInternalSkeleton();
+
+						gkBone::BoneList::Iterator roots = skelRes->getRootBoneList().iterator();
+
+						while (roots.hasMoreElements())
+						{
+							gkBone* bone = roots.getNext();
+							gkTransformState transform;
+
+							// TODO and FIXME: For some reason the skeleton/bones seem to be rotate 180deg
+							// to the original. Couldn't find out yet why. Applying this rotation 'back'
+							// on the root-transform seems to do the job. Actually this is more a hack
+							// and should be replaced by cleaner code someday...(dertom)
+							gkEuler euler = gkEuler(0,0,180);
+							gkTransformState trans(gkVector3(1,1,1),euler.toQuaternion(),gkVector3(1,1,1));
+							bone->applyRootTransform(trans);
+						}
 					}
 				}
+
 			}
 		}
 
@@ -368,6 +374,8 @@ void gkGameObjectInstance::createInstanceImpl(void)
 
 			gobj->setOwner(scene);
 			gobj->createInstance();
+
+
 			parentingPhysicsObjs.insert(gobj);
 		}
 	}
