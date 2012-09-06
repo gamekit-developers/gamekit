@@ -74,6 +74,15 @@ void gkSkeletonResource::copyBones(gkSkeletonResource& other)
 			}
 		}
 	}
+	{
+		gkBone::BoneList::Iterator biter = other.m_rootBoneList.iterator();
+		while (biter.hasMoreElements())
+		{
+			gkBone* sBone = biter.getNext();
+			gkBone* dBone = getBone(sBone->getName());     GK_ASSERT(dBone);
+			m_rootBoneList.push_back(dBone);
+		}
+	}
 }
 
 gkSkeletonResource* gkSkeletonResource::clone()

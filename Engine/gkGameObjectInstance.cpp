@@ -32,6 +32,10 @@
 #include "gkUtils.h"
 #include "gkLogger.h"
 #include "gkValue.h"
+#include "gkSkeleton.h"
+#include "gkEntity.h"
+#include "gkBone.h"
+#include "gkSkeletonResource.h"
 
 
 
@@ -114,7 +118,6 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 	}
 
 	ngobj->setOwner(0);
-
 
 
 	//	store the new object using the original name and not the uid-name
@@ -304,16 +307,70 @@ void gkGameObjectInstance::createInstanceImpl(void)
 
 	m_owner->createInstance();
 	gkGameObjectSet parentingPhysicsObjs;
-	Objects::Iterator iter = m_objects.iterator();
-	while (iter.hasMoreElements())
+
+
+	// first check for entities that are parented to a skeleton
 	{
-		gkGameObject* gobj = iter.getNext().second;
+		Objects::Iterator iter = m_objects.iterator();
+		while (iter.hasMoreElements())
+		{
+			gkGameObject* gobj = iter.getNext().second;
+			if (gobj->getType() == GK_ENTITY) {
+				gkString parentName = gobj->getProperties().m_parent;
 
-		gobj->setOwner(scene);
-		gobj->createInstance();
-		parentingPhysicsObjs.insert(gobj);
+				gkGameObject* parent;
+				Objects::Iterator iter2 = m_objects.iterator();
+				while (iter2.hasMoreElements())
+				{
+					gkGameObject* pobj = iter2.getNext().second;
+					if (pobj->getName()==parentName)
+					{
+						parent = pobj;
+						break;
+					}
+				}
+
+				if (parent && parent->getType()==GK_SKELETON){
+					gkSkeleton* skel;
+					skel = static_cast<gkSkeleton*>(parent);
+					gkEntity* ent;
+					ent = static_cast<gkEntity*>(gobj);
+					ent->setSkeleton(skel);
+
+					gkSkeletonResource* skelRes = skel->getInternalSkeleton();
+
+					gkBone::BoneList::Iterator roots = skelRes->getRootBoneList().iterator();
+
+					while (roots.hasMoreElements())
+					{
+						gkBone* bone = roots.getNext();
+						gkTransformState transform;
+
+						// TODO and FIXME: For some reason the skeleton/bones seem to be rotate 180deg
+						// to the original. Couldn't find out yet why. Applying this rotation 'back'
+						// on the root-transform seems to do the job. Actually this is more a hack
+						// and should be replaced by cleaner code someday...(dertom)
+						gkEuler euler = gkEuler(0,0,180);
+						gkTransformState trans(gkVector3(1,1,1),euler.toQuaternion(),gkVector3(1,1,1));
+						bone->applyRootTransform(trans);
+					}
+				}
+			}
+		}
+
 	}
+	// now instantiate the group-instance-objects
+	{
+		Objects::Iterator iter = m_objects.iterator();
+		while (iter.hasMoreElements())
+		{
+			gkGameObject* gobj = iter.getNext().second;
 
+			gobj->setOwner(scene);
+			gobj->createInstance();
+			parentingPhysicsObjs.insert(gobj);
+		}
+	}
 	scene->_applyBuiltinParents(parentingPhysicsObjs);
 	scene->_applyBuiltinPhysics(parentingPhysicsObjs);
 

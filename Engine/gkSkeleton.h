@@ -54,6 +54,7 @@ protected:
 
 	gkGameObject* clone(const gkString& name);
 
+
 	gkSkeletonResource*  m_resource;
 	gkEntity*            m_controller;
 
