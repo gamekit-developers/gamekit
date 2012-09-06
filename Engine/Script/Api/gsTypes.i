@@ -87,6 +87,8 @@
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, LuaScript); } %}
 %typemap(out) gkCharacter* 
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Character); } %}
+%typemap(out) gkCamera* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Camera); } %}
 %typemap(out) gkHUD* 
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, HUD); } %}
 %typemap(out) gkHUDElement* 

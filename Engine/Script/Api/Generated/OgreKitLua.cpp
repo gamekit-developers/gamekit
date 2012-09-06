@@ -1512,100 +1512,99 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_Array swig_types[0]
 #define SWIGTYPE_p_BrickList swig_types[1]
 #define SWIGTYPE_p_Iterator swig_types[2]
-#define SWIGTYPE_p_gkCamera swig_types[3]
-#define SWIGTYPE_p_gkCharacter swig_types[4]
-#define SWIGTYPE_p_gkDynamicsWorld swig_types[5]
-#define SWIGTYPE_p_gkGameObjectInstance swig_types[6]
-#define SWIGTYPE_p_gkLogicManager swig_types[7]
-#define SWIGTYPE_p_gkLuaCurState swig_types[8]
-#define SWIGTYPE_p_gkProcessManager swig_types[9]
-#define SWIGTYPE_p_gkScalar swig_types[10]
-#define SWIGTYPE_p_gkScene swig_types[11]
-#define SWIGTYPE_p_gsActionActuator swig_types[12]
-#define SWIGTYPE_p_gsActuator swig_types[13]
-#define SWIGTYPE_p_gsActuatorSensor swig_types[14]
-#define SWIGTYPE_p_gsAlwaysSensor swig_types[15]
-#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[16]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[17]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[18]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[19]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[20]
-#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[21]
-#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[22]
-#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[23]
-#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[24]
-#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[25]
-#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[26]
-#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[27]
-#define SWIGTYPE_p_gsBrick swig_types[28]
-#define SWIGTYPE_p_gsCamera swig_types[29]
-#define SWIGTYPE_p_gsCharacter swig_types[30]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[31]
-#define SWIGTYPE_p_gsController swig_types[32]
-#define SWIGTYPE_p_gsDebugger swig_types[33]
-#define SWIGTYPE_p_gsDelaySensor swig_types[34]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[35]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[36]
-#define SWIGTYPE_p_gsEngine swig_types[37]
-#define SWIGTYPE_p_gsEntity swig_types[38]
-#define SWIGTYPE_p_gsExpressionController swig_types[39]
-#define SWIGTYPE_p_gsFSM swig_types[40]
-#define SWIGTYPE_p_gsGameActuator swig_types[41]
-#define SWIGTYPE_p_gsGameObject swig_types[42]
-#define SWIGTYPE_p_gsGameObjectInstance swig_types[43]
-#define SWIGTYPE_p_gsHUD swig_types[44]
-#define SWIGTYPE_p_gsHUDElement swig_types[45]
-#define SWIGTYPE_p_gsJoystick swig_types[46]
-#define SWIGTYPE_p_gsKeyboard swig_types[47]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[48]
-#define SWIGTYPE_p_gsLight swig_types[49]
-#define SWIGTYPE_p_gsLogicManager swig_types[50]
-#define SWIGTYPE_p_gsLogicObject swig_types[51]
-#define SWIGTYPE_p_gsLogicOpController swig_types[52]
-#define SWIGTYPE_p_gsLuaManager swig_types[53]
-#define SWIGTYPE_p_gsLuaScript swig_types[54]
-#define SWIGTYPE_p_gsMessageActuator swig_types[55]
-#define SWIGTYPE_p_gsMessageSensor swig_types[56]
-#define SWIGTYPE_p_gsMotionActuator swig_types[57]
-#define SWIGTYPE_p_gsMouse swig_types[58]
-#define SWIGTYPE_p_gsMouseSensor swig_types[59]
-#define SWIGTYPE_p_gsNearSensor swig_types[60]
-#define SWIGTYPE_p_gsObject swig_types[61]
-#define SWIGTYPE_p_gsParentActuator swig_types[62]
-#define SWIGTYPE_p_gsParticles swig_types[63]
-#define SWIGTYPE_p_gsProcess swig_types[64]
-#define SWIGTYPE_p_gsProcessManager swig_types[65]
-#define SWIGTYPE_p_gsProperty swig_types[66]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[67]
-#define SWIGTYPE_p_gsPropertySensor swig_types[68]
-#define SWIGTYPE_p_gsQuaternion swig_types[69]
-#define SWIGTYPE_p_gsRadarSensor swig_types[70]
-#define SWIGTYPE_p_gsRandomActuator swig_types[71]
-#define SWIGTYPE_p_gsRandomSensor swig_types[72]
-#define SWIGTYPE_p_gsRay swig_types[73]
-#define SWIGTYPE_p_gsRaySensor swig_types[74]
-#define SWIGTYPE_p_gsRayTest swig_types[75]
-#define SWIGTYPE_p_gsScene swig_types[76]
-#define SWIGTYPE_p_gsSceneActuator swig_types[77]
-#define SWIGTYPE_p_gsScriptController swig_types[78]
-#define SWIGTYPE_p_gsSensor swig_types[79]
-#define SWIGTYPE_p_gsSkeleton swig_types[80]
-#define SWIGTYPE_p_gsSoundActuator swig_types[81]
-#define SWIGTYPE_p_gsStateActuator swig_types[82]
-#define SWIGTYPE_p_gsSweptTest swig_types[83]
-#define SWIGTYPE_p_gsTouchSensor swig_types[84]
-#define SWIGTYPE_p_gsUserDefs swig_types[85]
-#define SWIGTYPE_p_gsVector3 swig_types[86]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[87]
-#define SWIGTYPE_p_gsWhenEvent swig_types[88]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[89]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[90]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[91]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[92]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[93]
-#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[94]
-static swig_type_info *swig_types[96];
-static swig_module_info swig_module = {swig_types, 95, 0, 0, 0, 0};
+#define SWIGTYPE_p_gkCharacter swig_types[3]
+#define SWIGTYPE_p_gkDynamicsWorld swig_types[4]
+#define SWIGTYPE_p_gkGameObjectInstance swig_types[5]
+#define SWIGTYPE_p_gkLogicManager swig_types[6]
+#define SWIGTYPE_p_gkLuaCurState swig_types[7]
+#define SWIGTYPE_p_gkProcessManager swig_types[8]
+#define SWIGTYPE_p_gkScalar swig_types[9]
+#define SWIGTYPE_p_gkScene swig_types[10]
+#define SWIGTYPE_p_gsActionActuator swig_types[11]
+#define SWIGTYPE_p_gsActuator swig_types[12]
+#define SWIGTYPE_p_gsActuatorSensor swig_types[13]
+#define SWIGTYPE_p_gsAlwaysSensor swig_types[14]
+#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[15]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[16]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[17]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[18]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[19]
+#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[20]
+#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[21]
+#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[22]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[23]
+#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[24]
+#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[25]
+#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[26]
+#define SWIGTYPE_p_gsBrick swig_types[27]
+#define SWIGTYPE_p_gsCamera swig_types[28]
+#define SWIGTYPE_p_gsCharacter swig_types[29]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[30]
+#define SWIGTYPE_p_gsController swig_types[31]
+#define SWIGTYPE_p_gsDebugger swig_types[32]
+#define SWIGTYPE_p_gsDelaySensor swig_types[33]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[34]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[35]
+#define SWIGTYPE_p_gsEngine swig_types[36]
+#define SWIGTYPE_p_gsEntity swig_types[37]
+#define SWIGTYPE_p_gsExpressionController swig_types[38]
+#define SWIGTYPE_p_gsFSM swig_types[39]
+#define SWIGTYPE_p_gsGameActuator swig_types[40]
+#define SWIGTYPE_p_gsGameObject swig_types[41]
+#define SWIGTYPE_p_gsGameObjectInstance swig_types[42]
+#define SWIGTYPE_p_gsHUD swig_types[43]
+#define SWIGTYPE_p_gsHUDElement swig_types[44]
+#define SWIGTYPE_p_gsJoystick swig_types[45]
+#define SWIGTYPE_p_gsKeyboard swig_types[46]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[47]
+#define SWIGTYPE_p_gsLight swig_types[48]
+#define SWIGTYPE_p_gsLogicManager swig_types[49]
+#define SWIGTYPE_p_gsLogicObject swig_types[50]
+#define SWIGTYPE_p_gsLogicOpController swig_types[51]
+#define SWIGTYPE_p_gsLuaManager swig_types[52]
+#define SWIGTYPE_p_gsLuaScript swig_types[53]
+#define SWIGTYPE_p_gsMessageActuator swig_types[54]
+#define SWIGTYPE_p_gsMessageSensor swig_types[55]
+#define SWIGTYPE_p_gsMotionActuator swig_types[56]
+#define SWIGTYPE_p_gsMouse swig_types[57]
+#define SWIGTYPE_p_gsMouseSensor swig_types[58]
+#define SWIGTYPE_p_gsNearSensor swig_types[59]
+#define SWIGTYPE_p_gsObject swig_types[60]
+#define SWIGTYPE_p_gsParentActuator swig_types[61]
+#define SWIGTYPE_p_gsParticles swig_types[62]
+#define SWIGTYPE_p_gsProcess swig_types[63]
+#define SWIGTYPE_p_gsProcessManager swig_types[64]
+#define SWIGTYPE_p_gsProperty swig_types[65]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[66]
+#define SWIGTYPE_p_gsPropertySensor swig_types[67]
+#define SWIGTYPE_p_gsQuaternion swig_types[68]
+#define SWIGTYPE_p_gsRadarSensor swig_types[69]
+#define SWIGTYPE_p_gsRandomActuator swig_types[70]
+#define SWIGTYPE_p_gsRandomSensor swig_types[71]
+#define SWIGTYPE_p_gsRay swig_types[72]
+#define SWIGTYPE_p_gsRaySensor swig_types[73]
+#define SWIGTYPE_p_gsRayTest swig_types[74]
+#define SWIGTYPE_p_gsScene swig_types[75]
+#define SWIGTYPE_p_gsSceneActuator swig_types[76]
+#define SWIGTYPE_p_gsScriptController swig_types[77]
+#define SWIGTYPE_p_gsSensor swig_types[78]
+#define SWIGTYPE_p_gsSkeleton swig_types[79]
+#define SWIGTYPE_p_gsSoundActuator swig_types[80]
+#define SWIGTYPE_p_gsStateActuator swig_types[81]
+#define SWIGTYPE_p_gsSweptTest swig_types[82]
+#define SWIGTYPE_p_gsTouchSensor swig_types[83]
+#define SWIGTYPE_p_gsUserDefs swig_types[84]
+#define SWIGTYPE_p_gsVector3 swig_types[85]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[86]
+#define SWIGTYPE_p_gsWhenEvent swig_types[87]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[88]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[89]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[90]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[91]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[92]
+#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[93]
+static swig_type_info *swig_types[95];
+static swig_module_info swig_module = {swig_types, 94, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -8640,7 +8639,9 @@ static int _wrap_Scene_getMainCamera(lua_State* L) {
   }
   
   result = (gkCamera *)(arg1)->getMainCamera();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkCamera,0); SWIG_arg++; 
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Camera); 
+  } 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -31321,7 +31322,6 @@ static void *_p_gsScriptControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM
 static swig_type_info _swigt__p_Array = {"_p_Array", "Array *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_BrickList = {"_p_BrickList", "BrickList *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Iterator = {"_p_Iterator", "Iterator *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_gkCamera = {"_p_gkCamera", "gkCamera *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkCharacter = {"_p_gkCharacter", "gkCharacter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkDynamicsWorld = {"_p_gkDynamicsWorld", "gkDynamicsWorld *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkGameObjectInstance = {"_p_gkGameObjectInstance", "gkGameObjectInstance *", 0, 0, (void*)0, 0};
@@ -31418,7 +31418,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Array,
   &_swigt__p_BrickList,
   &_swigt__p_Iterator,
-  &_swigt__p_gkCamera,
   &_swigt__p_gkCharacter,
   &_swigt__p_gkDynamicsWorld,
   &_swigt__p_gkGameObjectInstance,
@@ -31515,7 +31514,6 @@ static swig_type_info *swig_type_initial[] = {
 static swig_cast_info _swigc__p_Array[] = {  {&_swigt__p_Array, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_BrickList[] = {  {&_swigt__p_BrickList, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Iterator[] = {  {&_swigt__p_Iterator, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gkCamera[] = {  {&_swigt__p_gkCamera, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkCharacter[] = {  {&_swigt__p_gkCharacter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkDynamicsWorld[] = {  {&_swigt__p_gkDynamicsWorld, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkGameObjectInstance[] = {  {&_swigt__p_gkGameObjectInstance, 0, 0, 0},{0, 0, 0, 0}};
@@ -31612,7 +31610,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Array,
   _swigc__p_BrickList,
   _swigc__p_Iterator,
-  _swigc__p_gkCamera,
   _swigc__p_gkCharacter,
   _swigc__p_gkDynamicsWorld,
   _swigc__p_gkGameObjectInstance,
