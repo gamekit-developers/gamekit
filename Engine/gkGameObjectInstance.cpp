@@ -344,8 +344,12 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 		gobj->setOwner(0);
 		gobj->setParent(0);
 	}
+	m_owner->destroyInstance();
 }
 
+void gkGameObjectInstance::postDestroyInstanceImpl() {
+	m_owner->getOwner()->notifyGroupInstanceDestroyed(this);
+}
 
 void gkGameObjectInstance::notifyGameObjectEvent(gkGameObject* gobj, const gkGameObject::Notifier::Event& id)
 {

@@ -53,8 +53,9 @@ protected:
 	void notifyGameObjectEvent(gkGameObject* gobj, const gkGameObject::Notifier::Event& id);
 
 	void createInstanceImpl(void);
-	void destroyInstanceImpl(void);
 	void postCreateInstanceImpl(void);
+	void destroyInstanceImpl(void);
+	void postDestroyInstanceImpl(void);
 
 public:
 

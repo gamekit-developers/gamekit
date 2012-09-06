@@ -81,6 +81,7 @@ public:
 	void notifyInstanceCreated(gkGameObject* gobject);
 	void notifyInstanceDestroyed(gkGameObject* gobject);
 	void notifyObjectUpdate(gkGameObject* gobject);
+	void notifyGroupInstanceDestroyed(gkGameObjectInstance* ginst);
 
 
 	void              addObject(gkGameObject* obj);

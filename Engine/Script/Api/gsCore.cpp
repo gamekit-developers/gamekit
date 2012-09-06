@@ -2101,18 +2101,18 @@ gsGameObjectInstance::~gsGameObjectInstance() {
 void gsGameObjectInstance::destroyInstance()
 {
 	if (m_gobj)
-		m_gobj->destroyInstance();
+		m_gobj->destroyInstance(true);
 }
 
 void gsGameObjectInstance::createInstance()
 {
 	if (m_gobj)
-		m_gobj->createInstance();
+		m_gobj->createInstance(true);
 }
 void gsGameObjectInstance::reinstance()
 {
 	if (m_gobj)
-		m_gobj->reinstance();
+		m_gobj->reinstance(true);
 }
 
 

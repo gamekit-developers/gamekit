@@ -127,6 +127,23 @@ gkScene* gkSceneManager::createEmptyScene(const gkString& sceneName, const gkStr
 		
 }
 
+void gkSceneManager::postProcessQueue(void) {
 
+	gkInstancedManager::postProcessQueue();
+
+	Instances::Iterator iter = getInstanceIterator();
+	while (iter.hasMoreElements()){
+		gkScene* scene = static_cast<gkScene*>(iter.getNext());
+
+		if (scene->isInstanced()){
+			gkGroupManager::Groups::Iterator giter = gkGroupManager::getSingleton().getAttachedGroupIterator(scene);
+			while (giter.hasMoreElements())
+			{
+				gkGameObjectGroup* g = giter.getNext();
+				g->getInstances().postProcessQueue();
+			}
+		}
+	}
+}
 
 UT_IMPLEMENT_SINGLETON(gkSceneManager);

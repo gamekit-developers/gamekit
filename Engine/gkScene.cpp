@@ -792,6 +792,7 @@ void gkScene::_destroyPhysicsObject(gkGameObject* obj)
 
 		obj->attachRigidBody(0);
 		obj->attachCharacter(0);
+		obj->attachGhost(0);
 
 		if (!isBeingDestroyed())
 		{
@@ -805,7 +806,9 @@ void gkScene::_destroyPhysicsObject(gkGameObject* obj)
 			if (isStatic)
 			{
 				// Re-merge the static Aabb.
-				calculateLimits();
+				// groupinstance-limits will be recalculted after the whole groupinstanes is destroyed
+				if (!obj->isGroupInstance())
+					calculateLimits();
 			}
 		}
 	}
@@ -889,7 +892,13 @@ void gkScene::calculateLimits(void)
 	while (it.hasMoreElements())
 	{
 		gkPhysicsController* phycon = it.getNext();
-		m_limits.merge(phycon->getAabb());
+		if (!phycon->getObject()){
+			gkLogger::write("Hmm.",true);
+			continue;
+		}
+
+		if (phycon->getShape())
+			m_limits.merge(phycon->getAabb());
 	}
 }
 
@@ -1234,9 +1243,8 @@ void gkScene::notifyInstanceCreated(gkGameObject* gobj)
 	if (!isBeingCreated())
 	{
 		_createPhysicsObject(gobj);
-			_postCreatePhysicsObject(gobj);
+		_postCreatePhysicsObject(gobj);
 	}
-
 
 	if (gobj->getType() == GK_CAMERA)
 		m_cameras.insert(gobj->getCamera());
@@ -1391,7 +1399,12 @@ void gkScene::endObject(gkGameObject* obj)
 	m_endObjects.insert(obj);
 }
 
-
+void gkScene::notifyGroupInstanceDestroyed(gkGameObjectInstance* ginst) {
+	// FIX TODO: for some reason this can crash if using static objects inside the group
+	//			 it seems that the already disposed references are inside m_staticControllers
+	//			 no side effect not doing calculateLimits() seen yet
+//		calculateLimits();
+}
 
 void gkScene::_unloadAndDestroy(gkGameObject* gobj)
 {

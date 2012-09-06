@@ -58,6 +58,8 @@ public:
 	void copyObjects(gkScene* fromScene, gkScene* toScene, int exceptObjectTypes = OBJ_CAMERA | OBJ_LIGHT);
 	gkScene* createEmptyScene(const gkString& sceneName = "Scene", const gkString& cameraName = "Camera", const gkString& group = "");
 
+	void postProcessQueue(void);
+
 private:
 	void notifyResourceDestroyedImpl(gkResource* res);
 
