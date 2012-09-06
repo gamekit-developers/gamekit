@@ -143,8 +143,10 @@ public:
 	GK_INLINE bool           hasLights(void) {return isInstanced() ? !m_lights.empty() : m_hasLights;}
 
 
-	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
+	void      setLayer(UTuint32 v);
 	GK_INLINE UTuint32  getLayer(void)           {return m_layers;}
+	GK_INLINE int getZOrder() { return m_zorder;}
+
 
 	gkGameObject* findInstancedObject(const gkString& name);
 

@@ -8702,6 +8702,56 @@ fail:
 }
 
 
+static int _wrap_Scene_setLayer(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("setLayer",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLayer",1,"gsScene *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLayer",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_setLayer",1,SWIGTYPE_p_gsScene);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->setLayer(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Scene_getLayer(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getLayer",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLayer",1,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getLayer",1,SWIGTYPE_p_gsScene);
+  }
+  
+  result = (int)(arg1)->getLayer();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Scene_getProcessManager(lua_State* L) {
   int SWIG_arg = 0;
   gsScene *arg1 = (gsScene *) 0 ;
@@ -8792,6 +8842,8 @@ static swig_lua_method swig_gsScene_methods[] = {
     {"getMainCamera", _wrap_Scene_getMainCamera}, 
     {"getPickRay", _wrap_Scene_getPickRay}, 
     {"setUpdateFlags", _wrap_Scene_setUpdateFlags}, 
+    {"setLayer", _wrap_Scene_setLayer}, 
+    {"getLayer", _wrap_Scene_getLayer}, 
     {"getProcessManager", _wrap_Scene_getProcessManager}, 
     {"getLogicBrickManager", _wrap_Scene_getLogicBrickManager}, 
     {"getOwner", _wrap_Scene_getOwner}, 
@@ -8836,6 +8888,35 @@ static int _wrap_getScene(lua_State* L) {
   arg1 = &temp1;
   
   result = (gkScene *)getScene((gkString const &)*arg1);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_addScene(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  int arg2 ;
+  gkScene *result = 0 ;
+  
+  SWIG_check_num_args("addScene",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addScene",1,"gsScene *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("addScene",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("addScene",1,SWIGTYPE_p_gsScene);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkScene *)addScene(arg1,arg2);
   if (result) {
     SWIG_arg += GS_LUA_OBJECT_STORE(result, Scene); 
   } 
@@ -30769,6 +30850,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getHUD", _wrap_getHUD},
     { "getActiveScene", _wrap_getActiveScene},
     { "getScene", _wrap_getScene},
+    { "addScene", _wrap_addScene},
     { "createGroupInstance",_wrap_createGroupInstance},
     { "sendMessage", _wrap_sendMessage},
     { "DebugPrint", _wrap_DebugPrint},

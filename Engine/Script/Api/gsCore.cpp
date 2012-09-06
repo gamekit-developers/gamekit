@@ -1040,6 +1040,19 @@ gsScene::~gsScene()
 	}
 }
 
+void gsScene::setLayer(int layer)
+{
+	if (m_object)
+		return cast<gkScene>()->setLayer((UTuint32)layer);
+}
+
+int gsScene::getLayer()
+{
+	if (m_object)
+		return cast<gkScene>()->getLayer();
+	return 0;
+}
+
 bool gsScene::hasObject(const gkString& name)
 {
 	if (m_object)
@@ -1176,6 +1189,22 @@ gkScene* getActiveScene(void)
 	gkEngine* eng = gkEngine::getSingletonPtr();
 	if (eng && eng->isInitialized())
 		return eng->getActiveScene();
+	return 0;
+}
+
+gkScene* addScene(gsScene* scene,int zorder) {
+	if (scene)
+	{
+		gkScene* tmpScene = scene->cast<gkScene>();
+		if (!tmpScene->isInstanced())
+		{
+		gkWindow* win;
+		win = gkEngine::getSingleton().getActiveScene()->getDisplayWindow();
+		tmpScene->setDisplayWindow(win, zorder);
+		tmpScene->createInstance(true);
+		}
+		return tmpScene;
+	}
 	return 0;
 }
 

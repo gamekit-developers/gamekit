@@ -80,6 +80,7 @@
 #include "OgreRTShaderSystem.h"
 #endif
 #include "Physics/gkGhost.h"
+#include "gkValue.h"
 
 //using namespace Ogre;
 
@@ -892,16 +893,39 @@ void gkScene::calculateLimits(void)
 	while (it.hasMoreElements())
 	{
 		gkPhysicsController* phycon = it.getNext();
-		if (!phycon->getObject()){
-			gkLogger::write("Hmm.",true);
-			continue;
-		}
 
 		if (phycon->getShape())
 			m_limits.merge(phycon->getAabb());
 	}
 }
 
+void gkScene::setLayer(UTuint32 v)
+{
+	if (v==m_layers)
+		return;
+
+	m_layers = v;
+
+	if (isInstanced()) {
+		gkGameObjectHashMap::Iterator it = m_objects.iterator();
+		while (it.hasMoreElements())
+		{
+			gkGameObject* gobj = it.getNext().second;
+
+			if (gobj->getLayer() & m_layers)
+			{
+				if (!gobj->isInstanced())
+					gobj->createInstance(true);
+			}
+			else
+			{
+				if (gobj->isInstanced())
+					gobj->destroyInstance(true);
+			}
+
+		}
+	}
+}
 
 
 void gkScene::createInstanceImpl(void)

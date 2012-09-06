@@ -392,6 +392,9 @@ public:
 
 	void setUpdateFlags(unsigned int flags);
 
+	void setLayer(int layer);
+	int getLayer(void);
+
 #ifdef OGREKIT_USE_PROCESSMANAGER
 	gkProcessManager* getProcessManager(void);
 #endif
@@ -405,7 +408,7 @@ public:
 
 extern gkScene* getActiveScene(void);
 extern gkScene* getScene(const gkString& sceneName);
-
+extern gkScene* addScene(gsScene* scene,int zorder);
 class gsGameObjectInstance
 {
 public:
