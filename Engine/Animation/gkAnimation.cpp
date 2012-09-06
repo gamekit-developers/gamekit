@@ -48,11 +48,12 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 	const akBezierSpline** splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
 
+	gkGameObject* obj = static_cast<gkGameObject*>(object);
 	// clear previous channel
-	gkTransformState channel;
-	channel.setIdentity();
+	gkTransformState channel = obj->getTransformState();
 
-	gkEuler euler(0,0,0);
+	gkEuler euler = obj->getRotation();
+
 	
 	while (i < len)
 	{
