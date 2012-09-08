@@ -29,6 +29,9 @@
 
 
 #include "gkVariable.h"
+#include "OgreOverlay.h"
+#include "OgreOverlayContainer.h"
+#include "OgreOverlayElement.h"
 
 
 

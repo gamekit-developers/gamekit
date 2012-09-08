@@ -32,6 +32,8 @@
 #include "OgreStringVector.h"
 #include "OgreStdHeaders.h"
 #include "utMemoryPool.h"
+#include "OgreOverlay.h"
+#include "OgreOverlayElement.h"
 
 class gkDebugScreen
 {

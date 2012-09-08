@@ -1005,6 +1005,7 @@ void gkScene::createInstanceImpl(void)
 	// to extract more detailed management information
 
 	m_manager = Ogre::Root::getSingleton().createSceneManager(Ogre::ST_GENERIC, m_name.getFullName());
+
 #if OGREKIT_USE_RTSHADER_SYSTEM
 	Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(m_manager);
 #endif

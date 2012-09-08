@@ -53,6 +53,7 @@
 #include "gkAnimationManager.h"
 #include "gkParticleManager.h"
 #include "gkHUDManager.h"
+#include "OgreOverlaySystem.h"
 
 #ifdef OGREKIT_USE_NNODE
 #include "gkNodeManager.h"
@@ -158,6 +159,8 @@ public:
 	unsigned long				curTime;
 
 	gkBlendArchiveFactory*		archive_factory;
+
+	Ogre::OverlaySystem*		overlaySystem;
 };
 
 
@@ -218,6 +221,7 @@ void gkEngine::initialize()
 	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(root);
 	m_private->archive_factory->addArchiveFactory();	
+	m_private->overlaySystem = new Ogre::OverlaySystem();
 
 	const Ogre::RenderSystemList& renderers = root->getAvailableRenderers();
 	if (renderers.empty())
@@ -408,10 +412,13 @@ void gkEngine::finalize()
 	delete gkBlendLoader::getSingletonPtr();
 	delete gkResourceGroupManager::getSingletonPtr();
 
+
 	delete gkStats::getSingletonPtr();
 	delete m_private->debugFps;
 	delete m_private->debugPage;
 	delete m_private->debug;
+	delete m_private->overlaySystem;
+
 	delete m_private->root;
 	delete m_private;
 
@@ -548,7 +555,11 @@ void gkEngine::registerActiveScene(gkScene* scene)
 	{
 		m_private->scenes.push_back(scene);
 		if (m_private->curScene == 0)
+		{
 			m_private->curScene = scene;
+			GK_ASSERT(scene->isInstanced());
+			scene->getManager()->addRenderQueueListener(m_private->overlaySystem);
+		}
 	}
 }
 
@@ -557,7 +568,16 @@ void gkEngine::unregisterActiveScene(gkScene* scene)
 	GK_ASSERT(m_private && scene);
 	m_private->scenes.erase(m_private->scenes.find(scene));
 	if (m_private->curScene == scene)
-		m_private->curScene = 0;
+	{
+		if (m_private->scenes.size()>0)
+		{
+			m_private->curScene = m_private->scenes.at(0);
+			m_private->curScene->getManager()->addRenderQueueListener(m_private->overlaySystem);
+		}
+		else
+			m_private->curScene = 0;
+
+	}
 }
 
 
@@ -745,7 +765,6 @@ void gkOgreEnginePrivate::tickImpl(gkScalar dt)
 	gkSceneManager::getSingleton().postProcessQueue();
 
 }
-
 
 
 
