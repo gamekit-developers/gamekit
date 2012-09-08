@@ -46,7 +46,7 @@ namespace Ogre
         ResourceHandle handle, const String& group, bool isManual, 
         ManualResourceLoader* loader)
         :Texture(creator, name, handle, group, isManual, loader),              
-        mD3DPool(D3D9RenderSystem::isDirectX9Ex() ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED),
+		mD3DPool(D3D9RenderSystem::isDirectX9Ex() ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED),
 		mDynamicTextures(false),
 		mHwGammaReadSupported(false),
 		mHwGammaWriteSupported(false),	
@@ -201,7 +201,9 @@ namespace Ogre
 			// NB: Need to initialise pool to some value other than D3DPOOL_DEFAULT,
 			// otherwise, if the texture loading failed, it might re-create as empty
 			// texture when device lost/restore. The actual pool will determine later.
-			mD3DPool = D3DPOOL_MANAGED;
+			//
+			// In directX9Ex this is not the case there is no managed pool and no device loss
+			mD3DPool = D3D9RenderSystem::isDirectX9Ex() ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
 		}
 
 		D3D9_DEVICE_ACCESS_CRITICAL_SECTION

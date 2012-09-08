@@ -43,7 +43,7 @@ THE SOFTWARE.
 #include "OgreGpuProgramManager.h"
 #include "OgreHighLevelGpuProgramManager.h"
 #include "OgreShaderExTextureAtlasSampler.h"
-#include "OgreGpuProgramManager.h"
+#include "OgreShaderExTriplanarTexturing.h"
 
 namespace Ogre {
 
@@ -225,6 +225,10 @@ void ShaderGenerator::createSubRenderStateExFactories()
     }
 
 	curFactory = new TextureAtlasSamplerFactory;
+	addSubRenderStateFactory(curFactory);
+	mSubRenderStateExFactories[curFactory->getType()] = (curFactory);
+	
+	curFactory = new TriplanarTexturingFactory;
 	addSubRenderStateFactory(curFactory);
 	mSubRenderStateExFactories[curFactory->getType()] = (curFactory);
 #endif
@@ -762,8 +766,7 @@ bool ShaderGenerator::createShaderBasedTechnique(const String& materialName,
 	srcTechnique = findSourceTechnique(materialName, trueGroupName, srcTechniqueSchemeName, overProgrammable);
 
 	// No appropriate source technique found.
-	if ((srcTechnique == NULL) ||
-		((overProgrammable == false) && (isProgrammable(srcTechnique) == true)))
+	if (srcTechnique == NULL)
 	{
 		return false;
 	}

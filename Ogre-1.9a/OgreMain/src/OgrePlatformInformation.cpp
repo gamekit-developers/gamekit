@@ -41,38 +41,6 @@ THE SOFTWARE.
 #include <setjmp.h>
 
     #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-
-
-#include <sys/cdefs.h>
-#include <stdint.h>
-
-__BEGIN_DECLS
-
-typedef enum {
-    ANDROID_CPU_FAMILY_UNKNOWN = 0,
-    ANDROID_CPU_FAMILY_ARM,
-    ANDROID_CPU_FAMILY_X86,
-
-    ANDROID_CPU_FAMILY_MAX  /* do not remove */
-
-} AndroidCpuFamily;
-
-/* Return family of the device's CPU */
-extern AndroidCpuFamily   android_getCpuFamily(void);
-
-enum {
-    ANDROID_CPU_ARM_FEATURE_ARMv7 = (1 << 0),
-    ANDROID_CPU_ARM_FEATURE_VFPv3 = (1 << 1),
-    ANDROID_CPU_ARM_FEATURE_NEON  = (1 << 2),
-};
-
-extern uint64_t    android_getCpuFeatures(void);
-
-__END_DECLS
-
-
-
-
         #include <cpu-features.h>
     #elif OGRE_CPU == OGRE_CPU_ARM 
         #include <sys/sysctl.h>
@@ -580,29 +548,14 @@ namespace Ogre {
 
         switch(cpusubtype)
         {
-            case CPU_SUBTYPE_ARM_V4T:
-                cpuID = "ARMv4T";
-                break;
-            case CPU_SUBTYPE_ARM_V5TEJ:
-                cpuID = "ARMv5TEJ";
-                break;
             case CPU_SUBTYPE_ARM_V6:
                 cpuID = "ARMv6";
-                break;
-            case CPU_SUBTYPE_ARM_XSCALE:
-                cpuID = "ARM XScale";
                 break;
             case CPU_SUBTYPE_ARM_V7:
                 cpuID = "ARMv7";
                 break;
             case CPU_SUBTYPE_ARM_V7F:
                 cpuID = "ARM Cortex-A9";
-                break;
-            case CPU_SUBTYPE_ARM_V7S:
-                cpuID = "ARM Swift";
-                break;
-            case CPU_SUBTYPE_ARM_V7K:
-                cpuID = "ARM Kirkwood 40";
                 break;
             default:
                 cpuID = "Unknown ARM";

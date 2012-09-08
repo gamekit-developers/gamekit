@@ -514,14 +514,6 @@ namespace Ogre {
         
             void _destroyDepthBuffer(RenderWindow* pRenderWnd);
         
-#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-            void resetRenderer(RenderWindow* pRenderWnd);
-        
-            static AndroidResourceManager* getResourceManager();
-    private:
-            static AndroidResourceManager* mResourceManager;
-#endif
-
             /// @copydoc RenderSystem::beginProfileEvent
             virtual void beginProfileEvent( const String &eventName );
             
@@ -530,6 +522,14 @@ namespace Ogre {
             
             /// @copydoc RenderSystem::markProfileEvent
             virtual void markProfileEvent( const String &eventName );
+
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+            void resetRenderer(RenderWindow* pRenderWnd);
+        
+            static AndroidResourceManager* getResourceManager();
+    private:
+            static AndroidResourceManager* mResourceManager;
+#endif
     };
 }
 

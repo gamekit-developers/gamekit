@@ -25,6 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#include "OgreD3D9RenderSystem.h"
 #include "OgreD3D9HardwareBufferManager.h"
 #include "OgreD3D9HardwareVertexBuffer.h"
 #include "OgreD3D9HardwareIndexBuffer.h"
@@ -56,8 +57,11 @@ namespace Ogre {
         // backed by system memory
         // Don't override shadow buffer if discardable, since then we use
         // unmanaged buffers for speed (avoids write-through overhead)
-        if (useShadowBuffer && !(usage & HardwareBuffer::HBU_DISCARDABLE))
-        {
+		// Don't override if we use directX9EX, since then we don't have managed
+		// pool. And creating non-write only default pool causes a performance warning. 
+		if (useShadowBuffer && !(usage & HardwareBuffer::HBU_DISCARDABLE) &&
+			!D3D9RenderSystem::isDirectX9Ex())
+		{
             useShadowBuffer = false;
             // Also drop any WRITE_ONLY so we can read direct
             if (usage == HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY)
@@ -88,8 +92,13 @@ namespace Ogre {
 #if OGRE_D3D_MANAGE_BUFFERS
         // Override shadow buffer setting; managed buffers are automatically
         // backed by system memory
-        if (useShadowBuffer)
-        {
+		// Don't override shadow buffer if discardable, since then we use
+		// unmanaged buffers for speed (avoids write-through overhead)
+		// Don't override if we use directX9EX, since then we don't have managed
+		// pool. And creating non-write only default pool causes a performance warning. 
+		if (useShadowBuffer && !(usage & HardwareBuffer::HBU_DISCARDABLE) &&
+			!D3D9RenderSystem::isDirectX9Ex())
+		{
             useShadowBuffer = false;
             // Also drop any WRITE_ONLY so we can read direct
             if (usage == HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY)

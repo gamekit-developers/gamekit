@@ -34,7 +34,7 @@ THE SOFTWARE.
 namespace Ogre {
     GLES2TextureManager::GLES2TextureManager(GLES2Support& support)
         : TextureManager(), mGLSupport(support), mWarningTextureID(0)
-    {        
+    {
         // Register with group manager
         ResourceGroupManager::getSingleton()._registerResourceManager(mResourceType, this);
     }

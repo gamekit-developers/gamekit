@@ -2222,7 +2222,31 @@ namespace Ogre {
                 mActiveBufferMap.erase(i);
         }
     }
-    //---------------------------------------------------------------------    
+	//---------------------------------------------------------------------
+    void GLES2RenderSystem::beginProfileEvent( const String &eventName )
+    {
+#if GL_EXT_debug_marker
+        glPushGroupMarkerEXT(0, eventName.c_str());
+#endif
+    }
+    //---------------------------------------------------------------------
+    void GLES2RenderSystem::endProfileEvent( void )
+    {
+#if GL_EXT_debug_marker
+        glPopGroupMarkerEXT();
+#endif
+    }
+    //---------------------------------------------------------------------
+    void GLES2RenderSystem::markProfileEvent( const String &eventName )
+    {
+        if( eventName.empty() )
+            return;
+
+#if GL_EXT_debug_marker
+        glInsertEventMarkerEXT(0, eventName.c_str());
+#endif
+    }  
+	//---------------------------------------------------------------------
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
     void GLES2RenderSystem::resetRenderer(RenderWindow* win)
     {
@@ -2250,43 +2274,21 @@ namespace Ogre {
         
         _setViewport(NULL);
         _setRenderTarget(win);
-    }    
-#endif
-    //---------------------------------------------------------------------
-    void GLES2RenderSystem::beginProfileEvent( const String &eventName )
-    {
-#if GL_EXT_debug_marker
-        glPushGroupMarkerEXT(0, eventName.c_str());
-#endif
-    }    
-    //---------------------------------------------------------------------
-    void GLES2RenderSystem::endProfileEvent( )
-    {
-#if GL_EXT_debug_marker
-        glPopGroupMarkerEXT();
-#endif
     }
     
-    //---------------------------------------------------------------------
-    void GLES2RenderSystem::markProfileEvent( const String &eventName )
+    AndroidResourceManager* GLES2RenderSystem::getResourceManager()
     {
-        if( eventName.empty() )
-            return;
-
-#if GL_EXT_debug_marker
-        glInsertEventMarkerEXT(0, eventName.c_str());
-#endif
+        return GLES2RenderSystem::mResourceManager;
     }
-    //---------------------------------------------------------------------
+#endif
+
     void GLES2RenderSystem::_setTextureUnitCompareFunction(size_t unit, CompareFunction function)
     {
         //no effect in GLES2 rendersystem
     }
-    //---------------------------------------------------------------------
+
     void GLES2RenderSystem::_setTextureUnitCompareEnabled(size_t unit, bool compare)
     {
         //no effect in GLES2 rendersystem
     }
-    //---------------------------------------------------------------------
 }
-

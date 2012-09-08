@@ -62,9 +62,9 @@ THE SOFTWARE.
 #include "DXErr.h"
 #endif
 
-// #ifdef OGRE_PROFILING == 1
-// #include "d3d9.h"
-// #endif
+//#ifdef OGRE_PROFILING == 1 && OGRE_PLATFORM != OGRE_PLATFORM_WINRT
+//#include "d3d9.h"
+//#endif
 
 //---------------------------------------------------------------------
 #define FLOAT2DWORD(f) *((DWORD*)&f)
@@ -686,12 +686,10 @@ bail:
             {
                 deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
             }
-#if OGRE_PLATFORM != OGRE_PLATFORM_WINRT
 			if (!OGRE_THREAD_SUPPORT)
 			{
 				deviceFlags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
 			}
-#endif
 			D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_UNKNOWN ;
 
 			// Search for a PerfHUD adapter
@@ -731,7 +729,6 @@ bail:
 				driverType = D3D_DRIVER_TYPE_SOFTWARE; 
 				SAFE_RELEASE(pSelectedAdapter);
 			}
-
 			
 			if (mDriverType == DT_WARP)
 			{
@@ -1810,14 +1807,9 @@ bail:
 		else
 		{
 			mBlendDesc.RenderTarget[0].BlendEnable = TRUE;
-			mBlendDesc.RenderTarget[0].SrcBlend = D3D11Mappings::get(sourceFactor);
-			mBlendDesc.RenderTarget[0].DestBlend = D3D11Mappings::get(destFactor);
-			//mBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD ;
-			mBlendDesc.RenderTarget[0].BlendOp = D3D11Mappings::get(op);
-			mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD ;
-			mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-			mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-			//mBlendDesc.AlphaToCoverageEnable = false;
+			mBlendDesc.RenderTarget[0].SrcBlend = mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactor);
+			mBlendDesc.RenderTarget[0].DestBlend = mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactor);
+			mBlendDesc.RenderTarget[0].BlendOp = mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11Mappings::get(op);
 			mBlendDesc.AlphaToCoverageEnable = mSceneAlphaToCoverage;
 			mBlendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
 		}  
@@ -2006,32 +1998,6 @@ bail:
 		mActiveRenderTarget = target;
 		if (mActiveRenderTarget)
 		{
-			/*ID3D11RenderTargetView * pRTView[OGRE_MAX_MULTIPLE_RENDER_TARGETS];
-			memset(pRTView, 0, sizeof(pRTView));
-
-			target->getCustomAttribute( "ID3D11RenderTargetView", &pRTView );
-
-			uint numberOfViews;
-			target->getCustomAttribute( "numberOfViews", &numberOfViews );
-
-			while (pRTView[numberOfViews] != NULL)
-			{
-				numberOfViews++;
-			}
-
-			//Retrieve depth buffer
-			D3D11DepthBuffer *depthBuffer = static_cast<D3D11DepthBuffer*>(target->getDepthBuffer());
-
-			if( target->getDepthBufferPool() != DepthBuffer::POOL_NO_DEPTH && !depthBuffer )
-			{
-				//Depth is automatically managed and there is no depth buffer attached to this RT
-				//or the Current D3D device doesn't match the one this Depth buffer was created
-				setDepthBufferFor( target );
-			}
-
-			//Retrieve depth buffer again (it may have changed)
-			depthBuffer = static_cast<D3D11DepthBuffer*>(target->getDepthBuffer());*/
-
 			// we need to clear the state 
 			mDevice.GetImmediateContext()->ClearState();
 
@@ -2042,20 +2008,6 @@ bail:
 					"D3D11 device cannot Clear State\nError Description:" + errorDescription,
 					"D3D11RenderSystem::_setRenderTarget");
 			}
-
-			/*// now switch to the new render target
-			mDevice.GetImmediateContext()->OMSetRenderTargets(
-				numberOfViews,
-				pRTView,
-				depthBuffer ? depthBuffer->getDepthStencilView() : 0 );
-
-			if (mDevice.isError())
-			{
-				String errorDescription = mDevice.getErrorDescription();
-				OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-					"D3D11 device cannot set render target\nError Description:" + errorDescription,
-					"D3D11RenderSystem::_setViewport");
-			}*/
 
 			_setRenderTargetViews();
 		}
@@ -2075,11 +2027,6 @@ bail:
 
 			uint numberOfViews;
 			target->getCustomAttribute( "numberOfViews", &numberOfViews );
-
-			while (pRTView[numberOfViews] != NULL)
-			{
-				numberOfViews++;
-			}
 
 			//Retrieve depth buffer
 			D3D11DepthBuffer *depthBuffer = static_cast<D3D11DepthBuffer*>(target->getDepthBuffer());
@@ -2105,10 +2052,9 @@ bail:
 				String errorDescription = mDevice.getErrorDescription();
 				OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
 					"D3D11 device cannot set render target\nError Description:" + errorDescription,
-					"D3D11RenderSystem::_setRenderTargatViews");
+					"D3D11RenderSystem::_setRenderTargetViews");
 			}
 		}
-		
 	}
 	//---------------------------------------------------------------------
 	void D3D11RenderSystem::_setViewport( Viewport *vp )
@@ -3311,12 +3257,6 @@ bail:
 				// Clear all views
 				uint numberOfViews;
 				mActiveRenderTarget->getCustomAttribute( "numberOfViews", &numberOfViews );
-
-				while (pRTView[numberOfViews] != NULL)
-				{
-					numberOfViews++;
-				}
-
 				if( numberOfViews == 1 )
 					mDevice.GetImmediateContext()->ClearRenderTargetView( pRTView[0], ClearColor );
 				else
@@ -3777,34 +3717,32 @@ bail:
     //---------------------------------------------------------------------
     void D3D11RenderSystem::beginProfileEvent( const String &eventName )
     {
-// #ifdef OGRE_PROFILING == 1
-//         if( eventName.empty() )
-//             return;
+//#ifdef OGRE_PROFILING == 1
+//		if( eventName.empty() )
+//			return;
 // 
-//         vector<wchar_t>::type result(eventName.length() + 1, '\0');
-//         (void)MultiByteToWideChar(CP_ACP, 0, eventName.data(), eventName.length(), &result[0], result.size());
-//         (void)D3DPERF_BeginEvent(D3DCOLOR_ARGB(1, 0, 1, 0), &result[0]);
-// #endif
+//		vector<wchar_t>::type result(eventName.length() + 1, '\0');
+//		(void)MultiByteToWideChar(CP_ACP, 0, eventName.data(), eventName.length(), &result[0], result.size());
+//		(void)D3DPERF_BeginEvent(D3DCOLOR_ARGB(1, 0, 1, 0), &result[0]);
+//#endif
     }
-
     //---------------------------------------------------------------------
     void D3D11RenderSystem::endProfileEvent( void )
     {
-// #ifdef OGRE_PROFILING == 1
-//         (void)D3DPERF_EndEvent();
-// #endif
+//#ifdef OGRE_PROFILING == 1
+//		(void)D3DPERF_EndEvent();
+//#endif
     }
-
     //---------------------------------------------------------------------
     void D3D11RenderSystem::markProfileEvent( const String &eventName )
     {
-// #ifdef OGRE_PROFILING == 1
-//         if( eventName.empty() )
-//             return;
-// 
-//         vector<wchar_t>::type result(eventName.length() + 1, '\0');
-//         (void)MultiByteToWideChar(CP_ACP, 0, eventName.data(), eventName.length(), &result[0], result.size());
-//         (void)D3DPERF_SetMarker(D3DCOLOR_ARGB(1, 0, 1, 0), &result[0]);
-// #endif
+//#ifdef OGRE_PROFILING == 1
+//		if( eventName.empty() )
+//			return;
+//
+//		vector<wchar_t>::type result(eventName.length() + 1, '\0');
+//		(void)MultiByteToWideChar(CP_ACP, 0, eventName.data(), eventName.length(), &result[0], result.size());
+//		(void)D3DPERF_SetMarker(D3DCOLOR_ARGB(1, 0, 1, 0), &result[0]);
+//#endif
     }    
 }

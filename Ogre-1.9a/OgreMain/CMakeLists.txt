@@ -38,7 +38,6 @@ set (HEADER_FILES
   include/OgreBitwise.h
   include/OgreBlendMode.h
   include/OgreBone.h
-  include/OgreBorderPanelOverlayElement.h
   ${OGRE_BINARY_DIR}/include/OgreBuildSettings.h
   include/OgreCamera.h
   include/OgreCodec.h
@@ -76,8 +75,6 @@ set (HEADER_FILES
   include/OgreExternalTextureSourceManager.h
   include/OgreFactoryObj.h
   include/OgreFileSystem.h
-  include/OgreFont.h
-  include/OgreFontManager.h
   include/OgreFrameListener.h
   include/OgreFrustum.h
   include/OgreGpuProgram.h
@@ -91,8 +88,6 @@ set (HEADER_FILES
   include/OgreHardwarePixelBuffer.h
   include/OgreHardwareUniformBuffer.h
   include/OgreHardwareVertexBuffer.h
-  include/OgreHeaderPrefix.h
-  include/OgreHeaderSuffix.h
   include/OgreHighLevelGpuProgram.h
   include/OgreHighLevelGpuProgramManager.h
   include/OgreImage.h
@@ -139,13 +134,6 @@ set (HEADER_FILES
   include/OgreNode.h
   include/OgreNumerics.h
   include/OgreOptimisedUtil.h
-  include/OgreOverlay.h
-  include/OgreOverlayContainer.h
-  include/OgreOverlayElement.h
-  include/OgreOverlayElementCommands.h
-  include/OgreOverlayElementFactory.h
-  include/OgreOverlayManager.h
-  include/OgrePanelOverlayElement.h
   include/OgreParticle.h
   include/OgreParticleAffector.h
   include/OgreParticleAffectorFactory.h
@@ -247,7 +235,6 @@ set (HEADER_FILES
   include/OgreTagPoint.h
   include/OgreTangentSpaceCalc.h
   include/OgreTechnique.h
-  include/OgreTextAreaOverlayElement.h
   include/OgreTexture.h
   include/OgreTextureManager.h
   include/OgreTextureUnitState.h
@@ -280,7 +267,6 @@ set (SOURCE_FILES
   src/OgreBillboardParticleRenderer.cpp
   src/OgreBillboardSet.cpp
   src/OgreBone.cpp
-  src/OgreBorderPanelOverlayElement.cpp
   src/OgreCamera.cpp
   src/OgreCodec.cpp
   src/OgreColourValue.cpp
@@ -310,8 +296,6 @@ set (SOURCE_FILES
   src/OgreExternalTextureSource.cpp
   src/OgreExternalTextureSourceManager.cpp
   src/OgreFileSystem.cpp
-  src/OgreFont.cpp
-  src/OgreFontManager.cpp
   src/OgreFrustum.cpp
   src/OgreGpuProgram.cpp
   src/OgreGpuProgramManager.cpp
@@ -366,13 +350,6 @@ set (SOURCE_FILES
 #  src/OgreOptimisedUtilNEON.cpp
   src/OgreOptimisedUtilSSE.cpp
 #  src/OgreOptimisedUtilVFP.cpp
-  src/OgreOverlay.cpp
-  src/OgreOverlayContainer.cpp
-  src/OgreOverlayElement.cpp
-  src/OgreOverlayElementCommands.cpp
-  src/OgreOverlayElementFactory.cpp
-  src/OgreOverlayManager.cpp
-  src/OgrePanelOverlayElement.cpp
   src/OgreParticle.cpp
   src/OgreParticleEmitter.cpp
   src/OgreParticleEmitterCommands.cpp
@@ -449,7 +426,6 @@ set (SOURCE_FILES
   src/OgreTagPoint.cpp
   src/OgreTangentSpaceCalc.cpp
   src/OgreTechnique.cpp
-  src/OgreTextAreaOverlayElement.cpp
   src/OgreTexture.cpp
   src/OgreTextureManager.cpp
   src/OgreTextureUnitState.cpp
@@ -590,7 +566,7 @@ elseif (APPLE)
     set(PLATFORM_LIBS ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
     set(PLATFORM_HEADER_INSTALL "OSX")
   endif ()
-elseif(OGREKIT_BUILD_ANDROID)
+elseif(ANDROID)
   set(PLATFORM_HEADER_FILES
     include/Android/OgreConfigDialogImp.h
     include/Android/OgreErrorDialogImp.h
@@ -606,14 +582,8 @@ elseif(OGREKIT_BUILD_ANDROID)
     src/Android/OgreAndroidLogListener.cpp
     src/Android/OgreAPKFileSystemArchive.cpp
   )
-    set(PLATFORM_LIBS dl)
-    set(PLATFORM_HEADER_INSTALL "Android")
-    # some platforms require explicit linking to libdl, see if it's available
-    find_library(DL_LIBRARY NAMES dl dlsym)
-    mark_as_advanced(DL_LIBRARY)
-    if (DL_LIBRARY)
-      list(APPEND PLATFORM_LIBS dl)
-    endif ()  
+
+  set(PLATFORM_HEADER_INSTALL "Android")
 elseif (UNIX)
   include_directories(include/GLX ${X11_INCLUDE_DIR})
   set(PLATFORM_HEADER_FILES
@@ -688,7 +658,6 @@ add_definitions(-DOGRE_NONCLIENT_BUILD -DFREEIMAGE_LIB -D_MT -D_USRDLL)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/nedmalloc)
 
 set(LIBRARIES
-  ${FREETYPE_LIBRARIES}
   ${PLATFORM_LIBS}
 )
 
@@ -776,12 +745,6 @@ if (APPLE)
       COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX
       COMMAND ditto ${OGRE_SOURCE_DIR}/OgreMain/include/OSX/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX/	
 	)
-  else ()
-    set_target_properties(OgreMain PROPERTIES INSTALL_NAME_DIR "OGRE")
-    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
-    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
-    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer")
-    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
   endif ()
 
   # Framework is called 'Ogre'

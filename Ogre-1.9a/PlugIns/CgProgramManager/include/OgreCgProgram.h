@@ -75,8 +75,6 @@ namespace Ogre {
 
         /// The CG context to use, passed in by factory
         CGcontext mCgContext;
-        /// Program handle
-        CGprogram mCgProgram;
         /** Internal load implementation, must be implemented by subclasses.
         */
         void loadFromSource(void);
