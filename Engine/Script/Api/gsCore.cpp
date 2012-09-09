@@ -2268,7 +2268,7 @@ gkString getPlatform() {
 }
 
 bool isSoundAvailable() {
-#if OGREKIT_OPENAL_SOUND
+#ifdef OGREKIT_OPENAL_SOUND
 	return true;
 #else
 	return false;
