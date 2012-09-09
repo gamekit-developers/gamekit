@@ -28,6 +28,9 @@
 #define _gkDebugFps_h_
 
 #include "gkVariable.h"
+#include "OgreOverlay.h"
+#include "OgreOverlayContainer.h"
+#include "OgreOverlayElement.h"
 
 class gkDebugFps
 {

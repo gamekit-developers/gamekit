@@ -33,6 +33,7 @@
 
 
 #include "gkResource.h"
+#include "OgreOverlay.h"
 
 class gkHUDElement;
 

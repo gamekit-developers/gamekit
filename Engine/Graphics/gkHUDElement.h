@@ -33,6 +33,7 @@
 
 #include "gkCommon.h"
 #include "gkVariable.h"
+#include "OgreOverlayElement.h"
 
 
 class gkHUDElement

@@ -34,6 +34,7 @@
 #include "gkResource.h"
 #include "utStreams.h"
 #include "OgreResource.h"
+#include "OgreFont.h"
 
 ///Internal font, loaded from Blender VFont objects in .ttf format.
 class gkFont : public gkResource
