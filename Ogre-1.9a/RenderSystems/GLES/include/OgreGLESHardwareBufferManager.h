@@ -80,8 +80,11 @@ namespace Ogre {
             */
             size_t getGLMapBufferThreshold() const;
             void setGLMapBufferThreshold( const size_t value );
+            // changed by gamekit: seems that this methods wasn't implemted which leads to a link-error
+            // As a fast hack return 0-ptr
             HardwareUniformBufferSharedPtr
-            createUniformBuffer(size_t sizeBytes, HardwareBuffer::Usage usage,bool useShadowBuffer, const String& name = "");
+            createUniformBuffer(size_t sizeBytes, HardwareBuffer::Usage usage,bool useShadowBuffer, const String& name = "")
+            { return HardwareUniformBufferSharedPtr(0); }
     };
 
 	/// GLESHardwareBufferManagerBase as a Singleton
