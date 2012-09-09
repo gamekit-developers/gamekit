@@ -311,6 +311,8 @@ gkProcess* gsProcessManager::createSound(const gkString& soundName)
 		return sound;
 	}
 	RETURN_DEFAULTPROCESS(gkString("Problem creating Sound-Process with empty name"))
+#else
+	// return null-pointer so you can check for nil in lua
+	return 0;
 #endif
-
 }

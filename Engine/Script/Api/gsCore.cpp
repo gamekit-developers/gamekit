@@ -2266,3 +2266,11 @@ gkString getPlatform() {
 	return "UNKNOWN";
 #endif
 }
+
+bool isSoundAvailable() {
+#if OGREKIT_OPENAL_SOUND
+	return true;
+#else
+	return false;
+#endif
+}

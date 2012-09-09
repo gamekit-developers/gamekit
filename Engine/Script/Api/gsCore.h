@@ -647,4 +647,6 @@ extern void import(const gkString& scriptName);
 
 extern gkString getPlatform();
 
+extern bool isSoundAvailable();
+
 #endif//_OgreKitApi_h_
