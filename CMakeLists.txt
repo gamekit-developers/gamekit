@@ -49,7 +49,8 @@ configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 if (GAMEKIT_GRAPHIC_BACKEND EQUAL 1)
 	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.9a)
 elseif (GAMEKIT_GRAPHIC_BACKEND EQUAL 2)	
-	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8rc)	
+	set(GAMEKIT_GRAPHIC_BACKEND_DIR Ogre-1.8rc)
+	add_definitions(-DBUILD_OGRE18)
 else()
 	message(FATAL_ERROR "Invalid graphics backend or not supported yet.")
 endif()
@@ -58,7 +59,7 @@ message(STATUS "----------------------------------------------------------------
 message(STATUS "-- Graphic backend is " ${GAMEKIT_GRAPHIC_BACKEND_DIR})
 message(STATUS "-----------------------------------------------------------------------------")
 
-configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/${GAMEKIT_GRAPHIC_BACKEND_DIR})
+configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/${GAMEKIT_GRAPHIC_BACKEND_DIR} ${GAMEKIT_GRAPHIC_BACKEND})
 
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision  LinearMath)	

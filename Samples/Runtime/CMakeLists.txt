@@ -23,6 +23,8 @@ include_directories(
 	../../Dependencies/Source/tclap/include
 )
 
+message (STATUS "RUNTIME-LIBS: ${OGREKIT_LIB}")
+
 link_libraries(
 	${OGREKIT_LIB}
 )

@@ -53,7 +53,6 @@
 #include "gkAnimationManager.h"
 #include "gkParticleManager.h"
 #include "gkHUDManager.h"
-#include "OgreOverlaySystem.h"
 
 #ifdef OGREKIT_USE_NNODE
 #include "gkNodeManager.h"
@@ -87,6 +86,11 @@
 #include "OgreStringConverter.h"
 #include "OgreFrameListener.h"
 #include "OgreOverlayManager.h"
+
+// temporary hack for keeping compatibility with ogre18 due to the android-version
+#ifndef BUILD_OGRE18
+#include "OgreOverlaySystem.h"
+#endif
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 #include "OgreRTShaderSystem.h"
@@ -160,7 +164,9 @@ public:
 
 	gkBlendArchiveFactory*		archive_factory;
 
+#ifndef BUILD_OGRE18
 	Ogre::OverlaySystem*		overlaySystem;
+#endif
 };
 
 
@@ -220,9 +226,11 @@ void gkEngine::initialize()
 	m_private->root = root;
 	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(root);
-	m_private->archive_factory->addArchiveFactory();	
-	m_private->overlaySystem = new Ogre::OverlaySystem();
+	m_private->archive_factory->addArchiveFactory();
 
+#ifndef BUILD_OGRE18
+	m_private->overlaySystem = new Ogre::OverlaySystem();
+#endif
 	const Ogre::RenderSystemList& renderers = root->getAvailableRenderers();
 	if (renderers.empty())
 	{
@@ -417,8 +425,9 @@ void gkEngine::finalize()
 	delete m_private->debugFps;
 	delete m_private->debugPage;
 	delete m_private->debug;
+#ifndef BUILD_OGRE18
 	delete m_private->overlaySystem;
-
+#endif
 	delete m_private->root;
 	delete m_private;
 
@@ -557,8 +566,10 @@ void gkEngine::registerActiveScene(gkScene* scene)
 		if (m_private->curScene == 0)
 		{
 			m_private->curScene = scene;
+#ifndef BUILD_OGRE18
 			GK_ASSERT(scene->isInstanced());
 			scene->getManager()->addRenderQueueListener(m_private->overlaySystem);
+#endif
 		}
 	}
 }
@@ -571,8 +582,14 @@ void gkEngine::unregisterActiveScene(gkScene* scene)
 	{
 		if (m_private->scenes.size()>0)
 		{
+#ifndef BUILD_OGRE18
+			m_private->curScene->getManager()->removeRenderQueueListener(m_private->overlaySystem);
+#endif
 			m_private->curScene = m_private->scenes.at(0);
+
+#ifndef BUILD_OGRE18
 			m_private->curScene->getManager()->addRenderQueueListener(m_private->overlaySystem);
+#endif
 		}
 		else
 			m_private->curScene = 0;

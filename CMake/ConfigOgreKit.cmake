@@ -1,5 +1,5 @@
 
-macro (configure_ogrekit ROOT OGREPATH)
+macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	#message(STATUS ${OGREPATH})
 	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
 	
@@ -520,10 +520,16 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 
 	set(OGREKIT_OGRE_LIBS 
-		OgreMain 
-		OgreOverlay        
-		${OGREKIT_FREEIMAGE_TARGET} 
-		${OGREKIT_FREETYPE_TARGET} 
+		OgreMain       
+	)    
+	
+	# ogre 1.8rc-compatability
+	if (NOT OGRE_BACKEND STREQUAL "Ogre-1.8rc")
+		list(APPEND OGREKIT_OGRE_LIBS OgreOverlay)  
+	endif()
+
+	list(APPEND OGREKIT_OGRE_LIBS 	${OGREKIT_FREEIMAGE_TARGET} 
+		${OGREKIT_FREETYPE_TARGET}
 		${OGREKIT_GLRS_LIBS}        
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D11_LIBS}		
@@ -531,8 +537,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_OIS_TARGET}
 		${OGREKIT_ZLIB_TARGET}
 		${GAMEKIT_ANIMKIT_TARGET}
-	)    
-	
+	)	
 	if (OGREKIT_USE_BPARSE)
 		set(BPARSE_FILE_FORMAT 1 CACHE STRING 
 			"Select the bparse-blendfile-format:
