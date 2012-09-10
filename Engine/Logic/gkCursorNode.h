@@ -28,6 +28,9 @@
 #define _gkCursorNode_h_
 
 #include "gkLogicNode.h"
+#include "OgreOverlay.h"
+#include "OgreOverlayContainer.h"
+#include "OgreOverlayElement.h"
 
 class gkCursorNode : public gkLogicNode
 {
