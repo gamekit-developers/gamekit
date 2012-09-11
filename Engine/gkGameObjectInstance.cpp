@@ -318,7 +318,7 @@ void gkGameObjectInstance::createInstanceImpl(void)
 			if (gobj->getType() == GK_ENTITY) {
 				gkString parentName = gobj->getProperties().m_parent;
 
-				gkGameObject* parent;
+				gkGameObject* parent = NULL;
 				Objects::Iterator iter2 = m_objects.iterator();
 				while (iter2.hasMoreElements())
 				{
