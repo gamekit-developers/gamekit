@@ -582,9 +582,6 @@ void gkEngine::unregisterActiveScene(gkScene* scene)
 	{
 		if (m_private->scenes.size()>0)
 		{
-#ifndef BUILD_OGRE18
-			m_private->curScene->getManager()->removeRenderQueueListener(m_private->overlaySystem);
-#endif
 			m_private->curScene = m_private->scenes.at(0);
 
 #ifndef BUILD_OGRE18
