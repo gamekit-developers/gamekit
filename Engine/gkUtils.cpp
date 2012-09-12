@@ -53,7 +53,7 @@ char* AppleGetBundleDirectory(void)
 	CFURLRef bundleURL;
 	CFStringRef pathStr;
 	static char path[MAXPATHLEN];
-	memset(path, MAXPATHLEN, 0);
+	memset(path, 0, MAXPATHLEN);
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 
 	bundleURL = CFBundleCopyBundleURL(mainBundle);

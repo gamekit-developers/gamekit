@@ -587,7 +587,7 @@ void gkBlenderMeshConverter::convert_bmesh(void)
 
 
 	gkSubMesh* curSubMesh = 0;
-	m_meshtable.empty();
+	m_meshtable.clear();
 
 	gkLoaderUtils_getLayers_bmesh(m_bmesh, mtpoly,muvs, &mloopCol, totlayer);
 
@@ -836,7 +836,7 @@ void gkBlenderMeshConverter::convert_legacy(void)
 
 
 	gkSubMesh* curSubMesh = 0;
-	m_meshtable.empty();
+	m_meshtable.clear();
 
 	gkLoaderUtils_getLayers_legacy(m_bmesh, mtface, &mcol, totlayer);
 
