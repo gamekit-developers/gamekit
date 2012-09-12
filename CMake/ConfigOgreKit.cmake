@@ -523,7 +523,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	)    
 	
 	# ogre 1.8rc-compatability
-	if (OGRE_BACKEND EQUAL 1)
+	if (${OGRE_BACKEND} EQUAL 1)
 		list(APPEND OGREKIT_OGRE_LIBS OgreOverlay)  
 	endif()
 
