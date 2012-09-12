@@ -1,4 +1,3 @@
-
 macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	#message(STATUS ${OGREPATH})
 	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
@@ -524,7 +523,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	)    
 	
 	# ogre 1.8rc-compatability
-	if (NOT OGRE_BACKEND STREQUAL "Ogre-1.8rc")
+	if (NOT OGRE_BACKEND EQUAL 1)
 		list(APPEND OGREKIT_OGRE_LIBS OgreOverlay)  
 	endif()
 
