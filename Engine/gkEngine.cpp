@@ -567,7 +567,6 @@ void gkEngine::registerActiveScene(gkScene* scene)
 		{
 			m_private->curScene = scene;
 #ifndef BUILD_OGRE18
-			GK_ASSERT(scene->isInstanced());
 			scene->getManager()->addRenderQueueListener(m_private->overlaySystem);
 #endif
 		}
