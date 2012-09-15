@@ -156,6 +156,7 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, con
 
 	gkGameObjectInstance* newInst = m_instanceManager->create<gkGameObjectInstance>(name);
 	newInst->_updateFromGroup(this);
+	scene->addObject(newInst->getRoot());
 	newInst->setLayer(layer);
 
 	gkGameObject* obj = newInst->getRoot();
