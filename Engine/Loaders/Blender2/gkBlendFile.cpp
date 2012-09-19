@@ -296,13 +296,31 @@ void gkBlendFile::buildAllTextures(void)
 		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(name, m_group);
 		if (tex.isNull())
 		{
-			gkTextureLoader* loader = new gkTextureLoader(ima);
-			tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
+			if (ima->packedfile) // is the texture packed with blender?
+			{
+				gkTextureLoader* loader = new gkTextureLoader(ima);
 
-			if (!tex.isNull())
-				m_loaders.push_back(loader);
+				tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
+
+				if (!tex.isNull())
+					m_loaders.push_back(loader);
+				else
+					delete loader;
+			}
 			else
-				delete loader;
+			{
+				gkString texName = GKB_IDNAME(ima);
+				try {
+					gkLogger::write("Texture "+texName+" not packed! Try to locate it via ogre-resources in group:'"+m_group+"'",true);
+					tex = Ogre::TextureManager::getSingleton().load(GKB_IDNAME(ima), m_group,Ogre::TEX_TYPE_2D,gkEngine::getSingleton().getUserDefs().defaultMipMap);
+					if (tex.isNull()) {
+					} else {
+						gkLogger::write("FOUND("+texName+")!!!",true);
+					}
+				} catch (...) {
+					gkLogger::write("NOT FOUND("+texName+")!!!",true);
+				}
+			}
 		}
 	}
 }

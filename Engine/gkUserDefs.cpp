@@ -59,7 +59,7 @@ gkUserDefs::gkUserDefs()
 	wintitle("Ogre GameKit Demo"),
 	fullscreen(false),
 	framingType(gkViewport::FRAMING_EXTEND),
-	resources(""),
+	resources("res.cfg"),
 	blendermat(true),
 	matblending(false),
 	grabInput(true),
