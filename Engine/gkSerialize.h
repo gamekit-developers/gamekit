@@ -95,7 +95,8 @@ public:
 			m_diffuseColorFactor(0),
 			m_diffuseAlpahFactor(0),
 			m_speculaColorFactor(0),
-			m_speculaHardFactor(0)
+			m_speculaHardFactor(0),
+			m_scale(1,1,1)
 	{
 	}
 
@@ -114,6 +115,7 @@ public:
 	gkScalar    m_diffuseAlpahFactor;
 	gkScalar    m_speculaColorFactor;
 	gkScalar    m_speculaHardFactor;
+	gkVector3   m_scale;
 };
 
 

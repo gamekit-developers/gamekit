@@ -38,10 +38,14 @@
 #include "OgrePass.h"
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
+#include "gkLogger.h"
+#include "gkValue.h"
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 #include "OgreRTShaderSystem.h"
 #include "OgreShaderGenerator.h"
+
+
 #endif
 
 gkMaterialLoader::gkMaterialLoader()
@@ -298,7 +302,10 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 			otus->setColourOperationEx(op, LBS_DIFFUSE, LBS_TEXTURE);		
 		else
 			otus->setColourOperationEx(op);
+
+		otus->setTextureScale(gte.m_scale[0],gte.m_scale[1]);
 	}
+
 
 
 	if (gma.m_mode & gkMaterialProperties::MA_ALPHABLEND)

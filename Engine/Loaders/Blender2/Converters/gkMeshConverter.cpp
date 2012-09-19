@@ -261,15 +261,22 @@ int gkBlenderMeshConverter::findTextureLayer(Blender::MTex* te)
 	if (!(te->texco & TEXCO_UV) || te->uvname[0] == '\0')
 		return 0;
 
+	Blender::CustomData* data=0;
+
 	if (m_bmesh->fdata.layers)
+		data = &m_bmesh->fdata;
+	if (m_bmesh->pdata.layers)
+		data = &m_bmesh->pdata;
+
+	if (data)
 	{
-		Blender::CustomDataLayer* cd = (Blender::CustomDataLayer*)m_bmesh->fdata.layers;
+		Blender::CustomDataLayer* cd = (Blender::CustomDataLayer*)data->layers;
 		if (cd)
 		{
 			int layer = 0;
-			for (int i = 0; i < m_bmesh->fdata.totlayer; i++)
+			for (int i = 0; i < data->totlayer; i++)
 			{
-				if (cd[i].type == CD_MTFACE)
+				if (cd[i].type == CD_MTFACE || cd[i].type == CD_MTEXPOLY)
 				{
 					if (utCharEq(cd[i].name, te->uvname))
 						return layer;
@@ -429,6 +436,10 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 				gte.m_diffuseAlpahFactor = mtex->alphafac;
 				gte.m_speculaColorFactor = mtex->colspecfac;
 				gte.m_speculaHardFactor = mtex->hardfac;
+
+				gte.m_scale.x = 1/mtex->size[0];
+				gte.m_scale.y = 1/mtex->size[1];
+				gte.m_scale.z = 1/mtex->size[2];
 			}
 		}
 	}
