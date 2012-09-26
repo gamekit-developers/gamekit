@@ -143,6 +143,39 @@ void gkBlendLoader::unloadFile(gkBlendFile* blendFile)
 		gkResourceGroupManager::getSingleton().destroyResourceGroup(group);
 }
 
+gkBlendFile* gkBlendLoader::loadFromMemory(const void* mem, int memsize, int options, const gkString& scene, const gkString& group)
+{
+
+	bool useUniqueGroup = false;
+	gkString groupName = group;
+	if (groupName.empty() && (options & LO_CREATE_UNIQUE_GROUP) != 0)
+	{
+		groupName = gkUtils::getUniqueName("BLEND");
+		useUniqueGroup = true;
+	}
+
+	bool inGlolbalPool = (options & LO_CREATE_PRIVATE_GROUP) == 0;
+
+	gkResourceGroupManager::getSingleton().createResourceGroup(groupName, inGlolbalPool);
+
+	//bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
+
+	m_activeFile = new gkBlendFile(mem, memsize,groupName);
+
+	if (m_activeFile->parse(options, scene))
+	{
+		m_files.push_back(m_activeFile);
+		return m_activeFile;
+	}
+	else
+	{
+		delete m_activeFile;
+		m_activeFile = m_files.empty() ? 0 : m_files.back();
+	}
+
+	return 0;
+}
+
 gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& scene, const gkString& group)
 {
 	if ((options & LO_IGNORE_CACHE_FILE) != 0)

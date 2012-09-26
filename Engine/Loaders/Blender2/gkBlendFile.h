@@ -46,6 +46,7 @@ public:
 
 public:
 	gkBlendFile(const gkString& blendToLoad, const gkString& group);
+	gkBlendFile(const void* mem, int size, const gkString& group);
 	~gkBlendFile();
 
 	bool parse(int opts, const gkString& scene = "");
@@ -92,6 +93,8 @@ protected:
 	ImageTextureHashMap			m_imageLookup;
 	gkString					m_findScene;
 	bool						m_hasBFont;
+	const void*					m_memoryBlend;
+	int							m_memoryBlendSize;
 };
 
 

@@ -135,7 +135,7 @@ public:
 
 
 	int parse(const char* path, int mode = PM_UNCOMPRESSED);
-	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED);
+	int parse(const void* memory, FBTsize sizeInBytes, int mode = PM_UNCOMPRESSED, bool suppressHeaderWarning=false);
 
 	/// Saving in non native endianness is not implemented yet.
 	int reflect(const char* path, const int mode = PM_UNCOMPRESSED, const fbtEndian& endian = FBT_ENDIAN_NATIVE);
@@ -194,8 +194,8 @@ protected:
 private:
 
 
-	int parseHeader(fbtStream* stream);
-	int parseStreamImpl(fbtStream* stream);
+	int parseHeader(fbtStream* stream, bool suppressHeaderWarning=false);
+	int parseStreamImpl(fbtStream* stream, bool suppressHeaderWarning=false);
 
 	int compileOffsets(void);
 	int link(void);

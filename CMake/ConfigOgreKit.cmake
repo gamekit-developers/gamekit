@@ -182,6 +182,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"     OFF)
 	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"   OFF)
 	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"       ON)
+	option(SAMPLES_CPPDEMO_COMPILE_BLEND	"Convert Blend-Files to .inl-files and compile them in the executable" OFF)
 	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"    OFF)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
@@ -189,6 +190,17 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)
 	option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"    OFF)
     option(SAMPLES_ANDROIDTEST    "Build Samples/Android/Test"  OFF)
+
+
+	if (NOT SAMPLES_CPPDEMO)
+		set(SAMPLES_CPPDEMO_COMPILE_BLEND FALSE CACHE BOOL "IF CPPDEMO not activated, deactivate cppdemo-compile blend as well" FORCE)	
+	endif()
+
+	if (SAMPLES_CPPDEMO_COMPILE_BLEND)
+		set(OGREKIT_DISABLE_ZIP FALSE CACHE BOOL "Force GZ to enabled" FORCE)
+		set(OGREKIT_GENERATE_BUILTIN_RES TRUE CACHE BOOL "Set GENERATE_BUILTIN_RES to true to enable the add_template-command" FORCE)
+	endif()	
+
 	
 	if (SAMPLES_LOGICDEMO OR SAMPLES_VEHICLEDEMO)		
 		set(OGREKIT_USE_NNODE TRUE CACHE BOOL "Forcing Logic Node" FORCE)		

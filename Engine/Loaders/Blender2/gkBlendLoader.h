@@ -77,6 +77,13 @@ public:
 
 	UT_DECLARE_SINGLETON(gkBlendLoader);
 
+	gkBlendFile* loadFromMemory(const void* mem,
+											 int memsize,
+											 int options=LO_ONLY_ACTIVE_SCENE,
+											 const gkString& scene="",
+											 const gkString& group="");
+
+
 private:
 
 	gkBlendFile* loadAndCatch(const gkString& fname,

@@ -154,7 +154,7 @@ public:
 	void open(fbtStream::StreamMode mode);
 	void open(const char* path, fbtStream::StreamMode mode);
 	void open(const fbtFileStream& fs, fbtStream::StreamMode mode);
-	void open(const void* buffer, FBTsize size, fbtStream::StreamMode mode);
+	void open(const void* buffer, FBTsize size, fbtStream::StreamMode mode,bool compressed=false);
 
 
 	bool     isOpen(void)    const   {return m_buffer != 0;}
@@ -165,8 +165,9 @@ public:
 	FBTsize  read(void* dest, FBTsize nr) const;
 	FBTsize  write(const void* src, FBTsize nr);
 	FBTsize  writef(const char* buf, ...);
-
-
+#if FBT_USE_GZ_FILE == 1
+	bool gzipInflate( char* inBuf, int inSize);
+#endif
 	void*            ptr(void)          {return m_buffer;}
 	const void*      ptr(void) const    {return m_buffer;}
 

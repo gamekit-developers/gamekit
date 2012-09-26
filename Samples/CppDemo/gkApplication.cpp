@@ -31,7 +31,9 @@
 #include "Graphics/gkHUDManager.h"
 #include "gkMemoryTest.h"
 
-
+#include "Loaders/Blender2/gkBlendLoader.h"
+#include "Loaders/Blender2/gkBlendFile.h"
+#include "gkScene.h"
 
 int main(int argc, char** argv)
 {
@@ -51,7 +53,7 @@ int main(int argc, char** argv)
 	//prefs.fsaa = true;
 	//prefs.debugPhysics = true;
 	//prefs.debugFps = true;
-	//prefs.grabInput = false;
+//	prefs.grabInput = false;
 
 
 	gkEngine eng(&prefs);
@@ -71,15 +73,17 @@ int main(int argc, char** argv)
 		game.loadLevel(GK_LEVEL_PICKUP);
 
 
+
 		//Connect game tick callbacks
 		eng.addListener(&game);
-
 
 		if (!eng.initializeStepLoop())
 		{
 			gkPrintf("CppDemo: failed to initialize main loop.\n");
 			return 1;
 		}
+
+
 
 
 		gkPrintf("CppDemo: enter main loop.\n");

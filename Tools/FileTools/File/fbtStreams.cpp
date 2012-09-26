@@ -30,6 +30,7 @@
 
 #if FBT_USE_GZ_FILE == 1
 #include "zlib.h"
+#include "zconf.h"
 #endif
 
 
@@ -310,25 +311,96 @@ void fbtMemoryStream::open(const fbtFileStream& fs, fbtStream::StreamMode mode)
 }
 
 
-void fbtMemoryStream::open(const void* buffer, FBTsize size, fbtStream::StreamMode mode)
+void fbtMemoryStream::open(const void* buffer, FBTsize size, fbtStream::StreamMode mode, bool compressed)
 {
 	if (buffer && size > 0 && size != FBT_NPOS)
 	{
 		m_mode = mode;
-		m_size = size;
 		m_pos  = 0;
-		fbtMemcpy(m_buffer, buffer, m_size);
+
+
+		if (!compressed)
+		{
+			m_size = size;
+			reserve(m_size);
+			fbtMemcpy(m_buffer, buffer, m_size);
+
+		} else
+		{
+			bool result = gzipInflate((char*)buffer,size);
+		}
+
 	}
 }
 
+#if FBT_USE_GZ_FILE == 1
+// this method was adapted from this snippet:
+// http://windrealm.org/tutorials/decompress-gzip-stream.php
+bool fbtMemoryStream::gzipInflate( char* inBuf, int inSize) {
+  if ( inSize == 0 ) {
+	   m_buffer = inBuf ;
+    return true ;
+  }
+
+  if (m_buffer)
+	  delete [] m_buffer;
+
+
+  m_size = inSize ;
+  m_buffer = (char*) calloc( sizeof(char), m_size );
+
+  z_stream strm;
+  strm.next_in = (Bytef *) inBuf;
+  strm.avail_in = inSize ;
+  strm.total_out = 0;
+  strm.zalloc = Z_NULL;
+  strm.zfree = Z_NULL;
+
+  bool done = false ;
+
+  if (inflateInit2(&strm, (16+MAX_WBITS)) != Z_OK) {
+    free( m_buffer );
+    return false;
+  }
+
+  while (!done) {
+    // If our output buffer is too small
+    if (strm.total_out >= m_size ) {
+      // Increase size of output buffer
+      char* uncomp2 = (char*) calloc( sizeof(char), m_size + (inSize / 2) );
+      memcpy( uncomp2, m_buffer, m_size );
+      m_size += inSize / 2 ;
+      free( m_buffer );
+      m_buffer = uncomp2 ;
+    }
+
+    strm.next_out = (Bytef *) (m_buffer + strm.total_out);
+    strm.avail_out = m_size - strm.total_out;
+
+    // Inflate another chunk.
+    int err = inflate (&strm, Z_SYNC_FLUSH);
+    if (err == Z_STREAM_END) done = true;
+    else if (err != Z_OK)  {
+      break;
+    }
+  }
+
+  if (inflateEnd (&strm) != Z_OK) {
+    free( m_buffer );
+    return false;
+  }
+
+  return done ;
+}
+#endif
 
 fbtMemoryStream::~fbtMemoryStream()
 {
-	if (m_buffer != 0)
+	if (m_buffer != 0 )
 	{
 		delete []m_buffer;
-		m_buffer = 0;
 	}
+	m_buffer = 0;
 	m_size = m_pos = 0;
 	m_capacity = 0;
 }

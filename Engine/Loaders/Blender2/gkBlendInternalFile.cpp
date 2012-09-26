@@ -29,6 +29,7 @@
 #include "gkBlendInternalFile.h"
 #include "gkLogger.h"
 #include "utStreams.h"
+#include "fbtTypes.h"
 
 gkBlendListIterator::gkBlendListIterator(List* list)
 	:	m_list(list),
@@ -125,6 +126,35 @@ bool gkBlendInternalFile::parse(const gkString& fname)
 	return true;
 }
 
+
+bool gkBlendInternalFile::parse(const void* mem, int size)
+{
+#if OGREKIT_USE_BPARSE
+	gkLogMessage("BlendFile: MemoryBlend not supported in bparse!");
+	return false;
+#else
+	m_file = new fbtBlend();
+
+	// first check to use uncompressed version
+	int status = m_file->parse(mem,size, fbtFile::PM_UNCOMPRESSED,true);
+#ifndef OGREKIT_DISABLE_ZIP
+	// if this fails with invalid-headerstring try to uncompress the blend
+	if (status == fbtFile::FS_INV_HEADER_STR) {
+		status = m_file->parse(mem,size, fbtFile::PM_COMPRESSED);
+	}
+#endif
+
+	if (status != fbtFile::FS_OK)
+	{
+		delete m_file;
+		m_file = 0;
+		gkLogMessage("BlendFile: MemoryBlend loading failed. code: " << status);
+		return false;
+	}
+
+	return true;
+#endif
+}
 
 Blender::FileGlobal* gkBlendInternalFile::getFileGlobal()
 {

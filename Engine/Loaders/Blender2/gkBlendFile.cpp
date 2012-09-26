@@ -72,11 +72,25 @@ gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& group)
 		m_activeScene(0),
 		m_findScene(""),
 		m_hasBFont(false),
-		m_file(0)
+		m_file(0),
+		m_memoryBlend(0),
+		m_memoryBlendSize(0)
 {
 }
 
+gkBlendFile::gkBlendFile(const void* mem, int size, const gkString& group)
+	:	m_name(""),
+		m_group(group),
+		m_animFps(24),
+		m_activeScene(0),
+		m_findScene(""),
+		m_hasBFont(false),
+		m_file(0),
+		m_memoryBlend(mem),
+		m_memoryBlendSize(size)
 
+{
+}
 
 gkBlendFile::~gkBlendFile()
 {
@@ -93,11 +107,24 @@ gkBlendFile::~gkBlendFile()
 bool gkBlendFile::parse(int opts, const gkString& scene)
 {	
 	m_file = new gkBlendInternalFile();
-	if (!m_file->parse(m_name))
+
+	if (!m_name.empty())
 	{
-		delete m_file;
-		m_file = 0;
-		return false;
+		if (!m_file->parse(m_name))
+		{
+			delete m_file;
+			m_file = 0;
+			return false;
+		}
+	}
+	else
+	{
+		if (m_memoryBlend)
+		{
+
+			m_file->parse(m_memoryBlend,m_memoryBlendSize);
+
+		}
 	}
 
 	doVersionTests();

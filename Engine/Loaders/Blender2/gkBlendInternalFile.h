@@ -80,6 +80,8 @@ public:
 
 	bool parse(const gkString& fname);
 
+	bool parse(const void* mem, int size);
+
 	Blender::FileGlobal* getFileGlobal();
 	Blender::Scene* getFirstScene();
 

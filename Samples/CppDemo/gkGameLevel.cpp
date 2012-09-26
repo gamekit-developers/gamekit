@@ -30,6 +30,10 @@
 #include "gkFontManager.h"
 #include "OgreKit.h"
 
+#ifdef OGREKIT_CPPDEMO_COMPILE_BLEND
+#include "Generated/gkInlineBlendFiles.inl"
+#endif
+
 #define LEVEL_GROUP_NAME "CppDemo"
 
 
@@ -98,8 +102,12 @@ void gkGameLevel::loadPickup(void)
 		return;
 	}
 
-
+#ifndef OGREKIT_CPPDEMO_COMPILE_BLEND
 	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_PLAYER), "", LEVEL_GROUP_NAME);
+#else
+	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFromMemory(MOMO,MOMO_SIZE,gkBlendLoader::LO_ALL_SCENES, "", LEVEL_GROUP_NAME);
+#endif
+
 	if (!playerData || !playerData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s' loading failed", GK_RESOURCE_PLAYER);
@@ -111,7 +119,11 @@ void gkGameLevel::loadPickup(void)
 	gkPrintf("GameLevel: Blend '%s' loaded", GK_RESOURCE_PLAYER);
 
 
+#ifndef OGREKIT_CPPDEMO_COMPILE_BLEND
 	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_MAPS), "Pickup", LEVEL_GROUP_NAME);
+#else
+	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFromMemory(MAPS,MAPS_SIZE,gkBlendLoader::LO_ALL_SCENES, "Pickup", LEVEL_GROUP_NAME);
+#endif
 	if (!mapData || !mapData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s'->Pickup loading failed", GK_RESOURCE_MAPS);

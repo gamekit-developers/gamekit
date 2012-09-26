@@ -17,7 +17,6 @@ if (APPLE)
 	SET (NibFile MainMenu.nib)
 endif()
 
-
 set(CPP_CONT_SRC
 	Controllers/gkJoystickController.cpp
 	Controllers/gkDefaultController.cpp
@@ -54,6 +53,22 @@ set(SRC
 	${CPP_GRAPH_SRC} ${CPP_GRAPH_HDR}
 	)
 
+
+option(SAMPLES_CPPDEMO_COMPILE_BLEND	"Convert Blend-Files to .inl-files and compile them in the executable" OFF)
+
+if (SAMPLES_CPPDEMO_COMPILE_BLEND)
+	message(STATUS "CPPDEMO: Compile Blend-Resources!")
+
+	add_definitions(-DOGREKIT_CPPDEMO_COMPILE_BLEND)
+	
+	set(BLEND_TMPL
+		./Maps.blend
+		./Momo.blend
+		./Rat.blend
+	)	
+	add_templates(1 GEN_BLEND_OUT Generated/gkInlineBlendFiles.inl ${BLEND_TMPL})
+	LIST(APPEND SRC	${GEN_BLEND_OUT})
+endif()
 
 
 if(WIN32)

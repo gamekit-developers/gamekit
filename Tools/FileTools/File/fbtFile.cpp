@@ -158,10 +158,10 @@ int fbtFile::parse(const char* path, int mode)
 
 
 
-int fbtFile::parse(const void* memory, FBTsize sizeInBytes, int mode)
+int fbtFile::parse(const void* memory, FBTsize sizeInBytes, int mode, bool suppressHeaderWarning)
 {
 	fbtMemoryStream ms;
-	ms.open( memory, sizeInBytes, fbtStream::SM_READ );
+	ms.open( memory, sizeInBytes, fbtStream::SM_READ, mode==PM_COMPRESSED );
 
 	if (!ms.isOpen())
 	{
@@ -169,19 +169,20 @@ int fbtFile::parse(const void* memory, FBTsize sizeInBytes, int mode)
 		return FS_FAILED;
 	}
 
-	return parseStreamImpl(&ms);
+	return parseStreamImpl(&ms,suppressHeaderWarning);
 }
 
 
 
-int fbtFile::parseHeader(fbtStream* stream)
+int fbtFile::parseHeader(fbtStream* stream, bool suppressHeaderWarning)
 {
 	m_header.resize(12);
 	stream->read(m_header.ptr(), 12);
 
 	if (!fbtCharNEq(m_header.c_str(), m_uhid, 7) && !fbtCharNEq(m_header.c_str(), m_aluhid, 7))
 	{
-		fbtPrintf("Unknown header ID '%s'\n", m_header.c_str());
+		if (!suppressHeaderWarning)
+			fbtPrintf("Unknown header ID '%s'\n", m_header.c_str());
 		return FS_INV_HEADER_STR;
 	}
 
@@ -215,11 +216,11 @@ int fbtFile::parseHeader(fbtStream* stream)
 }
 
 
-int fbtFile::parseStreamImpl(fbtStream* stream)
+int fbtFile::parseStreamImpl(fbtStream* stream, bool suppressHeaderWarning)
 {
 	int status;
 
-	status = parseHeader(stream);
+	status = parseHeader(stream,suppressHeaderWarning);
 	if (status != FS_OK)
 	{
 		fbtPrintf("Failed to extract header!\n");
