@@ -466,6 +466,12 @@ void gkGameObject::notifyUpdate(void)
 		m_scene->notifyObjectUpdate(this);
 
 	sendNotification(Notifier::UPDATED);
+
+	gkGameObjectArray::Iterator children(m_children);
+	while (children.hasMoreElements())
+	{
+		children.getNext()->notifyUpdate();
+	}
 }
 
 
