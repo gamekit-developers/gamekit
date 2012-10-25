@@ -348,7 +348,7 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 					else
 						nsrs->setNormalMapSpace(RTShader::NormalMapLighting::NMS_TANGENT);
 					nsrs->setNormalMapTextureName(gte.m_name);
-					//nsrs->setNormalFa
+					nsrs->setTexCoordIndex(gte.m_layer);
 
 					rs->addTemplateSubRenderState(srs);
 				}

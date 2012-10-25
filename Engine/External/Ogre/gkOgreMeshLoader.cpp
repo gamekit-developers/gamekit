@@ -275,6 +275,7 @@ void gkMeshLoader::loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh* gks)
 void gkMeshLoader::loadResource(Ogre::Resource* res)
 {
 	int tangentLayer = -1, t;
+	int tangentUV = -1;
 	Ogre::Mesh* omesh = static_cast<Ogre::Mesh*>(res);
 
 	if (m_mesh->getSkeleton())
@@ -298,13 +299,16 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 
 		t = gks->getMaterial().m_tangentLayer;
 		if (t!=-1)
+		{
 			tangentLayer = t;
+			tangentUV = gks->getMaterial().m_textures[tangentLayer].m_layer;
+		}
 	}
 
 	omesh->_setBounds(m_mesh->getBoundingBox(), false);
 	omesh->_setBoundingSphereRadius(m_mesh->getBoundingBox().getSize().squaredLength());
 	
 	if (tangentLayer!=-1){
-		omesh->buildTangentVectors(Ogre::VES_TANGENT, tangentLayer, 0, true, false, true);
+		omesh->buildTangentVectors(Ogre::VES_TANGENT, tangentUV,tangentLayer, true, false, true);
 	}
 }
