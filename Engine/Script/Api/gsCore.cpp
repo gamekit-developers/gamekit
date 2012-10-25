@@ -1939,19 +1939,13 @@ void gsSkeleton::setBoneManual(const gkString& boneName,bool setManual)
 {
 	if (m_object)
 	{
-		gkEntity* ent = static_cast<gkEntity*>(m_object);
-		gkSkeleton* skel = ent->getSkeleton();
-		if (skel)
+		gkSkeleton* skel = static_cast<gkSkeleton*>(m_object);
+		gkBone* bone = skel->getBone(boneName);
+		if (bone)
 		{
-			gkBone* bone = skel->getBone(boneName);
-			if (bone)
-			{
-				bone->setManuallyControlled(setManual);
-			}
-			else gsDebugPrint(gkString("Entity "+ent->getName()+"'s skeleton doesn't have a bone with name "+boneName).c_str());
-
+			bone->setManuallyControlled(setManual);
 		}
-		else gsDebugPrint(gkString("Entity doesn't have a skeleton: "+ent->getName()).c_str());
+		else gsDebugPrint(gkString("Skeleton doesn't have a bone with name "+boneName).c_str());
 	}
 }
 
@@ -1959,22 +1953,33 @@ bool gsSkeleton::isBoneManual(const gkString& boneName)
 {
 	if (m_object)
 	{
-		gkEntity* ent = static_cast<gkEntity*>(m_object);
-		gkSkeleton* skel = ent->getSkeleton();
-		if (skel)
-		{
-			gkBone* bone = skel->getBone(boneName);
-			if (bone)
-			{
-				return bone->isManuallyControlled();
-			}
-			else gsDebugPrint(gkString("Entity "+ent->getName()+"'s skeleton doesn't have a bone with name "+boneName).c_str());
+		gkSkeleton* skel = static_cast<gkSkeleton*>(m_object);
 
-		}
-		else gsDebugPrint(gkString("Entity doesn't have a skeleton: "+ent->getName()).c_str());
-	}
+		gkBone* bone = skel->getBone(boneName);
+		if (bone)
+		{
+			return bone->isManuallyControlled();
+		}  // if
+		else gsDebugPrint(gkString("Skeleton does have a bone with name "+boneName).c_str());
+	}  // if
 	return false;
 }
+
+void gsSkeleton::applyBoneChannelTransform(const gkString& boneName, gsVector3 loc, gsVector3 orientation,gsVector3 scale, gkScalar pWeight)
+{
+	if (m_object)
+	{
+		gkSkeleton* skel = static_cast<gkSkeleton*>(m_object);
+
+		gkBone* bone = skel->getBone(boneName);
+		if (bone)
+		{
+			gkTransformState lState = gkTransformState(loc,gkEuler(orientation).toQuaternion(),scale);
+			bone->applyChannelTransform(lState, pWeight);
+		}  // if
+		else gsDebugPrint(gkString("Skeleton does have a bone with name "+boneName).c_str());
+	}  // if
+}  // void applyBoneChannelTransform
 
 gsLight::gsLight()
 {

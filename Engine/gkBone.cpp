@@ -68,25 +68,21 @@ void gkBone::applyRootTransform(const gkTransformState& root)
 
 void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar weight)
 {
-	if (!isManuallyControlled())
+
+	m_tempBlendMat = m_pose;
+
+	// combine relative to binding position
+	m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
+	m_pose.rot = m_bind.rot * channel.rot;
+	m_pose.scl = m_bind.scl * channel.scl;
+
+	if (weight < 1.0)
 	{
-		// save previous pose
-		m_tempBlendMat = m_pose;
-
-		// combine relative to binding position
-		m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
-		m_pose.rot = m_bind.rot * channel.rot;
-		m_pose.scl = m_bind.scl * channel.scl;
-
-		if (weight < 1.0)
-		{
-			// blend poses
-			m_pose.loc = gkMathUtils::interp(m_tempBlendMat.loc, m_pose.loc, weight);
-			m_pose.rot = gkMathUtils::interp(m_tempBlendMat.rot, m_pose.rot, weight);
-			m_pose.rot.normalise();
-			m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
-		}
-
+		// blend poses
+		m_pose.loc = gkMathUtils::interp(m_tempBlendMat.loc, m_pose.loc, weight);
+		m_pose.rot = gkMathUtils::interp(m_tempBlendMat.rot, m_pose.rot, weight);
+		m_pose.rot.normalise();
+		m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
 	}
 
 	m_bone->setPosition(m_pose.loc);

@@ -604,6 +604,8 @@ public:
 	void setBoneManual(const gkString& boneName,bool manual);
 	bool isBoneManual(const gkString& boneName);
 
+	void applyBoneChannelTransform(const gkString& boneName, gsVector3 loc=gsVector3(0,0,0), gsVector3 orientation=gsVector3(0,0,0),gsVector3 scale=gsVector3(1,1,1), gkScalar pWeight=1.0F);
+
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsSkeleton, gkInstancedObject);
 };

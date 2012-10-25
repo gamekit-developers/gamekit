@@ -14136,6 +14136,460 @@ fail:
 }
 
 
+static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gkScalar arg6 ;
+  gkString temp2 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  gkScalar *argp6 ;
+  
+  SWIG_check_num_args("applyBoneChannelTransform",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("applyBoneChannelTransform",2,"gkString const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("applyBoneChannelTransform",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("applyBoneChannelTransform",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("applyBoneChannelTransform",5,"gsVector3");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("applyBoneChannelTransform",6,"gkScalar");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_gkScalar,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",6,SWIGTYPE_p_gkScalar);
+  }
+  arg6 = *argp6;
+  
+  (arg1)->applyBoneChannelTransform((gkString const &)*arg2,arg3,arg4,arg5,arg6);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gsVector3 arg5 ;
+  gkString temp2 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  gsVector3 *argp5 ;
+  
+  SWIG_check_num_args("applyBoneChannelTransform",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("applyBoneChannelTransform",2,"gkString const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("applyBoneChannelTransform",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("applyBoneChannelTransform",4,"gsVector3");
+  if(!lua_isuserdata(L,5)) SWIG_fail_arg("applyBoneChannelTransform",5,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,5,(void**)&argp5,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",5,SWIGTYPE_p_gsVector3);
+  }
+  arg5 = *argp5;
+  
+  (arg1)->applyBoneChannelTransform((gkString const &)*arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gsVector3 arg3 ;
+  gsVector3 arg4 ;
+  gkString temp2 ;
+  gsVector3 *argp3 ;
+  gsVector3 *argp4 ;
+  
+  SWIG_check_num_args("applyBoneChannelTransform",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("applyBoneChannelTransform",2,"gkString const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("applyBoneChannelTransform",3,"gsVector3");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("applyBoneChannelTransform",4,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&argp4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",4,SWIGTYPE_p_gsVector3);
+  }
+  arg4 = *argp4;
+  
+  (arg1)->applyBoneChannelTransform((gkString const &)*arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gsVector3 arg3 ;
+  gkString temp2 ;
+  gsVector3 *argp3 ;
+  
+  SWIG_check_num_args("applyBoneChannelTransform",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("applyBoneChannelTransform",2,"gkString const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("applyBoneChannelTransform",3,"gsVector3");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",3,SWIGTYPE_p_gsVector3);
+  }
+  arg3 = *argp3;
+  
+  (arg1)->applyBoneChannelTransform((gkString const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *arg1 = (gsSkeleton *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("applyBoneChannelTransform",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("applyBoneChannelTransform",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
+    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->applyBoneChannelTransform((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Skeleton_applyBoneChannelTransform(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Skeleton_applyBoneChannelTransform__SWIG_4(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_Skeleton_applyBoneChannelTransform__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_Skeleton_applyBoneChannelTransform__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              return _wrap_Skeleton_applyBoneChannelTransform__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsSkeleton, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            {
+              void *ptr;
+              if (lua_isuserdata(L,argv[4])==0 || SWIG_ConvertPtr(L,argv[4], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+                _v = 0;
+              } else {
+                _v = 1;
+              }
+            }
+            if (_v) {
+              {
+                void *ptr;
+                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_gkScalar, 0)) {
+                  _v = 0;
+                } else {
+                  _v = 1;
+                }
+              }
+              if (_v) {
+                return _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Skeleton_applyBoneChannelTransform'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3,gsVector3,gkScalar)\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3,gsVector3)\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3)\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3)\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &)\n");
+  lua_error(L);return 0;
+}
+
+
 static void swig_delete_Skeleton(void *obj) {
 gsSkeleton *arg1 = (gsSkeleton *) obj;
 delete arg1;
@@ -14145,6 +14599,7 @@ static swig_lua_method swig_gsSkeleton_methods[] = {
     {"attachObjectToBoneInPlace", _wrap_Skeleton_attachObjectToBoneInPlace}, 
     {"setBoneManual", _wrap_Skeleton_setBoneManual}, 
     {"isBoneManual", _wrap_Skeleton_isBoneManual}, 
+    {"applyBoneChannelTransform", _wrap_Skeleton_applyBoneChannelTransform}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsSkeleton_attributes[] = {

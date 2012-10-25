@@ -130,7 +130,7 @@ void gkBoneChannel::applyTransform(void* object, const gkTransformState* transfo
 	if(skel)
 	{
 		gkBone* bone = skel->getBone(m_name);
-		if(bone)
+		if(bone && !(bone -> isManuallyControlled()))
 			bone->applyChannelTransform(*transform, weight);
 	}
 }
