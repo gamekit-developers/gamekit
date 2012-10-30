@@ -65,7 +65,8 @@ private:
 
 	void addObject(void);
 	void endObject(void);
-
+	void suspendDynamics(void);
+	void restoreDynamics(void);
 public:
 
 	gkEditObjectActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);

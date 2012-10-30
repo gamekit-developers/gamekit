@@ -172,6 +172,22 @@ void gkEditObjectActuator::trackToObject(void)
 }
 
 
+void gkEditObjectActuator::suspendDynamics(void)
+{
+	if (m_object)
+	{
+		m_object->getAttachedBody()->suspend(true);
+	}
+}
+
+void gkEditObjectActuator::restoreDynamics(void)
+{
+	if (m_object)
+	{
+		m_object->getAttachedBody()->suspend(false);
+	}
+}
+
 void gkEditObjectActuator::execute(void)
 {
 	if (isPulseOff())
@@ -190,6 +206,23 @@ void gkEditObjectActuator::execute(void)
 	case EO_TRACKTO_2D:
 	case EO_TRACKTO_3D:
 		trackToObject();
+		break;
+	case EO_DYNAMICS:
+		switch(m_dynMode)
+		{
+			case EOD_RESTORE:
+				restoreDynamics();
+				break;
+			case EOD_SUSPEND:
+				suspendDynamics();
+				break;
+			case EOD_ENABLE_BODY:
+				break;
+			case EOD_DISABLE_BODY:
+				break;
+			case EOD_SETMASS:
+				break;
+		}
 		break;
 	default:
 		// TODO: Log some warning message
