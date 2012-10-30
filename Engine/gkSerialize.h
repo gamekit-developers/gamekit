@@ -134,7 +134,8 @@ public:
 		MA_ALPHABLEND       = (1 << 6),
 		MA_ADDITIVEBLEND    = (1 << 7),
 		MA_HASFACETEX       = (1 << 8),
-		MA_HASRAMPBLEND		= (1 << 9)
+		MA_HASRAMPBLEND		= (1 << 9),
+		MA_ALPHACLIP        = (1 << 10)
 	};
 
 

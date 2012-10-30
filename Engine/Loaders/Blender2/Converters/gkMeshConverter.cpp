@@ -97,7 +97,7 @@ public:
 		if (alpha & TF_ADD)         m_mode |= gkMaterialProperties::MA_ADDITIVEBLEND;
 		if (mode & TF_TEX)          m_mode |= gkMaterialProperties::MA_HASFACETEX;
 
-		if (alpha & TF_ALPHA || alpha & TF_CLIP)
+		if ((alpha & TF_ALPHA) || (alpha & TF_CLIP) )
 			m_mode |= gkMaterialProperties::MA_ALPHABLEND;
 		for (int i = 0; i < 8; ++i) m_images[i] = images[i];
 	}
@@ -367,13 +367,21 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 	gma.m_specular      = gkColor(bma->specr, bma->specg, bma->specb);
 	gma.m_rblend        = getRampBlendType(bma->rampblend_col);
 
-	if (bma->mode & MA_ZTRA)        gma.m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
-	if (bma->mode & MA_SHADOW)      gma.m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
-	if (bma->mode & MA_WIRE)        gma.m_mode |= gkMaterialProperties::MA_WIREFRAME;
-	if (!(bma->mode & MA_SHLESS))   gma.m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
-	if (bma->alpha <= 0.f)          gma.m_mode |= gkMaterialProperties::MA_INVISIBLE;
-	if (bma->mode & MA_RAMP_COL)	gma.m_mode |= gkMaterialProperties::MA_HASRAMPBLEND;
+	if (bma->mode & MA_ZTRA)        		gma.m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
+	if (bma->mode & MA_SHADOW)      		gma.m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
+	if (bma->mode & MA_WIRE)        		gma.m_mode |= gkMaterialProperties::MA_WIREFRAME;
+	if (!(bma->mode & MA_SHLESS))   		gma.m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
+	// TODO: this need to be checked, as there are cases where material-alpha is set to zero to give the texture-alpha full control
+	if (bma->alpha <= 0.f)          		gma.m_mode |= gkMaterialProperties::MA_INVISIBLE;
+	if (bma->mode & MA_RAMP_COL)			gma.m_mode |= gkMaterialProperties::MA_HASRAMPBLEND;
+	if (!(bma->game.flag & GEMAT_BACKCULL)) gma.m_mode |= gkMaterialProperties::MA_TWOSIDE;
+	if (bma->game.flag & GEMAT_INVISIBLE)   gma.m_mode |= gkMaterialProperties::MA_INVISIBLE;
 
+	if (bma->game.alpha_blend & GEMAT_ALPHA)
+		gma.m_mode |= gkMaterialProperties::MA_ALPHABLEND;
+
+	if (bma->game.alpha_blend & GEMAT_CLIP)
+		gma.m_mode |= gkMaterialProperties::MA_ALPHACLIP;
 
 	// textures
 	if (bma->mtex != 0)

@@ -2924,6 +2924,23 @@
 #define UNKNOWNKEY      171
 #define COMMANDKEY      172
 #define GRLESSKEY       173
+#define GEMAT_SOLID             0
+#define GEMAT_ADD               1
+#define GEMAT_ALPHA             2
+#define GEMAT_CLIP              4
+#define GEMAT_ALPHA_SORT        8
+#define GEMAT_BACKCULL          16
+#define GEMAT_SHADED            32
+#define GEMAT_TEXT              64
+#define GEMAT_NOPHYSICS         128
+#define GEMAT_INVISIBLE         256
+#define GEMAT_NORMAL            0
+#define GEMAT_HALO              512
+#define GEMAT_BILLBOARD         1024
+#define GEMAT_SHADOW            2048
+#define GEMAT_TEX               4096
+
+
 
 #define G_FILE_SHOW_DEBUG_PROPS  (1 << 4)                /* deprecated */
 #define G_FILE_GAME_MAT             (1 << 12)                /* deprecated */

@@ -27,6 +27,7 @@ from bpy.props import *
 import os
 from . import config
 
+from rna_prop_ui import PropertyPanel
 
 # Use some of the existing buttons.
 #import properties_game
@@ -42,7 +43,7 @@ properties_game.RENDER_PT_game_shading.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.WORLD_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_RENDER')
-#properties_game.SCENE_PT_game_navmesh.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_game.SCENE_PT_game_navmesh.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 
 del properties_game
 
@@ -78,6 +79,7 @@ properties_material.MATERIAL_PT_specular.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_strand.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_transp.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_transp_game.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_material.MATERIAL_PT_game_settings.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_material.MATERIAL_PT_volume_density.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_material.MATERIAL_PT_volume_integration.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_material.MATERIAL_PT_volume_lighting.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -155,6 +157,7 @@ properties_data_lamp.LAMP_MT_sunsky_presets.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_lamp
 
 from bl_ui import properties_world
+
 
 
 class WORLD_PT_world(properties_world.WorldButtonsPanel, bpy.types.Panel):
@@ -339,7 +342,8 @@ def addProperties():
     bpy.utils.register_class(GamekitRender)
     bpy.utils.register_class(GamekitSettings)    
     
-    #bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
+
+#bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
     bpy.types.Scene.gamekit = bpy.props.PointerProperty(type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
     
     cfg = config.GamekitConfig()
@@ -457,4 +461,5 @@ del properties_scene
 
 from bl_ui import properties_render
 properties_render.RENDER_PT_bake.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_render.RENDER_PT_dimensions.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_render

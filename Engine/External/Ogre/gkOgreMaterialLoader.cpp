@@ -213,7 +213,7 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 		specular    = gma.m_specular * gma.m_spec;
 		diffuse     = gma.m_diffuse * (gma.m_emissive + gma.m_refraction);
 
-		emissive.a = ambient.a = specular.a = diffuse.a = 1.f;
+		emissive.a = ambient.a = specular.a = 1.f;
 
 		oma->setSelfIllumination(emissive);
 		oma->setAmbient(ambient);
@@ -221,7 +221,7 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 		oma->setDiffuse(diffuse);
 		oma->setShininess(gma.m_hardness);
 	}
-
+	
 	Ogre::Pass* pass = oma->getTechnique(0)->getPass(0);
 
 	bool matBlending = gkEngine::getSingleton().getUserDefs().matblending;
@@ -311,8 +311,12 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 	if (gma.m_mode & gkMaterialProperties::MA_ALPHABLEND)
 	{
 		pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
 		pass->setDepthWriteEnabled(false);
+	}
+
+	if (gma.m_mode & gkMaterialProperties::MA_ALPHACLIP)
+	{
+		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 254);
 	}
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
