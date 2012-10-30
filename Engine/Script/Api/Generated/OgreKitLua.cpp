@@ -10866,6 +10866,130 @@ static int _wrap_GameObject_setRotation(lua_State* L) {
 }
 
 
+static int _wrap_GameObject_lookAt__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("lookAt",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("lookAt",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("lookAt",2,"gsVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_lookAt",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_lookAt",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  (arg1)->lookAt((gsVector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_lookAt__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
+  
+  SWIG_check_num_args("lookAt",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("lookAt",1,"gsGameObject *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("lookAt",2,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_lookAt",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_lookAt",2,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->lookAt(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_lookAt(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_GameObject_lookAt__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_GameObject_lookAt__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_lookAt'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    lookAt(gsGameObject *,gsVector3 const &)\n"
+    "    lookAt(gsGameObject *,gsGameObject *)\n");
+  lua_error(L);return 0;
+}
+
+
 static int _wrap_GameObject_setOrientation__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -12738,7 +12862,43 @@ fail:
 }
 
 
-static int _wrap_GameObject_playAnimation(lua_State* L) {
+static int _wrap_GameObject_playAnimation__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
+  float arg3 ;
+  bool arg4 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("playAnimation",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAnimation",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("playAnimation",2,"gkString const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAnimation",3,"float");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("playAnimation",4,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_playAnimation",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (lua_toboolean(L, 4)!=0);
+  (arg1)->playAnimation((gkString const &)*arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_playAnimation__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
   gkString *arg2 = 0 ;
@@ -12768,6 +12928,75 @@ static int _wrap_GameObject_playAnimation(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_playAnimation(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_GameObject_playAnimation__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isboolean(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_GameObject_playAnimation__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_playAnimation'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    playAnimation(gsGameObject *,gkString const &,float,bool)\n"
+    "    playAnimation(gsGameObject *,gkString const &,float)\n");
+  lua_error(L);return 0;
 }
 
 
@@ -13279,6 +13508,7 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"setAngularVelocity", _wrap_GameObject_setAngularVelocity}, 
     {"setPosition", _wrap_GameObject_setPosition}, 
     {"setRotation", _wrap_GameObject_setRotation}, 
+    {"lookAt", _wrap_GameObject_lookAt}, 
     {"setOrientation", _wrap_GameObject_setOrientation}, 
     {"setScale", _wrap_GameObject_setScale}, 
     {"getType", _wrap_GameObject_getType}, 

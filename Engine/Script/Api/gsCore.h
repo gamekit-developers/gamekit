@@ -459,6 +459,9 @@ public:
 	void setRotation(const gsVector3& v);
 	void setRotation(float pitch, float yaw, float roll);
 
+	void lookAt(const gsVector3& v);
+	void lookAt(gsGameObject* lookAtObj);
+	
 	void setOrientation(const gsQuaternion& quat);
 	void setOrientation(float w, float x, float y, float z);
 
@@ -518,7 +521,7 @@ public:
 
 	gkScene* getScene(void);
 	
-	void playAnimation(const gkString& name, float blend);
+	void playAnimation(const gkString& name, float blend, bool restart=false);
 
 	// actually just calling not lua-enabled method!
 	gsProperty getProperty(const gkString& name) {return __getitem__(name);}

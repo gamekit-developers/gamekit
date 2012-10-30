@@ -1386,8 +1386,34 @@ void gsGameObject::setPosition(float x, float y, float z)
 		cast<gkGameObject>()->setPosition(gkVector3(x, y, z));
 }
 
+void gsGameObject::lookAt(const gsVector3& v)
+{
+	if(m_object)
+	{
+		gkVector3 front = gkVector3(v.x, v.y, v.z) - cast<gkGameObject>()->getWorldPosition();
+		gkVector3 up    = gkVector3::UNIT_Z;
+		gkVector3 right = front.crossProduct(up);
+		up = right.crossProduct(front);
+		front.normalise();
+		up.normalise();   
+		right.normalise();
+		cast<gkGameObject>()->setOrientation(gkQuaternion(right, up, -front));
+	}
+}
 
+void gsGameObject::lookAt(gsGameObject* lookAtObj)
+{
+	if (m_object)
+	{
+		if (!lookAtObj)
+		{
+			gkDebugScreen::printTo("Warning: You passed NIL as lookAt-Object. Ignoring LookAt(..)!");
+			return;
+		}
 
+		lookAt(lookAtObj->getPosition());
+	}
+}
 
 void gsGameObject::setRotation(const gsVector3& v)
 {
@@ -1815,21 +1841,24 @@ bool gsGameObject::hasContact(const gkString& object)
 }
 
 
-void gsGameObject::playAnimation(const gkString& name, float blend)
+void gsGameObject::playAnimation(const gkString& name, float blend, bool restart)
 {
 	if (m_object && m_object->isInstanced())
 	{
-		if (get()->getAnimationPlayer(name) == 0)
+		gkAnimationPlayer* player = get()->getAnimationPlayer(name);
+		if (player == 0)
 		{
-			gkAnimationPlayer* player = get()->addAnimation(name);
+			player = get()->addAnimation(name);
 			if (!player)
 			{
 				gsDebugPrint(gkString("Couldn't find animation with name:"+name).c_str());
 				return;
 			}
 		}
-
-		get()->playAnimation(name, blend);
+		if(restart){
+			player->reset();
+		}
+		get()->playAnimation(name, blend, restart);
 	}
 }
 
