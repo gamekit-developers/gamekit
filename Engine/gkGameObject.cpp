@@ -293,6 +293,7 @@ void gkGameObject::destroyInstanceImpl(void)
 
 	m_node = 0;
 
+	m_scene->removeAnimationUpdate(this);
 
 	// Reset variables
 	utHashTableIterator<VariableMap> iter(m_variables);

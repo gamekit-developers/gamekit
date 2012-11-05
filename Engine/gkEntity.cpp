@@ -105,6 +105,11 @@ void gkEntity::destroyInstanceImpl(void)
 
 			manager->destroyEntity(m_entity);
 		}
+
+		if (m_skeleton)
+		{
+			m_skeleton->destroyInstance();
+		}
 	}
 
 	m_entity = 0;

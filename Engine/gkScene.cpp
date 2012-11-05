@@ -1576,7 +1576,12 @@ void gkScene::updateObjectsAnimations(const gkScalar tick)
 	{
 		gkGameObjectSet::Iterator it = m_updateAnimObjects.iterator();
 		while (it.hasMoreElements())
-			it.getNext()->updateAnimationBlender(animtick);
+		{
+			gkGameObject* gobj = it.getNext();
+			if (gobj && gobj->isInstanced())
+				gobj->updateAnimationBlender(animtick);
+		}
+
 
 		//m_endObjects.clear(true);
 	}
