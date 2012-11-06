@@ -550,7 +550,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 		${GAMEKIT_ANIMKIT_TARGET}
 	)	
 	if (OGREKIT_USE_BPARSE)
-		set(BPARSE_FILE_FORMAT 1 CACHE STRING 
+		set(BPARSE_FILE_FORMAT 2 CACHE STRING 
 			"Select the bparse-blendfile-format:
 				 1 - <= 2.62
 				 2 - >= 2.63
