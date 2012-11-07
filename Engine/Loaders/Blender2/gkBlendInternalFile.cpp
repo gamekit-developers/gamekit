@@ -29,7 +29,10 @@
 #include "gkBlendInternalFile.h"
 #include "gkLogger.h"
 #include "utStreams.h"
+
+#if not OGREKIT_USE_BPARSE
 #include "fbtTypes.h"
+#endif
 
 gkBlendListIterator::gkBlendListIterator(List* list)
 	:	m_list(list),
