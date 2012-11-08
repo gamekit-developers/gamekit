@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha (dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -117,7 +117,6 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 		ngobj->getProperties().m_parent = propParent + m_uidName;
 	}
 
-	ngobj->setOwner(0);
 
 
 	//	store the new object using the original name and not the uid-name

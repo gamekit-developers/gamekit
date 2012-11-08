@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha (dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -124,12 +124,12 @@ void gkGroupManager::destroyGameObjectInstances(gkScene* scene)
 
 void gkGroupManager::createStaticBatches(gkScene* scene)
 {
-	UTsize pos;
-	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	GroupAttachements::Iterator it = m_attachements.iterator();
+	while (it.hasMoreElements())
 	{
-		Groups::Iterator it = m_attachements.at(pos).iterator();
-		while (it.hasMoreElements())
-			it.getNext()->createStaticBatches(scene);
+		Groups::Iterator sceneGroups = it.getNext().second;
+		while (sceneGroups.hasMoreElements())
+			sceneGroups.getNext()->createStaticBatches(scene);
 	}
 }
 

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha (dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -297,7 +297,8 @@ void gkGameObjectGroup::createStaticBatches(gkScene* scene)
 	{
 		gkGameObjectInstance* inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
 
-
+		if (!inst->isInstanced() || !(inst->getLayer() & scene->getLayer()) || inst->getRoot()->getOwner()!=scene)
+			continue;
 
 		gkGameObjectInstance::Objects::Iterator instIt = inst->getObjects().iterator();
 		while (instIt.hasMoreElements())

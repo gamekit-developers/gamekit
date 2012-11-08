@@ -6,6 +6,7 @@
     Copyright (c) 2006-2010 Charlie C.
 
     Contributor(s): Nestor Silveira.
+    				Thomas Trocha (dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -120,6 +121,7 @@ void gkGameObject::attachLogic(gkLogicLink* bricks)
 gkGameObject* gkGameObject::cloneToScene(const gkString& name, gkScene* scene) {
 	m_cloneToScene = scene;
 	gkGameObject* gobj = clone(name);
+	gobj->setOwner(scene);
 	m_cloneToScene = 0;
 	return gobj;
 }
