@@ -109,7 +109,11 @@ gkBlendArchiveFactory::~gkBlendArchiveFactory()
 {
 }
 
-Ogre::Archive *gkBlendArchiveFactory::createInstance(const Ogre::String& name ) 
+#if OGRE_VERSION_MAJOR==1 && OGRE_VERSION_MINOR>=9
+Ogre::Archive *gkBlendArchiveFactory::createInstance(const Ogre::String& name, bool readOnly )
+#else
+Ogre::Archive *gkBlendArchiveFactory::createInstance(const Ogre::String& name )
+#endif
 {
 	return new gkBlendArchive(name, ARCHIVE_TYPE);
 }

@@ -68,9 +68,11 @@ public:
 
 	virtual ~gkBlendArchiveFactory();
 	GK_INLINE const Ogre::String& getType(void) const { return ARCHIVE_TYPE; }
-
+#if OGRE_VERSION_MAJOR==1 && OGRE_VERSION_MINOR>=9
+	Ogre::Archive* createInstance(const Ogre::String& name, bool readOnly=true);
+#else
 	Ogre::Archive* createInstance(const Ogre::String& name);
-	
+#endif
 	void destroyInstance(Ogre::Archive* arch);
 
 	void addArchiveFactory(void);

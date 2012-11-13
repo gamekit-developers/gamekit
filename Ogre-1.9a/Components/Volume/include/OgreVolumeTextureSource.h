@@ -28,6 +28,8 @@ THE SOFTWARE.
 #ifndef __Ogre_Volume_TextureSource_H__
 #define __Ogre_Volume_TextureSource_H__
 
+#include "OgreVector4.h"
+
 #include "OgreVolumeSource.h"
 #include "OgreVolumePrerequisites.h"
 
@@ -67,11 +69,11 @@ namespace Volume {
         // Whether to use trilinear filtering or not for the value.
         const bool mTrilinearValue;
         
-        // Whether to use trilinear filtering or not for the normal.
-        const bool mTrilinearNormal;
+        // Whether to use trilinear filtering or not for the gradient.
+        const bool mTrilinearGradient;
 
-        /// Whether to blur the normal a bit Sobel like.
-        const bool mSobelNormal;
+        /// Whether to blur the gradient a bit Sobel like.
+        const bool mSobelGradient;
 
         /** Gets the volume value of a position.
         @param x
@@ -123,7 +125,7 @@ namespace Volume {
         */
         inline const Vector3 getGradient(size_t x, size_t y, size_t z) const
         {
-            if (mSobelNormal)
+            if (mSobelGradient)
             {
                 // Calculate gradient like in the original MC paper but mix a bit of Sobel in
                 return Vector3(
@@ -157,12 +159,12 @@ namespace Volume {
             The world depth.
         @param trilinearValue
             Whether to use trilinear filtering (true) or nearest neighbour (false) for the value.
-        @param trilinearNormal
-            Whether to use trilinear filtering (true) or nearest neighbour (false) for the normal.
-        @param sobelNormal
-            Whether to add a bit of blur to the normal like in a sobel filter.
+        @param trilinearGradient
+            Whether to use trilinear filtering (true) or nearest neighbour (false) for the gradient.
+        @param sobelGradient
+            Whether to add a bit of blur to the gradient like in a sobel filter.
         */
-        explicit TextureSource(const String &volumeTextureName, const Real worldWidth, const Real worldHeight, const Real worldDepth, const bool trilinearValue = true, const bool trilinearNormal = true, const bool sobelNormal = false);
+        explicit TextureSource(const String &volumeTextureName, const Real worldWidth, const Real worldHeight, const Real worldDepth, const bool trilinearValue = true, const bool trilinearGradient = true, const bool sobelGradient = false);
         
         /** Destructor.
         */
@@ -170,7 +172,7 @@ namespace Volume {
 
         /** Overridden from VolumeSource.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
         
         /** Overridden from VolumeSource.
         */

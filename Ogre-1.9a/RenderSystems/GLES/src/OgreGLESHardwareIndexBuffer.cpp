@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "OgreGLESHardwareIndexBuffer.h"
 #include "OgreGLESHardwareBufferManager.h"
 #include "OgreException.h"
+#include "OgreLogManager.h"
 
 namespace Ogre {
     GLESHardwareIndexBuffer::GLESHardwareIndexBuffer(HardwareBufferManagerBase* mgr, 
@@ -37,7 +38,7 @@ namespace Ogre {
                                                      size_t numIndexes,
                                                      HardwareBuffer::Usage usage,
                                                      bool useShadowBuffer)
-        : HardwareIndexBuffer(mgr, idxType, numIndexes, usage, false, useShadowBuffer)
+        : HardwareIndexBuffer(mgr, idxType, numIndexes, usage, false, true)
     {
 		if (idxType == HardwareIndexBuffer::IT_32BIT)
 		{
@@ -53,28 +54,52 @@ namespace Ogre {
                         "GLESHardwareIndexBuffer");
         }
 
-        glGenBuffers(1, &mBufferId);
-        GL_CHECK_ERROR;
-
-        if (!mBufferId)
-        {
-            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR,
-                "Cannot create GL ES index buffer",
-                "GLESHardwareIndexBuffer::GLESHardwareIndexBuffer");
-        }
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
-        GL_CHECK_ERROR;
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, NULL,
-                     GLESHardwareBufferManager::getGLUsage(usage));
-        GL_CHECK_ERROR;
+        createBuffer();
     }
 
     GLESHardwareIndexBuffer::~GLESHardwareIndexBuffer()
     {
+        destroyBuffer();
+    }
+    
+    void GLESHardwareIndexBuffer::createBuffer()
+    {
+        glGenBuffers(1, &mBufferId);
+        GL_CHECK_ERROR;
+        
+        if (!mBufferId)
+        {
+            OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR,
+                        "Cannot create GL ES index buffer",
+                        "GLESHardwareIndexBuffer::GLESHardwareIndexBuffer");
+        }
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
+        GL_CHECK_ERROR;
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, NULL,
+                     GLESHardwareBufferManager::getGLUsage(mUsage));
+        GL_CHECK_ERROR;
+    }
+    
+    void GLESHardwareIndexBuffer::destroyBuffer()
+    {
         glDeleteBuffers(1, &mBufferId);
         GL_CHECK_ERROR;
     }
+    
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+    void GLESHardwareIndexBuffer::notifyOnContextLost()
+    {
+        destroyBuffer();
+    }
+    
+    void GLESHardwareIndexBuffer::notifyOnContextReset()
+    {
+        createBuffer();
+        mShadowUpdated = true;
+        _updateFromShadow();
+    }
+#endif
 
     void GLESHardwareIndexBuffer::unlockImpl(void)
     {
@@ -252,18 +277,18 @@ namespace Ogre {
             GL_CHECK_ERROR;
 
             // Update whole buffer if possible, otherwise normal
-            if (mLockStart == 0 && mLockSize == mSizeInBytes)
-            {
+//            if (mLockStart == 0 && mLockSize == mSizeInBytes)
+//            {
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, mSizeInBytes, srcData,
                              GLESHardwareBufferManager::getGLUsage(mUsage));
                 GL_CHECK_ERROR;
-            }
-            else
-            {
-                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
-                                mLockStart, mLockSize, srcData);
-                GL_CHECK_ERROR;
-            }
+//            }
+//            else
+//            {
+//                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,
+//                                mLockStart, mLockSize, srcData);
+//                GL_CHECK_ERROR;
+ //           }
 
             mShadowBuffer->unlock();
             mShadowUpdated = false;

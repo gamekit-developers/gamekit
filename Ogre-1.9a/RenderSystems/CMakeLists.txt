@@ -20,7 +20,7 @@ if (OGRE_BUILD_RENDERSYSTEM_D3D9)
 endif ()
 
 if (OGRE_BUILD_RENDERSYSTEM_D3D11)
-  if (NOT DirectX_FOUND)
+  if (NOT DirectX_D3D11_FOUND)
     MESSAGE(STATUS "Could not find dependency: DirectX")
   	MESSAGE(STATUS "Skipping Direct3D11 rendersystem build")
     set(OGRE_BUILD_RENDERSYSTEM_D3D11 0)
@@ -57,4 +57,9 @@ if (OGRE_BUILD_RENDERSYSTEM_GLES2)
   else ()
     add_subdirectory(GLES2)
   endif()
+endif()
+
+
+if (OGRE_BUILD_RENDERSYSTEM_STAGE3D AND FLASHCC)
+    add_subdirectory(Stage3D)
 endif()

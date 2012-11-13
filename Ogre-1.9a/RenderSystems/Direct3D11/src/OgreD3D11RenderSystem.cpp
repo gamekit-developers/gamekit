@@ -280,15 +280,12 @@ bail:
         optMinFeatureLevels;
         optMinFeatureLevels.name = "Min Requested Feature Levels";
         optMinFeatureLevels.possibleValues.push_back("9.1");
-        optMinFeatureLevels.possibleValues.push_back("9.2");
         optMinFeatureLevels.possibleValues.push_back("9.3");
         optMinFeatureLevels.possibleValues.push_back("10.0");
         optMinFeatureLevels.possibleValues.push_back("10.1");
         optMinFeatureLevels.possibleValues.push_back("11.0");
-#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
-        optMinFeatureLevels.possibleValues.push_back("11.1");
-#endif
-        optMinFeatureLevels.currentValue = "9.1";
+
+		optMinFeatureLevels.currentValue = "9.1";
         optMinFeatureLevels.immutable = false;		
 
 
@@ -296,18 +293,22 @@ bail:
         optMaxFeatureLevels;
         optMaxFeatureLevels.name = "Max Requested Feature Levels";
         optMaxFeatureLevels.possibleValues.push_back("9.1");
+
+#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
+#	 if  OGRE_WINRT_TARGET_TYPE == PHONE
         optMaxFeatureLevels.possibleValues.push_back("9.2");
+#    endif
+        optMaxFeatureLevels.possibleValues.push_back("9.3");
+        optMaxFeatureLevels.currentValue = "9.3";
+#else     
         optMaxFeatureLevels.possibleValues.push_back("9.3");
         optMaxFeatureLevels.possibleValues.push_back("10.0");
         optMaxFeatureLevels.possibleValues.push_back("10.1");
         optMaxFeatureLevels.possibleValues.push_back("11.0");
-#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
-        optMaxFeatureLevels.possibleValues.push_back("11.1");
-        optMaxFeatureLevels.currentValue = "11.1";
-#else       
         optMaxFeatureLevels.currentValue = "11.0";
 #endif
-        optMaxFeatureLevels.immutable = false;		
+
+		optMaxFeatureLevels.immutable = false;		
 
         // Exceptions Error Level
 		optExceptionsErrorLevel.name = "Information Queue Exceptions Bottom Level";
@@ -316,7 +317,7 @@ bail:
 		optExceptionsErrorLevel.possibleValues.push_back("Error");
 		optExceptionsErrorLevel.possibleValues.push_back("Warning");
 		optExceptionsErrorLevel.possibleValues.push_back("Info (exception on any message)");
-#ifdef OGRE_DEBUG_MODE
+#if OGRE_DEBUG_MODE
 		optExceptionsErrorLevel.currentValue = "Info (exception on any message)";
 #else
 		optExceptionsErrorLevel.currentValue = "No information queue exceptions";
@@ -456,10 +457,6 @@ bail:
                 mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_10_1;
             else if (value == "11.0")
                 mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_0;
-#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
-            else if (value == "11.1")
-                mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_1;
-#endif
             else
                 mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_9_1;
         }
@@ -737,12 +734,15 @@ bail:
 			}
 
 			D3D_FEATURE_LEVEL requestedLevels[] = {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
+#if OGRE_WINRT_TARGET_TYPE != PHONE
+#	if OGRE_PLATFORM == OGRE_PLATFORM_WINRT 
                 D3D_FEATURE_LEVEL_11_1,
-#endif
+#	endif // OGRE_PLATFORM == OGRE_PLATFORM_WINRT 
 				D3D_FEATURE_LEVEL_11_0,
 				D3D_FEATURE_LEVEL_10_1,
 				D3D_FEATURE_LEVEL_10_0,
+#endif // OGRE_WINRT_TARGET_TYPE != PHONE
+// Technically WINRT should only support up to 9_1, however to generate the proper cache file for the phone we need to be running with 9_3 on Win8.
 				D3D_FEATURE_LEVEL_9_3,
 				D3D_FEATURE_LEVEL_9_2,
 				D3D_FEATURE_LEVEL_9_1
@@ -750,9 +750,9 @@ bail:
 
             unsigned int requestedLevelsSize = sizeof( requestedLevels ) / sizeof( requestedLevels[0] );
 
-            int minRequestedFeatureLevelIndex = 0;
-            int maxRequestedFeatureLevelIndex = requestedLevelsSize - 1;
-            for(int i = 0 ; i < requestedLevelsSize ; i++)
+            int minRequestedFeatureLevelIndex = requestedLevelsSize - 1;
+            int maxRequestedFeatureLevelIndex = 0;
+            for(unsigned int i = 0 ; i < requestedLevelsSize ; i++)
             {
                 if(mMinRequestedFeatureLevel == requestedLevels[i])
                 {
@@ -1027,8 +1027,10 @@ bail:
 		}
 
 		D3D11RenderWindowBase* win = NULL;
-		if(win == NULL && windowType == "SurfaceImageSource")
-			win = new D3D11RenderWindowImageSource(mDevice, mpDXGIFactory);
+#if OGRE_WINRT_TARGET_TYPE != PHONE
+ 		if(win == NULL && windowType == "SurfaceImageSource")
+ 			win = new D3D11RenderWindowImageSource(mDevice, mpDXGIFactory);
+#endif // OGRE_WINRT_TARGET_TYPE != PHONE
 		if(win == NULL)
 			win = new D3D11RenderWindowCoreWindow(mDevice, mpDXGIFactory);
 #endif
@@ -1171,7 +1173,13 @@ bail:
 		rsc->setCapability(RSC_INFINITE_FAR_PLANE);
 
 		rsc->setCapability(RSC_TEXTURE_3D);
-		rsc->setCapability(RSC_NON_POWER_OF_2_TEXTURES);
+		if (mFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
+		{
+			rsc->setCapability(RSC_NON_POWER_OF_2_TEXTURES);
+			rsc->setCapability(RSC_HWRENDER_TO_TEXTURE_3D);
+			rsc->setCapability(RSC_TEXTURE_1D);
+		}
+
 		rsc->setCapability(RSC_HWRENDER_TO_TEXTURE);
 		rsc->setCapability(RSC_TEXTURE_FLOAT);
 
@@ -1258,10 +1266,6 @@ bail:
         if (mFeatureLevel >= D3D_FEATURE_LEVEL_9_1)
         {
             rsc->addShaderProfile("ps_4_0_level_9_1");
-        }
-        if (mFeatureLevel >= D3D_FEATURE_LEVEL_9_2)
-        {
-            rsc->addShaderProfile("ps_4_0_level_9_2");
         }
         if (mFeatureLevel >= D3D_FEATURE_LEVEL_9_3)
         {
@@ -1422,7 +1426,12 @@ bail:
 		descDepth.Height				= renderTarget->getHeight();
 		descDepth.MipLevels				= 1;
 		descDepth.ArraySize				= BBDesc.ArraySize;
-		descDepth.Format				= DXGI_FORMAT_R32_TYPELESS;//DXGI_FORMAT_D32_FLOAT;
+
+		if ( mFeatureLevel < D3D_FEATURE_LEVEL_10_0)
+			descDepth.Format			= DXGI_FORMAT_D24_UNORM_S8_UINT;
+		else
+			descDepth.Format			= DXGI_FORMAT_R32_TYPELESS;
+
 		descDepth.SampleDesc.Count		= BBDesc.SampleDesc.Count;
 		descDepth.SampleDesc.Quality	= BBDesc.SampleDesc.Quality;
 		descDepth.Usage					= D3D11_USAGE_DEFAULT;
@@ -1450,7 +1459,11 @@ bail:
 		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 		ZeroMemory( &descDSV, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC) );
 
-		descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+		if (mFeatureLevel < D3D_FEATURE_LEVEL_10_0)
+			descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		else
+			descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+
 		descDSV.ViewDimension = (BBDesc.SampleDesc.Count > 1) ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Flags = 0 /* D3D11_DSV_READ_ONLY_DEPTH | D3D11_DSV_READ_ONLY_STENCIL */;	// TODO: Allows bind depth buffer as depth view AND texture simultaneously.
 																							// TODO: Decide how to expose this feature
@@ -1722,7 +1735,7 @@ bail:
 	{
 		static D3D11TexturePtr dt;
 		dt = tex;
-		if (enabled)
+		if (enabled && dt->getSize() > 0)
 		{
 			// note used
 			dt->touch();
@@ -1807,10 +1820,34 @@ bail:
 		else
 		{
 			mBlendDesc.RenderTarget[0].BlendEnable = TRUE;
-			mBlendDesc.RenderTarget[0].SrcBlend = mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactor);
-			mBlendDesc.RenderTarget[0].DestBlend = mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactor);
-			mBlendDesc.RenderTarget[0].BlendOp = mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11Mappings::get(op);
-			mBlendDesc.AlphaToCoverageEnable = mSceneAlphaToCoverage;
+            mBlendDesc.RenderTarget[0].SrcBlend = mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactor);
+            mBlendDesc.RenderTarget[0].DestBlend = mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactor);
+            mBlendDesc.RenderTarget[0].BlendOp = mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11Mappings::get(op);
+            
+            switch(mBlendDesc.RenderTarget[0].SrcBlendAlpha)
+            {
+                case D3D11_BLEND_DEST_COLOR: 
+                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+                    break;
+                case D3D11_BLEND_SRC_COLOR: 
+                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+                    break;
+                case D3D11_BLEND_INV_DEST_COLOR: 
+                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
+                    break;
+                case D3D11_BLEND_INV_SRC_COLOR: 
+                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+                    break;
+                default:
+                    break;
+            }
+
+			// feature level 9 and below does not support alpha to coverage.
+			if (mFeatureLevel < D3D_FEATURE_LEVEL_10_0)
+				mBlendDesc.AlphaToCoverageEnable = false;
+			else
+				mBlendDesc.AlphaToCoverageEnable = mSceneAlphaToCoverage;
+
 			mBlendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
 		}  
 	}
@@ -1845,8 +1882,8 @@ bail:
 
 		// Do nothing, alpha rejection unavailable in Direct3D11
 		// hacky, but it works
-		if(func != CMPF_ALWAYS_PASS && !alphaToCoverage)
-		{
+		if(func != CMPF_ALWAYS_PASS && !alphaToCoverage && mFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
+		{ mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_9_1;
 			// Actually we should do it in pixel shader in dx11.
 			mBlendDesc.AlphaToCoverageEnable = true;
 		}
@@ -1959,18 +1996,17 @@ bail:
 	{
 		switch(ftype) {
 		case FT_MIN:
-			FilterMinification = filter;
+			FilterMinification[unit] = filter;
 			break;
 		case FT_MAG:
-			FilterMagnification = filter;
+			FilterMagnification[unit] = filter;
 			break;
 		case FT_MIP:
-			FilterMips = filter;
+			FilterMips[unit] = filter;
 			break;
 		}
 
-		mTexStageDesc[unit].samplerDesc.Filter = D3D11Mappings::get(FilterMinification, FilterMagnification, FilterMips,CompareEnabled);
-
+		mTexStageDesc[unit].samplerDesc.Filter = D3D11Mappings::get(FilterMinification[unit], FilterMagnification[unit], FilterMips[unit],CompareEnabled);
 	}
 	//---------------------------------------------------------------------
 	void D3D11RenderSystem::_setTextureUnitCompareEnabled(size_t unit, bool compare)
@@ -2306,6 +2342,9 @@ bail:
 				opState->mTextures[opState->mTexturesCount] = texture;
 				opState->mTexturesCount++;
 
+				stage.samplerDesc.Filter = D3D11Mappings::get(FilterMinification[n], FilterMagnification[n],
+								FilterMips[n],false );
+				stage.samplerDesc.ComparisonFunc = D3D11Mappings::get(mSceneAlphaRejectFunc);
 				stage.samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 				stage.samplerDesc.MinLOD = 0;
 				stage.samplerDesc.MipLODBias = 0.f;
@@ -2324,6 +2363,11 @@ bail:
 				opState->mSamplerStates[n] = (samplerState);		
 			}
 			opState->mSamplerStatesCount = numberOfSamplers;
+		}
+
+		for (size_t n = opState->mTexturesCount; n < OGRE_MAX_TEXTURE_LAYERS; n++)
+		{
+			opState->mTextures[n] = NULL;
 		}
 
 		//if (opState->mBlendState != mBoundBlendState)
@@ -3587,9 +3631,14 @@ bail:
 		mBasicStatesInitialised = false;
         mMinRequestedFeatureLevel = D3D_FEATURE_LEVEL_9_1;
 #if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
+
+#if  OGRE_WINRT_TARGET_TYPE == PHONE
+        mMaxRequestedFeatureLevel = D3D_FEATURE_LEVEL_9_3;
+#    else
         mMaxRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_1;
+#    endif
 #else
-        mMaxRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_0;
+		mMaxRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 #endif
 		mUseNVPerfHUD = false;
 		mHLSLProgramFactory = NULL;
@@ -3614,9 +3663,13 @@ bail:
 		ZeroMemory( &mDepthStencilDesc, sizeof(mDepthStencilDesc));
 		ZeroMemory( &mScissorRect, sizeof(mScissorRect));
 
-		FilterMinification = FO_NONE;
-		FilterMagnification = FO_NONE;
-		FilterMips = FO_NONE;
+		// set filters to defaults
+		for (size_t n = 0; n < OGRE_MAX_TEXTURE_LAYERS; n++)
+		{
+			FilterMinification[n] = FO_NONE;
+			FilterMagnification[n] = FO_NONE;
+			FilterMips[n] = FO_NONE;
+		}
 
 		mPolygonMode = PM_SOLID;
 

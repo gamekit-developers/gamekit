@@ -29,6 +29,7 @@ THE SOFTWARE.
 #define _String_H__
 
 #include "OgrePrerequisites.h"
+#include "OgreHeaderPrefix.h"
 
 // If we're using the GCC 3.1 C++ Std lib
 #if OGRE_COMPILER == OGRE_COMPILER_GNUC && OGRE_COMP_VER >= 310 && !defined(STLPORT)
@@ -219,5 +220,19 @@ namespace Ogre {
 	/** @} */
 
 } // namespace Ogre
+
+#include "OgreHeaderSuffix.h"
+
+#if _DEBUG && (OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT)
+#   pragma push_macro("NOMINMAX")
+#   define NOMINMAX
+#   include <windows.h>
+#   pragma pop_macro("NOMINMAX")
+#	define Ogre_OutputCString(str) ::OutputDebugStringA(str)
+#	define Ogre_OutputWString(str) ::OutputDebugStringW(str)
+#else
+#	define Ogre_OutputCString(str) std::cerr << str
+#	define Ogre_OutputWString(str) std::cerr << str
+#endif
 
 #endif // _String_H__

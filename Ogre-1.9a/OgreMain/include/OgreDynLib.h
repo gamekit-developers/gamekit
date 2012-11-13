@@ -29,6 +29,7 @@ THE SOFTWARE.
 #define _DynLib_H__
 
 #include "OgrePrerequisites.h"
+#include "OgreHeaderPrefix.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #    define DYNLIB_HANDLE hInstance
@@ -48,7 +49,7 @@ typedef struct HINSTANCE__* hInstance;
 struct HINSTANCE__;
 typedef struct HINSTANCE__* hInstance;
 
-#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_FLASHCC
 #    define DYNLIB_HANDLE void*
 #    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY | RTLD_GLOBAL)
 #    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
@@ -129,5 +130,7 @@ namespace Ogre {
 	/** @} */
 
 }
+
+#include "OgreHeaderSuffix.h"
 
 #endif

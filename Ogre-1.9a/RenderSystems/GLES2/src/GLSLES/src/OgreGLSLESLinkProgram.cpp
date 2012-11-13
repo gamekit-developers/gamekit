@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "OgreLogManager.h"
 #include "OgreGpuProgramManager.h"
 #include "OgreStringConverter.h"
+#include "OgreRoot.h"
 
 namespace Ogre {
 
@@ -128,22 +129,31 @@ namespace Ogre {
 	void GLSLESLinkProgram::compileAndLink()
 	{
 		// Compile and attach Vertex Program
-		if (!mVertexProgram->getGLSLProgram()->compile(true))
-		{
-			// TODO error
+        try
+        {
+            mVertexProgram->getGLSLProgram()->compile(true);
+        }
+        catch (Exception& e)
+        {
+            LogManager::getSingleton().stream() << e.getDescription();
             mTriedToLinkAndFailed = true;
-			return;
-		}
+            return;
+        }
+
         mVertexProgram->getGLSLProgram()->attachToProgramObject(mGLProgramHandle);
         setSkeletalAnimationIncluded(mVertexProgram->isSkeletalAnimationIncluded());
         
 		// Compile and attach Fragment Program
-		if (!mFragmentProgram->getGLSLProgram()->compile(true))
-		{
-			// TODO error
+        try
+        {
+            mFragmentProgram->getGLSLProgram()->compile(true);
+        }
+        catch (Exception& e)
+        {
+            LogManager::getSingleton().stream() << e.getDescription();
             mTriedToLinkAndFailed = true;
-			return;
-		}
+            return;
+        }
         mFragmentProgram->getGLSLProgram()->attachToProgramObject(mGLProgramHandle);
         
         // The link
@@ -154,6 +164,22 @@ namespace Ogre {
         mTriedToLinkAndFailed = !mLinked;
 
         logObjectInfo( getCombinedName() + String("GLSL link result : "), mGLProgramHandle );
+
+#if GL_EXT_separate_shader_objects && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+        if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS) &&
+                glIsProgramPipelineEXT(mGLProgramHandle))
+        {
+            glValidateProgramPipelineEXT(mGLProgramHandle);
+        }
+        else if(glIsProgram(mGLProgramHandle))
+#else
+		if(glIsProgram(mGLProgramHandle))
+#endif
+        {
+            glValidateProgram(mGLProgramHandle);
+        }
+
+		logObjectInfo( getCombinedName() + String(" GLSL validation result : "), mGLProgramHandle );
 
 		if(mLinked)
 		{

@@ -20,12 +20,14 @@ set (HEADER_FILES
 	include/OgreVolumeDualCell.h
 	include/OgreVolumeDualGridGenerator.h
 	include/OgreVolumeIsoSurface.h
-	include/OgreVolumeIsoSurfaceTables.h
+	include/OgreVolumeIsoSurfaceMC.h
+	include/OgreVolumeIsoSurfaceTablesMC.h
 	include/OgreVolumeMeshBuilder.h
 	include/OgreVolumeTextureSource.h
 	include/OgreVolumeChunk.h
 	include/OgreVolumeOctreeNode.h
 	include/OgreVolumeOctreeNodeSplitPolicy.h
+	include/OgreVolumeSimplexNoise.h
 	include/OgreVolumeSource.h
 	include/OgreVolumePrerequisites.h
 )
@@ -35,11 +37,13 @@ set(SOURCE_FILES
 	src/OgreVolumeDualCell.cpp
 	src/OgreVolumeDualGridGenerator.cpp
 	src/OgreVolumeIsoSurface.cpp
+	src/OgreVolumeIsoSurfaceMC.cpp
 	src/OgreVolumeMeshBuilder.cpp
 	src/OgreVolumeTextureSource.cpp
 	src/OgreVolumeChunk.cpp
 	src/OgreVolumeOctreeNode.cpp
 	src/OgreVolumeOctreeNodeSplitPolicy.cpp
+	src/OgreVolumeSimplexNoise.cpp
 	src/OgreVolumeSource.cpp
 )
 

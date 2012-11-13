@@ -78,6 +78,10 @@ namespace Ogre
         file << "\t" << "vbo " << StringConverter::toString(caps->hasCapability(RSC_VBO)) << endl;
         file << "\t" << "vertex_program " << StringConverter::toString(caps->hasCapability(RSC_VERTEX_PROGRAM)) << endl;
         file << "\t" << "fragment_program " << StringConverter::toString(caps->hasCapability(RSC_FRAGMENT_PROGRAM)) << endl;
+        file << "\t" << "geometry_program " << StringConverter::toString(caps->hasCapability(RSC_GEOMETRY_PROGRAM)) << endl;
+        file << "\t" << "tesselation_hull_program " << StringConverter::toString(caps->hasCapability(RSC_TESSELATION_HULL_PROGRAM)) << endl;
+        file << "\t" << "tessellation_domain_program " << StringConverter::toString(caps->hasCapability(RSC_TESSELATION_DOMAIN_PROGRAM)) << endl;
+        file << "\t" << "compute_program " << StringConverter::toString(caps->hasCapability(RSC_COMPUTE_PROGRAM)) << endl;
         file << "\t" << "scissor_test " << StringConverter::toString(caps->hasCapability(RSC_SCISSOR_TEST)) << endl;
         file << "\t" << "two_sided_stencil " << StringConverter::toString(caps->hasCapability(RSC_TWO_SIDED_STENCIL)) << endl;
         file << "\t" << "stencil_wrap " << StringConverter::toString(caps->hasCapability(RSC_STENCIL_WRAP)) << endl;
@@ -89,6 +93,7 @@ namespace Ogre
         file << "\t" << "texture_float " << StringConverter::toString(caps->hasCapability(RSC_TEXTURE_FLOAT)) << endl;
         file << "\t" << "non_power_of_2_textures " << StringConverter::toString(caps->hasCapability(RSC_NON_POWER_OF_2_TEXTURES)) << endl;
         file << "\t" << "texture_3d " << StringConverter::toString(caps->hasCapability(RSC_TEXTURE_3D)) << endl;
+        file << "\t" << "texture_1d " << StringConverter::toString(caps->hasCapability(RSC_TEXTURE_1D)) << endl;
         file << "\t" << "point_sprites " << StringConverter::toString(caps->hasCapability(RSC_POINT_SPRITES)) << endl;
         file << "\t" << "point_extended_parameters " << StringConverter::toString(caps->hasCapability(RSC_POINT_EXTENDED_PARAMETERS)) << endl;
         file << "\t" << "vertex_texture_fetch " << StringConverter::toString(caps->hasCapability(RSC_VERTEX_TEXTURE_FETCH)) << endl;
@@ -137,6 +142,15 @@ namespace Ogre
         file << "\t" << "geometry_program_constant_float_count " << StringConverter::toString(caps->getGeometryProgramConstantFloatCount()) << endl;
         file << "\t" << "geometry_program_constant_int_count " << StringConverter::toString(caps->getGeometryProgramConstantIntCount()) << endl;
         file << "\t" << "geometry_program_constant_bool_count " << StringConverter::toString(caps->getGeometryProgramConstantBoolCount()) << endl;
+        file << "\t" << "tesselation_hull_program_constant_float_count " << StringConverter::toString(caps->getTesselationHullProgramConstantFloatCount()) << endl;
+        file << "\t" << "tesselation_hull_program_constant_int_count " << StringConverter::toString(caps->getTesselationHullProgramConstantIntCount()) << endl;
+        file << "\t" << "tesselation_hull_program_constant_bool_count " << StringConverter::toString(caps->getTesselationHullProgramConstantBoolCount()) << endl;
+        file << "\t" << "tesselation_domain_program_constant_float_count " << StringConverter::toString(caps->getTesselationDomainProgramConstantFloatCount()) << endl;
+        file << "\t" << "tesselation_domain_program_constant_int_count " << StringConverter::toString(caps->getTesselationDomainProgramConstantIntCount()) << endl;
+        file << "\t" << "tesselation_domain_program_constant_bool_count " << StringConverter::toString(caps->getTesselationDomainProgramConstantBoolCount()) << endl;
+        file << "\t" << "compute_program_constant_float_count " << StringConverter::toString(caps->getComputeProgramConstantFloatCount()) << endl;
+        file << "\t" << "compute_program_constant_int_count " << StringConverter::toString(caps->getComputeProgramConstantIntCount()) << endl;
+        file << "\t" << "compute_program_constant_bool_count " << StringConverter::toString(caps->getComputeProgramConstantBoolCount()) << endl;
         file << "\t" << "num_vertex_texture_units " << StringConverter::toString(caps->getNumVertexTextureUnits()) << endl;
 
         file << endl;
@@ -344,6 +358,15 @@ namespace Ogre
         addKeywordType("geometry_program_constant_float_count", SET_INT_METHOD);
         addKeywordType("geometry_program_constant_int_count", SET_INT_METHOD);
         addKeywordType("geometry_program_constant_bool_count", SET_INT_METHOD);
+        addKeywordType("tesselation_hull_program_constant_float_count", SET_INT_METHOD);
+        addKeywordType("tesselation_hull_program_constant_int_count", SET_INT_METHOD);
+        addKeywordType("tesselation_hull_program_constant_bool_count", SET_INT_METHOD);
+        addKeywordType("tesselation_domain_program_constant_float_count", SET_INT_METHOD);
+        addKeywordType("tesselation_domain_program_constant_int_count", SET_INT_METHOD);
+        addKeywordType("tesselation_domain_program_constant_bool_count", SET_INT_METHOD);
+        addKeywordType("compute_program_constant_float_count", SET_INT_METHOD);
+        addKeywordType("compute_program_constant_int_count", SET_INT_METHOD);
+        addKeywordType("compute_program_constant_bool_count", SET_INT_METHOD);
         addKeywordType("num_vertex_texture_units", SET_INT_METHOD);
 
         // initialize int setters
@@ -361,6 +384,15 @@ namespace Ogre
         addSetIntMethod("geometry_program_constant_float_count", &RenderSystemCapabilities::setGeometryProgramConstantFloatCount);
         addSetIntMethod("geometry_program_constant_int_count", &RenderSystemCapabilities::setGeometryProgramConstantIntCount);
         addSetIntMethod("geometry_program_constant_bool_count", &RenderSystemCapabilities::setGeometryProgramConstantBoolCount);
+        addSetIntMethod("tesselation_hull_program_constant_float_count", &RenderSystemCapabilities::setTesselationHullProgramConstantFloatCount);
+        addSetIntMethod("tesselation_hull_program_constant_int_count", &RenderSystemCapabilities::setTesselationHullProgramConstantIntCount);
+        addSetIntMethod("tesselation_hull_program_constant_bool_count", &RenderSystemCapabilities::setTesselationHullProgramConstantBoolCount);
+        addSetIntMethod("tesselation_domain_program_constant_float_count", &RenderSystemCapabilities::setTesselationDomainProgramConstantFloatCount);
+        addSetIntMethod("tesselation_domain_program_constant_int_count", &RenderSystemCapabilities::setTesselationDomainProgramConstantIntCount);
+        addSetIntMethod("tesselation_domain_program_constant_bool_count", &RenderSystemCapabilities::setTesselationDomainProgramConstantBoolCount);
+        addSetIntMethod("compute_program_constant_float_count", &RenderSystemCapabilities::setComputeProgramConstantFloatCount);
+        addSetIntMethod("compute_program_constant_int_count", &RenderSystemCapabilities::setComputeProgramConstantIntCount);
+        addSetIntMethod("compute_program_constant_bool_count", &RenderSystemCapabilities::setComputeProgramConstantBoolCount);
         addSetIntMethod("num_vertex_texture_units", &RenderSystemCapabilities::setNumVertexTextureUnits);
 
         // initialize bool types
@@ -392,6 +424,9 @@ namespace Ogre
         addKeywordType("vertex_program", SET_CAPABILITY_ENUM_BOOL);
 		addKeywordType("geometry_program", SET_CAPABILITY_ENUM_BOOL);
         addKeywordType("fragment_program", SET_CAPABILITY_ENUM_BOOL);
+        addKeywordType("tesselation_hull_program", SET_CAPABILITY_ENUM_BOOL);
+        addKeywordType("tesselation_domain_program", SET_CAPABILITY_ENUM_BOOL);
+        addKeywordType("compute_program", SET_CAPABILITY_ENUM_BOOL);
         addKeywordType("scissor_test", SET_CAPABILITY_ENUM_BOOL);
         addKeywordType("two_sided_stencil", SET_CAPABILITY_ENUM_BOOL);
         addKeywordType("stencil_wrap", SET_CAPABILITY_ENUM_BOOL);
@@ -443,6 +478,7 @@ namespace Ogre
 		addCapabilitiesMapping("texture_float", RSC_TEXTURE_FLOAT);
         addCapabilitiesMapping("non_power_of_2_textures", RSC_NON_POWER_OF_2_TEXTURES);
         addCapabilitiesMapping("texture_3d", RSC_TEXTURE_3D);
+		addCapabilitiesMapping("texture_1d", RSC_TEXTURE_1D);
         addCapabilitiesMapping("point_sprites", RSC_POINT_SPRITES);
         addCapabilitiesMapping("point_extended_parameters", RSC_POINT_EXTENDED_PARAMETERS);
         addCapabilitiesMapping("vertex_texture_fetch", RSC_VERTEX_TEXTURE_FETCH);

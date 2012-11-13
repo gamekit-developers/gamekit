@@ -230,16 +230,15 @@ namespace RTShader {
     SubRenderState*	TriplanarTexturingFactory::createInstance(ScriptCompiler* compiler, 
                                                        PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator)
     {
-
         if (prop->name == "triplanarTexturing")
         {
             if (prop->values.size() == 6)
             {
                 SubRenderState* subRenderState = createOrRetrieveInstance(translator);
                 TriplanarTexturing* tpSubRenderState = static_cast<TriplanarTexturing*>(subRenderState);
+                
+	            AbstractNodeList::const_iterator it = prop->values.begin();
                 float parameters[3];
-                ColourValue cValue;
-                AbstractNodeList::const_iterator it = prop->values.begin();
                 if (false == SGScriptTranslator::getFloat(*it, parameters))
                 {
                     compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
@@ -261,19 +260,19 @@ namespace RTShader {
                 tpSubRenderState->setParameters(vParameters);
 
                 String textureNameFromX, textureNameFromY, textureNameFromZ;
-                it++;
+                ++it;
                 if (false == SGScriptTranslator::getString(*it, &textureNameFromX))
                 {
                     compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
                     return NULL;
                 }
-                it++;
+                ++it;
                 if (false == SGScriptTranslator::getString(*it, &textureNameFromY))
                 {
                     compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
                     return NULL;
                 }
-                it++;
+                ++it;
                 if (false == SGScriptTranslator::getString(*it, &textureNameFromZ))
                 {
                     compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
@@ -288,7 +287,6 @@ namespace RTShader {
                 compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
             }
         }
-
         return NULL;
     }
 

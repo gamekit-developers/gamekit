@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "OgreException.h"
 #include "OgreGpuProgram.h"
 #include "OgreSingleton.h"
+#include "OgreHeaderPrefix.h"
 
 namespace Ogre {
 
@@ -58,6 +59,7 @@ namespace Ogre {
 		SharedParametersMap mSharedParametersMap;
 		MicrocodeMap mMicrocodeCache;
 		bool mSaveMicrocodesToCache;
+		bool mCacheDirty;			// When this is true the cache is 'dirty' and should be resaved to disk.
 			
 		static String addRenderSystemToName( const String &  name );
 
@@ -187,6 +189,10 @@ namespace Ogre {
         */
 		void setSaveMicrocodesToCache( const bool val );
 
+		/** Returns true if the microcodecache changed during the run.
+		*/
+		bool isCacheDirty(void) const;
+
 		bool canGetCompiledShaderBuffer();
         /** Check if a microcode is available for a program in the microcode cache.
         @param name The name of the program.
@@ -258,5 +264,7 @@ namespace Ogre {
 	/** @} */
 	/** @} */
 }
+
+#include "OgreHeaderSuffix.h"
 
 #endif

@@ -101,15 +101,30 @@ namespace Ogre {
 /* Finds the current platform */
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #	if defined(WINAPI_FAMILY)
+#		define __OGRE_HAVE_DIRECTXMATH 1
 #		include <winapifamily.h>
-#		if WINAPI_FAMILY == WINAPI_FAMILY_APP
+#		if WINAPI_FAMILY == WINAPI_FAMILY_APP|| WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+#			define DESKTOP_APP 1
+#			define PHONE 2
 #			define OGRE_PLATFORM OGRE_PLATFORM_WINRT
+#			define _CRT_SECURE_NO_WARNINGS
+#			define _SCL_SECURE_NO_WARNINGS
+#			if WINAPI_FAMILY == WINAPI_FAMILY_APP
+#				define OGRE_WINRT_TARGET_TYPE DESKTOP_APP
+#			endif
+#			if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+#				define OGRE_WINRT_TARGET_TYPE PHONE
+				// For the phone we only support running from the cache file.
+#		        define ENABLE_SHADERS_CACHE_LOAD 1
+#			endif
 #		else
 #			define OGRE_PLATFORM OGRE_PLATFORM_WIN32
 #		endif
 #	else
 #		define OGRE_PLATFORM OGRE_PLATFORM_WIN32
 #	endif
+#elif defined(__FLASHCC__)
+#	define OGRE_PLATFORM OGRE_PLATFORM_FLASHCC
 #elif defined( __APPLE_CC__)
     // Device                                                     Simulator
     // Both requiring OS version 4.0 or greater
@@ -210,7 +225,7 @@ namespace Ogre {
 //----------------------------------------------------------------------------
 // Linux/Apple/iOs/Android/NaCl Settings
 #if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || \
-    OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_NACL
+    OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_NACL || OGRE_PLATFORM == OGRE_PLATFORM_FLASHCC
 
 // Enable GCC symbol visibility
 #   if defined( OGRE_GCC_VISIBILITY )
@@ -250,9 +265,8 @@ namespace Ogre {
 #   ifdef OGRE_UNICODE_SUPPORT
 #       undef OGRE_UNICODE_SUPPORT
 #   endif
-#	define OGRE_UNICODE_SUPPORT 0
-#   define OGRE_DEBUG_MODE 0
-#	  define CLOCKS_PER_SEC  1000
+#	define OGRE_UNICODE_SUPPORT 1
+#	define CLOCKS_PER_SEC  1000
     // A quick define to overcome different names for the same function
 #   define stricmp strcasecmp
 #   ifdef DEBUG
@@ -261,6 +275,21 @@ namespace Ogre {
 #       define OGRE_DEBUG_MODE 0
 #   endif
 #endif
+    
+//----------------------------------------------------------------------------
+// FlashCC Settings
+#if OGRE_PLATFORM == OGRE_PLATFORM_FLASHCC
+#   ifdef OGRE_UNICODE_SUPPORT
+#       undef OGRE_UNICODE_SUPPORT
+#   endif
+#	define OGRE_UNICODE_SUPPORT 0
+#   ifdef DEBUG
+#       define OGRE_DEBUG_MODE 1
+#   else
+#       define OGRE_DEBUG_MODE 0
+#   endif
+#endif
+
 //----------------------------------------------------------------------------
 // Endian Settings
 // check for BIG_ENDIAN config flag, set OGRE_ENDIAN correctly
@@ -323,7 +352,11 @@ typedef char int8;
 // disable: "unreferenced formal parameter"
 // Many versions of VC have bugs which generate this error in cases where they shouldn't
 #   pragma warning (disable : 4100)
+// disable: "behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized"
+// We have this issue in OgreMemorySTLAlloc.h - so we see it over and over
+#   pragma warning (disable : 4345)
 #endif
+
 }
 
 #endif

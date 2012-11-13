@@ -106,10 +106,15 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
 #endif
 
 
+// Copy this definition from desktop GL.  Used for polygon modes.
+#ifndef GL_FILL
+#   define GL_FILL    0x1B02
+#endif
+
 // Define GL_NONE for convenience
 #define GL_NONE 0
 
-#ifndef GL_BGRA
+#if !defined(GL_BGRA) && OGRE_PLATFORM != OGRE_PLATFORM_NACL
 #   define GL_BGRA  0x80E1
 #endif
 
@@ -139,7 +144,8 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
         fprintf(stderr, "%s:%d: %s\n", __FUNCTION__, __LINE__, text); \
     }
 
-#define ENABLE_GL_CHECK 1
+#define ENABLE_GL_CHECK 0
+
 #if ENABLE_GL_CHECK
 #define GL_CHECK_ERROR \
     { \
@@ -155,7 +161,7 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
             case GL_OUT_OF_MEMORY:      errorString = "GL_OUT_OF_MEMORY";       break; \
             default:                                                            break; \
             } \
-            char msgBuf[10000]; \
+            char msgBuf[4096]; \
             sprintf(msgBuf, "OpenGL ES2 error 0x%04X %s in %s at line %i\n", e, errorString, __PRETTY_FUNCTION__, __LINE__); \
             LogManager::getSingleton().logMessage(msgBuf); \
         } \
@@ -170,7 +176,7 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
         int e = eglGetError(); \
         if ((e != 0) && (e != EGL_SUCCESS))\
         { \
-            char msgBuf[10000]; \
+            char msgBuf[4096]; \
             sprintf(msgBuf, "EGL error 0x%04X in %s at line %i\n", e, __PRETTY_FUNCTION__, __LINE__); \
             LogManager::getSingleton().logMessage(msgBuf); \
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, msgBuf, __PRETTY_FUNCTION__); \

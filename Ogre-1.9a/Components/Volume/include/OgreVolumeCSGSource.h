@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include "OgreVector3.h"
 #include "OgreAxisAlignedBox.h"
 #include "OgreVolumePrerequisites.h"
+#include "OgreVolumeSimplexNoise.h"
 
 namespace Ogre {
 namespace Volume {
@@ -60,7 +61,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -91,7 +92,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -110,6 +111,12 @@ namespace Volume {
         /// The box.
         AxisAlignedBox mBox;
 
+        /** Gets the distance of a point to the nearest cube element.
+        @param position
+            The point to test.
+        @return
+            The distance.
+        */
         inline Real distanceTo(const Vector3 &position) const
         {
             Real distance;
@@ -149,7 +156,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -193,7 +200,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -216,7 +223,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -240,7 +247,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -277,7 +284,7 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
@@ -304,11 +311,95 @@ namespace Volume {
         
         /** Overridden from Source.
         */
-        virtual Real getValueAndGradient(const Vector3 &position, Vector3 &gradient) const;
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
 
         /** Overridden from VolumeSource.
         */
         virtual Real getValue(const Vector3 &position) const;
+    };
+
+    class _OgreVolumeExport CSGNoiseSource: public CSGUnarySource
+    {
+    protected:
+        
+        /// The frequencies of the octaves.
+        Real *mFrequencies;
+
+        /// The amplitudes of the octaves.
+        Real *mAmplitudes;
+        
+        /// The amount of octaves.
+        size_t mNumOctaves;
+        
+        /// To make some noise.
+        SimplexNoise mNoise;
+
+        /// To calculate the gradient.
+        Real mGradientOff;
+
+        /// The initial seed.
+        long mSeed;
+
+        /// Prepares the node members.
+        void setData(void);
+
+        /* Gets the density value.
+        @param position
+            The position of the value.
+        @return
+            The value.
+        */
+        inline Real getInternalValue(const Vector3 &position) const
+        {
+            Real toAdd = (Real)0.0;
+            for (size_t i = 0; i < mNumOctaves; ++i)
+            {
+                toAdd += mNoise.noise(position.x * mFrequencies[i], position.y * mFrequencies[i], position.z * mFrequencies[i]) * mAmplitudes[i];
+            }
+            return mSrc->getValue(position) + toAdd;
+        }
+
+    public:
+        
+        /** Constructor.
+        @param src
+            The source to add the noise to.
+        @param frequencies
+            The frequencies of the added noise octaves.
+        @param amplitudes
+            The amplitudes of the added noise octaves.
+        @param numOctaves
+            The amount of octaves.
+        @param seed
+            The seed to initialize the random number generator with.
+        */
+        CSGNoiseSource(const Source *src, Real *frequencies, Real *amplitudes, size_t numOctaves, long seed);
+        
+        /** Constructor with current time as seed.
+        @param src
+            The source to add the noise to.
+        @param frequencies
+            The frequencies of the added noise octaves.
+        @param amplitudes
+            The amplitudes of the added noise octaves.
+        @param numOctaves
+            The amount of octaves.
+        */
+        CSGNoiseSource(const Source *src, Real *frequencies, Real *amplitudes, size_t numOctaves);
+                
+        /** Overridden from Source.
+        */
+        virtual Vector4 getValueAndGradient(const Vector3 &position) const;
+
+        /** Overridden from VolumeSource.
+        */
+        virtual Real getValue(const Vector3 &position) const;
+        
+        /** Gets the initial seed.
+        @return
+            The initial seed.
+        */
+        long getSeed(void) const;
     };
 
 }

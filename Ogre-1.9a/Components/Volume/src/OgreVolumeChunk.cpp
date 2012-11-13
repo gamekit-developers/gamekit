@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "OgreTimer.h"
 #include "OgreConfigFile.h"
 
-#include "OgreVolumeIsoSurface.h"
+#include "OgreVolumeIsoSurfaceMC.h"
 #include "OgreVolumeOctreeNodeSplitPolicy.h"
 #include "OgreVolumeTextureSource.h"
 
@@ -62,7 +62,7 @@ namespace Volume {
         mChunksBeingProcessed++;
         mNode = parent->createChildSceneNode();
         mScale = parameters->scale;
-        mMaxPixelError = parameters->maxPixelError;
+        mMaxScreenSpaceError = parameters->maxScreenSpaceError;
 
         // Call worker
         ChunkRequest req;
@@ -125,7 +125,7 @@ namespace Volume {
 
         chunkRequest->dualGridGenerator->generateDualGrid(chunkRequest->root);
 
-        IsoSurface is(chunkRequest->parameters->src);
+        IsoSurface *is = OGRE_NEW IsoSurfaceMC(chunkRequest->parameters->src);
         size_t count = chunkRequest->dualGridGenerator->getDualCellCount();
         const Vector3 *corners;
         const Vector4 *values;
@@ -139,33 +139,34 @@ namespace Volume {
             DualCell cell = chunkRequest->dualGridGenerator->getDualCell(i);
             corners = cell.getCorners();
             values = cell.hasValues() ? cell.getValues() : 0;
-            is.addMarchingCubesTriangles(corners, values, chunkRequest->mb);
+            is->addMarchingCubesTriangles(corners, values, chunkRequest->mb);
 
             if (corners[0].z == from.z && corners[0].z != chunkRequest->totalFrom.z)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BACK, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BACK, maxMSDistance, chunkRequest->mb);
             }
             if (corners[2].z == to.z && corners[2].z != chunkRequest->totalTo.z)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_FRONT, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_FRONT, maxMSDistance, chunkRequest->mb);
             }
             if (corners[0].x == from.x && corners[0].x != chunkRequest->totalFrom.x)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_LEFT, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_LEFT, maxMSDistance, chunkRequest->mb);
             }
             if (corners[1].x == to.x && corners[1].x != chunkRequest->totalTo.x)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_RIGHT, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_RIGHT, maxMSDistance, chunkRequest->mb);
             }
             if (corners[5].y == to.y && corners[5].y != chunkRequest->totalTo.y)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_TOP, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_TOP, maxMSDistance, chunkRequest->mb);
             }
             if (corners[0].y == from.y && corners[0].y != chunkRequest->totalFrom.y)
             {
-                is.addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BOTTOM, maxMSDistance, chunkRequest->mb);
+                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BOTTOM, maxMSDistance, chunkRequest->mb);
             }
         }
+        OGRE_DELETE is;
     }
     
     //-----------------------------------------------------------------------
@@ -306,16 +307,16 @@ namespace Volume {
         String source = config.getSetting("source");
         Vector3 dimensions = StringConverter::parseVector3(config.getSetting("sourceDimensions"));
         bool trilinearValue = StringConverter::parseBool(config.getSetting("trilinearValue"));
-        bool trilinearNormal = StringConverter::parseBool(config.getSetting("trilinearNormal"));
-        bool sobelNormal = StringConverter::parseBool(config.getSetting("sobelNormal"));
+        bool trilinearGradient = StringConverter::parseBool(config.getSetting("trilinearGradient"));
+        bool sobelGradient = StringConverter::parseBool(config.getSetting("sobelGradient"));
 
-        TextureSource textureSource(source, dimensions.x, dimensions.y, dimensions.z, trilinearValue, trilinearNormal, sobelNormal);
+        TextureSource textureSource(source, dimensions.x, dimensions.y, dimensions.z, trilinearValue, trilinearGradient, sobelGradient);
     
         Vector3 from = StringConverter::parseVector3(config.getSetting("scanFrom"));
         Vector3 to = StringConverter::parseVector3(config.getSetting("scanTo"));
         size_t level = StringConverter::parseUnsignedInt(config.getSetting("level"));
         Real scale = StringConverter::parseReal(config.getSetting("scale"));
-        Real maxPixelError = StringConverter::parseReal(config.getSetting("maxPixelError"));
+        Real maxPixelError = StringConverter::parseReal(config.getSetting("maxScreenSpaceError"));
     
         ChunkParameters parameters;
         parameters.sceneManager = sceneManager;
@@ -323,7 +324,7 @@ namespace Volume {
         parameters.lodCallbackLod = lodCallbackLod;
         parameters.src = &textureSource;
         parameters.scale = scale;
-        parameters.maxPixelError = maxPixelError;
+        parameters.maxScreenSpaceError = maxPixelError;
         parameters.baseError = StringConverter::parseReal(config.getSetting("baseError"));
         parameters.errorMultiplicator = StringConverter::parseReal(config.getSetting("errorMultiplicator"));
         parameters.createOctreeVisualization = StringConverter::parseBool(config.getSetting("createOctreeVisualization"));
@@ -334,6 +335,17 @@ namespace Volume {
 
         String material = config.getSetting("material");
         setMaterial(material);
+
+        for (size_t i = 0; i < level; ++i)
+        {
+            StringUtil::StrStreamType stream;
+            stream << "materialOfLevel" << i;
+            String materialOfLevel = config.getSetting(stream.str());
+            if (materialOfLevel != StringUtil::BLANK)
+            {
+                setMaterialOfLevel(i, materialOfLevel);
+            }
+        }
     }
     
     //-----------------------------------------------------------------------
@@ -420,15 +432,15 @@ namespace Volume {
         
         // Get the distance to the center.
         Vector3 camPos = mCamera->getRealPosition();
-        Real d = (mBox.getCenter() * mScale).squaredDistance(camPos);
+        Real d = (mBox.getCenter() * mScale).distance(camPos);
         if (d < 1.0)
         {
             d = 1.0;
         }
 
-        Real screenSpaceError = (mError / Math::Sqrt(d)) * k;
+        Real screenSpaceError = mError / d * k;
 
-        if (screenSpaceError <= mMaxPixelError / mScale)
+        if (screenSpaceError <= mMaxScreenSpaceError / mScale)
         {
             setChunkVisible(true, false);
             if (mChildren)
@@ -501,6 +513,31 @@ namespace Volume {
         }
     }
     
+    //-----------------------------------------------------------------------
+
+    void Chunk::setMaterialOfLevel(size_t level, const String& matName)
+    {
+        if (level == 0)
+        {
+            SimpleRenderable::setMaterial(matName);
+        }
+        
+        if (level > 0 && mChildren)
+        {
+            mChildren[0]->setMaterialOfLevel(level - 1, matName);
+            if (mChildren[1])
+            {
+                mChildren[1]->setMaterialOfLevel(level - 1, matName);
+                mChildren[2]->setMaterialOfLevel(level - 1, matName);
+                mChildren[3]->setMaterialOfLevel(level - 1, matName);
+                mChildren[4]->setMaterialOfLevel(level - 1, matName);
+                mChildren[5]->setMaterialOfLevel(level - 1, matName);
+                mChildren[6]->setMaterialOfLevel(level - 1, matName);
+                mChildren[7]->setMaterialOfLevel(level - 1, matName);
+            }
+        }
+    }
+
     //-----------------------------------------------------------------------
 
     void Chunk::getChunksOfLevel(const size_t level, VecChunk &result) const

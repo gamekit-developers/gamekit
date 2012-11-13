@@ -57,13 +57,13 @@ namespace Volume {
         /// The smallest allowed geometric error of the highest LOD.
         Real baseError;
 
-        /// The error multiplicator per LOD level.
+        /// The error multiplicator per LOD level with 1.0 as default.
         Real errorMultiplicator;
 
-        /// Whether to create the octree debug visualization entity.
+        /// Whether to create the octree debug visualization entity with false as default.
         bool createOctreeVisualization;
 
-        /// Whether to create the dualgrid debug visualization entity.
+        /// Whether to create the dualgrid debug visualization entity with false as default.
         bool createDualGridVisualization;
 
         /// Factor for the skirt length generation.
@@ -75,11 +75,11 @@ namespace Volume {
         /// On which LOD level the callback should be called.
         size_t lodCallbackLod;
 
-        /// The scale of the volume.
+        /// The scale of the volume with 1.0 as default.
         Real scale;
 
-        /// The maximum accepted geometric error when chosing the LOD levels to render.
-        Real maxPixelError;
+        /// The maximum accepted screen space error when chosing the LOD levels to render.
+        Real maxScreenSpaceError;
         
         /** Constructor.
         */
@@ -148,12 +148,13 @@ namespace Volume {
         /// Holds the amount of generated triangles.
         static size_t mGeneratedTriangles;
 
-        /// The maximum accepted pixel error.
-        Real mMaxPixelError;
+        /// The maximum accepted screen space error.
+        Real mMaxScreenSpaceError;
         
         /// The scale.
         Real mScale;
 
+        /// The amount of chunks currently being processed.
         static size_t mChunksBeingProcessed;
 
         /// To attach this node to.
@@ -362,6 +363,16 @@ namespace Volume {
             Sets the material of this chunk and all of his children.
         */
         virtual void setMaterial(const String& matName);
+
+        /** Sets the material of all chunks of a specific level in the tree.
+        This allows LODs where the lower levels (== less detail and more far away)
+        have simpler materials.
+        @param level
+            The tree level getting the material, 0 based. 0 means the chunk with the lowest level of detail.
+        @param matName
+            The material name to set.
+        */
+        virtual void setMaterialOfLevel(size_t level, const String& matName);
 
         /** A list of Chunks.
         */

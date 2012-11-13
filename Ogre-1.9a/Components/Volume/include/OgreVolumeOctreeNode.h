@@ -161,8 +161,6 @@ namespace Volume {
         }
         
         /** Setter for the to-part of this cell.
-        @param from
-            The back lower left corner of the cell.
         @param to
             The front upper right corner of the cell.
         */
@@ -223,8 +221,10 @@ namespace Volume {
         }
 
         /** Gets whether this cell is at the left of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderLeft(const OctreeNode &root) const
         {
@@ -232,8 +232,10 @@ namespace Volume {
         }
         
         /** Gets whether this cell is at the right of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderRight(const OctreeNode &root) const
         {
@@ -241,8 +243,10 @@ namespace Volume {
         }
         
         /** Gets whether this cell is at the bottom of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderBottom(const OctreeNode &root) const
         {
@@ -250,8 +254,10 @@ namespace Volume {
         }
         
         /** Gets whether this cell is at the top of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderTop(const OctreeNode &root) const
         {
@@ -259,8 +265,10 @@ namespace Volume {
         }
         
         /** Gets whether this cell is at the back of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderBack(const OctreeNode &root) const
         {
@@ -268,8 +276,10 @@ namespace Volume {
         }
         
         /** Gets whether this cell is at the front of the given root cell.
+        @param root
+            The octree root node to test against.
         @return
-            True if so.
+            true if so.
         */
         inline bool isBorderFront(const OctreeNode &root) const
         {
@@ -492,31 +502,13 @@ namespace Volume {
             return Vector3(mFrom.x, mTo.y, mTo.z);
         }
 
-        /** Calculates the center value.
-        @param src
-            The volume source.
-        */
-        inline void setCenterValue(const Source *src)
-        {
-            Vector3 normal;
-            mCenterValue.w = src->getValueAndGradient(getCenter(), normal);
-            mCenterValue.x = normal.x;
-            mCenterValue.y = normal.y;
-            mCenterValue.z = normal.z;
-        }
-
         /** Raw setter for the center value.
         @param value
             The density value.
-        @param gradient
-            The gradient at this position.
         */
-        inline void setCenterValue(Real value, const Vector3 &gradient)
+        inline void setCenterValue(Vector4 value)
         {
-            mCenterValue.x = gradient.x;
-            mCenterValue.y = gradient.y;
-            mCenterValue.z = gradient.z;
-            mCenterValue.w = value;
+            mCenterValue = value;
         }
 
         /** Gets the center value.

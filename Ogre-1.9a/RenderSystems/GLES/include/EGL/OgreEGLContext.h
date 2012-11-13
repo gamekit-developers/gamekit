@@ -48,6 +48,9 @@ namespace Ogre {
             EGLContext(EGLDisplay eglDisplay, const EGLSupport* glsupport, ::EGLConfig fbconfig, ::EGLSurface drawable);
 
             virtual ~EGLContext();
+        
+            virtual void _createInternalResources(EGLDisplay eglDisplay, ::EGLConfig glconfig, ::EGLSurface drawable, ::EGLContext shareContext);
+            virtual void _destroyInternalResources();
 
             virtual void setCurrent();
             virtual void endCurrent();

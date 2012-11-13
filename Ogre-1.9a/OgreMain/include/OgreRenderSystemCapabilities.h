@@ -35,6 +35,7 @@ THE SOFTWARE.
 #include "OgreStringVector.h"
 #include "OgreResource.h"
 #include "OgreLogManager.h"
+#include "OgreHeaderPrefix.h"
 
 // Because there are more than 32 possible Capabilities, more than 1 int is needed to store them all.
 // In fact, an array of integers is used to store capabilities. However all the capabilities are defined in the single
@@ -126,14 +127,6 @@ namespace Ogre
 		RSC_GEOMETRY_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 26),
 		/// Supports rendering to vertex buffers
 		RSC_HWRENDER_TO_VERTEX_BUFFER = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 27),
-		/// Supports hardware tesselation hull programs
-		RSC_TESSELATION_HULL_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 28),
-		/// Supports hardware tesselation domain programs
-		RSC_TESSELATION_DOMAIN_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 29),
-		/// Supports hardware compute programs
-		RSC_COMPUTE_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 30),
-		/// Supports asynchronous hardware occlusion queries
-		RSC_HWOCCLUSION_ASYNCHRONOUS = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON, 31),
 
 		/// Supports compressed textures
 		RSC_TEXTURE_COMPRESSION = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 0),
@@ -165,6 +158,18 @@ namespace Ogre
 		RSC_CAN_GET_COMPILED_SHADER_BUFFER = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 12),
 		/// Supports dynamic linkage/shader subroutine
 		RSC_SHADER_SUBROUTINE = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 13),
+		/// Supports 3d texture render targets
+		RSC_HWRENDER_TO_TEXTURE_3D = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 14),
+		/// Supports 1d textures
+		RSC_TEXTURE_1D              = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 15),
+		/// Supports hardware tesselation hull programs
+		RSC_TESSELATION_HULL_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 16),
+		/// Supports hardware tesselation domain programs
+		RSC_TESSELATION_DOMAIN_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 17),
+		/// Supports hardware compute programs
+		RSC_COMPUTE_PROGRAM = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 18),
+		/// Supports asynchronous hardware occlusion queries
+		RSC_HWOCCLUSION_ASYNCHRONOUS = OGRE_CAPS_VALUE(CAPS_CATEGORY_COMMON_2, 19),
 
 		// ***** DirectX specific caps *****
 		/// Is DirectX feature "per stage constants" supported
@@ -317,6 +322,8 @@ namespace Ogre
 		Real mMaxPointSize;
 		/// Are non-POW2 textures feature-limited?
 		bool mNonPOW2TexturesLimited;
+		/// The maximum supported anisotropy
+		Real mMaxSupportedAnisotropy;
 		/// The number of vertex texture units supported
 		ushort mNumVertexTextureUnits;
 		/// Are vertex texture units shared with fragment processor?
@@ -692,6 +699,16 @@ namespace Ogre
 		{
 			return mNonPOW2TexturesLimited;
 		}
+		/// Set the maximum supported anisotropic filtering
+		void setMaxSupportedAnisotropy(Real s)
+		{
+			mMaxSupportedAnisotropy = s;
+		}
+		/// Get the maximum supported anisotropic filtering
+		Real getMaxSupportedAnisotropy()
+		{
+			return mMaxSupportedAnisotropy;
+		}
 
 		/// Set the number of vertex texture units supported
 		void setNumVertexTextureUnits(ushort n)
@@ -852,6 +869,9 @@ namespace Ogre
 	/** @} */
 	/** @} */
 } // namespace
+
+
+#include "OgreHeaderSuffix.h"
 
 #endif // __RenderSystemCapabilities__
 

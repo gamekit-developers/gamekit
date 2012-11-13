@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 #include "OgreArchive.h"
 #include "OgreArchiveFactory.h"
+#include "OgreHeaderPrefix.h"
 
 namespace Ogre {
 
@@ -64,7 +65,7 @@ namespace Ogre {
 
         OGRE_AUTO_MUTEX
     public:
-        FileSystemArchive(const String& name, const String& archType );
+        FileSystemArchive(const String& name, const String& archType, bool readOnly );
         ~FileSystemArchive();
 
         /// @copydoc Archive::isCaseSensitive
@@ -129,9 +130,9 @@ namespace Ogre {
         /// @copydoc FactoryObj::getType
         const String& getType(void) const;
         /// @copydoc FactoryObj::createInstance
-        Archive *createInstance( const String& name ) 
+        Archive *createInstance( const String& name, bool readOnly ) 
         {
-            return OGRE_NEW FileSystemArchive(name, "FileSystem");
+            return OGRE_NEW FileSystemArchive(name, "FileSystem", readOnly);
         }
         /// @copydoc FactoryObj::destroyInstance
         void destroyInstance(Archive* ptr) { delete ptr; }
@@ -141,5 +142,7 @@ namespace Ogre {
     /** @} */
 
 } // namespace Ogre
+
+#include "OgreHeaderSuffix.h"
 
 #endif // __FileSystem_H__
