@@ -612,6 +612,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	case OB_BODY_TYPE_DYNAMIC:      phy.m_type = GK_DYNAMIC;        break;
 	case OB_BODY_TYPE_NO_COLLISION: phy.m_type = GK_NO_COLLISION;   break;
 	case OB_BODY_TYPE_SENSOR :		phy.m_type = GK_SENSOR; break;
+	case OB_BODY_TYPE_NAVMESH :     phy.m_type = GK_NAVMESH; break;
 	}
 
 	if (bobj->type != OB_MESH)

@@ -431,10 +431,30 @@
 #define CD_MTEXPOLY                              15
 #define CD_MLOOPUV                               16
 #define CD_MLOOPCOL                              17
-#define CD_TANGENT                               18
-#define CD_MDISPS                                19
-#define CD_WEIGHT_MCOL                           20
-#define CD_NUMTYPES                              21
+#define CD_TANGENT								 18
+#define CD_MDISPS								 19
+#define CD_PREVIEW_MCOL							 20
+#define CD_ID_MCOL								 21
+#define CD_TEXTURE_MCOL							 22
+#define CD_CLOTH_ORCO							 23
+#define CD_RECAST								 24
+
+// BMESH
+#define CD_MPOLY		25
+#define CD_MLOOP		26
+#define CD_SHAPE_KEYINDEX	27
+#define CD_SHAPEKEY		28
+#define CD_BWEIGHT		29
+#define CD_CREASE		30
+#define CD_ORIGSPACE_MLOOP	31
+#define CD_PREVIEW_MLOOPCOL	32
+#define CD_BM_ELEM_PYPTR	33
+// ----
+#define CD_PAINT_MASK	34
+#define CD_GRID_PAINT_MASK	35
+#define CD_MVERT_SKIN	36
+#define CD_NUMTYPES		37
+
 #define CD_MASK_MVERT                            (1<<CD_MVERT)
 #define CD_MASK_MSTICKY                          (1<<CD_MSTICKY)
 #define CD_MASK_MDEFORMVERT                      (1<<CD_MDEFORMVERT)
@@ -1463,6 +1483,9 @@
 #define OB_BODY_TYPE_SOFT                        4
 #define OB_BODY_TYPE_OCCLUDER                    5
 #define OB_BODY_TYPE_SENSOR                      6
+#define OB_BODY_TYPE_NAVMESH                     7
+#define OB_BODY_TYPE_CHARACTER                   8
+
 #define OB_VIS_SENS                              1
 #define OB_VIS_CONT                              2
 #define OB_VIS_ACT                               4

@@ -283,7 +283,9 @@ enum gkPhysicsType
 	GK_DYNAMIC,
 	GK_RIGID,
 	GK_SOFT,
-	GK_SENSOR
+	GK_SENSOR,
+	GK_NAVMESH,
+	GK_CHARACTER
 };
 
 
