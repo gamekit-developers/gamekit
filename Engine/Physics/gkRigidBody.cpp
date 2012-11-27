@@ -216,7 +216,11 @@ void gkRigidBody::createConstraints(void)
 
 		if (!cprops.m_target.empty())
 		{
-			gkGameObject* target = scene->findInstancedObject(cprops.m_target);
+			gkGameObject* target;
+			if (!obj->isGroupInstance())
+				target = scene->findInstancedObject(cprops.m_target);
+			else
+				target = obj->getGroupInstance()->getObject(cprops.m_target);
 
 			GK_ASSERT(target && target->getAttachedBody());
 
