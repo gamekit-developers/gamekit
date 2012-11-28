@@ -83,7 +83,8 @@ namespace Ogre {
 
             HardwareUniformBufferSharedPtr
             createUniformBuffer(size_t sizeBytes, HardwareBuffer::Usage usage,bool useShadowBuffer, const String& name = "");
-
+  };
+  
 	/// GLESHardwareBufferManagerBase as a Singleton
 	class _OgreGLESExport GLESHardwareBufferManager : public HardwareBufferManager
 	{
