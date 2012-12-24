@@ -227,7 +227,10 @@ bool OgreKit::setup(void)
 		return false;
 	}
 
-	m_scene = blend->getMainScene();
+	m_scene = blend->getSceneByName("StartScene");
+	if (!m_scene)
+		m_scene = blend->getMainScene();
+
 	if (!m_scene)
 	{
 		gkPrintf("No usable scenes found in blend.\n");
