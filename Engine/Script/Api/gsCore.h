@@ -646,9 +646,9 @@ public:
 	gsDebugger(gsScene* sc);
 	~gsDebugger() {}
 
-	void drawLine(const gsVector3& from, const gsVector3& to, const gsVector3& color);
+	void drawLine(const gsVector3& from, const gsVector3& to, const gsVector3& color=gsVector3(1,1,1));
 	void drawObjectAxis(gsGameObject* ptr, float size);
-	void drawCurve(gsCurve* path, const gsVector3& color);
+	void drawCurve(gsCurve* path, const gsVector3& color=gsVector3(1,1,1));
 
 	void clear(void);
 };

@@ -15170,7 +15170,7 @@ fail:
 }
 
 
-static int _wrap_Debugger_drawLine(lua_State* L) {
+static int _wrap_Debugger_drawLine__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsDebugger *arg1 = (gsDebugger *) 0 ;
   gsVector3 *arg2 = 0 ;
@@ -15214,6 +15214,137 @@ fail:
 }
 
 
+static int _wrap_Debugger_drawLine__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsDebugger *arg1 = (gsDebugger *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 *arg3 = 0 ;
+  
+  SWIG_check_num_args("drawLine",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"gsDebugger *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"gsVector3 const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"gsVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawLine",1,SWIGTYPE_p_gsDebugger);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",3,SWIGTYPE_p_gsVector3);
+  }
+  
+  (arg1)->drawLine((gsVector3 const &)*arg2,(gsVector3 const &)*arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_drawLine(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsDebugger, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_Debugger_drawLine__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsDebugger, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (lua_isuserdata(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_Debugger_drawLine__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Debugger_drawLine'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    drawLine(gsDebugger *,gsVector3 const &,gsVector3 const &,gsVector3 const &)\n"
+    "    drawLine(gsDebugger *,gsVector3 const &,gsVector3 const &)\n");
+  lua_error(L);return 0;
+}
+
+
 static int _wrap_Debugger_drawObjectAxis(lua_State* L) {
   int SWIG_arg = 0;
   gsDebugger *arg1 = (gsDebugger *) 0 ;
@@ -15247,7 +15378,7 @@ fail:
 }
 
 
-static int _wrap_Debugger_drawCurve(lua_State* L) {
+static int _wrap_Debugger_drawCurve__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsDebugger *arg1 = (gsDebugger *) 0 ;
   gsCurve *arg2 = (gsCurve *) 0 ;
@@ -15281,6 +15412,110 @@ static int _wrap_Debugger_drawCurve(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_drawCurve__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsDebugger *arg1 = (gsDebugger *) 0 ;
+  gsCurve *arg2 = (gsCurve *) 0 ;
+  
+  SWIG_check_num_args("drawCurve",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawCurve",1,"gsDebugger *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("drawCurve",2,"gsCurve *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawCurve",1,SWIGTYPE_p_gsDebugger);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsCurve,0))){
+    SWIG_fail_ptr("Debugger_drawCurve",2,SWIGTYPE_p_gsCurve);
+  }
+  
+  (arg1)->drawCurve(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_drawCurve(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsDebugger, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsCurve, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Debugger_drawCurve__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsDebugger, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsCurve, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_Debugger_drawCurve__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Debugger_drawCurve'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    drawCurve(gsDebugger *,gsCurve *,gsVector3 const &)\n"
+    "    drawCurve(gsDebugger *,gsCurve *)\n");
+  lua_error(L);return 0;
 }
 
 
