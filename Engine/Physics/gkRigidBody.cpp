@@ -28,7 +28,7 @@
 #include "gkGameObject.h"
 #include "gkRigidBody.h"
 #include "gkScene.h"
-
+#include "gkGameObjectInstance.h"
 #include "btBulletDynamicsCommon.h"
 
 

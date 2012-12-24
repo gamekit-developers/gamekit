@@ -84,6 +84,7 @@
 #include "OgreEntity.h"
 #include "gkBone.h"
 #include "OgreTagPoint.h"
+#include "gkCurve.h"
 
 using Ogre::TagPoint;
 

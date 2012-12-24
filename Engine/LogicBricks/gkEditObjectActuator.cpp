@@ -34,6 +34,7 @@
 #include "OgreSceneNode.h"
 #include "gkSceneManager.h"
 #include "gkGameObjectManager.h"
+#include "Physics/gkRigidBody.h"
 
 
 

@@ -30,7 +30,7 @@
 #include "gkInstancedManager.h"
 #include "utSingleton.h"
 
-
+class gkCurve;
 
 class gkGameObjectManager : public gkInstancedManager, public utSingleton<gkGameObjectManager>
 {
