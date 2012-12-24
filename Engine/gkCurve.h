@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2012 Thomas Trocha
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,55 +24,40 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkEntityObject_h_
-#define _gkEntityObject_h_
+#ifndef _gkCurveObject_h_
+#define _gkCurveObject_h_
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
 
 
-class gkEntity : public gkGameObject
+class gkCurve : public gkGameObject
 {
 public:
-	gkEntity(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
-	virtual ~gkEntity();
-
-	GK_INLINE Ogre::Entity* getEntity(void) { return m_entity; }
-
-	GK_INLINE gkEntityProperties&  getEntityProperties(void) {return *m_entityProps;}
-	
-	GK_INLINE gkMesh* getMesh(void) {return m_entityProps->m_mesh; }
-	
-	GK_INLINE gkSkeleton* getSkeleton(void) {return m_skeleton;}
-	void          setSkeleton(gkSkeleton* skel);
-
-	void _resetPose(void);
+	gkCurve(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
+	virtual ~gkCurve() {}
 
 
-	// Remove only the entity but keep the rest.
-	void _destroyAsStaticGeometry(void);
+	GK_INLINE gkCurveProperties& getCurveProperties(void)           {return m_curveProps;}
 
-	void setMaterialName(const gkString& matName);
+	void updateProperties(void);
 
-protected:
+	int getPointCount() { return m_curveProps.m_points.size(); }
 
+	const gkVector3 getPoint(int nr);
 
-	virtual gkBoundingBox getAabb() const;
+	bool isCyclic() { return m_curveProps.m_isCyclic; }
 
-	gkGameObject* clone(const gkString& name);
-
-	gkEntityProperties*     m_entityProps;
-	Ogre::Entity*           m_entity;
-	gkSkeleton*             m_skeleton;
-
-	virtual void createInstanceImpl();
-	virtual void destroyInstanceImpl();
+	void showDebug();
 
 private:
-	// this one is not set at the beginning and is only filled by the last materialName
-	// set by setMaterialName(..)
-	gkString				m_materialNameCache;
+	gkGameObject* clone(const gkString& name);
+
+	gkCurveProperties       m_curveProps;
+
+	virtual void createInstanceImpl(void);
+	virtual void destroyInstanceImpl(void);
+
 };
 
-
-#endif//_gkEntityObject_h_
+#endif//_gkCurveObject_h_

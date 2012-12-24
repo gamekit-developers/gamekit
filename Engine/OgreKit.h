@@ -44,6 +44,7 @@
 #include "gkInput.h"
 #include "gkInstancedObject.h"
 #include "gkLight.h"
+#include "gkCurve.h"
 #include "gkLogger.h"
 #include "gkMathUtils.h"
 #include "gkMemoryTest.h"

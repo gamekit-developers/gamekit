@@ -37,6 +37,7 @@
 #include "gkScene.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
+#include "gkCurve.h"
 
 
 #ifdef OGREKIT_OPENAL_SOUND
@@ -293,4 +294,16 @@ Ogre::Real gkDebugger::getSquaredViewDepth(const Ogre::Camera* cam) const
 Ogre::Real gkDebugger::getBoundingRadius(void) const
 {
 	return m_radius;
+}
+
+void gkDebugger::drawCurve(gkCurve* curve, const gkVector3& color) {
+	const gkCurveProperties& props = curve->getCurveProperties();
+
+	for (int i=0;i<curve->getPointCount()-1;i++)
+	{
+		drawLine(curve->getPoint(i), curve->getPoint(i+1),color);
+	}
+	if (props.m_isCyclic) {
+		drawLine(curve->getPoint(curve->getPointCount()-1), curve->getPoint(0),color);
+	}
 }

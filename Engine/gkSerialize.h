@@ -226,6 +226,28 @@ public:
 };
 
 
+class gkCurveProperties
+{
+public:
+	enum CurveType
+	{
+		CU_Bezier,
+		CU_Spline,
+		CU_Points
+	};
+
+public:
+	gkCurveProperties() :m_type(CU_Points), m_isCyclic(false)
+	{
+
+	}
+
+	CurveType m_type;
+
+	utArray<gkVector3> m_points;
+	bool m_isCyclic;
+};
+
 class gkLightProperties
 {
 public:
@@ -426,7 +448,8 @@ enum gkGameObjectTypes
 	GK_ENTITY,
 	GK_OBJECT,
 	GK_SKELETON,
-	GK_PARTICLES
+	GK_PARTICLES,
+	GK_CURVE
 };
 
 enum gkGameObjectMode

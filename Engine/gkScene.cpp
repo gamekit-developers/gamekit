@@ -288,7 +288,17 @@ gkLight* gkScene::createLight(const gkHashedString& name)
 }
 
 
+gkCurve* gkScene::createCurve(const gkHashedString& name) {
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("Scene: Duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
+	gkCurve* gobj = gkGameObjectManager::getSingleton().createCurve(gkResourceName(name, getGroupName()));
+	addObject(gobj);
+	return gobj;
+}
 
 gkCamera* gkScene::createCamera(const gkHashedString& name)
 {

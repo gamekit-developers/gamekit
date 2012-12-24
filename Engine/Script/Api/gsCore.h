@@ -74,6 +74,7 @@ enum gsGameObjectTypes
 	OBT_ENTITY,
 	OBT_EMPTY,
 	OBT_SKELETON,
+	OBT_CURVE
 };
 
 
@@ -388,7 +389,7 @@ public:
 
 	gkCamera* getMainCamera(void);
 
-	gsRay* getPickRay();
+	gsRay* getPickRay(float x=-1,float y=-1);
 
 	void setUpdateFlags(unsigned int flags);
 
@@ -538,14 +539,23 @@ public:
 	gkGameObjectInstance* getGroupInstance();
 	bool             isGroupInstance();
 
-
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkInstancedObject);
 	OGRE_KIT_TEMPLATE_CAST(gkGameObject, m_object);
 //	OGRE_KIT_TEMPLATE_NEW(gsGameObject, gkGameObject);
 };
 
+class gsCurve : public gsGameObject
+{
+public:
+	gsCurve();
+	~gsCurve() {}
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsCurve, gkInstancedObject);
 
+	gsVector3 getPoint(int nr);
+	int getPointCount();
+	bool isCyclic();
+};
 
 class gsLight : public gsGameObject
 {
@@ -588,7 +598,7 @@ public:
 
 	bool hasCharacter(void);
 	gkCharacter* getCharacter(void);
-
+	void setMaterialName(const gkString& materialName);
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
 };
@@ -638,9 +648,12 @@ public:
 
 	void drawLine(const gsVector3& from, const gsVector3& to, const gsVector3& color);
 	void drawObjectAxis(gsGameObject* ptr, float size);
+	void drawCurve(gsCurve* path, const gsVector3& color);
 
 	void clear(void);
 };
+
+
 
 extern void sendMessage(const char* from,const char* to,const char* subject,const char* body);
 

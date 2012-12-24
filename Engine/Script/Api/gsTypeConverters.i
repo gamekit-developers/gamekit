@@ -131,6 +131,7 @@ static int gsWrapGameObject(lua_State *L, gkGameObject *obj)
     GS_LUA_OBJECT_RET(obj, Entity);
     GS_LUA_OBJECT_RET(obj, Light);
     GS_LUA_OBJECT_RET(obj, Skeleton);
+    GS_LUA_OBJECT_RET(obj, Curve);
     GS_LUA_OBJECT_WRAP_RET(obj, ParticleObject, Particles);
     
     return GS_LUA_OBJECT_STORE(obj, GameObject);

@@ -43,6 +43,7 @@
 #include "gkRecast.h"
 #endif
 
+class gkCurve;
 
 class gkScene : public gkInstancedObject
 {
@@ -104,6 +105,7 @@ public:
 	gkSkeleton*       createSkeleton(const gkHashedString& name);
 	gkMesh*           createMesh(const gkHashedString& name);
 	gkParticleObject* createParticleObject(const gkHashedString& name);
+	gkCurve*		  createCurve(const gkHashedString& name);
 
 	gkGameObject*     cloneObject(gkGameObject* obj, int life, bool instantiate = false);
 	void              endObject(gkGameObject* obj);

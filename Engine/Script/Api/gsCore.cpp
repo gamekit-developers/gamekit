@@ -1120,14 +1120,18 @@ gkLogicManager* gsScene::getLogicBrickManager()
 	return 0;
 }
 
-gsRay* gsScene::getPickRay(){
+gsRay* gsScene::getPickRay(float rayX,float rayY){
 	if (m_object){
-		gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 
-		gkScalar ncx = mse->position.x;
-		gkScalar ncy = mse->position.y;
+		if (rayX==-1 || rayY==-1)
+		{
+			gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
+			rayX = mse->position.x;
+			rayY = mse->position.y;
+		}
 
-		gkCam2ViewportRay pickRay = gkCam2ViewportRay(ncx, ncy);
+		gkCam2ViewportRay pickRay = gkCam2ViewportRay(rayX, rayY, 10000, cast<gkScene>());
+
 		if (!m_pickRay){
 			m_pickRay = new gsRay;
 		}
@@ -1944,6 +1948,10 @@ gkCharacter* gsEntity::getCharacter(void)
 	return get()->getAttachedCharacter();
 }
 
+void gsEntity::setMaterialName(const gkString& name) {
+	static_cast<gkEntity*>(m_object)->setMaterialName(name);
+}
+
 void gsSkeleton::attachObjectToBone(const gkString& boneName, gsGameObject* gsobj,gsVector3 loc,gsVector3 orientation,gsVector3 scale)
 {
 	if (m_object)
@@ -2021,6 +2029,37 @@ gsLight::gsLight(gkInstancedObject* ob) : gsGameObject(ob)
 }
 
 
+gsCurve::gsCurve()
+{
+}
+
+gsCurve::gsCurve(gkInstancedObject* ob) : gsGameObject(ob)
+{
+}
+
+int gsCurve::getPointCount()
+{
+	if (m_object){
+		return static_cast<gkCurve*>(m_object)->getPointCount();
+	}
+	return -1;
+}
+
+bool gsCurve::isCyclic()
+{
+	if (m_object){
+		return static_cast<gkCurve*>(m_object)->isCyclic();
+	}
+	return false;
+}
+
+gsVector3 gsCurve::getPoint(int nr)
+{
+	if (m_object){
+		return gsVector3(static_cast<gkCurve*>(m_object)->getPoint(nr));
+	}
+	return gsVector3(0,0,0);
+}
 
 
 void  gsCamera::setClipping(float start, float end)
@@ -2150,6 +2189,11 @@ void gsDebugger::drawObjectAxis(gsGameObject* ptr, float size)
 	}
 }
 
+void gsDebugger::drawCurve(gsCurve* curve, const gsVector3& color)
+{
+	if (m_debugger && curve)
+		m_debugger->drawCurve(curve->cast<gkCurve>(), gkVector3(color));
+}
 
 
 void gsDebugger::clear(void)
@@ -2276,6 +2320,8 @@ gkString gsGameObjectInstance::getName()
 {
 	return m_gobj?m_gobj->getName():"";
 }
+
+
 
 void import(const gkString& scriptName)
 {

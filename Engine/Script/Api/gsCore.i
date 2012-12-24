@@ -74,6 +74,7 @@ GS_SCRIPT_NAME(Particles)
 GS_SCRIPT_NAME(UserDefs)
 GS_SCRIPT_NAME(HUD)
 GS_SCRIPT_NAME(HUDElement)
+GS_SCRIPT_NAME(Curve)
 
 
 // Enums

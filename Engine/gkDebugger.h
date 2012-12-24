@@ -34,6 +34,7 @@
 #include "OgreHardwareVertexBuffer.h"
 
 class gkSoundProperties;
+class gkCurve;
 
 // for debugging / building line lists
 class gkDebugger : public Ogre::SimpleRenderable
@@ -57,6 +58,8 @@ public:
 	void drawLine(const gkVector3& from, const gkVector3& to, const gkVector3& color);
 
 	void clear(void);
+
+	void drawCurve(gkCurve* curve,const gkVector3& color=gkVector3(1, 0.5, 0.0));
 
 #ifdef OGREKIT_OPENAL_SOUND
 	void draw3dSound(const gkSoundProperties& props);

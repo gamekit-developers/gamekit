@@ -66,6 +66,7 @@ bool gkBlenderSceneConverter::validObject(Blender::Object* bobj)
 	case OB_CAMERA:     // Camera
 	case OB_MESH:       // Entity + Mesh
 	case OB_ARMATURE:   // SceneNode + Skeleton
+	case OB_CURVE:		// Curves
 		return true;
 	}
 	return false;
@@ -338,6 +339,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		case OB_CAMERA:     gobj = m_gscene->createCamera(name);    break;
 		case OB_MESH:       gobj = m_gscene->createEntity(name);    break;
 		case OB_ARMATURE:   gobj = m_gscene->createSkeleton(name);  break;
+		case OB_CURVE:      gobj = m_gscene->createCurve(name);     break;
 		}
 
 	}
@@ -362,6 +364,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		case OB_CAMERA:     convertObjectCamera(gobj, bobj);      break;
 		case OB_MESH:       convertObjectMesh(gobj, bobj);        break;
 		case OB_ARMATURE:   convertObjectArmature(gobj, bobj);    break;
+		case OB_CURVE:		convertObjectCurve(gobj, bobj);		  break;
 		}
 
 		convertObjectParticles(gobj, bobj); //need mesh info
@@ -1018,4 +1021,29 @@ void gkBlenderSceneConverter::convert(bool createGroupInstances)
 	}
 
 	m_logic->resolveLinks();
+}
+
+void gkBlenderSceneConverter::convertObjectCurve(gkGameObject* gobj, Blender::Object* bobj)
+{
+	GK_ASSERT(gobj->getType() == GK_CURVE && bobj->data);
+
+	gkCurve* obj = static_cast<gkCurve*>(gobj);
+
+	gkCurveProperties& props = obj->getCurveProperties();
+	Blender::Curve* curve = static_cast<Blender::Curve*>(bobj->data);
+	Blender::Nurb* nurb = (Blender::Nurb* )curve->nurb.first;
+	if (nurb->type != CU_NURBS) {
+		gkLogger::write("Only Nurb-Curves are supported, atm! ("+obj->getName()+")");
+		return;
+	}
+	props.m_isCyclic = (nurb->flagu & CU_CYCLIC) || (nurb->flagv & CU_CYCLIC);
+
+	for (int i=0;i<nurb->pntsu;i++){
+		short int nurbType = nurb->type;
+
+		const Blender::BPoint& pnt = nurb->bp[i];
+		// TODO: check if these are converted properly
+		gkVector3 point(pnt.vec[0],pnt.vec[1],pnt.vec[2]);
+		props.m_points.push_back(point);
+	}
 }

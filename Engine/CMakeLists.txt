@@ -51,6 +51,7 @@ set(Core_SOURCE
 	gkWindow.cpp
 	gkViewport.cpp
 	gkVariable.cpp
+	gkCurve.cpp
 )
 
 set(Core_SOURCE_2
@@ -114,6 +115,7 @@ set(Core_HEADER
 	gkWindowSystem.h
 	gkWindow.h
 	gkViewport.h
+	gkCurve.h
 	${CMAKE_BINARY_DIR}/Engine/gkSettings.h
 	OgreKit.h
 )

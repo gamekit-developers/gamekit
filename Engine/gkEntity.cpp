@@ -190,3 +190,9 @@ gkBoundingBox gkEntity::getAabb() const
 	return m_entityProps->m_mesh ? m_entityProps->m_mesh->getBoundingBox() : gkGameObject::getAabb();
 }
 
+void gkEntity::setMaterialName(const gkString& matName) {
+	if (m_materialNameCache!=matName) {
+		m_entity->setMaterialName(matName);
+		m_materialNameCache = matName;
+	}
+}

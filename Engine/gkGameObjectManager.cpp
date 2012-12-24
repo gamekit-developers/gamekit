@@ -32,6 +32,7 @@
 #include "gkLight.h"
 #include "gkSkeleton.h"
 #include "Ogre/gkOgreParticleObject.h"
+#include "gkCurve.h"
 
 
 gkGameObjectManager::gkGameObjectManager()
@@ -84,6 +85,11 @@ gkParticleObject* gkGameObjectManager::createParticleObject(const gkResourceName
 	return static_cast<gkParticleObject*>(create(name));
 }
 
+gkCurve* gkGameObjectManager::createCurve(const gkResourceName& name)
+{
+	m_currentType = GK_CURVE;
+	return static_cast<gkCurve*>(create(name));
+}
 
 gkGameObject* gkGameObjectManager::getObject(const gkResourceName& name)
 {
@@ -120,6 +126,12 @@ gkParticleObject * gkGameObjectManager::getParticleObject(const gkResourceName& 
 	return ob ? ob->getParticleObject() : 0;
 }
 
+gkCurve* gkGameObjectManager::getCurve(const gkResourceName& name)
+{
+	gkGameObject* ob = getObject(name);
+	return ob ? ob->getCurve() : 0;
+}
+
 
 gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
@@ -135,6 +147,7 @@ gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gk
 #ifdef OGREKIT_USE_PARTICLE
 	case GK_PARTICLES: return new gkOgreParticleObject(this, name, handle);
 #endif
+	case GK_CURVE:	   return new gkCurve(this,name,handle);
 	}
 	return new gkGameObject(this, name, handle);
 }
