@@ -154,7 +154,6 @@ gkSubMesh* gkSubMesh::clone(void)
 	nme->m_tris             = m_tris;
 	nme->m_verts            = m_verts;
 	nme->m_uvlayers         = m_uvlayers;
-	nme->m_material         = m_material;
 	nme->m_hasVertexColors  = m_hasVertexColors;
 	nme->m_boundsInit       = false;
 	nme->m_defverts         = m_defverts;
