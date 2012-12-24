@@ -49,7 +49,7 @@ public:
 			btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace);
 	};
 	
-	gkRayTest();
+	gkRayTest(gkScene* scene=0);
 
 	~gkRayTest();
 
@@ -79,6 +79,8 @@ private:
 	const btCollisionObject* m_collisionObject;
 
 	gkScalar m_hitFraction;
+
+	gkScene* m_scene;
 };
 
 

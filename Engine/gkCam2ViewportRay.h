@@ -34,7 +34,7 @@
 class gkCam2ViewportRay : public Ogre::Ray
 {
 public:
-	gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength = 10000);
+	gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength = 10000, gkScene* scene=0);
 
 	~gkCam2ViewportRay();
 };

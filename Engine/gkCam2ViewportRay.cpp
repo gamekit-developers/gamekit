@@ -33,9 +33,9 @@
 #include "gkDynamicsWorld.h"
 #include "OgreRenderWindow.h"
 
-gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength)
+gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength, gkScene* scene)
 {
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+	gkScene* pScene = scene?scene:gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
 

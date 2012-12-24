@@ -53,11 +53,11 @@ private:
 	gkRayTest* m_ray;
 
 public:
-	gsRayTest();
+	gsRayTest(gsScene* scene=0);
 	~gsRayTest();
 
 
-	bool cast(const gsRay& ray);
+	bool cast(gsRay& ray, const gkString& prop="", gsGameObject* excludeObject=0);
 
 	gsVector3 getHitPoint(void);
 	gsVector3 getHitNormal(void);

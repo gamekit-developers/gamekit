@@ -41,9 +41,12 @@ void gsDynamicsWorld::exportBullet(const gkString& fileName)
 	m_world->exportBullet(fileName);
 }
 
-gsRayTest::gsRayTest()
+gsRayTest::gsRayTest(gsScene* scene)
 {
-	m_ray = new gkRayTest();
+	if (scene)
+		m_ray = new gkRayTest(scene->cast<gkScene>());
+	else
+		m_ray = new gkRayTest();
 }
 
 
@@ -54,9 +57,16 @@ gsRayTest::~gsRayTest()
 }
 
 
-bool gsRayTest::cast(const gsRay& ray)
+bool gsRayTest::cast(gsRay& ray, const gkString& prop, gsGameObject* excludeObj)
 {
-	return m_ray->collides(ray);
+	if (prop.empty() && !excludeObj)
+		return m_ray->collides(ray);
+	else{
+		xrayFilter xray(excludeObj?excludeObj->get():0, prop, "");
+		gkVector3 from(ray.getOrigin());
+		gkVector3 to(ray.getOrigin()+ray.getDirection()*100);
+		return m_ray->collides(from,to,xray);
+	}
 }
 
 

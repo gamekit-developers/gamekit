@@ -32,11 +32,13 @@
 #include "btBulletDynamicsCommon.h"
 
 
-gkRayTest::gkRayTest()
+gkRayTest::gkRayTest(gkScene* scene)
 	: m_hitPointWorld(gkVector3::ZERO),
 	  m_hitNormalWorld(gkVector3::ZERO),
-	  m_collisionObject(0)
+	  m_collisionObject(0),
+	  m_hitFraction(0)
 {
+	m_scene = scene?scene:gkEngine::getSingleton().getActiveScene();
 }
 
 gkRayTest::~gkRayTest()
@@ -61,11 +63,10 @@ bool gkRayTest::collides(const gkVector3& from, const gkVector3& to,
 	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
 	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
 
-	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+	btDynamicsWorld* pWorld = m_scene->getDynamicsWorld()->getBulletWorld();
 
 	GK_ASSERT(pWorld);
 
