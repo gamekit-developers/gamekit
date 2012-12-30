@@ -69,7 +69,20 @@ gkGameObjectInstance::~gkGameObjectInstance()
 	m_objects.clear();
 }
 
+void gkGameObjectInstance::_setExternalRoot(gkGameObjectGroup* group, gkGameObject* root)
+{
+	GK_ASSERT(!m_parent);
 
+	if (!m_parent)
+	{
+		m_parent = group;
+		m_owner = root;
+
+		if (root != 0)
+			root->addEventListener(this);
+
+	}
+}
 
 void gkGameObjectInstance::_updateFromGroup(gkGameObjectGroup* group)
 {
@@ -80,7 +93,7 @@ void gkGameObjectInstance::_updateFromGroup(gkGameObjectGroup* group)
 		m_parent = group;
 
 
-		// create the object
+		// create the root object
 		m_owner = gkGameObjectManager::getSingleton().createObject(m_name);
 		if (m_owner != 0)
 			m_owner->addEventListener(this);
@@ -132,7 +145,39 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 	ngobj->setLayer(m_layer);
 }
 
+void gkGameObjectInstance::addGroupInstance(const gkGameObjectGroup::GroupInstance* grpDesc)
+{
+	if (!grpDesc)
+		return;
 
+
+	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
+	if (mgr->exists(grpDesc->m_groupName))
+	{
+		gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(grpDesc->m_groupName);
+
+		gkScene* toScene = m_owner->getOwner();
+		// clone the root with all of its properties and logicbricks
+		gkGameObject* rootClone = grpDesc->m_root->clone(gkUtils::getUniqueName(grpDesc->m_root->getName()));
+		gkGameObjectInstance* inst = ggobj->createGroupInstance(toScene, gkResourceName(gkUtils::getUniqueName("gi"+grpDesc->m_root->getName()), ""), rootClone, toScene->getLayer());
+
+		gkGameObject* instRoot = inst->getRoot();
+
+		// store the inital-transformstates
+		gkTransformState initalTransformState = instRoot->getTransformState();
+		m_objInitialTransformstates.insert(instRoot,initalTransformState);
+
+		m_groupInstances.insert(grpDesc->m_root->getName(), inst);
+
+		// modify the parent (if there is one) to fit the group's uid
+		gkString propParent = instRoot->getProperties().m_parent;
+		if (!propParent.empty())
+		{
+			instRoot->getProperties().m_parent = propParent + m_uidName;
+		}
+	}
+
+}
 
 
 gkGameObject* gkGameObjectInstance::getObject(const gkHashedString& name)
@@ -228,6 +273,26 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 		initalTransformState->toMatrix(clocal);
 		obj->setTransform(plocal * clocal);
 	}
+
+	GroupInstances::Iterator grpInstIter = m_groupInstances.iterator();
+	while (grpInstIter.hasMoreElements())
+	{
+		gkGameObjectInstance* ginst = grpInstIter.getNext().second;
+
+		gkGameObject* obj = ginst->getRoot();
+		if (obj->hasParent())
+		{
+			continue;
+		}
+
+		gkTransformState* initalTransformState = m_objInitialTransformstates.get(obj);
+
+		// Update transform relative to owner
+		gkMatrix4 clocal;
+		initalTransformState->toMatrix(clocal);
+		obj->setTransform(plocal * clocal);
+	}
+
 }
 
 
@@ -364,6 +429,17 @@ void gkGameObjectInstance::createInstanceImpl(void)
 			parentingPhysicsObjs.insert(gobj);
 		}
 	}
+
+	// instantiate nested group-instances
+	{
+		GroupInstances::Iterator iter = m_groupInstances.iterator();
+		while (iter.hasMoreElements()){
+			gkGameObjectInstance* inst = iter.getNext().second;
+			inst->createInstance();
+			// add the group-instances root to be checked for parenting purposes
+			parentingPhysicsObjs.insert(inst->getRoot());
+		}
+	}
 	scene->_applyBuiltinParents(parentingPhysicsObjs);
 	scene->_applyBuiltinPhysics(parentingPhysicsObjs);
 
@@ -397,6 +473,14 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 		gobj->setOwner(0);
 		gobj->setParent(0);
 	}
+
+	GroupInstances::Iterator grpInstIter = m_groupInstances.iterator();
+	while (grpInstIter.hasMoreElements())
+	{
+		gkGameObjectInstance* gobj = grpInstIter.getNext().second;
+		gobj->destroyInstance();
+	}
+
 	m_owner->destroyInstance();
 }
 

@@ -71,7 +71,14 @@ gkGameObjectGroup::~gkGameObjectGroup()
 	m_objects.clear();
 }
 
+void gkGameObjectGroup::addGroup(const gkString& groupName, gkGameObject* groupRoot)
+{
+	if (!groupRoot)
+		return;
 
+	GroupInstance* grpInstance = new GroupInstance(groupName, groupRoot);
+	m_groupInstances.push_back(grpInstance);
+}
 
 void gkGameObjectGroup::addObject(gkGameObject* gobj)
 {
@@ -144,7 +151,7 @@ void gkGameObjectGroup::destroyAllInstances(void)
 }
 
 
-gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, const gkResourceName& name, UTuint32 layer )
+gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, const gkResourceName& name, gkGameObject* root, UTuint32 layer )
 {
 	GK_ASSERT(m_instanceManager);
 
@@ -155,7 +162,11 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, con
 	}
 
 	gkGameObjectInstance* newInst = m_instanceManager->create<gkGameObjectInstance>(name);
-	newInst->_updateFromGroup(this);
+	if (!root)
+		newInst->_updateFromGroup(this);
+	else
+		newInst->_setExternalRoot(this,root);
+
 	scene->addObject(newInst->getRoot());
 	newInst->setLayer(layer);
 
@@ -169,6 +180,10 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, con
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 		newInst->addObject(iter.getNext().second);
+
+	GroupInstances::Iterator grpInstIter = m_groupInstances.iterator();
+	while (grpInstIter.hasMoreElements())
+		newInst->addGroupInstance(grpInstIter.getNext());
 
 	return newInst;
 }

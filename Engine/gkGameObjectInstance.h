@@ -36,10 +36,13 @@ class gkGameObjectInstance : public gkInstancedObject, public gkGameObject::Noti
 {
 public:
 	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
+	typedef utHashTable<gkHashedString, gkGameObjectInstance*> GroupInstances;
+
 	typedef utHashTable<utPointerHashKey, gkTransformState> InitialTransformstates;
 
 protected:
 	Objects                 m_objects;
+	GroupInstances			m_groupInstances;
 	gkTransformState        m_transform;
 	InitialTransformstates  m_objInitialTransformstates;
 
@@ -72,7 +75,7 @@ public:
 
 	///addObject will create a clone of this object, then add it the main list.
 	void          addObject(gkGameObject* gobj);
-
+	void		  addGroupInstance(const gkGameObjectGroup::GroupInstance* inst);
 
 
 	bool          hasObject(const gkHashedString& name);
@@ -91,7 +94,7 @@ public:
 	                  bool tsAngLocal = true);
 
 	void _updateFromGroup(gkGameObjectGroup* group);
-
+	void _setExternalRoot(gkGameObjectGroup* group, gkGameObject* root);
 
 	GK_INLINE gkTransformState&      getOwnerTransform(void)  {return m_transform;}
 	GK_INLINE gkGameObjectGroup*     getGroup(void)           {return m_parent;}

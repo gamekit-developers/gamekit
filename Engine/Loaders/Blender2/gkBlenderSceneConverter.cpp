@@ -193,7 +193,7 @@ void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup* gobj, Blende
 	        group = (Blender::GroupObject*)group->next)
 	{
 		Blender::Object* gob = group->ob;
-		if (gob->transflag& OB_DUPLIGROUP && gob->dup_group != 0)
+		if ( (gob->transflag & OB_DUPLIGROUP) && gob->dup_group != 0)
 			convertObjectGroup(gobj, gob);
 		else
 		{
@@ -243,11 +243,26 @@ void gkBlenderSceneConverter::convertGroups()
 				if (!validObject(bobj))
 					continue;
 
-				gkGameObject* gobj = m_gscene->getObject(GKB_IDNAME(bobj));
+				// is object a group-instance?
+				if ( (bobj->transflag& OB_DUPLIGROUP) && bobj->dup_group != 0)
+				{
+					gkGameObject* gobj = m_gscene->createObject(gkString(GKB_IDNAME(bobj))+"_grproot");
+					convertObject(bobj,gobj);
 
-				// add it to the list
-				if (gobj)
-					group->addObject(gobj);
+					// Owning group
+					Blender::Group* bgobj = bobj->dup_group;
+					const gkString instGroupName(GKB_IDNAME(bgobj));
+					if (gobj)
+						group->addGroup(instGroupName,gobj);
+				}
+				else
+				{
+					gkGameObject* gobj = m_gscene->getObject(GKB_IDNAME(bobj));
+
+					// add it to the list
+					if (gobj)
+						group->addObject(gobj);
+				}
 			}
 		}
 
@@ -282,7 +297,7 @@ void gkBlenderSceneConverter::convertGroupInstances()
 				continue;
 
 			// only concentrate on the group-instances
-			if (bobj->transflag& OB_DUPLIGROUP && bobj->dup_group != 0)
+			if ( (bobj->transflag & OB_DUPLIGROUP) && bobj->dup_group != 0)
 				groups.push_back(bobj);
 		}
 
@@ -307,7 +322,8 @@ void gkBlenderSceneConverter::convertGroupInstances()
 				gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
 
 
-				gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName),bobj->lay);
+				gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName),0,bobj->lay);
+				inst->getRoot()->_makeGroup(ggobj);
 				inst->getRoot()->_makeGroupInstance(inst);
 				if (inst)
 					convertObject(bobj, inst->getRoot());
@@ -729,6 +745,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 		break;
 	case OB_BOUND_CAPSULE:
 		phy.m_shape = SH_CAPSULE;
+		break;
 	}
 		
 		

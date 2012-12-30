@@ -42,6 +42,16 @@ class gkGameObjectGroup : public gkResource
 public:
 	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
 
+	struct GroupInstance {
+		gkGameObject* m_root;
+		gkString m_groupName;
+
+		GroupInstance(const gkString& groupName, gkGameObject* root)
+			: m_root(root), m_groupName(groupName)
+		{}
+	};
+
+	typedef utArray<GroupInstance*> GroupInstances;
 
 
 	class InstanceManager : public gkInstancedManager
@@ -66,6 +76,7 @@ protected:
 	Ogre::StaticGeometry*   m_geometry;
 	UTsize                  m_handle;
 	Objects                 m_objects;
+	GroupInstances			m_groupInstances;
 	InstanceManager*        m_instanceManager;
 
 
@@ -76,6 +87,7 @@ public:
 
 
 	void addObject(gkGameObject* v);
+	void addGroup(const gkString& groupName, gkGameObject* groupRoot);
 	void destroyObject(gkGameObject* v);
 
 	///Destroys all gkGameObjectInstance objects managed by this group.
@@ -87,7 +99,7 @@ public:
 	gkGameObject*  getObject(const gkHashedString& name);
 
 
-	gkGameObjectInstance* createGroupInstance(gkScene* scene, const gkResourceName& name, UTuint32 layer=0);
+	gkGameObjectInstance* createGroupInstance(gkScene* scene, const gkResourceName& name, gkGameObject* root=0, UTuint32 layer=0);
 	void                  destroyGroupInstance(gkGameObjectInstance* inst);
 
 
@@ -119,7 +131,7 @@ public:
 
 	GK_INLINE InstanceManager&           getInstances(void)      {GK_ASSERT(m_instanceManager); return *m_instanceManager;}
 	GK_INLINE Objects&                   getObjects(void)        {return m_objects;}
-	GK_INLINE bool                       isEmpty(void)           {return m_objects.empty();}
+	GK_INLINE bool                       isEmpty(void)           {return m_objects.empty() && m_groupInstances.empty();}
 
 
 
