@@ -634,6 +634,9 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	case OB_BODY_TYPE_NAVMESH :     phy.m_type = GK_NAVMESH; break;
 	}
 
+	phy.m_colGroupMask = bobj->col_group;
+	phy.m_colMask = bobj->col_mask;
+
 	if (bobj->type != OB_MESH)
 	{
 		if (!(bobj->gameflag & OB_ACTOR))
