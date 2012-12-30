@@ -96,14 +96,23 @@ void gkCharacter::create(void)
 
 	btCollisionShape* pShape = ghost->getCollisionShape();
 
-	gkScalar stepHeight = getAabb().getSize().z / 1.5f;
+	gkPhysicsProperties& physProps = m_object->getProperties().m_physics;
+
+	gkScalar stepHeight = physProps.m_charStepHeight==-1
+							?getAabb().getSize().z / 1.5f
+							:physProps.m_charStepHeight;
 
 	m_character = new btKinematicCharacterController(
 	    ghost, static_cast<btConvexShape*>(ghost->getCollisionShape()), stepHeight);
 
+
+	m_character->setJumpSpeed(physProps.m_charJumpSpeed);
+	m_character->setFallSpeed(physProps.m_charFallSpeed);
+
 	m_character->setUpAxis(2);
 
-	dyn->addCollisionObject(ghost, btBroadphaseProxy::CharacterFilter);
+//	dyn->addCollisionObject(ghost, btBroadphaseProxy::CharacterFilter);
+	dyn->addCollisionObject(ghost, physProps.m_colGroupMask, physProps.m_colMask);
 
 	dyn->addAction(this);
 }
@@ -220,10 +229,17 @@ void gkCharacter::setRotation(const gkVector3& axis, gkScalar scalar)
 	m_character->getGhostObject()->getWorldTransform().setBasis(orn);
 }
 
-void gkCharacter::setJumpSpeed(gkScalar scalar)
+void gkCharacter::setJumpSpeed(gkScalar jumpSpeed)
 {
-	m_character->setJumpSpeed(scalar);
+	m_character->setJumpSpeed(jumpSpeed);
 }
+
+
+void gkCharacter::setFallSpeed(gkScalar fallSpeed)
+{
+	m_character->setFallSpeed(fallSpeed);
+}
+
 
 void gkCharacter::jump(void)
 {

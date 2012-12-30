@@ -61,7 +61,9 @@ public:
 
 	void setRotation(const gkVector3& axis, gkScalar scalar);
 
-	void setJumpSpeed(gkScalar scalar);
+	void setJumpSpeed(gkScalar jumpSpeed);
+	void setFallSpeed(gkScalar fallSpeed);
+
 	void jump(void);
 
 	bool isOnGround(void);

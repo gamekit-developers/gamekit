@@ -397,7 +397,10 @@ public:
 		    m_restitution(0.f),
 		    m_friction(0.5f),
 			m_colMask(-2),
-			m_colGroupMask(-2)
+			m_colGroupMask(-2),
+			m_charStepHeight(-1),
+			m_charJumpSpeed(-1),
+			m_charFallSpeed(-1)
 	{
 	}
 
@@ -417,6 +420,9 @@ public:
 	gkScalar    m_friction;
 	CollisionMask m_colMask;
 	CollisionMask m_colGroupMask;
+	gkScalar m_charStepHeight;
+	gkScalar m_charJumpSpeed;
+	gkScalar m_charFallSpeed;
 
 	utArray<gkPhysicsConstraintProperties> m_constraints;
 
