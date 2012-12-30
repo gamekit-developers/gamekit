@@ -723,7 +723,7 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 	if (obj->getPhysicsController())
 		m_physicsWorld->destroyObject(obj->getPhysicsController());
 
-	if (obj->hasVariable("gk_character"))
+	if (obj->hasVariable("gk_character") || props.m_physics.m_type==GK_CHARACTER )
 	{
 		gkCharacter* character = m_physicsWorld->createCharacter(obj);
 		obj->attachCharacter(character);
