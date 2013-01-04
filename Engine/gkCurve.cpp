@@ -53,8 +53,6 @@ void gkCurve::createInstanceImpl(void)
 {
 	gkGameObject::createInstanceImpl();
 
-	GK_ASSERT(!m_light);
-
 // TODO
 }
 
@@ -62,8 +60,6 @@ void gkCurve::createInstanceImpl(void)
 
 void gkCurve::destroyInstanceImpl(void)
 {
-	GK_ASSERT(m_light);
-
 
 	gkGameObject::destroyInstanceImpl();
 }
