@@ -64,7 +64,7 @@ bool gkRayTest::collides(const gkVector3& from, const gkVector3& to,
 	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 
 
-	GK_ASSERT(pScene);
+	GK_ASSERT(m_scene);
 
 	btDynamicsWorld* pWorld = m_scene->getDynamicsWorld()->getBulletWorld();
 
