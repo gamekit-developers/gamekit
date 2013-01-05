@@ -684,11 +684,13 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	phy.m_formFactor    = bobj->formfactor;
 	phy.m_margin        = bobj->margin;
 
-	phy.m_colGroupMask = bobj->col_group;
-	phy.m_colMask = bobj->col_mask;
-	phy.m_charStepHeight = bobj->step_height;
-	phy.m_charJumpSpeed = bobj->jump_speed;
-	phy.m_charFallSpeed = bobj->fall_speed;
+	if (bobj->col_group>0 && bobj->col_mask>0) {
+		phy.m_colGroupMask = bobj->col_group;
+		phy.m_colMask = bobj->col_mask;
+		phy.m_charStepHeight = bobj->step_height;
+		phy.m_charJumpSpeed = bobj->jump_speed;
+		phy.m_charFallSpeed = bobj->fall_speed;
+	}
 
 	if (gobj->hasVariable("gk_collisionmask")){
 		phy.m_colMask = gobj->getVariable("gk_collisionmask")->getValueInt();
