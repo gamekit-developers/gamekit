@@ -134,6 +134,7 @@ public:
 
 
 	gkBoundingBox&       getBoundingBox(void);
+    void updateBounds(void);
 
 	gkMaterialProperties& getMaterial(void)                 {return *m_material;}
 
@@ -175,10 +176,10 @@ public:
 	typedef utArray<gkSubMesh*>             SubMeshArray;
 	typedef utArrayIterator<SubMeshArray>   SubMeshIterator;
 	typedef utArray<gkVertexGroup*>         VertexGroups;
+	SubMeshArray         m_submeshes;
 
 private:
 
-	SubMeshArray         m_submeshes;
 	gkBoundingBox        m_bounds;
 	bool                 m_boundsInit;
 	VertexGroups         m_groups;
@@ -200,6 +201,7 @@ public:
 
 
 	gkBoundingBox& getBoundingBox(void);
+    void updateBounds(void);
 
 	btTriangleMesh*          getTriMesh(void);
 	gkMaterialProperties&    getFirstMaterial(void);

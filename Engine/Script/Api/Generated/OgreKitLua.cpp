@@ -1517,95 +1517,103 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gkGameObjectInstance swig_types[5]
 #define SWIGTYPE_p_gkLogicManager swig_types[6]
 #define SWIGTYPE_p_gkLuaCurState swig_types[7]
-#define SWIGTYPE_p_gkProcessManager swig_types[8]
-#define SWIGTYPE_p_gkScalar swig_types[9]
-#define SWIGTYPE_p_gkScene swig_types[10]
-#define SWIGTYPE_p_gsActionActuator swig_types[11]
-#define SWIGTYPE_p_gsActuator swig_types[12]
-#define SWIGTYPE_p_gsActuatorSensor swig_types[13]
-#define SWIGTYPE_p_gsAlwaysSensor swig_types[14]
-#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[15]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[16]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[17]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[18]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[19]
-#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[20]
-#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[21]
-#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[22]
-#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[23]
-#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[24]
-#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[25]
-#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[26]
-#define SWIGTYPE_p_gsBrick swig_types[27]
-#define SWIGTYPE_p_gsCamera swig_types[28]
-#define SWIGTYPE_p_gsCharacter swig_types[29]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[30]
-#define SWIGTYPE_p_gsController swig_types[31]
-#define SWIGTYPE_p_gsCurve swig_types[32]
-#define SWIGTYPE_p_gsDebugger swig_types[33]
-#define SWIGTYPE_p_gsDelaySensor swig_types[34]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[35]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[36]
-#define SWIGTYPE_p_gsEngine swig_types[37]
-#define SWIGTYPE_p_gsEntity swig_types[38]
-#define SWIGTYPE_p_gsExpressionController swig_types[39]
-#define SWIGTYPE_p_gsFSM swig_types[40]
-#define SWIGTYPE_p_gsGameActuator swig_types[41]
-#define SWIGTYPE_p_gsGameObject swig_types[42]
-#define SWIGTYPE_p_gsGameObjectInstance swig_types[43]
-#define SWIGTYPE_p_gsHUD swig_types[44]
-#define SWIGTYPE_p_gsHUDElement swig_types[45]
-#define SWIGTYPE_p_gsJoystick swig_types[46]
-#define SWIGTYPE_p_gsKeyboard swig_types[47]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[48]
-#define SWIGTYPE_p_gsLight swig_types[49]
-#define SWIGTYPE_p_gsLogicManager swig_types[50]
-#define SWIGTYPE_p_gsLogicObject swig_types[51]
-#define SWIGTYPE_p_gsLogicOpController swig_types[52]
-#define SWIGTYPE_p_gsLuaManager swig_types[53]
-#define SWIGTYPE_p_gsLuaScript swig_types[54]
-#define SWIGTYPE_p_gsMessageActuator swig_types[55]
-#define SWIGTYPE_p_gsMessageSensor swig_types[56]
-#define SWIGTYPE_p_gsMotionActuator swig_types[57]
-#define SWIGTYPE_p_gsMouse swig_types[58]
-#define SWIGTYPE_p_gsMouseSensor swig_types[59]
-#define SWIGTYPE_p_gsNearSensor swig_types[60]
-#define SWIGTYPE_p_gsObject swig_types[61]
-#define SWIGTYPE_p_gsParentActuator swig_types[62]
-#define SWIGTYPE_p_gsParticles swig_types[63]
-#define SWIGTYPE_p_gsProcess swig_types[64]
-#define SWIGTYPE_p_gsProcessManager swig_types[65]
-#define SWIGTYPE_p_gsProperty swig_types[66]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[67]
-#define SWIGTYPE_p_gsPropertySensor swig_types[68]
-#define SWIGTYPE_p_gsQuaternion swig_types[69]
-#define SWIGTYPE_p_gsRadarSensor swig_types[70]
-#define SWIGTYPE_p_gsRandomActuator swig_types[71]
-#define SWIGTYPE_p_gsRandomSensor swig_types[72]
-#define SWIGTYPE_p_gsRay swig_types[73]
-#define SWIGTYPE_p_gsRaySensor swig_types[74]
-#define SWIGTYPE_p_gsRayTest swig_types[75]
-#define SWIGTYPE_p_gsScene swig_types[76]
-#define SWIGTYPE_p_gsSceneActuator swig_types[77]
-#define SWIGTYPE_p_gsScriptController swig_types[78]
-#define SWIGTYPE_p_gsSensor swig_types[79]
-#define SWIGTYPE_p_gsSkeleton swig_types[80]
-#define SWIGTYPE_p_gsSoundActuator swig_types[81]
-#define SWIGTYPE_p_gsStateActuator swig_types[82]
-#define SWIGTYPE_p_gsSweptTest swig_types[83]
-#define SWIGTYPE_p_gsTouchSensor swig_types[84]
-#define SWIGTYPE_p_gsUserDefs swig_types[85]
-#define SWIGTYPE_p_gsVector3 swig_types[86]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[87]
-#define SWIGTYPE_p_gsWhenEvent swig_types[88]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[89]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[90]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[91]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[92]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[93]
-#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[94]
-static swig_type_info *swig_types[96];
-static swig_module_info swig_module = {swig_types, 95, 0, 0, 0, 0};
+#define SWIGTYPE_p_gkMesh swig_types[8]
+#define SWIGTYPE_p_gkProcessManager swig_types[9]
+#define SWIGTYPE_p_gkScalar swig_types[10]
+#define SWIGTYPE_p_gkScene swig_types[11]
+#define SWIGTYPE_p_gkSubMesh swig_types[12]
+#define SWIGTYPE_p_gkVector2 swig_types[13]
+#define SWIGTYPE_p_gkVector3 swig_types[14]
+#define SWIGTYPE_p_gkVertex swig_types[15]
+#define SWIGTYPE_p_gsActionActuator swig_types[16]
+#define SWIGTYPE_p_gsActuator swig_types[17]
+#define SWIGTYPE_p_gsActuatorSensor swig_types[18]
+#define SWIGTYPE_p_gsAlwaysSensor swig_types[19]
+#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[20]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[21]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[22]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[23]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[24]
+#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[25]
+#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[26]
+#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[27]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[28]
+#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[29]
+#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[30]
+#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[31]
+#define SWIGTYPE_p_gsBrick swig_types[32]
+#define SWIGTYPE_p_gsCamera swig_types[33]
+#define SWIGTYPE_p_gsCharacter swig_types[34]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[35]
+#define SWIGTYPE_p_gsController swig_types[36]
+#define SWIGTYPE_p_gsCurve swig_types[37]
+#define SWIGTYPE_p_gsDebugger swig_types[38]
+#define SWIGTYPE_p_gsDelaySensor swig_types[39]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[40]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[41]
+#define SWIGTYPE_p_gsEngine swig_types[42]
+#define SWIGTYPE_p_gsEntity swig_types[43]
+#define SWIGTYPE_p_gsExpressionController swig_types[44]
+#define SWIGTYPE_p_gsFSM swig_types[45]
+#define SWIGTYPE_p_gsGameActuator swig_types[46]
+#define SWIGTYPE_p_gsGameObject swig_types[47]
+#define SWIGTYPE_p_gsGameObjectInstance swig_types[48]
+#define SWIGTYPE_p_gsHUD swig_types[49]
+#define SWIGTYPE_p_gsHUDElement swig_types[50]
+#define SWIGTYPE_p_gsJoystick swig_types[51]
+#define SWIGTYPE_p_gsKeyboard swig_types[52]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[53]
+#define SWIGTYPE_p_gsLight swig_types[54]
+#define SWIGTYPE_p_gsLogicManager swig_types[55]
+#define SWIGTYPE_p_gsLogicObject swig_types[56]
+#define SWIGTYPE_p_gsLogicOpController swig_types[57]
+#define SWIGTYPE_p_gsLuaManager swig_types[58]
+#define SWIGTYPE_p_gsLuaScript swig_types[59]
+#define SWIGTYPE_p_gsMesh swig_types[60]
+#define SWIGTYPE_p_gsMessageActuator swig_types[61]
+#define SWIGTYPE_p_gsMessageSensor swig_types[62]
+#define SWIGTYPE_p_gsMotionActuator swig_types[63]
+#define SWIGTYPE_p_gsMouse swig_types[64]
+#define SWIGTYPE_p_gsMouseSensor swig_types[65]
+#define SWIGTYPE_p_gsNearSensor swig_types[66]
+#define SWIGTYPE_p_gsObject swig_types[67]
+#define SWIGTYPE_p_gsParentActuator swig_types[68]
+#define SWIGTYPE_p_gsParticles swig_types[69]
+#define SWIGTYPE_p_gsProcess swig_types[70]
+#define SWIGTYPE_p_gsProcessManager swig_types[71]
+#define SWIGTYPE_p_gsProperty swig_types[72]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[73]
+#define SWIGTYPE_p_gsPropertySensor swig_types[74]
+#define SWIGTYPE_p_gsQuaternion swig_types[75]
+#define SWIGTYPE_p_gsRadarSensor swig_types[76]
+#define SWIGTYPE_p_gsRandomActuator swig_types[77]
+#define SWIGTYPE_p_gsRandomSensor swig_types[78]
+#define SWIGTYPE_p_gsRay swig_types[79]
+#define SWIGTYPE_p_gsRaySensor swig_types[80]
+#define SWIGTYPE_p_gsRayTest swig_types[81]
+#define SWIGTYPE_p_gsScene swig_types[82]
+#define SWIGTYPE_p_gsSceneActuator swig_types[83]
+#define SWIGTYPE_p_gsScriptController swig_types[84]
+#define SWIGTYPE_p_gsSensor swig_types[85]
+#define SWIGTYPE_p_gsSkeleton swig_types[86]
+#define SWIGTYPE_p_gsSoundActuator swig_types[87]
+#define SWIGTYPE_p_gsStateActuator swig_types[88]
+#define SWIGTYPE_p_gsSubMesh swig_types[89]
+#define SWIGTYPE_p_gsSweptTest swig_types[90]
+#define SWIGTYPE_p_gsTouchSensor swig_types[91]
+#define SWIGTYPE_p_gsTriangleIdx swig_types[92]
+#define SWIGTYPE_p_gsUserDefs swig_types[93]
+#define SWIGTYPE_p_gsVector3 swig_types[94]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[95]
+#define SWIGTYPE_p_gsWhenEvent swig_types[96]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[97]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[98]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[99]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[100]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[101]
+#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[102]
+static swig_type_info *swig_types[104];
+static swig_module_info swig_module = {swig_types, 103, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4153,6 +4161,626 @@ fail:
   return SWIG_arg;
 }
 
+
+static int _wrap_gkVector2_x_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector2 *arg1 = (gkVector2 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("x",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gkVector2 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("x",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkVector2_x_set",1,SWIGTYPE_p_gkVector2);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->x = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector2_x_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector2 *arg1 = (gkVector2 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("x",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gkVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkVector2_x_get",1,SWIGTYPE_p_gkVector2);
+  }
+  
+  result = (float) ((arg1)->x);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector2_y_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector2 *arg1 = (gkVector2 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("y",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gkVector2 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("y",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkVector2_y_set",1,SWIGTYPE_p_gkVector2);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->y = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector2_y_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector2 *arg1 = (gkVector2 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("y",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gkVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkVector2_y_get",1,SWIGTYPE_p_gkVector2);
+  }
+  
+  result = (float) ((arg1)->y);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkVector2(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector2 *result = 0 ;
+  
+  SWIG_check_num_args("gkVector2::gkVector2",0,0)
+  result = (gkVector2 *)new gkVector2();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector2,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkVector2(void *obj) {
+gkVector2 *arg1 = (gkVector2 *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkVector2_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkVector2_attributes[] = {
+    { "x", _wrap_gkVector2_x_get, _wrap_gkVector2_x_set},
+    { "y", _wrap_gkVector2_y_get, _wrap_gkVector2_y_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkVector2_bases[] = {0};
+static const char *swig_gkVector2_base_names[] = {0};
+static swig_lua_class _wrap_class_gkVector2 = { "gkVector2", &SWIGTYPE_p_gkVector2,_wrap_new_gkVector2, swig_delete_gkVector2, swig_gkVector2_methods, swig_gkVector2_attributes, swig_gkVector2_bases, swig_gkVector2_base_names };
+
+static int _wrap_gkVector3_x_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("x",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gkVector3 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("x",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_x_set",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->x = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector3_x_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("x",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_x_get",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  result = (float) ((arg1)->x);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector3_y_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("y",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gkVector3 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("y",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_y_set",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->y = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector3_y_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("y",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_y_get",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  result = (float) ((arg1)->y);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector3_z_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("z",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gkVector3 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("z",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_z_set",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->z = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVector3_z_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *arg1 = (gkVector3 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("z",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVector3_z_get",1,SWIGTYPE_p_gkVector3);
+  }
+  
+  result = (float) ((arg1)->z);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkVector3(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("gkVector3::gkVector3",0,0)
+  result = (gkVector3 *)new gkVector3();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkVector3(void *obj) {
+gkVector3 *arg1 = (gkVector3 *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkVector3_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkVector3_attributes[] = {
+    { "x", _wrap_gkVector3_x_get, _wrap_gkVector3_x_set},
+    { "y", _wrap_gkVector3_y_get, _wrap_gkVector3_y_set},
+    { "z", _wrap_gkVector3_z_get, _wrap_gkVector3_z_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkVector3_bases[] = {0};
+static const char *swig_gkVector3_base_names[] = {0};
+static swig_lua_class _wrap_class_gkVector3 = { "gkVector3", &SWIGTYPE_p_gkVector3,_wrap_new_gkVector3, swig_delete_gkVector3, swig_gkVector3_methods, swig_gkVector3_attributes, swig_gkVector3_bases, swig_gkVector3_base_names };
+
+static int _wrap_gkVertex_co_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("co",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("co",1,"gkVertex *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("co",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_co_set",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVertex_co_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->co = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_co_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("co",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("co",1,"gkVertex *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_co_get",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->co);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_no_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("no",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("no",1,"gkVertex *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("no",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_no_set",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkVertex_no_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->no = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_no_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("no",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("no",1,"gkVertex *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_no_get",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->no);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_vcol_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("vcol",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("vcol",1,"gkVertex *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("vcol",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_vcol_set",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->vcol = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_vcol_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("vcol",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("vcol",1,"gkVertex *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_vcol_get",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = (unsigned int) ((arg1)->vcol);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_uv_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector2 *arg2 ;
+  
+  SWIG_check_num_args("uv",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("uv",1,"gkVertex *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("uv",2,"gkVector2 [GK_UV_MAX]");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_uv_set",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkVertex_uv_set",2,SWIGTYPE_p_gkVector2);
+  }
+  
+  {
+    size_t ii;
+    gkVector2 *b = (gkVector2 *) arg1->uv;
+    for (ii = 0; ii < (size_t)GK_UV_MAX; ii++) b[ii] = *((gkVector2 *) arg2 + ii);
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_uv_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  gkVector2 *result = 0 ;
+  
+  SWIG_check_num_args("uv",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("uv",1,"gkVertex *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_uv_get",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = (gkVector2 *)(gkVector2 *) ((arg1)->uv);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector2,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_vba_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("vba",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("vba",1,"gkVertex *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("vba",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_vba_set",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->vba = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkVertex_vba_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("vba",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("vba",1,"gkVertex *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_vba_get",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = (int) ((arg1)->vba);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkVertex(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *result = 0 ;
+  
+  SWIG_check_num_args("gkVertex::gkVertex",0,0)
+  result = (gkVertex *)new gkVertex();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVertex,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkVertex(void *obj) {
+gkVertex *arg1 = (gkVertex *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkVertex_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkVertex_attributes[] = {
+    { "co", _wrap_gkVertex_co_get, _wrap_gkVertex_co_set},
+    { "no", _wrap_gkVertex_no_get, _wrap_gkVertex_no_set},
+    { "vcol", _wrap_gkVertex_vcol_get, _wrap_gkVertex_vcol_set},
+    { "uv", _wrap_gkVertex_uv_get, _wrap_gkVertex_uv_set},
+    { "vba", _wrap_gkVertex_vba_get, _wrap_gkVertex_vba_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkVertex_bases[] = {0};
+static const char *swig_gkVertex_base_names[] = {0};
+static swig_lua_class _wrap_class_gkVertex = { "gkVertex", &SWIGTYPE_p_gkVertex,_wrap_new_gkVertex, swig_delete_gkVertex, swig_gkVertex_methods, swig_gkVertex_attributes, swig_gkVertex_bases, swig_gkVertex_base_names };
 
 static int _wrap_new_ObjectList__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -8539,6 +9167,39 @@ fail:
 }
 
 
+static int _wrap_Scene_createEntity(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gkGameObject *result = 0 ;
+  
+  SWIG_check_num_args("createEntity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createEntity",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createEntity",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_createEntity",1,SWIGTYPE_p_gsScene);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gkGameObject *)(arg1)->createEntity((gkString const &)*arg2);
+  if (result) {
+    SWIG_arg += gsWrapGameObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Scene_cloneObject(lua_State* L) {
   int SWIG_arg = 0;
   gsScene *arg1 = (gsScene *) 0 ;
@@ -8970,6 +9631,7 @@ static swig_lua_method swig_gsScene_methods[] = {
     {"hasObject", _wrap_Scene_hasObject}, 
     {"getObject", _wrap_Scene_getObject}, 
     {"createEmpty", _wrap_Scene_createEmpty}, 
+    {"createEntity", _wrap_Scene_createEntity}, 
     {"cloneObject", _wrap_Scene_cloneObject}, 
     {"getObjectList", _wrap_Scene_getObjectList}, 
     {"getDynamicsWorld", _wrap_Scene_getDynamicsWorld}, 
@@ -14111,6 +14773,32 @@ fail:
 }
 
 
+static int _wrap_Entity_getMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkMesh *result = 0 ;
+  
+  SWIG_check_num_args("getMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getMesh",1,"gsEntity *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_getMesh",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  result = (gkMesh *)(arg1)->getMesh();
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Mesh); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Entity(void *obj) {
 gsEntity *arg1 = (gsEntity *) obj;
 delete arg1;
@@ -14119,6 +14807,7 @@ static swig_lua_method swig_gsEntity_methods[] = {
     {"hasCharacter", _wrap_Entity_hasCharacter}, 
     {"getCharacter", _wrap_Entity_getCharacter}, 
     {"setMaterialName", _wrap_Entity_setMaterialName}, 
+    {"getMesh", _wrap_Entity_getMesh}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsEntity_attributes[] = {
@@ -15559,6 +16248,506 @@ static swig_lua_attribute swig_gsDebugger_attributes[] = {
 static swig_lua_class *swig_gsDebugger_bases[] = {0};
 static const char *swig_gsDebugger_base_names[] = {0};
 static swig_lua_class _wrap_class_gsDebugger = { "Debugger", &SWIGTYPE_p_gsDebugger,_wrap_new_Debugger, swig_delete_Debugger, swig_gsDebugger_methods, swig_gsDebugger_attributes, swig_gsDebugger_bases, swig_gsDebugger_base_names };
+
+static int _wrap_new_gsMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMesh *arg1 = (gkMesh *) 0 ;
+  gsMesh *result = 0 ;
+  
+  SWIG_check_num_args("gsMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsMesh",1,"gkMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMesh,0))){
+    SWIG_fail_ptr("new_gsMesh",1,SWIGTYPE_p_gkMesh);
+  }
+  
+  result = (gsMesh *)new gsMesh(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsMesh,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsMesh_getSubMeshAmount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMesh *arg1 = (gsMesh *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getSubMeshAmount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSubMeshAmount",1,"gsMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMesh,0))){
+    SWIG_fail_ptr("gsMesh_getSubMeshAmount",1,SWIGTYPE_p_gsMesh);
+  }
+  
+  result = (int)(arg1)->getSubMeshAmount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsMesh_getSubMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMesh *arg1 = (gsMesh *) 0 ;
+  int arg2 ;
+  gkSubMesh *result = 0 ;
+  
+  SWIG_check_num_args("getSubMesh",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSubMesh",1,"gsMesh *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getSubMesh",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMesh,0))){
+    SWIG_fail_ptr("gsMesh_getSubMesh",1,SWIGTYPE_p_gsMesh);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkSubMesh *)(arg1)->getSubMesh(arg2);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, SubMesh); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsMesh_reload(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMesh *arg1 = (gsMesh *) 0 ;
+  
+  SWIG_check_num_args("reload",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"gsMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMesh,0))){
+    SWIG_fail_ptr("gsMesh_reload",1,SWIGTYPE_p_gsMesh);
+  }
+  
+  (arg1)->reload();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gsMesh(void *obj) {
+gsMesh *arg1 = (gsMesh *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsMesh_methods[] = {
+    {"getSubMeshAmount", _wrap_gsMesh_getSubMeshAmount}, 
+    {"getSubMesh", _wrap_gsMesh_getSubMesh}, 
+    {"reload", _wrap_gsMesh_reload}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsMesh_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsMesh_bases[] = {0};
+static const char *swig_gsMesh_base_names[] = {0};
+static swig_lua_class _wrap_class_gsMesh = { "gsMesh", &SWIGTYPE_p_gsMesh,_wrap_new_gsMesh, swig_delete_gsMesh, swig_gsMesh_methods, swig_gsMesh_attributes, swig_gsMesh_bases, swig_gsMesh_base_names };
+
+static int _wrap_new_gsSubMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSubMesh *arg1 = (gkSubMesh *) 0 ;
+  gsSubMesh *result = 0 ;
+  
+  SWIG_check_num_args("gsSubMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSubMesh",1,"gkSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSubMesh,0))){
+    SWIG_fail_ptr("new_gsSubMesh",1,SWIGTYPE_p_gkSubMesh);
+  }
+  
+  result = (gsSubMesh *)new gsSubMesh(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSubMesh,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_getVertex(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int arg2 ;
+  gkVertex *result = 0 ;
+  
+  SWIG_check_num_args("getVertex",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertex",1,"gsSubMesh *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVertex",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getVertex",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkVertex *)(arg1)->getVertex(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVertex,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_getVertexAmount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getVertexAmount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertexAmount",1,"gsSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getVertexAmount",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  result = (int)(arg1)->getVertexAmount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_addTriangle(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  gkVertex *arg2 = 0 ;
+  unsigned int arg3 ;
+  gkVertex *arg4 = 0 ;
+  unsigned int arg5 ;
+  gkVertex *arg6 = 0 ;
+  unsigned int arg7 ;
+  
+  SWIG_check_num_args("addTriangle",7,7)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTriangle",1,"gsSubMesh *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("addTriangle",2,"gkVertex const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("addTriangle",3,"unsigned int");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("addTriangle",4,"gkVertex const &");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("addTriangle",5,"unsigned int");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("addTriangle",6,"gkVertex const &");
+  if(!lua_isnumber(L,7)) SWIG_fail_arg("addTriangle",7,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",2,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
+  arg3 = (unsigned int)lua_tonumber(L, 3);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",4,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,5)>=0),"number must not be negative")
+  arg5 = (unsigned int)lua_tonumber(L, 5);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&arg6,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",6,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,7)>=0),"number must not be negative")
+  arg7 = (unsigned int)lua_tonumber(L, 7);
+  (arg1)->addTriangle((gkVertex const &)*arg2,arg3,(gkVertex const &)*arg4,arg5,(gkVertex const &)*arg6,arg7);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gsSubMesh(void *obj) {
+gsSubMesh *arg1 = (gsSubMesh *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsSubMesh_methods[] = {
+    {"getVertex", _wrap_gsSubMesh_getVertex}, 
+    {"getVertexAmount", _wrap_gsSubMesh_getVertexAmount}, 
+    {"addTriangle", _wrap_gsSubMesh_addTriangle}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsSubMesh_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsSubMesh_bases[] = {0};
+static const char *swig_gsSubMesh_base_names[] = {0};
+static swig_lua_class _wrap_class_gsSubMesh = { "gsSubMesh", &SWIGTYPE_p_gsSubMesh,_wrap_new_gsSubMesh, swig_delete_gsSubMesh, swig_gsSubMesh_methods, swig_gsSubMesh_attributes, swig_gsSubMesh_bases, swig_gsSubMesh_base_names };
+
+static int _wrap_gsTriangleIdx_i1_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("i1",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gsTriangleIdx *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i1",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i1_set",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i1 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_i1_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("i1",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gsTriangleIdx *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i1_get",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  result = (int) ((arg1)->i1);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_i2_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("i2",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gsTriangleIdx *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i2",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i2_set",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i2 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_i2_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("i2",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gsTriangleIdx *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i2_get",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  result = (int) ((arg1)->i2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_i3_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("i3",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i3",1,"gsTriangleIdx *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i3",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i3_set",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i3 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_i3_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("i3",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i3",1,"gsTriangleIdx *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_i3_get",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  result = (int) ((arg1)->i3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_flag_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("flag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gsTriangleIdx *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("flag",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_flag_set",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->flag = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTriangleIdx_flag_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("flag",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gsTriangleIdx *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
+    SWIG_fail_ptr("gsTriangleIdx_flag_get",1,SWIGTYPE_p_gsTriangleIdx);
+  }
+  
+  result = (int) ((arg1)->flag);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsTriangleIdx(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTriangleIdx *result = 0 ;
+  
+  SWIG_check_num_args("gsTriangleIdx::gsTriangleIdx",0,0)
+  result = (gsTriangleIdx *)new gsTriangleIdx();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsTriangleIdx,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gsTriangleIdx(void *obj) {
+gsTriangleIdx *arg1 = (gsTriangleIdx *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsTriangleIdx_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gsTriangleIdx_attributes[] = {
+    { "i1", _wrap_gsTriangleIdx_i1_get, _wrap_gsTriangleIdx_i1_set},
+    { "i2", _wrap_gsTriangleIdx_i2_get, _wrap_gsTriangleIdx_i2_set},
+    { "i3", _wrap_gsTriangleIdx_i3_get, _wrap_gsTriangleIdx_i3_set},
+    { "flag", _wrap_gsTriangleIdx_flag_get, _wrap_gsTriangleIdx_flag_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gsTriangleIdx_bases[] = {0};
+static const char *swig_gsTriangleIdx_base_names[] = {0};
+static swig_lua_class _wrap_class_gsTriangleIdx = { "gsTriangleIdx", &SWIGTYPE_p_gsTriangleIdx,_wrap_new_gsTriangleIdx, swig_delete_gsTriangleIdx, swig_gsTriangleIdx_methods, swig_gsTriangleIdx_attributes, swig_gsTriangleIdx_bases, swig_gsTriangleIdx_base_names };
 
 static int _wrap_sendMessage(lua_State* L) {
   int SWIG_arg = 0;
@@ -33336,9 +34525,14 @@ static swig_type_info _swigt__p_gkDynamicsWorld = {"_p_gkDynamicsWorld", "gkDyna
 static swig_type_info _swigt__p_gkGameObjectInstance = {"_p_gkGameObjectInstance", "gkGameObjectInstance *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkLogicManager = {"_p_gkLogicManager", "gkLogicManager *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "gsSelf *|gsFunction *|gkLuaCurState *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkMesh = {"_p_gkMesh", "gkMesh *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkProcessManager = {"_p_gkProcessManager", "gkProcessManager *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkScalar = {"_p_gkScalar", "gkScalar *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkScene = {"_p_gkScene", "gkScene *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkSubMesh = {"_p_gkSubMesh", "gkSubMesh *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkVector2 = {"_p_gkVector2", "gkVector2 *", 0, 0, (void*)&_wrap_class_gkVector2, 0};
+static swig_type_info _swigt__p_gkVector3 = {"_p_gkVector3", "gkVector3 *", 0, 0, (void*)&_wrap_class_gkVector3, 0};
+static swig_type_info _swigt__p_gkVertex = {"_p_gkVertex", "gkVertex *", 0, 0, (void*)&_wrap_class_gkVertex, 0};
 static swig_type_info _swigt__p_gsActionActuator = {"_p_gsActionActuator", "gsActionActuator *", 0, 0, (void*)&_wrap_class_gsActionActuator, 0};
 static swig_type_info _swigt__p_gsActuator = {"_p_gsActuator", "gsActuator *", 0, 0, (void*)&_wrap_class_gsActuator, 0};
 static swig_type_info _swigt__p_gsActuatorSensor = {"_p_gsActuatorSensor", "gsActuatorSensor *", 0, 0, (void*)&_wrap_class_gsActuatorSensor, 0};
@@ -33383,6 +34577,7 @@ static swig_type_info _swigt__p_gsLogicObject = {"_p_gsLogicObject", "gsLogicObj
 static swig_type_info _swigt__p_gsLogicOpController = {"_p_gsLogicOpController", "gsLogicOpController *", 0, 0, (void*)&_wrap_class_gsLogicOpController, 0};
 static swig_type_info _swigt__p_gsLuaManager = {"_p_gsLuaManager", "gsLuaManager *", 0, 0, (void*)&_wrap_class_gsLuaManager, 0};
 static swig_type_info _swigt__p_gsLuaScript = {"_p_gsLuaScript", "gsLuaScript *", 0, 0, (void*)&_wrap_class_gsLuaScript, 0};
+static swig_type_info _swigt__p_gsMesh = {"_p_gsMesh", "gsMesh *", 0, 0, (void*)&_wrap_class_gsMesh, 0};
 static swig_type_info _swigt__p_gsMessageActuator = {"_p_gsMessageActuator", "gsMessageActuator *", 0, 0, (void*)&_wrap_class_gsMessageActuator, 0};
 static swig_type_info _swigt__p_gsMessageSensor = {"_p_gsMessageSensor", "gsMessageSensor *", 0, 0, (void*)&_wrap_class_gsMessageSensor, 0};
 static swig_type_info _swigt__p_gsMotionActuator = {"_p_gsMotionActuator", "gsMotionActuator *", 0, 0, (void*)&_wrap_class_gsMotionActuator, 0};
@@ -33411,8 +34606,10 @@ static swig_type_info _swigt__p_gsSensor = {"_p_gsSensor", "gsSensor *", 0, 0, (
 static swig_type_info _swigt__p_gsSkeleton = {"_p_gsSkeleton", "gsSkeleton *", 0, 0, (void*)&_wrap_class_gsSkeleton, 0};
 static swig_type_info _swigt__p_gsSoundActuator = {"_p_gsSoundActuator", "gsSoundActuator *", 0, 0, (void*)&_wrap_class_gsSoundActuator, 0};
 static swig_type_info _swigt__p_gsStateActuator = {"_p_gsStateActuator", "gsStateActuator *", 0, 0, (void*)&_wrap_class_gsStateActuator, 0};
+static swig_type_info _swigt__p_gsSubMesh = {"_p_gsSubMesh", "gsSubMesh *", 0, 0, (void*)&_wrap_class_gsSubMesh, 0};
 static swig_type_info _swigt__p_gsSweptTest = {"_p_gsSweptTest", "gsSweptTest *", 0, 0, (void*)&_wrap_class_gsSweptTest, 0};
 static swig_type_info _swigt__p_gsTouchSensor = {"_p_gsTouchSensor", "gsTouchSensor *", 0, 0, (void*)&_wrap_class_gsTouchSensor, 0};
+static swig_type_info _swigt__p_gsTriangleIdx = {"_p_gsTriangleIdx", "gsTriangleIdx *", 0, 0, (void*)&_wrap_class_gsTriangleIdx, 0};
 static swig_type_info _swigt__p_gsUserDefs = {"_p_gsUserDefs", "gsUserDefs *", 0, 0, (void*)&_wrap_class_gsUserDefs, 0};
 static swig_type_info _swigt__p_gsVector3 = {"_p_gsVector3", "gsVector3 *", 0, 0, (void*)&_wrap_class_gsVector3, 0};
 static swig_type_info _swigt__p_gsVisibilityActuator = {"_p_gsVisibilityActuator", "gsVisibilityActuator *", 0, 0, (void*)&_wrap_class_gsVisibilityActuator, 0};
@@ -33433,9 +34630,14 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gkGameObjectInstance,
   &_swigt__p_gkLogicManager,
   &_swigt__p_gkLuaCurState,
+  &_swigt__p_gkMesh,
   &_swigt__p_gkProcessManager,
   &_swigt__p_gkScalar,
   &_swigt__p_gkScene,
+  &_swigt__p_gkSubMesh,
+  &_swigt__p_gkVector2,
+  &_swigt__p_gkVector3,
+  &_swigt__p_gkVertex,
   &_swigt__p_gsActionActuator,
   &_swigt__p_gsActuator,
   &_swigt__p_gsActuatorSensor,
@@ -33480,6 +34682,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsLogicOpController,
   &_swigt__p_gsLuaManager,
   &_swigt__p_gsLuaScript,
+  &_swigt__p_gsMesh,
   &_swigt__p_gsMessageActuator,
   &_swigt__p_gsMessageSensor,
   &_swigt__p_gsMotionActuator,
@@ -33508,8 +34711,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsSkeleton,
   &_swigt__p_gsSoundActuator,
   &_swigt__p_gsStateActuator,
+  &_swigt__p_gsSubMesh,
   &_swigt__p_gsSweptTest,
   &_swigt__p_gsTouchSensor,
+  &_swigt__p_gsTriangleIdx,
   &_swigt__p_gsUserDefs,
   &_swigt__p_gsVector3,
   &_swigt__p_gsVisibilityActuator,
@@ -33530,9 +34735,14 @@ static swig_cast_info _swigc__p_gkDynamicsWorld[] = {  {&_swigt__p_gkDynamicsWor
 static swig_cast_info _swigc__p_gkGameObjectInstance[] = {  {&_swigt__p_gkGameObjectInstance, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLogicManager[] = {  {&_swigt__p_gkLogicManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLuaCurState[] = {  {&_swigt__p_gkLuaCurState, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkMesh[] = {  {&_swigt__p_gkMesh, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkProcessManager[] = {  {&_swigt__p_gkProcessManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkScalar[] = {  {&_swigt__p_gkScalar, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkScene[] = {  {&_swigt__p_gkScene, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkSubMesh[] = {  {&_swigt__p_gkSubMesh, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkVector2[] = {  {&_swigt__p_gkVector2, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkVector3[] = {  {&_swigt__p_gkVector3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkVertex[] = {  {&_swigt__p_gkVertex, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActionActuator[] = {  {&_swigt__p_gsActionActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuator[] = {  {&_swigt__p_gsActuator, 0, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsActuator, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsActuator, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsActuatorSensor[] = {  {&_swigt__p_gsActuatorSensor, 0, 0, 0},{0, 0, 0, 0}};
@@ -33577,6 +34787,7 @@ static swig_cast_info _swigc__p_gsLogicObject[] = {  {&_swigt__p_gsLogicObject, 
 static swig_cast_info _swigc__p_gsLogicOpController[] = {  {&_swigt__p_gsLogicOpController, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLuaManager[] = {  {&_swigt__p_gsLuaManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLuaScript[] = {  {&_swigt__p_gsLuaScript, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsMesh[] = {  {&_swigt__p_gsMesh, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMessageActuator[] = {  {&_swigt__p_gsMessageActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMessageSensor[] = {  {&_swigt__p_gsMessageSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMotionActuator[] = {  {&_swigt__p_gsMotionActuator, 0, 0, 0},{0, 0, 0, 0}};
@@ -33605,8 +34816,10 @@ static swig_cast_info _swigc__p_gsSensor[] = {  {&_swigt__p_gsAlwaysSensor, _p_g
 static swig_cast_info _swigc__p_gsSkeleton[] = {  {&_swigt__p_gsSkeleton, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSoundActuator[] = {  {&_swigt__p_gsSoundActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsStateActuator[] = {  {&_swigt__p_gsStateActuator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsSubMesh[] = {  {&_swigt__p_gsSubMesh, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSweptTest[] = {  {&_swigt__p_gsSweptTest, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsTouchSensor[] = {  {&_swigt__p_gsTouchSensor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsTriangleIdx[] = {  {&_swigt__p_gsTriangleIdx, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsUserDefs[] = {  {&_swigt__p_gsUserDefs, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVector3[] = {  {&_swigt__p_gsVector3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVisibilityActuator[] = {  {&_swigt__p_gsVisibilityActuator, 0, 0, 0},{0, 0, 0, 0}};
@@ -33627,9 +34840,14 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gkGameObjectInstance,
   _swigc__p_gkLogicManager,
   _swigc__p_gkLuaCurState,
+  _swigc__p_gkMesh,
   _swigc__p_gkProcessManager,
   _swigc__p_gkScalar,
   _swigc__p_gkScene,
+  _swigc__p_gkSubMesh,
+  _swigc__p_gkVector2,
+  _swigc__p_gkVector3,
+  _swigc__p_gkVertex,
   _swigc__p_gsActionActuator,
   _swigc__p_gsActuator,
   _swigc__p_gsActuatorSensor,
@@ -33674,6 +34892,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsLogicOpController,
   _swigc__p_gsLuaManager,
   _swigc__p_gsLuaScript,
+  _swigc__p_gsMesh,
   _swigc__p_gsMessageActuator,
   _swigc__p_gsMessageSensor,
   _swigc__p_gsMotionActuator,
@@ -33702,8 +34921,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsSkeleton,
   _swigc__p_gsSoundActuator,
   _swigc__p_gsStateActuator,
+  _swigc__p_gsSubMesh,
   _swigc__p_gsSweptTest,
   _swigc__p_gsTouchSensor,
+  _swigc__p_gsTriangleIdx,
   _swigc__p_gsUserDefs,
   _swigc__p_gsVector3,
   _swigc__p_gsVisibilityActuator,

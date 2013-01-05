@@ -30,9 +30,10 @@
 #include "gsCommon.h"
 #include "gsMath.h"
 #include "gsUtils.h"
+#include "gkMesh.h"
 
 #ifdef OGREKIT_USE_PROCESSMANAGER
-#include "gsProcess.h"
+# include "gsProcess.h"
 #endif
 
 
@@ -381,6 +382,7 @@ public:
 
 	gkGameObject* getObject(const gkString& name);
 	gkGameObject* createEmpty(const gkString& name);
+	gkGameObject* createEntity(const gkString& name);
     gkGameObject* cloneObject(gsGameObject* obj, int lifeSpan, bool instantiate);
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
@@ -599,6 +601,7 @@ public:
 	bool hasCharacter(void);
 	gkCharacter* getCharacter(void);
 	void setMaterialName(const gkString& materialName);
+	gkMesh* getMesh();
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
 };
@@ -653,7 +656,54 @@ public:
 	void clear(void);
 };
 
+class gsMesh
+{
+public:
+	gsMesh(gkMesh* mesh);
+	~gsMesh() {};
+	int getSubMeshAmount() { return m_mesh->m_submeshes.size();}
+	gkSubMesh* getSubMesh(int nr) { return m_mesh->m_submeshes.at(nr); }
+	void reload() {m_mesh->reload();}
+private:
+	gkMesh* m_mesh;
+};
 
+class gsSubMesh {
+public:
+	gsSubMesh(gkSubMesh* submesh);
+	~gsSubMesh(){}
+
+	gkVertex* getVertex(int nr){ return &(m_submesh->getVertexBuffer().at(nr));};
+	int getVertexAmount(){ return m_submesh->getVertexBuffer().size();};
+	void addTriangle(const gkVertex& v0,
+            unsigned int i0,
+            const gkVertex& v1,
+            unsigned int i1,
+            const gkVertex& v2,
+            unsigned int i2);
+
+
+private:
+	gkSubMesh* m_submesh;
+};
+
+struct gsTriangleIdx {
+	int i1, i2, i3;
+	int flag;
+};
+
+//class gsVertex {
+//public:
+//	gsVertex(gkVertex* vert);
+//	~gsVertex() {};
+//	gsVector3       getCoordinate(){};                 // vertex coordinates
+//	gkVector3       no;                 // normals
+//	unsigned int    vcol;               // vertex color
+//	gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
+//	int             vba;
+//private:
+//	gkVertex* m_vert;
+//};
 
 extern void sendMessage(const char* from,const char* to,const char* subject,const char* body);
 

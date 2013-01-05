@@ -28,6 +28,27 @@
 #include "gsCore.h"
 %}
 
+class gkVector2 {
+public:
+    float x,y;
+};
+
+class gkVector3 {
+public:
+    float x,y,z;
+};
+class gkVertex
+{
+public:
+    gkVector3       co;                 // vertex coordinates
+    gkVector3       no;                 // normals
+    unsigned int    vcol;               // vertex color
+    gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
+    int             vba;                // Vertex bone assignment
+};
+
+
+
 %include "gsMacros.i"
 
 

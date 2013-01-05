@@ -172,7 +172,7 @@ void gkSubMesh::addTriangle(const gkVertex& v0,
                             unsigned int i2, int flag
                            )
 {
-	m_boundsInit = true;
+    m_boundsInit = false;
 	gkTriangle tri;
 	tri.flag = flag;
 
@@ -193,7 +193,9 @@ gkBoundingBox& gkSubMesh::getBoundingBox(void)
 {
 	if (!m_boundsInit)
 	{
-		m_boundsInit = true;
+        m_boundsInit = true;
+        m_bounds = gkBoundingBox::BOX_NULL;
+
 		UTsize i = 0, s = m_verts.size();
 		Verticies::Pointer ptr = m_verts.ptr();
 
@@ -204,7 +206,16 @@ gkBoundingBox& gkSubMesh::getBoundingBox(void)
 		}
 
 	}
-	return m_bounds;
+
+    return m_bounds;
+}
+
+void gkSubMesh::updateBounds()
+{
+    // clear bounds-cache-flag
+	m_boundsInit = false;
+	// rebuild bounds
+    getBoundingBox();
 }
 
 
@@ -254,14 +265,32 @@ gkBoundingBox& gkMesh::getBoundingBox(void)
 	if (!m_boundsInit)
 	{
 		m_boundsInit = true;
+        m_bounds = gkBoundingBox::BOX_NULL;
+
 		SubMeshIterator iter = getSubMeshIterator();
 		while (iter.hasMoreElements())
 			m_bounds.merge(iter.getNext()->getBoundingBox());
 	}
 
-	return m_bounds;
+    return m_bounds;
 }
 
+void gkMesh::updateBounds()
+{
+    m_boundsInit = false;
+    getBoundingBox();
+
+    // update ogre-bounds
+	Ogre::MeshManager& mgr = Ogre::MeshManager::getSingleton();
+	const gkString& name = getResourceName().getName();
+
+	Ogre::MeshPtr omesh = mgr.getByName(name);
+
+	if (!omesh.isNull()){
+		omesh.getPointer()->_setBounds(m_bounds, false);
+		omesh.getPointer()->_setBoundingSphereRadius(m_bounds.getSize().squaredLength());
+	}
+}
 
 gkMaterialProperties& gkMesh::getFirstMaterial(void)
 {

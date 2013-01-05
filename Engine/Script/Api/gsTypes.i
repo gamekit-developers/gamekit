@@ -93,6 +93,10 @@
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, HUD); } %}
 %typemap(out) gkHUDElement* 
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, HUDElement); } %}
+%typemap(out) gkMesh* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Mesh); } %}
+%typemap(out) gkSubMesh* 
+%{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, SubMesh); } %}
 %typemap(out) gkScene* 
 %{ if ($1) { SWIG_arg += GS_LUA_OBJECT_STORE($1, Scene); } %}
 %typemap(out) gkLogicLink* 

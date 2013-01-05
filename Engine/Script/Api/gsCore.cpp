@@ -27,6 +27,7 @@
 #include "gsCore.h"
 #include "gsPhysics.h"
 #include "gkCam2ViewportRay.h"
+#include "gkMesh.h"
 
 
 gsProperty::gsProperty(gkVariable* var) : m_prop(var), m_creator(false)
@@ -1109,6 +1110,26 @@ gkGameObject* gsScene::createEmpty(const gkString& name)
 	return 0;
 }
 
+gkGameObject* gsScene::createEntity(const gkString& name)
+{
+	if (m_object)
+	{
+		gkScene* scene = cast<gkScene>();
+		if (!scene->hasObject(name))
+		{
+			gkEntity* ent = scene->createEntity(name);
+
+		    gkMesh* mesh = scene->createMesh("mesh_"+name);
+		    gkSubMesh* submesh = new gkSubMesh();
+		    mesh->addSubMesh(submesh);
+		    ent->getEntityProperties().m_mesh = mesh;
+			return ent;
+		}
+	}
+
+	return 0;
+}
+
 gkLogicManager* gsScene::getLogicBrickManager()
 {
 	if (m_object)
@@ -1935,7 +1956,10 @@ gsEntity::gsEntity()
 gsEntity::gsEntity(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
-
+gkMesh* gsEntity::getMesh() {
+	gkEntity* ent = static_cast<gkEntity*>(get());
+	return ent->getMesh();
+}
 bool gsEntity::hasCharacter(void)
 {
 	return get()->getAttachedCharacter() != 0;
@@ -2321,7 +2345,22 @@ gkString gsGameObjectInstance::getName()
 	return m_gobj?m_gobj->getName():"";
 }
 
+gsMesh::gsMesh(gkMesh* mesh) : m_mesh(mesh)
+{}
 
+gsSubMesh::gsSubMesh(gkSubMesh* submesh) : m_submesh(submesh)
+{}
+
+void gsSubMesh::addTriangle(const gkVertex& v0,
+            unsigned int i0,
+            const gkVertex& v1,
+            unsigned int i1,
+            const gkVertex& v2,
+            unsigned int i2) {
+	m_submesh->addTriangle(v0,i0,v1,i1,v2,i2,gkTriangle::TRI_COLLIDER);
+}
+//gsVertex::gsVertex(gkVertex* vert) : m_vert(vert)
+//{}
 
 void import(const gkString& scriptName)
 {
