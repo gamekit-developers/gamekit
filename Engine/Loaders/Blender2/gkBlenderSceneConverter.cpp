@@ -624,15 +624,20 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	int boundtype;
 	int version = m_file->_getInternalFile()->getVersion();
 
-	phy.m_type = GK_STATIC;
-	switch (bobj->body_type)
+	if ((bobj->gameflag & OB_COLLISION) && bobj->body_type==GK_NO_COLLISION)
+		phy.m_type = GK_STATIC;
+	else
 	{
-	case OB_BODY_TYPE_CHARACTER:	phy.m_type = GK_CHARACTER;      break;
-	case OB_BODY_TYPE_RIGID:        phy.m_type = GK_RIGID;          break;
-	case OB_BODY_TYPE_DYNAMIC:      phy.m_type = GK_DYNAMIC;        break;
-	case OB_BODY_TYPE_NO_COLLISION: phy.m_type = GK_NO_COLLISION;   break;
-	case OB_BODY_TYPE_SENSOR :		phy.m_type = GK_SENSOR;         break;
-	case OB_BODY_TYPE_NAVMESH :     phy.m_type = GK_NAVMESH;        break;
+		phy.m_type = GK_STATIC;
+		switch (bobj->body_type)
+		{
+		case OB_BODY_TYPE_CHARACTER:	phy.m_type = GK_CHARACTER;      break;
+		case OB_BODY_TYPE_RIGID:        phy.m_type = GK_RIGID;          break;
+		case OB_BODY_TYPE_DYNAMIC:      phy.m_type = GK_DYNAMIC;        break;
+		case OB_BODY_TYPE_NO_COLLISION: phy.m_type = GK_NO_COLLISION;   break;
+		case OB_BODY_TYPE_SENSOR :		phy.m_type = GK_SENSOR;         break;
+		case OB_BODY_TYPE_NAVMESH :     phy.m_type = GK_NAVMESH;        break;
+		}
 	}
 
 
