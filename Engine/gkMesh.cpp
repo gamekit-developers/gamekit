@@ -164,7 +164,7 @@ gkSubMesh* gkSubMesh::clone(void)
 
 
 
-void gkSubMesh::addTriangle(const gkVertex& v0,
+const gkTriangle gkSubMesh::addTriangle(const gkVertex& v0,
                             unsigned int i0,
                             const gkVertex& v1,
                             unsigned int i1,
@@ -180,6 +180,7 @@ void gkSubMesh::addTriangle(const gkVertex& v0,
 	tri.i1 = m_sort->getVertexIndex(this, i1, v1);
 	tri.i2 = m_sort->getVertexIndex(this, i2, v2);
 	m_tris.push_back(tri);
+	return tri;
 }
 
 

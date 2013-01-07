@@ -324,7 +324,6 @@ gkEntity* gkScene::createEntity(const gkHashedString& name)
 		return 0;
 	}
 
-
 	gkEntity* gobj = gkGameObjectManager::getSingleton().createEntity(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;

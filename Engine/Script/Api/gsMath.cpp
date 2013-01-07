@@ -25,8 +25,15 @@
 -------------------------------------------------------------------------------
 */
 #include "gsMath.h"
+#include "gkMesh.h"
 
  gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t)
  {
 	 return gsVector3(gkMathUtils::interp(gkVector3(vec1),gkVector3(vec2),t));
+ }
+
+ gkVector3 getTriNormal(const gkVertex& v0,const gkVertex& v1,const gkVertex& v2)
+ {
+	 gkVector3 n = (v1.co - v2.co).crossProduct(v2.co - v0.co).normalisedCopy();
+	 return n;
  }

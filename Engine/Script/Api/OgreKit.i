@@ -39,10 +39,14 @@
 %ignore OGRE_KIT_TEMPLATE_NEW;
 %ignore OGRE_KIT_TEMPLATE_NEW_INLINE;
 
+#define GK_INLINE
+#define gkScalar float
+
 // dependent types
 %include "gsTypes.i"
 
 %include "gsCommon.h"
+%include "../../gkSerialize.h"
 %include "gsUtils.i"
 %include "gsMath.i"
 %include "gsCore.i"

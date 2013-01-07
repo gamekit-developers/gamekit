@@ -28,6 +28,7 @@
 #include "gsPhysics.h"
 #include "gkCam2ViewportRay.h"
 #include "gkMesh.h"
+#include "External/Ogre/gkOgreMaterialLoader.h"
 
 
 gsProperty::gsProperty(gkVariable* var) : m_prop(var), m_creator(false)
@@ -1121,6 +1122,7 @@ gkGameObject* gsScene::createEntity(const gkString& name)
 
 		    gkMesh* mesh = scene->createMesh("mesh_"+name);
 		    gkSubMesh* submesh = new gkSubMesh();
+		    //submesh->setVertexColors(true);
 		    mesh->addSubMesh(submesh);
 		    ent->getEntityProperties().m_mesh = mesh;
 			return ent;
@@ -2348,19 +2350,76 @@ gkString gsGameObjectInstance::getName()
 gsMesh::gsMesh(gkMesh* mesh) : m_mesh(mesh)
 {}
 
-gsSubMesh::gsSubMesh(gkSubMesh* submesh) : m_submesh(submesh)
+void gsMesh::addSubMesh(gsSubMesh* submesh) {
+	m_mesh->addSubMesh(submesh->m_submesh);
+	// if we add the submesh to the mesh, the mesh is responsible for disposing
+	// this from now on:
+	submesh->m_isMeshCreator=false;
+}
+
+gsSubMesh::gsSubMesh() : m_isMeshCreator(true)
+{
+	m_submesh = new gkSubMesh;
+}
+
+gsSubMesh::gsSubMesh(gkSubMesh* submesh) : m_submesh(submesh), m_isMeshCreator(false)
 {}
 
-void gsSubMesh::addTriangle(const gkVertex& v0,
+gsSubMesh::~gsSubMesh()
+{
+	if (m_isMeshCreator)
+		delete m_submesh;
+}
+
+const gkTriangle gsSubMesh::addTriangle(const gkVertex& v0,
             unsigned int i0,
             const gkVertex& v1,
             unsigned int i1,
             const gkVertex& v2,
             unsigned int i2) {
-	m_submesh->addTriangle(v0,i0,v1,i1,v2,i2,gkTriangle::TRI_COLLIDER);
+	return m_submesh->addTriangle(v0,i0,v1,i1,v2,i2,gkTriangle::TRI_COLLIDER);
 }
-//gsVertex::gsVertex(gkVertex* vert) : m_vert(vert)
-//{}
+
+void gsSubMesh::setMaterialName(const gkString& materialName)
+{
+	m_submesh->setMaterialName(materialName);
+}
+
+bool isMaterialInitialized(const gkString& matName)
+{
+	Ogre::ResourcePtr resPtr = Ogre::MaterialManager::getSingleton().getByName(matName);
+	if (resPtr.isNull())
+		return false;
+	else
+		return true;
+}
+void initMaterial(const gkString& matName)
+{
+	if (!isMaterialInitialized(matName)){
+		// for now we have to find the material-props by searching all submeshes!!
+		// TODO: create gamekit-material-manager
+
+		gkMesh* mesh = 0;
+
+		gkMeshManager::ResourceIterator iter(gkMeshManager::getSingleton().getResourceIterator());
+		while (iter.hasMoreElements()){
+			gkMesh* mesh = static_cast<gkMesh*>(iter.getNext().second);
+
+			gkMesh::SubMeshIterator subIter(mesh->getSubMeshIterator());
+			while (subIter.hasMoreElements()) {
+				gkSubMesh* subM = static_cast<gkSubMesh*>(subIter.getNext());
+
+				if (subM->getMaterialName() == matName) {
+					// init the material
+					// TODO: check if there might be problems due to the group
+					gkMaterialLoader::loadSubMeshMaterial(subM, mesh->getGroupName());
+				}
+			}
+
+		}
+	}
+}
+
 
 void import(const gkString& scriptName)
 {

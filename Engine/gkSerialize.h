@@ -158,6 +158,8 @@ public:
 	{
 	}
 
+	gkTextureProperties& getTextureProp(int nr) { return m_textures[nr];}
+
 	gkString                m_name;
 	unsigned int            m_mode;
 	int                     m_rblend;

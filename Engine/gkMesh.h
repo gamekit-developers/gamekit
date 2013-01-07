@@ -55,6 +55,7 @@ public:
 	gkVertex();
 	gkVertex(const gkVertex& o);
 	gkVertex& operator = (const gkVertex& o);
+	gkVector2& getUV(int nr) { return uv[nr]; }
 
 	gkVector3       co;                 // vertex coordinates
 	gkVector3       no;                 // normals
@@ -125,8 +126,8 @@ public:
 	Verticies&          getVertexBuffer(void)               {return m_verts;}
 	Triangles&          getIndexBuffer(void)                {return m_tris;}
 	DeformVerts&        getDeformVertexBuffer(void)         {return m_defverts;}
-	gkString            getMaterialName(void)               {return m_material->m_name.c_str();}
-	void                setMaterialName(const gkString& v)  {m_material->m_name = v.c_str();}
+	gkString            getMaterialName(void)               {return m_material->m_name;}
+	void                setMaterialName(const gkString& v)  {m_material->m_name = v;}
 	void                setTotalLayers(int v)               {m_uvlayers = v;}
 	int                 getUvLayerCount(void)               {return m_uvlayers;}
 	void                setVertexColors(bool v)             {m_hasVertexColors = v;}
@@ -140,7 +141,7 @@ public:
 
 
 	gkSubMesh* clone(void);
-	void       addTriangle(const gkVertex& v0,
+	const gkTriangle       addTriangle(const gkVertex& v0,
 	                       unsigned int i0,
 	                       const gkVertex& v1,
 	                       unsigned int i1,

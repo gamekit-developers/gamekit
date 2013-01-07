@@ -35,6 +35,7 @@ public:
 
 class gkVector3 {
 public:
+    gkVector3() : x(0),y(0),z(0) {}
     float x,y,z;
 };
 class gkVertex
@@ -45,9 +46,25 @@ public:
     unsigned int    vcol;               // vertex color
     gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
     int             vba;                // Vertex bone assignment
+    gkVector2& getUV(int nr) { return uv[nr]; }
+};
+      
+class gkColor
+{
+public:
+   gkColor(float _r,float _g,float _b,float _a) :  r(_r),g(_g),b(_b),a(_a)
+   {}
+   ~gkColor() {}
+   float r,g,b,a;
 };
 
 
+
+struct gkTriangle
+{
+    unsigned int i0, i1, i2;
+    int flag;
+};
 
 %include "gsMacros.i"
 

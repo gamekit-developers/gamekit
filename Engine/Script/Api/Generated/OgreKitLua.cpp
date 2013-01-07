@@ -1511,109 +1511,132 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 #define SWIGTYPE_p_Array swig_types[0]
 #define SWIGTYPE_p_BrickList swig_types[1]
-#define SWIGTYPE_p_Iterator swig_types[2]
-#define SWIGTYPE_p_gkCharacter swig_types[3]
-#define SWIGTYPE_p_gkDynamicsWorld swig_types[4]
-#define SWIGTYPE_p_gkGameObjectInstance swig_types[5]
-#define SWIGTYPE_p_gkLogicManager swig_types[6]
-#define SWIGTYPE_p_gkLuaCurState swig_types[7]
-#define SWIGTYPE_p_gkMesh swig_types[8]
-#define SWIGTYPE_p_gkProcessManager swig_types[9]
-#define SWIGTYPE_p_gkScalar swig_types[10]
-#define SWIGTYPE_p_gkScene swig_types[11]
-#define SWIGTYPE_p_gkSubMesh swig_types[12]
-#define SWIGTYPE_p_gkVector2 swig_types[13]
-#define SWIGTYPE_p_gkVector3 swig_types[14]
-#define SWIGTYPE_p_gkVertex swig_types[15]
-#define SWIGTYPE_p_gsActionActuator swig_types[16]
-#define SWIGTYPE_p_gsActuator swig_types[17]
-#define SWIGTYPE_p_gsActuatorSensor swig_types[18]
-#define SWIGTYPE_p_gsAlwaysSensor swig_types[19]
-#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[20]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[21]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[22]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[23]
-#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[24]
-#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[25]
-#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[26]
-#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[27]
-#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[28]
-#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[29]
-#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[30]
-#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[31]
-#define SWIGTYPE_p_gsBrick swig_types[32]
-#define SWIGTYPE_p_gsCamera swig_types[33]
-#define SWIGTYPE_p_gsCharacter swig_types[34]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[35]
-#define SWIGTYPE_p_gsController swig_types[36]
-#define SWIGTYPE_p_gsCurve swig_types[37]
-#define SWIGTYPE_p_gsDebugger swig_types[38]
-#define SWIGTYPE_p_gsDelaySensor swig_types[39]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[40]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[41]
-#define SWIGTYPE_p_gsEngine swig_types[42]
-#define SWIGTYPE_p_gsEntity swig_types[43]
-#define SWIGTYPE_p_gsExpressionController swig_types[44]
-#define SWIGTYPE_p_gsFSM swig_types[45]
-#define SWIGTYPE_p_gsGameActuator swig_types[46]
-#define SWIGTYPE_p_gsGameObject swig_types[47]
-#define SWIGTYPE_p_gsGameObjectInstance swig_types[48]
-#define SWIGTYPE_p_gsHUD swig_types[49]
-#define SWIGTYPE_p_gsHUDElement swig_types[50]
-#define SWIGTYPE_p_gsJoystick swig_types[51]
-#define SWIGTYPE_p_gsKeyboard swig_types[52]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[53]
-#define SWIGTYPE_p_gsLight swig_types[54]
-#define SWIGTYPE_p_gsLogicManager swig_types[55]
-#define SWIGTYPE_p_gsLogicObject swig_types[56]
-#define SWIGTYPE_p_gsLogicOpController swig_types[57]
-#define SWIGTYPE_p_gsLuaManager swig_types[58]
-#define SWIGTYPE_p_gsLuaScript swig_types[59]
-#define SWIGTYPE_p_gsMesh swig_types[60]
-#define SWIGTYPE_p_gsMessageActuator swig_types[61]
-#define SWIGTYPE_p_gsMessageSensor swig_types[62]
-#define SWIGTYPE_p_gsMotionActuator swig_types[63]
-#define SWIGTYPE_p_gsMouse swig_types[64]
-#define SWIGTYPE_p_gsMouseSensor swig_types[65]
-#define SWIGTYPE_p_gsNearSensor swig_types[66]
-#define SWIGTYPE_p_gsObject swig_types[67]
-#define SWIGTYPE_p_gsParentActuator swig_types[68]
-#define SWIGTYPE_p_gsParticles swig_types[69]
-#define SWIGTYPE_p_gsProcess swig_types[70]
-#define SWIGTYPE_p_gsProcessManager swig_types[71]
-#define SWIGTYPE_p_gsProperty swig_types[72]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[73]
-#define SWIGTYPE_p_gsPropertySensor swig_types[74]
-#define SWIGTYPE_p_gsQuaternion swig_types[75]
-#define SWIGTYPE_p_gsRadarSensor swig_types[76]
-#define SWIGTYPE_p_gsRandomActuator swig_types[77]
-#define SWIGTYPE_p_gsRandomSensor swig_types[78]
-#define SWIGTYPE_p_gsRay swig_types[79]
-#define SWIGTYPE_p_gsRaySensor swig_types[80]
-#define SWIGTYPE_p_gsRayTest swig_types[81]
-#define SWIGTYPE_p_gsScene swig_types[82]
-#define SWIGTYPE_p_gsSceneActuator swig_types[83]
-#define SWIGTYPE_p_gsScriptController swig_types[84]
-#define SWIGTYPE_p_gsSensor swig_types[85]
-#define SWIGTYPE_p_gsSkeleton swig_types[86]
-#define SWIGTYPE_p_gsSoundActuator swig_types[87]
-#define SWIGTYPE_p_gsStateActuator swig_types[88]
-#define SWIGTYPE_p_gsSubMesh swig_types[89]
-#define SWIGTYPE_p_gsSweptTest swig_types[90]
-#define SWIGTYPE_p_gsTouchSensor swig_types[91]
-#define SWIGTYPE_p_gsTriangleIdx swig_types[92]
-#define SWIGTYPE_p_gsUserDefs swig_types[93]
-#define SWIGTYPE_p_gsVector3 swig_types[94]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[95]
-#define SWIGTYPE_p_gsWhenEvent swig_types[96]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[97]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[98]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[99]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[100]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[101]
-#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[102]
-static swig_type_info *swig_types[104];
-static swig_module_info swig_module = {swig_types, 103, 0, 0, 0, 0};
+#define SWIGTYPE_p_CollisionMask swig_types[2]
+#define SWIGTYPE_p_Iterator swig_types[3]
+#define SWIGTYPE_p_UTsize swig_types[4]
+#define SWIGTYPE_p_float swig_types[5]
+#define SWIGTYPE_p_gkCameraProperties swig_types[6]
+#define SWIGTYPE_p_gkCharacter swig_types[7]
+#define SWIGTYPE_p_gkColor swig_types[8]
+#define SWIGTYPE_p_gkCurveProperties swig_types[9]
+#define SWIGTYPE_p_gkDynamicsWorld swig_types[10]
+#define SWIGTYPE_p_gkEntityProperties swig_types[11]
+#define SWIGTYPE_p_gkFogParams swig_types[12]
+#define SWIGTYPE_p_gkGameObjectInstance swig_types[13]
+#define SWIGTYPE_p_gkGameObjectProperties swig_types[14]
+#define SWIGTYPE_p_gkLightProperties swig_types[15]
+#define SWIGTYPE_p_gkLogicManager swig_types[16]
+#define SWIGTYPE_p_gkLuaCurState swig_types[17]
+#define SWIGTYPE_p_gkMaterialProperties swig_types[18]
+#define SWIGTYPE_p_gkMesh swig_types[19]
+#define SWIGTYPE_p_gkParticleSettingsProperties swig_types[20]
+#define SWIGTYPE_p_gkParticleSystemProperties swig_types[21]
+#define SWIGTYPE_p_gkPhysicsConstraintProperties swig_types[22]
+#define SWIGTYPE_p_gkPhysicsProperties swig_types[23]
+#define SWIGTYPE_p_gkProcessManager swig_types[24]
+#define SWIGTYPE_p_gkScene swig_types[25]
+#define SWIGTYPE_p_gkSceneMaterial swig_types[26]
+#define SWIGTYPE_p_gkSceneProperties swig_types[27]
+#define SWIGTYPE_p_gkSoundSceneProperties swig_types[28]
+#define SWIGTYPE_p_gkSubMesh swig_types[29]
+#define SWIGTYPE_p_gkTextureProperties swig_types[30]
+#define SWIGTYPE_p_gkTransformState swig_types[31]
+#define SWIGTYPE_p_gkTriangle swig_types[32]
+#define SWIGTYPE_p_gkVector2 swig_types[33]
+#define SWIGTYPE_p_gkVector3 swig_types[34]
+#define SWIGTYPE_p_gkVertex swig_types[35]
+#define SWIGTYPE_p_gsActionActuator swig_types[36]
+#define SWIGTYPE_p_gsActuator swig_types[37]
+#define SWIGTYPE_p_gsActuatorSensor swig_types[38]
+#define SWIGTYPE_p_gsAlwaysSensor swig_types[39]
+#define SWIGTYPE_p_gsArrayIteratorT_gkGameObject_t swig_types[40]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicActuator_t swig_types[41]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicController_t swig_types[42]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicLink_t swig_types[43]
+#define SWIGTYPE_p_gsArrayIteratorT_gkLogicSensor_t swig_types[44]
+#define SWIGTYPE_p_gsArrayIteratorT_gkProcess_t swig_types[45]
+#define SWIGTYPE_p_gsArrayT_gsActuator_gkLogicActuator_t swig_types[46]
+#define SWIGTYPE_p_gsArrayT_gsController_gkLogicController_t swig_types[47]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[48]
+#define SWIGTYPE_p_gsArrayT_gsLogicObject_gkLogicLink_t swig_types[49]
+#define SWIGTYPE_p_gsArrayT_gsProcess_gkProcess_t swig_types[50]
+#define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[51]
+#define SWIGTYPE_p_gsBrick swig_types[52]
+#define SWIGTYPE_p_gsCamera swig_types[53]
+#define SWIGTYPE_p_gsCharacter swig_types[54]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[55]
+#define SWIGTYPE_p_gsController swig_types[56]
+#define SWIGTYPE_p_gsCurve swig_types[57]
+#define SWIGTYPE_p_gsDebugger swig_types[58]
+#define SWIGTYPE_p_gsDelaySensor swig_types[59]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[60]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[61]
+#define SWIGTYPE_p_gsEngine swig_types[62]
+#define SWIGTYPE_p_gsEntity swig_types[63]
+#define SWIGTYPE_p_gsExpressionController swig_types[64]
+#define SWIGTYPE_p_gsFSM swig_types[65]
+#define SWIGTYPE_p_gsGameActuator swig_types[66]
+#define SWIGTYPE_p_gsGameObject swig_types[67]
+#define SWIGTYPE_p_gsGameObjectInstance swig_types[68]
+#define SWIGTYPE_p_gsHUD swig_types[69]
+#define SWIGTYPE_p_gsHUDElement swig_types[70]
+#define SWIGTYPE_p_gsJoystick swig_types[71]
+#define SWIGTYPE_p_gsKeyboard swig_types[72]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[73]
+#define SWIGTYPE_p_gsLight swig_types[74]
+#define SWIGTYPE_p_gsLogicManager swig_types[75]
+#define SWIGTYPE_p_gsLogicObject swig_types[76]
+#define SWIGTYPE_p_gsLogicOpController swig_types[77]
+#define SWIGTYPE_p_gsLuaManager swig_types[78]
+#define SWIGTYPE_p_gsLuaScript swig_types[79]
+#define SWIGTYPE_p_gsMesh swig_types[80]
+#define SWIGTYPE_p_gsMessageActuator swig_types[81]
+#define SWIGTYPE_p_gsMessageSensor swig_types[82]
+#define SWIGTYPE_p_gsMotionActuator swig_types[83]
+#define SWIGTYPE_p_gsMouse swig_types[84]
+#define SWIGTYPE_p_gsMouseSensor swig_types[85]
+#define SWIGTYPE_p_gsNearSensor swig_types[86]
+#define SWIGTYPE_p_gsObject swig_types[87]
+#define SWIGTYPE_p_gsParentActuator swig_types[88]
+#define SWIGTYPE_p_gsParticles swig_types[89]
+#define SWIGTYPE_p_gsProcess swig_types[90]
+#define SWIGTYPE_p_gsProcessManager swig_types[91]
+#define SWIGTYPE_p_gsProperty swig_types[92]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[93]
+#define SWIGTYPE_p_gsPropertySensor swig_types[94]
+#define SWIGTYPE_p_gsQuaternion swig_types[95]
+#define SWIGTYPE_p_gsRadarSensor swig_types[96]
+#define SWIGTYPE_p_gsRandomActuator swig_types[97]
+#define SWIGTYPE_p_gsRandomSensor swig_types[98]
+#define SWIGTYPE_p_gsRay swig_types[99]
+#define SWIGTYPE_p_gsRaySensor swig_types[100]
+#define SWIGTYPE_p_gsRayTest swig_types[101]
+#define SWIGTYPE_p_gsScene swig_types[102]
+#define SWIGTYPE_p_gsSceneActuator swig_types[103]
+#define SWIGTYPE_p_gsScriptController swig_types[104]
+#define SWIGTYPE_p_gsSensor swig_types[105]
+#define SWIGTYPE_p_gsSkeleton swig_types[106]
+#define SWIGTYPE_p_gsSoundActuator swig_types[107]
+#define SWIGTYPE_p_gsStateActuator swig_types[108]
+#define SWIGTYPE_p_gsSubMesh swig_types[109]
+#define SWIGTYPE_p_gsSweptTest swig_types[110]
+#define SWIGTYPE_p_gsTouchSensor swig_types[111]
+#define SWIGTYPE_p_gsTriangleIdx swig_types[112]
+#define SWIGTYPE_p_gsUserDefs swig_types[113]
+#define SWIGTYPE_p_gsVector3 swig_types[114]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[115]
+#define SWIGTYPE_p_gsWhenEvent swig_types[116]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[117]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[118]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[119]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[120]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[121]
+#define SWIGTYPE_p_utArrayT_gkPhysicsConstraintProperties_t swig_types[122]
+#define SWIGTYPE_p_utArrayT_gkProcess_p_t swig_types[123]
+#define SWIGTYPE_p_utArrayT_gkString_t swig_types[124]
+#define SWIGTYPE_p_utArrayT_gkVector3_t swig_types[125]
+static swig_type_info *swig_types[127];
+static swig_module_info swig_module = {swig_types, 126, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1823,6 +1846,8523 @@ static int gsWrapActuator(lua_State *L, gkLogicActuator *obj)
 #ifdef __cplusplus
 extern "C" {
 #endif
+static int _wrap_new_gkTextureProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkTextureProperties",0,0)
+  result = (gkTextureProperties *)new gkTextureProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkTextureProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_name_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_name",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkTextureProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_name",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_name_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_name = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_name_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_name",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_name_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result =  ((arg1)->m_name);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_image_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_image",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_image",1,"gkTextureProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_image",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_image_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_image = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_image_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_image",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_image",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_image_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result =  ((arg1)->m_image);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_color_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_color",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_color",1,"gkTextureProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_color",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_color_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_color_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_color = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_color_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_color",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_color",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_color_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_color);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_layer_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_layer",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_layer",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_layer",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_layer_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_layer = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_layer_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_layer",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_layer",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_layer_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (int) ((arg1)->m_layer);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_type_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_type_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_blend_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_blend",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_blend",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_blend",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_blend_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_blend = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_blend_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_blend",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_blend",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_blend_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (int) ((arg1)->m_blend);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_mode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mode",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_mode_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_mode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_mode_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (int) ((arg1)->m_mode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_texmode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_texmode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_texmode",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_texmode",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_texmode_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_texmode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_texmode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_texmode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_texmode",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_texmode_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (int) ((arg1)->m_texmode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_mix_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_mix",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mix",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mix",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_mix_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mix = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_mix_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_mix",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mix",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_mix_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_mix);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_normalFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_normalFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_normalFactor",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_normalFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_normalFactor_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_normalFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_normalFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_normalFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_normalFactor",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_normalFactor_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_normalFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_diffuseColorFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_diffuseColorFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuseColorFactor",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_diffuseColorFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_diffuseColorFactor_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_diffuseColorFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_diffuseColorFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_diffuseColorFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuseColorFactor",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_diffuseColorFactor_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_diffuseColorFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_diffuseAlpahFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_diffuseAlpahFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuseAlpahFactor",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_diffuseAlpahFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_diffuseAlpahFactor_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_diffuseAlpahFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_diffuseAlpahFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_diffuseAlpahFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuseAlpahFactor",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_diffuseAlpahFactor_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_diffuseAlpahFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_speculaColorFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_speculaColorFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_speculaColorFactor",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_speculaColorFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_speculaColorFactor_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_speculaColorFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_speculaColorFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_speculaColorFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_speculaColorFactor",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_speculaColorFactor_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_speculaColorFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_speculaHardFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_speculaHardFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_speculaHardFactor",1,"gkTextureProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_speculaHardFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_speculaHardFactor_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_speculaHardFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_speculaHardFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_speculaHardFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_speculaHardFactor",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_speculaHardFactor_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (float) ((arg1)->m_speculaHardFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_scale_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_scale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_scale",1,"gkTextureProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_scale",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_scale_set",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_scale_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_scale = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTextureProperties_m_scale_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTextureProperties *arg1 = (gkTextureProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_scale",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_scale",1,"gkTextureProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkTextureProperties_m_scale_get",1,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_scale);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkTextureProperties(void *obj) {
+gkTextureProperties *arg1 = (gkTextureProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkTextureProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkTextureProperties_attributes[] = {
+    { "m_name", _wrap_gkTextureProperties_m_name_get, _wrap_gkTextureProperties_m_name_set},
+    { "m_image", _wrap_gkTextureProperties_m_image_get, _wrap_gkTextureProperties_m_image_set},
+    { "m_color", _wrap_gkTextureProperties_m_color_get, _wrap_gkTextureProperties_m_color_set},
+    { "m_layer", _wrap_gkTextureProperties_m_layer_get, _wrap_gkTextureProperties_m_layer_set},
+    { "m_type", _wrap_gkTextureProperties_m_type_get, _wrap_gkTextureProperties_m_type_set},
+    { "m_blend", _wrap_gkTextureProperties_m_blend_get, _wrap_gkTextureProperties_m_blend_set},
+    { "m_mode", _wrap_gkTextureProperties_m_mode_get, _wrap_gkTextureProperties_m_mode_set},
+    { "m_texmode", _wrap_gkTextureProperties_m_texmode_get, _wrap_gkTextureProperties_m_texmode_set},
+    { "m_mix", _wrap_gkTextureProperties_m_mix_get, _wrap_gkTextureProperties_m_mix_set},
+    { "m_normalFactor", _wrap_gkTextureProperties_m_normalFactor_get, _wrap_gkTextureProperties_m_normalFactor_set},
+    { "m_diffuseColorFactor", _wrap_gkTextureProperties_m_diffuseColorFactor_get, _wrap_gkTextureProperties_m_diffuseColorFactor_set},
+    { "m_diffuseAlpahFactor", _wrap_gkTextureProperties_m_diffuseAlpahFactor_get, _wrap_gkTextureProperties_m_diffuseAlpahFactor_set},
+    { "m_speculaColorFactor", _wrap_gkTextureProperties_m_speculaColorFactor_get, _wrap_gkTextureProperties_m_speculaColorFactor_set},
+    { "m_speculaHardFactor", _wrap_gkTextureProperties_m_speculaHardFactor_get, _wrap_gkTextureProperties_m_speculaHardFactor_set},
+    { "m_scale", _wrap_gkTextureProperties_m_scale_get, _wrap_gkTextureProperties_m_scale_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkTextureProperties_bases[] = {0};
+static const char *swig_gkTextureProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkTextureProperties = { "gkTextureProperties", &SWIGTYPE_p_gkTextureProperties,_wrap_new_gkTextureProperties, swig_delete_gkTextureProperties, swig_gkTextureProperties_methods, swig_gkTextureProperties_attributes, swig_gkTextureProperties_bases, swig_gkTextureProperties_base_names };
+
+static int _wrap_new_gkMaterialProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkMaterialProperties",0,0)
+  result = (gkMaterialProperties *)new gkMaterialProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkMaterialProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_getTextureProp(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int arg2 ;
+  gkTextureProperties *result = 0 ;
+  
+  SWIG_check_num_args("getTextureProp",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getTextureProp",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getTextureProp",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_getTextureProp",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkTextureProperties *) &(arg1)->getTextureProp(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkTextureProperties,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_name_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_name",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkMaterialProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_name",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_name_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_name = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_name_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_name",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_name_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result =  ((arg1)->m_name);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("m_mode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mode",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_mode_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("m_mode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_mode_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (unsigned int) ((arg1)->m_mode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_rblend_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_rblend",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_rblend",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_rblend",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_rblend_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_rblend = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_rblend_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_rblend",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_rblend",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_rblend_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (int) ((arg1)->m_rblend);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_diffuse_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_diffuse",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuse",1,"gkMaterialProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_diffuse",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_diffuse_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_diffuse_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_diffuse = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_diffuse_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_diffuse",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuse",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_diffuse_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_diffuse);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_specular_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_specular",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_specular",1,"gkMaterialProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_specular",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_specular_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_specular_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_specular = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_specular_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_specular",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_specular",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_specular_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_specular);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_hardness_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_hardness",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_hardness",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_hardness",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_hardness_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_hardness = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_hardness_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_hardness",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_hardness",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_hardness_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_hardness);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_refraction_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_refraction",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_refraction",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_refraction",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_refraction_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_refraction = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_refraction_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_refraction",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_refraction",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_refraction_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_refraction);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_emissive_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_emissive",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_emissive",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_emissive",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_emissive_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_emissive = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_emissive_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_emissive",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_emissive",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_emissive_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_emissive);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_ambient_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_ambient",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_ambient",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_ambient",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_ambient_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_ambient = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_ambient_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_ambient",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_ambient",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_ambient_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_ambient);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_spec_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_spec",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_spec",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_spec",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_spec_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_spec = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_spec_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_spec",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_spec",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_spec_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_spec);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_alpha_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_alpha",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_alpha",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_alpha",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_alpha_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_alpha = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_alpha_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_alpha",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_alpha",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_alpha_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_alpha);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_depthOffset_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_depthOffset",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_depthOffset",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_depthOffset",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_depthOffset_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_depthOffset = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_depthOffset_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_depthOffset",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_depthOffset",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_depthOffset_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (float) ((arg1)->m_depthOffset);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_totaltex_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_totaltex",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_totaltex",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_totaltex",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_totaltex_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_totaltex = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_totaltex_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_totaltex",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_totaltex",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_totaltex_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (int) ((arg1)->m_totaltex);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_textures_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkTextureProperties *arg2 ;
+  
+  SWIG_check_num_args("m_textures",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_textures",1,"gkMaterialProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_textures",2,"gkTextureProperties [18]");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_textures_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkTextureProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_textures_set",2,SWIGTYPE_p_gkTextureProperties);
+  }
+  
+  {
+    size_t ii;
+    gkTextureProperties *b = (gkTextureProperties *) arg1->m_textures;
+    for (ii = 0; ii < (size_t)18; ii++) b[ii] = *((gkTextureProperties *) arg2 + ii);
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_textures_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  gkTextureProperties *result = 0 ;
+  
+  SWIG_check_num_args("m_textures",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_textures",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_textures_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (gkTextureProperties *)(gkTextureProperties *) ((arg1)->m_textures);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkTextureProperties,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_tangentLayer_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_tangentLayer",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_tangentLayer",1,"gkMaterialProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_tangentLayer",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_tangentLayer_set",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_tangentLayer = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkMaterialProperties_m_tangentLayer_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkMaterialProperties *arg1 = (gkMaterialProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_tangentLayer",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_tangentLayer",1,"gkMaterialProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkMaterialProperties,0))){
+    SWIG_fail_ptr("gkMaterialProperties_m_tangentLayer_get",1,SWIGTYPE_p_gkMaterialProperties);
+  }
+  
+  result = (int) ((arg1)->m_tangentLayer);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkMaterialProperties(void *obj) {
+gkMaterialProperties *arg1 = (gkMaterialProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkMaterialProperties_methods[] = {
+    {"getTextureProp", _wrap_gkMaterialProperties_getTextureProp}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gkMaterialProperties_attributes[] = {
+    { "m_name", _wrap_gkMaterialProperties_m_name_get, _wrap_gkMaterialProperties_m_name_set},
+    { "m_mode", _wrap_gkMaterialProperties_m_mode_get, _wrap_gkMaterialProperties_m_mode_set},
+    { "m_rblend", _wrap_gkMaterialProperties_m_rblend_get, _wrap_gkMaterialProperties_m_rblend_set},
+    { "m_diffuse", _wrap_gkMaterialProperties_m_diffuse_get, _wrap_gkMaterialProperties_m_diffuse_set},
+    { "m_specular", _wrap_gkMaterialProperties_m_specular_get, _wrap_gkMaterialProperties_m_specular_set},
+    { "m_hardness", _wrap_gkMaterialProperties_m_hardness_get, _wrap_gkMaterialProperties_m_hardness_set},
+    { "m_refraction", _wrap_gkMaterialProperties_m_refraction_get, _wrap_gkMaterialProperties_m_refraction_set},
+    { "m_emissive", _wrap_gkMaterialProperties_m_emissive_get, _wrap_gkMaterialProperties_m_emissive_set},
+    { "m_ambient", _wrap_gkMaterialProperties_m_ambient_get, _wrap_gkMaterialProperties_m_ambient_set},
+    { "m_spec", _wrap_gkMaterialProperties_m_spec_get, _wrap_gkMaterialProperties_m_spec_set},
+    { "m_alpha", _wrap_gkMaterialProperties_m_alpha_get, _wrap_gkMaterialProperties_m_alpha_set},
+    { "m_depthOffset", _wrap_gkMaterialProperties_m_depthOffset_get, _wrap_gkMaterialProperties_m_depthOffset_set},
+    { "m_totaltex", _wrap_gkMaterialProperties_m_totaltex_get, _wrap_gkMaterialProperties_m_totaltex_set},
+    { "m_textures", _wrap_gkMaterialProperties_m_textures_get, _wrap_gkMaterialProperties_m_textures_set},
+    { "m_tangentLayer", _wrap_gkMaterialProperties_m_tangentLayer_get, _wrap_gkMaterialProperties_m_tangentLayer_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkMaterialProperties_bases[] = {0};
+static const char *swig_gkMaterialProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkMaterialProperties = { "gkMaterialProperties", &SWIGTYPE_p_gkMaterialProperties,_wrap_new_gkMaterialProperties, swig_delete_gkMaterialProperties, swig_gkMaterialProperties_methods, swig_gkMaterialProperties_attributes, swig_gkMaterialProperties_bases, swig_gkMaterialProperties_base_names };
+
+static int _wrap_new_gkCameraProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkCameraProperties",0,0)
+  result = (gkCameraProperties *)new gkCameraProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkCameraProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_clipstart_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_clipstart",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_clipstart",1,"gkCameraProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_clipstart",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_clipstart_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_clipstart = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_clipstart_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_clipstart",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_clipstart",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_clipstart_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (float) ((arg1)->m_clipstart);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_clipend_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_clipend",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_clipend",1,"gkCameraProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_clipend",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_clipend_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_clipend = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_clipend_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_clipend",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_clipend",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_clipend_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (float) ((arg1)->m_clipend);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_fov_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_fov",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_fov",1,"gkCameraProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_fov",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_fov_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_fov = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_fov_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_fov",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_fov",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_fov_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (float) ((arg1)->m_fov);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_orthoscale_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_orthoscale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_orthoscale",1,"gkCameraProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_orthoscale",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_orthoscale_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_orthoscale = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_orthoscale_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_orthoscale",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_orthoscale",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_orthoscale_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (float) ((arg1)->m_orthoscale);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_start_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_start",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkCameraProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_start",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_start_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_start = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_start_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_start",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_start_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (bool) ((arg1)->m_start);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkCameraProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_type_set",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCameraProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCameraProperties *arg1 = (gkCameraProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkCameraProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCameraProperties,0))){
+    SWIG_fail_ptr("gkCameraProperties_m_type_get",1,SWIGTYPE_p_gkCameraProperties);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkCameraProperties(void *obj) {
+gkCameraProperties *arg1 = (gkCameraProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkCameraProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkCameraProperties_attributes[] = {
+    { "m_clipstart", _wrap_gkCameraProperties_m_clipstart_get, _wrap_gkCameraProperties_m_clipstart_set},
+    { "m_clipend", _wrap_gkCameraProperties_m_clipend_get, _wrap_gkCameraProperties_m_clipend_set},
+    { "m_fov", _wrap_gkCameraProperties_m_fov_get, _wrap_gkCameraProperties_m_fov_set},
+    { "m_orthoscale", _wrap_gkCameraProperties_m_orthoscale_get, _wrap_gkCameraProperties_m_orthoscale_set},
+    { "m_start", _wrap_gkCameraProperties_m_start_get, _wrap_gkCameraProperties_m_start_set},
+    { "m_type", _wrap_gkCameraProperties_m_type_get, _wrap_gkCameraProperties_m_type_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkCameraProperties_bases[] = {0};
+static const char *swig_gkCameraProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkCameraProperties = { "gkCameraProperties", &SWIGTYPE_p_gkCameraProperties,_wrap_new_gkCameraProperties, swig_delete_gkCameraProperties, swig_gkCameraProperties_methods, swig_gkCameraProperties_attributes, swig_gkCameraProperties_bases, swig_gkCameraProperties_base_names };
+
+static int _wrap_new_gkEntityProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkEntityProperties",0,0)
+  result = (gkEntityProperties *)new gkEntityProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkEntityProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_mesh_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkMesh *arg2 = (gkMesh *) 0 ;
+  
+  SWIG_check_num_args("m_mesh",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mesh",1,"gkEntityProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_mesh",2,"gkMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_mesh_set",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkMesh,SWIG_POINTER_DISOWN))){
+    SWIG_fail_ptr("gkEntityProperties_m_mesh_set",2,SWIGTYPE_p_gkMesh);
+  }
+  
+  if (arg1) (arg1)->m_mesh = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_mesh_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkMesh *result = 0 ;
+  
+  SWIG_check_num_args("m_mesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mesh",1,"gkEntityProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_mesh_get",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  result = (gkMesh *) ((arg1)->m_mesh);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Mesh); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_casts_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_casts",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_casts",1,"gkEntityProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_casts",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_casts_set",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_casts = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_casts_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_casts",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_casts",1,"gkEntityProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_casts_get",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  result = (bool) ((arg1)->m_casts);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_source_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_source",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_source",1,"gkEntityProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_source",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_source_set",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_source = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_source_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_source",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_source",1,"gkEntityProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_source_get",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  result =  ((arg1)->m_source);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_startPose_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_startPose",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_startPose",1,"gkEntityProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_startPose",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_startPose_set",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_startPose = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkEntityProperties_m_startPose_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkEntityProperties *arg1 = (gkEntityProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_startPose",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_startPose",1,"gkEntityProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkEntityProperties,0))){
+    SWIG_fail_ptr("gkEntityProperties_m_startPose_get",1,SWIGTYPE_p_gkEntityProperties);
+  }
+  
+  result =  ((arg1)->m_startPose);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkEntityProperties(void *obj) {
+gkEntityProperties *arg1 = (gkEntityProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkEntityProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkEntityProperties_attributes[] = {
+    { "m_mesh", _wrap_gkEntityProperties_m_mesh_get, _wrap_gkEntityProperties_m_mesh_set},
+    { "m_casts", _wrap_gkEntityProperties_m_casts_get, _wrap_gkEntityProperties_m_casts_set},
+    { "m_source", _wrap_gkEntityProperties_m_source_get, _wrap_gkEntityProperties_m_source_set},
+    { "m_startPose", _wrap_gkEntityProperties_m_startPose_get, _wrap_gkEntityProperties_m_startPose_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkEntityProperties_bases[] = {0};
+static const char *swig_gkEntityProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkEntityProperties = { "gkEntityProperties", &SWIGTYPE_p_gkEntityProperties,_wrap_new_gkEntityProperties, swig_delete_gkEntityProperties, swig_gkEntityProperties_methods, swig_gkEntityProperties_attributes, swig_gkEntityProperties_bases, swig_gkEntityProperties_base_names };
+
+static int _wrap_new_gkCurveProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkCurveProperties",0,0)
+  result = (gkCurveProperties *)new gkCurveProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkCurveProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  gkCurveProperties::CurveType arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkCurveProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"gkCurveProperties::CurveType");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_type_set",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  arg2 = (gkCurveProperties::CurveType)(int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  gkCurveProperties::CurveType result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkCurveProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_type_get",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  result = (gkCurveProperties::CurveType) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_points_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  utArray< gkVector3 > *arg2 = (utArray< gkVector3 > *) 0 ;
+  
+  SWIG_check_num_args("m_points",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_points",1,"gkCurveProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_points",2,"utArray< gkVector3 > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_points_set",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_utArrayT_gkVector3_t,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_points_set",2,SWIGTYPE_p_utArrayT_gkVector3_t);
+  }
+  
+  if (arg1) (arg1)->m_points = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_points_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  utArray< gkVector3 > *result = 0 ;
+  
+  SWIG_check_num_args("m_points",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_points",1,"gkCurveProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_points_get",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  result = (utArray< gkVector3 > *)& ((arg1)->m_points);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_utArrayT_gkVector3_t,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_isCyclic_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_isCyclic",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_isCyclic",1,"gkCurveProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_isCyclic",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_isCyclic_set",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_isCyclic = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkCurveProperties_m_isCyclic_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkCurveProperties *arg1 = (gkCurveProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_isCyclic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_isCyclic",1,"gkCurveProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkCurveProperties,0))){
+    SWIG_fail_ptr("gkCurveProperties_m_isCyclic_get",1,SWIGTYPE_p_gkCurveProperties);
+  }
+  
+  result = (bool) ((arg1)->m_isCyclic);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkCurveProperties(void *obj) {
+gkCurveProperties *arg1 = (gkCurveProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkCurveProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkCurveProperties_attributes[] = {
+    { "m_type", _wrap_gkCurveProperties_m_type_get, _wrap_gkCurveProperties_m_type_set},
+    { "m_points", _wrap_gkCurveProperties_m_points_get, _wrap_gkCurveProperties_m_points_set},
+    { "m_isCyclic", _wrap_gkCurveProperties_m_isCyclic_get, _wrap_gkCurveProperties_m_isCyclic_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkCurveProperties_bases[] = {0};
+static const char *swig_gkCurveProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkCurveProperties = { "gkCurveProperties", &SWIGTYPE_p_gkCurveProperties,_wrap_new_gkCurveProperties, swig_delete_gkCurveProperties, swig_gkCurveProperties_methods, swig_gkCurveProperties_attributes, swig_gkCurveProperties_bases, swig_gkCurveProperties_base_names };
+
+static int _wrap_new_gkLightProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkLightProperties",0,0)
+  result = (gkLightProperties *)new gkLightProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkLightProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_diffuse_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_diffuse",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuse",1,"gkLightProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_diffuse",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_diffuse_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkLightProperties_m_diffuse_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_diffuse = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_diffuse_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_diffuse",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_diffuse",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_diffuse_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_diffuse);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_specular_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_specular",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_specular",1,"gkLightProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_specular",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_specular_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkLightProperties_m_specular_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_specular = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_specular_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_specular",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_specular",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_specular_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_specular);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_type_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_type_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_spot_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkVector2 *arg2 = (gkVector2 *) 0 ;
+  
+  SWIG_check_num_args("m_spot",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_spot",1,"gkLightProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_spot",2,"gkVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_spot_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector2,0))){
+    SWIG_fail_ptr("gkLightProperties_m_spot_set",2,SWIGTYPE_p_gkVector2);
+  }
+  
+  if (arg1) (arg1)->m_spot = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_spot_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkVector2 *result = 0 ;
+  
+  SWIG_check_num_args("m_spot",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_spot",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_spot_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (gkVector2 *)& ((arg1)->m_spot);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector2,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_direction_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_direction",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_direction",1,"gkLightProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_direction",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_direction_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkLightProperties_m_direction_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_direction = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_direction_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_direction",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_direction",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_direction_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_direction);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_power_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_power",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_power",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_power",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_power_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_power = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_power_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_power",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_power",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_power_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_power);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_falloff_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_falloff",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_falloff",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_falloff",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_falloff_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_falloff = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_falloff_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_falloff",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_falloff",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_falloff_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_falloff);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_range_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_range",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_range",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_range",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_range_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_range = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_range_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_range",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_range",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_range_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_range);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_constant_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_constant",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_constant",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_constant",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_constant_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_constant = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_constant_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_constant",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_constant",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_constant_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_constant);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_linear_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_linear",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_linear",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_linear",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_linear_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_linear = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_linear_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_linear",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_linear",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_linear_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_linear);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_quadratic_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_quadratic",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_quadratic",1,"gkLightProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_quadratic",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_quadratic_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_quadratic = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_quadratic_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_quadratic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_quadratic",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_quadratic_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float) ((arg1)->m_quadratic);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_casts_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_casts",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_casts",1,"gkLightProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_casts",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_casts_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_casts = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_casts_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_casts",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_casts",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_casts_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (bool) ((arg1)->m_casts);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_extra_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_extra",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_extra",1,"gkLightProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_extra",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_extra_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_extra = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_extra_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_extra",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_extra",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_extra_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (bool) ((arg1)->m_extra);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_param_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float *arg2 ;
+  
+  SWIG_check_num_args("m_param",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_param",1,"gkLightProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_param",2,"float [4]");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_param_set",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_float,0))){
+    SWIG_fail_ptr("gkLightProperties_m_param_set",2,SWIGTYPE_p_float);
+  }
+  
+  {
+    size_t ii;
+    float *b = (float *) arg1->m_param;
+    for (ii = 0; ii < (size_t)4; ii++) b[ii] = *((float *) arg2 + ii);
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkLightProperties_m_param_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLightProperties *arg1 = (gkLightProperties *) 0 ;
+  float *result = 0 ;
+  
+  SWIG_check_num_args("m_param",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_param",1,"gkLightProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLightProperties,0))){
+    SWIG_fail_ptr("gkLightProperties_m_param_get",1,SWIGTYPE_p_gkLightProperties);
+  }
+  
+  result = (float *)(float *) ((arg1)->m_param);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_float,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkLightProperties(void *obj) {
+gkLightProperties *arg1 = (gkLightProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkLightProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkLightProperties_attributes[] = {
+    { "m_diffuse", _wrap_gkLightProperties_m_diffuse_get, _wrap_gkLightProperties_m_diffuse_set},
+    { "m_specular", _wrap_gkLightProperties_m_specular_get, _wrap_gkLightProperties_m_specular_set},
+    { "m_type", _wrap_gkLightProperties_m_type_get, _wrap_gkLightProperties_m_type_set},
+    { "m_spot", _wrap_gkLightProperties_m_spot_get, _wrap_gkLightProperties_m_spot_set},
+    { "m_direction", _wrap_gkLightProperties_m_direction_get, _wrap_gkLightProperties_m_direction_set},
+    { "m_power", _wrap_gkLightProperties_m_power_get, _wrap_gkLightProperties_m_power_set},
+    { "m_falloff", _wrap_gkLightProperties_m_falloff_get, _wrap_gkLightProperties_m_falloff_set},
+    { "m_range", _wrap_gkLightProperties_m_range_get, _wrap_gkLightProperties_m_range_set},
+    { "m_constant", _wrap_gkLightProperties_m_constant_get, _wrap_gkLightProperties_m_constant_set},
+    { "m_linear", _wrap_gkLightProperties_m_linear_get, _wrap_gkLightProperties_m_linear_set},
+    { "m_quadratic", _wrap_gkLightProperties_m_quadratic_get, _wrap_gkLightProperties_m_quadratic_set},
+    { "m_casts", _wrap_gkLightProperties_m_casts_get, _wrap_gkLightProperties_m_casts_set},
+    { "m_extra", _wrap_gkLightProperties_m_extra_get, _wrap_gkLightProperties_m_extra_set},
+    { "m_param", _wrap_gkLightProperties_m_param_get, _wrap_gkLightProperties_m_param_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkLightProperties_bases[] = {0};
+static const char *swig_gkLightProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkLightProperties = { "gkLightProperties", &SWIGTYPE_p_gkLightProperties,_wrap_new_gkLightProperties, swig_delete_gkLightProperties, swig_gkLightProperties_methods, swig_gkLightProperties_attributes, swig_gkLightProperties_bases, swig_gkLightProperties_base_names };
+
+static int _wrap_new_gkPhysicsConstraintProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkPhysicsConstraintProperties",0,0)
+  result = (gkPhysicsConstraintProperties *)new gkPhysicsConstraintProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkPhysicsConstraintProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_target_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_target",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_target",1,"gkPhysicsConstraintProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_target",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_target_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_target = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_target_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_target",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_target",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_target_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result =  ((arg1)->m_target);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkPhysicsConstraintProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_type_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_type_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_pivot_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_pivot",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_pivot",1,"gkPhysicsConstraintProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_pivot",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_pivot_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_pivot_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_pivot = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_pivot_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_pivot",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_pivot",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_pivot_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_pivot);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_axis_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_axis",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_axis",1,"gkPhysicsConstraintProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_axis",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_axis_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_axis_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_axis = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_axis_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_axis",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_axis",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_axis_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_axis);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_minLimit_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  float *arg2 ;
+  
+  SWIG_check_num_args("m_minLimit",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_minLimit",1,"gkPhysicsConstraintProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_minLimit",2,"float [6]");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_minLimit_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_float,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_minLimit_set",2,SWIGTYPE_p_float);
+  }
+  
+  {
+    size_t ii;
+    float *b = (float *) arg1->m_minLimit;
+    for (ii = 0; ii < (size_t)6; ii++) b[ii] = *((float *) arg2 + ii);
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_minLimit_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  float *result = 0 ;
+  
+  SWIG_check_num_args("m_minLimit",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_minLimit",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_minLimit_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (float *)(float *) ((arg1)->m_minLimit);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_float,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_maxLimit_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  float *arg2 ;
+  
+  SWIG_check_num_args("m_maxLimit",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_maxLimit",1,"gkPhysicsConstraintProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_maxLimit",2,"float [6]");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_maxLimit_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_float,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_maxLimit_set",2,SWIGTYPE_p_float);
+  }
+  
+  {
+    size_t ii;
+    float *b = (float *) arg1->m_maxLimit;
+    for (ii = 0; ii < (size_t)6; ii++) b[ii] = *((float *) arg2 + ii);
+  }
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_maxLimit_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  float *result = 0 ;
+  
+  SWIG_check_num_args("m_maxLimit",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_maxLimit",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_maxLimit_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (float *)(float *) ((arg1)->m_maxLimit);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_float,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_flag_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_flag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_flag",1,"gkPhysicsConstraintProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_flag",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_flag_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_flag = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_flag_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_flag",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_flag",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_flag_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (int) ((arg1)->m_flag);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_disableLinkedCollision_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_disableLinkedCollision",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_disableLinkedCollision",1,"gkPhysicsConstraintProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_disableLinkedCollision",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_disableLinkedCollision_set",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_disableLinkedCollision = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsConstraintProperties_m_disableLinkedCollision_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_disableLinkedCollision",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_disableLinkedCollision",1,"gkPhysicsConstraintProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsConstraintProperties,0))){
+    SWIG_fail_ptr("gkPhysicsConstraintProperties_m_disableLinkedCollision_get",1,SWIGTYPE_p_gkPhysicsConstraintProperties);
+  }
+  
+  result = (bool) ((arg1)->m_disableLinkedCollision);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkPhysicsConstraintProperties(void *obj) {
+gkPhysicsConstraintProperties *arg1 = (gkPhysicsConstraintProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkPhysicsConstraintProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkPhysicsConstraintProperties_attributes[] = {
+    { "m_target", _wrap_gkPhysicsConstraintProperties_m_target_get, _wrap_gkPhysicsConstraintProperties_m_target_set},
+    { "m_type", _wrap_gkPhysicsConstraintProperties_m_type_get, _wrap_gkPhysicsConstraintProperties_m_type_set},
+    { "m_pivot", _wrap_gkPhysicsConstraintProperties_m_pivot_get, _wrap_gkPhysicsConstraintProperties_m_pivot_set},
+    { "m_axis", _wrap_gkPhysicsConstraintProperties_m_axis_get, _wrap_gkPhysicsConstraintProperties_m_axis_set},
+    { "m_minLimit", _wrap_gkPhysicsConstraintProperties_m_minLimit_get, _wrap_gkPhysicsConstraintProperties_m_minLimit_set},
+    { "m_maxLimit", _wrap_gkPhysicsConstraintProperties_m_maxLimit_get, _wrap_gkPhysicsConstraintProperties_m_maxLimit_set},
+    { "m_flag", _wrap_gkPhysicsConstraintProperties_m_flag_get, _wrap_gkPhysicsConstraintProperties_m_flag_set},
+    { "m_disableLinkedCollision", _wrap_gkPhysicsConstraintProperties_m_disableLinkedCollision_get, _wrap_gkPhysicsConstraintProperties_m_disableLinkedCollision_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkPhysicsConstraintProperties_bases[] = {0};
+static const char *swig_gkPhysicsConstraintProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkPhysicsConstraintProperties = { "gkPhysicsConstraintProperties", &SWIGTYPE_p_gkPhysicsConstraintProperties,_wrap_new_gkPhysicsConstraintProperties, swig_delete_gkPhysicsConstraintProperties, swig_gkPhysicsConstraintProperties_methods, swig_gkPhysicsConstraintProperties_attributes, swig_gkPhysicsConstraintProperties_bases, swig_gkPhysicsConstraintProperties_base_names };
+
+static int _wrap_new_gkPhysicsProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkPhysicsProperties",0,0)
+  result = (gkPhysicsProperties *)new gkPhysicsProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkPhysicsProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_type_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_type_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_mode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mode",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_mode_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_mode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_mode_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (int) ((arg1)->m_mode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_shape_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_shape",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_shape",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_shape",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_shape_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_shape = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_shape_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_shape",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_shape",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_shape_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (int) ((arg1)->m_shape);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_margin_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_margin",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_margin",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_margin",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_margin_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_margin = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_margin_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_margin",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_margin",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_margin_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_margin);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_cpt_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_cpt",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_cpt",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_cpt",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_cpt_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_cpt = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_cpt_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_cpt",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_cpt",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_cpt_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_cpt);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_mass_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_mass",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mass",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mass",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_mass_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mass = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_mass_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_mass",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mass",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_mass_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_mass);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_radius_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_radius",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_radius",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_radius",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_radius_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_radius = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_radius_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_radius",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_radius",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_radius_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_radius);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_linearDamp_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_linearDamp",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_linearDamp",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_linearDamp",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_linearDamp_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_linearDamp = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_linearDamp_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_linearDamp",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_linearDamp",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_linearDamp_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_linearDamp);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_angularDamp_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_angularDamp",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_angularDamp",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_angularDamp",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_angularDamp_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_angularDamp = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_angularDamp_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_angularDamp",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_angularDamp",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_angularDamp_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_angularDamp);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_formFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_formFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_formFactor",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_formFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_formFactor_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_formFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_formFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_formFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_formFactor",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_formFactor_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_formFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_minVel_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_minVel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_minVel",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_minVel",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_minVel_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_minVel = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_minVel_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_minVel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_minVel",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_minVel_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_minVel);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_maxVel_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_maxVel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_maxVel",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_maxVel",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_maxVel_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_maxVel = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_maxVel_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_maxVel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_maxVel",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_maxVel_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_maxVel);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_restitution_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_restitution",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_restitution",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_restitution",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_restitution_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_restitution = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_restitution_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_restitution",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_restitution",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_restitution_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_restitution);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_friction_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_friction",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_friction",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_friction",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_friction_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_friction = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_friction_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_friction",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_friction",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_friction_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_friction);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_colMask_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  gkPhysicsProperties::CollisionMask arg2 ;
+  
+  SWIG_check_num_args("m_colMask",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_colMask",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_colMask",2,"gkPhysicsProperties::CollisionMask");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_colMask_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (gkPhysicsProperties::CollisionMask)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_colMask = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_colMask_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  gkPhysicsProperties::CollisionMask result;
+  
+  SWIG_check_num_args("m_colMask",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_colMask",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_colMask_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (gkPhysicsProperties::CollisionMask) ((arg1)->m_colMask);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_colGroupMask_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  gkPhysicsProperties::CollisionMask arg2 ;
+  
+  SWIG_check_num_args("m_colGroupMask",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_colGroupMask",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_colGroupMask",2,"gkPhysicsProperties::CollisionMask");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_colGroupMask_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (gkPhysicsProperties::CollisionMask)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_colGroupMask = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_colGroupMask_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  gkPhysicsProperties::CollisionMask result;
+  
+  SWIG_check_num_args("m_colGroupMask",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_colGroupMask",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_colGroupMask_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (gkPhysicsProperties::CollisionMask) ((arg1)->m_colGroupMask);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charStepHeight_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_charStepHeight",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charStepHeight",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_charStepHeight",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charStepHeight_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_charStepHeight = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charStepHeight_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_charStepHeight",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charStepHeight",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charStepHeight_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_charStepHeight);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charJumpSpeed_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_charJumpSpeed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charJumpSpeed",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_charJumpSpeed",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charJumpSpeed_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_charJumpSpeed = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charJumpSpeed_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_charJumpSpeed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charJumpSpeed",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charJumpSpeed_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_charJumpSpeed);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charFallSpeed_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_charFallSpeed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charFallSpeed",1,"gkPhysicsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_charFallSpeed",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charFallSpeed_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_charFallSpeed = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_charFallSpeed_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_charFallSpeed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_charFallSpeed",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_charFallSpeed_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (float) ((arg1)->m_charFallSpeed);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_constraints_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  utArray< gkPhysicsConstraintProperties > *arg2 = (utArray< gkPhysicsConstraintProperties > *) 0 ;
+  
+  SWIG_check_num_args("m_constraints",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_constraints",1,"gkPhysicsProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_constraints",2,"utArray< gkPhysicsConstraintProperties > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_constraints_set",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_utArrayT_gkPhysicsConstraintProperties_t,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_constraints_set",2,SWIGTYPE_p_utArrayT_gkPhysicsConstraintProperties_t);
+  }
+  
+  if (arg1) (arg1)->m_constraints = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_m_constraints_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  utArray< gkPhysicsConstraintProperties > *result = 0 ;
+  
+  SWIG_check_num_args("m_constraints",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_constraints",1,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_m_constraints_get",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (utArray< gkPhysicsConstraintProperties > *)& ((arg1)->m_constraints);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_utArrayT_gkPhysicsConstraintProperties_t,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isContactListener(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isContactListener",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isContactListener",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isContactListener",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isContactListener();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isDosser(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isDosser",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isDosser",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isDosser",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isDosser();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isCompound(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isCompound",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isCompound",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isCompound",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isCompound();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isCompoundChild(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isCompoundChild",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isCompoundChild",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isCompoundChild",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isCompoundChild();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isSensor(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isSensor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isSensor",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isSensor",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isSensor();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isRigidOrDynamic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigidOrDynamic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigidOrDynamic",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isRigidOrDynamic",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isRigidOrDynamic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isRigidOrStatic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigidOrStatic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigidOrStatic",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isRigidOrStatic",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isRigidOrStatic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isPhysicsObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isPhysicsObject",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isPhysicsObject",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isPhysicsObject",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isPhysicsObject();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isStatic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isStatic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isStatic",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isStatic",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isStatic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isDynamic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isDynamic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isDynamic",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isDynamic",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isDynamic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isRigid(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigid",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigid",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isRigid",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isRigid();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isSoft(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isSoft",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isSoft",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isSoft",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isSoft();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isMeshShape(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isMeshShape",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isMeshShape",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isMeshShape",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isMeshShape();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_hasPhysicsConstraint(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("hasPhysicsConstraint",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasPhysicsConstraint",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_hasPhysicsConstraint",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->hasPhysicsConstraint();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_isLinkedToOther(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isLinkedToOther",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isLinkedToOther",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_isLinkedToOther",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = (bool)((gkPhysicsProperties const *)arg1)->isLinkedToOther();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_getConstraintCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  UTsize result;
+  
+  SWIG_check_num_args("getConstraintCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getConstraintCount",1,"gkPhysicsProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_getConstraintCount",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  result = ((gkPhysicsProperties const *)arg1)->getConstraintCount();
+  {
+    UTsize * resultptr = new UTsize((const UTsize &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_UTsize,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkPhysicsProperties_getConstraint(lua_State* L) {
+  int SWIG_arg = 0;
+  gkPhysicsProperties *arg1 = (gkPhysicsProperties *) 0 ;
+  UTsize arg2 ;
+  UTsize *argp2 ;
+  gkPhysicsConstraintProperties *result = 0 ;
+  
+  SWIG_check_num_args("getConstraint",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getConstraint",1,"gkPhysicsProperties const *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getConstraint",2,"UTsize");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_getConstraint",1,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_UTsize,0))){
+    SWIG_fail_ptr("gkPhysicsProperties_getConstraint",2,SWIGTYPE_p_UTsize);
+  }
+  arg2 = *argp2;
+  
+  result = (gkPhysicsConstraintProperties *) &((gkPhysicsProperties const *)arg1)->getConstraint(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkPhysicsConstraintProperties,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkPhysicsProperties(void *obj) {
+gkPhysicsProperties *arg1 = (gkPhysicsProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkPhysicsProperties_methods[] = {
+    {"isContactListener", _wrap_gkPhysicsProperties_isContactListener}, 
+    {"isDosser", _wrap_gkPhysicsProperties_isDosser}, 
+    {"isCompound", _wrap_gkPhysicsProperties_isCompound}, 
+    {"isCompoundChild", _wrap_gkPhysicsProperties_isCompoundChild}, 
+    {"isSensor", _wrap_gkPhysicsProperties_isSensor}, 
+    {"isRigidOrDynamic", _wrap_gkPhysicsProperties_isRigidOrDynamic}, 
+    {"isRigidOrStatic", _wrap_gkPhysicsProperties_isRigidOrStatic}, 
+    {"isPhysicsObject", _wrap_gkPhysicsProperties_isPhysicsObject}, 
+    {"isStatic", _wrap_gkPhysicsProperties_isStatic}, 
+    {"isDynamic", _wrap_gkPhysicsProperties_isDynamic}, 
+    {"isRigid", _wrap_gkPhysicsProperties_isRigid}, 
+    {"isSoft", _wrap_gkPhysicsProperties_isSoft}, 
+    {"isMeshShape", _wrap_gkPhysicsProperties_isMeshShape}, 
+    {"hasPhysicsConstraint", _wrap_gkPhysicsProperties_hasPhysicsConstraint}, 
+    {"isLinkedToOther", _wrap_gkPhysicsProperties_isLinkedToOther}, 
+    {"getConstraintCount", _wrap_gkPhysicsProperties_getConstraintCount}, 
+    {"getConstraint", _wrap_gkPhysicsProperties_getConstraint}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gkPhysicsProperties_attributes[] = {
+    { "m_type", _wrap_gkPhysicsProperties_m_type_get, _wrap_gkPhysicsProperties_m_type_set},
+    { "m_mode", _wrap_gkPhysicsProperties_m_mode_get, _wrap_gkPhysicsProperties_m_mode_set},
+    { "m_shape", _wrap_gkPhysicsProperties_m_shape_get, _wrap_gkPhysicsProperties_m_shape_set},
+    { "m_margin", _wrap_gkPhysicsProperties_m_margin_get, _wrap_gkPhysicsProperties_m_margin_set},
+    { "m_cpt", _wrap_gkPhysicsProperties_m_cpt_get, _wrap_gkPhysicsProperties_m_cpt_set},
+    { "m_mass", _wrap_gkPhysicsProperties_m_mass_get, _wrap_gkPhysicsProperties_m_mass_set},
+    { "m_radius", _wrap_gkPhysicsProperties_m_radius_get, _wrap_gkPhysicsProperties_m_radius_set},
+    { "m_linearDamp", _wrap_gkPhysicsProperties_m_linearDamp_get, _wrap_gkPhysicsProperties_m_linearDamp_set},
+    { "m_angularDamp", _wrap_gkPhysicsProperties_m_angularDamp_get, _wrap_gkPhysicsProperties_m_angularDamp_set},
+    { "m_formFactor", _wrap_gkPhysicsProperties_m_formFactor_get, _wrap_gkPhysicsProperties_m_formFactor_set},
+    { "m_minVel", _wrap_gkPhysicsProperties_m_minVel_get, _wrap_gkPhysicsProperties_m_minVel_set},
+    { "m_maxVel", _wrap_gkPhysicsProperties_m_maxVel_get, _wrap_gkPhysicsProperties_m_maxVel_set},
+    { "m_restitution", _wrap_gkPhysicsProperties_m_restitution_get, _wrap_gkPhysicsProperties_m_restitution_set},
+    { "m_friction", _wrap_gkPhysicsProperties_m_friction_get, _wrap_gkPhysicsProperties_m_friction_set},
+    { "m_colMask", _wrap_gkPhysicsProperties_m_colMask_get, _wrap_gkPhysicsProperties_m_colMask_set},
+    { "m_colGroupMask", _wrap_gkPhysicsProperties_m_colGroupMask_get, _wrap_gkPhysicsProperties_m_colGroupMask_set},
+    { "m_charStepHeight", _wrap_gkPhysicsProperties_m_charStepHeight_get, _wrap_gkPhysicsProperties_m_charStepHeight_set},
+    { "m_charJumpSpeed", _wrap_gkPhysicsProperties_m_charJumpSpeed_get, _wrap_gkPhysicsProperties_m_charJumpSpeed_set},
+    { "m_charFallSpeed", _wrap_gkPhysicsProperties_m_charFallSpeed_get, _wrap_gkPhysicsProperties_m_charFallSpeed_set},
+    { "m_constraints", _wrap_gkPhysicsProperties_m_constraints_get, _wrap_gkPhysicsProperties_m_constraints_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkPhysicsProperties_bases[] = {0};
+static const char *swig_gkPhysicsProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkPhysicsProperties = { "gkPhysicsProperties", &SWIGTYPE_p_gkPhysicsProperties,_wrap_new_gkPhysicsProperties, swig_delete_gkPhysicsProperties, swig_gkPhysicsProperties_methods, swig_gkPhysicsProperties_attributes, swig_gkPhysicsProperties_bases, swig_gkPhysicsProperties_base_names };
+
+static int _wrap_new_gkGameObjectProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkGameObjectProperties",0,0)
+  result = (gkGameObjectProperties *)new gkGameObjectProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkGameObjectProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_transform_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkTransformState arg2 ;
+  gkTransformState *argp2 ;
+  
+  SWIG_check_num_args("m_transform",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_transform",1,"gkGameObjectProperties *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("m_transform",2,"gkTransformState");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_transform_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gkTransformState,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_transform_set",2,SWIGTYPE_p_gkTransformState);
+  }
+  arg2 = *argp2;
+  
+  if (arg1) (arg1)->m_transform = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_transform_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkTransformState result;
+  
+  SWIG_check_num_args("m_transform",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_transform",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_transform_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result =  ((arg1)->m_transform);
+  {
+    gkTransformState * resultptr = new gkTransformState((const gkTransformState &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gkTransformState,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_mode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkGameObjectProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mode",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_mode_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_mode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_mode_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (int) ((arg1)->m_mode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_state_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_state",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_state",1,"gkGameObjectProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_state",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_state_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_state = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_state_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_state",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_state",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_state_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (int) ((arg1)->m_state);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_physics_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkPhysicsProperties *arg2 = (gkPhysicsProperties *) 0 ;
+  
+  SWIG_check_num_args("m_physics",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_physics",1,"gkGameObjectProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_physics",2,"gkPhysicsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_physics_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkPhysicsProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_physics_set",2,SWIGTYPE_p_gkPhysicsProperties);
+  }
+  
+  if (arg1) (arg1)->m_physics = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_physics_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkPhysicsProperties *result = 0 ;
+  
+  SWIG_check_num_args("m_physics",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_physics",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_physics_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (gkPhysicsProperties *)& ((arg1)->m_physics);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkPhysicsProperties,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_findPathFlag_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  unsigned char arg2 ;
+  
+  SWIG_check_num_args("m_findPathFlag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_findPathFlag",1,"gkGameObjectProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_findPathFlag",2,"unsigned char");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_findPathFlag_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned char)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_findPathFlag = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_findPathFlag_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  unsigned char result;
+  
+  SWIG_check_num_args("m_findPathFlag",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_findPathFlag",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_findPathFlag_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (unsigned char) ((arg1)->m_findPathFlag);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_parent_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_parent",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_parent",1,"gkGameObjectProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_parent",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_parent_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_parent = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_parent_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_parent",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_parent",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_parent_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result =  ((arg1)->m_parent);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_boneParent_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_boneParent",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_boneParent",1,"gkGameObjectProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_boneParent",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_boneParent_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_boneParent = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_boneParent_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_boneParent",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_boneParent",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_boneParent_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result =  ((arg1)->m_boneParent);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_particleObjs_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  utArray< gkString > arg2 ;
+  utArray< gkString > *argp2 ;
+  
+  SWIG_check_num_args("m_particleObjs",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_particleObjs",1,"gkGameObjectProperties *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("m_particleObjs",2,"utArray< gkString >");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_particleObjs_set",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_utArrayT_gkString_t,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_particleObjs_set",2,SWIGTYPE_p_utArrayT_gkString_t);
+  }
+  arg2 = *argp2;
+  
+  if (arg1) (arg1)->m_particleObjs = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_m_particleObjs_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  utArray< gkString > result;
+  
+  SWIG_check_num_args("m_particleObjs",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_particleObjs",1,"gkGameObjectProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_m_particleObjs_get",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result =  ((arg1)->m_particleObjs);
+  {
+    utArray< gkString > * resultptr = new utArray< gkString >((const utArray< gkString > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_utArrayT_gkString_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isContactListener(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isContactListener",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isContactListener",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isContactListener",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isContactListener();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isDosser(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isDosser",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isDosser",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isDosser",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isDosser();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isRigidOrDynamic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigidOrDynamic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigidOrDynamic",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isRigidOrDynamic",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isRigidOrDynamic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isRigidOrStatic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigidOrStatic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigidOrStatic",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isRigidOrStatic",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isRigidOrStatic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_hasBoneParent(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("hasBoneParent",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasBoneParent",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_hasBoneParent",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->hasBoneParent();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isPhysicsObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isPhysicsObject",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isPhysicsObject",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isPhysicsObject",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isPhysicsObject();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isStatic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isStatic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isStatic",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isStatic",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isStatic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isDynamic(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isDynamic",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isDynamic",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isDynamic",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isDynamic();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isRigid(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isRigid",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isRigid",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isRigid",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isRigid();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isSoft(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isSoft",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isSoft",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isSoft",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isSoft();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isMeshShape(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isMeshShape",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isMeshShape",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isMeshShape",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isMeshShape();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isActor(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isActor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isActor",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isActor",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isActor();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isInvisible(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isInvisible",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isInvisible",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isInvisible",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isInvisible();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isOccluder(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isOccluder",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isOccluder",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isOccluder",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isOccluder();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_isGhost(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isGhost",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isGhost",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_isGhost",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->isGhost();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkGameObjectProperties_hasParticles(lua_State* L) {
+  int SWIG_arg = 0;
+  gkGameObjectProperties *arg1 = (gkGameObjectProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("hasParticles",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParticles",1,"gkGameObjectProperties const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkGameObjectProperties,0))){
+    SWIG_fail_ptr("gkGameObjectProperties_hasParticles",1,SWIGTYPE_p_gkGameObjectProperties);
+  }
+  
+  result = (bool)((gkGameObjectProperties const *)arg1)->hasParticles();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkGameObjectProperties(void *obj) {
+gkGameObjectProperties *arg1 = (gkGameObjectProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkGameObjectProperties_methods[] = {
+    {"isContactListener", _wrap_gkGameObjectProperties_isContactListener}, 
+    {"isDosser", _wrap_gkGameObjectProperties_isDosser}, 
+    {"isRigidOrDynamic", _wrap_gkGameObjectProperties_isRigidOrDynamic}, 
+    {"isRigidOrStatic", _wrap_gkGameObjectProperties_isRigidOrStatic}, 
+    {"hasBoneParent", _wrap_gkGameObjectProperties_hasBoneParent}, 
+    {"isPhysicsObject", _wrap_gkGameObjectProperties_isPhysicsObject}, 
+    {"isStatic", _wrap_gkGameObjectProperties_isStatic}, 
+    {"isDynamic", _wrap_gkGameObjectProperties_isDynamic}, 
+    {"isRigid", _wrap_gkGameObjectProperties_isRigid}, 
+    {"isSoft", _wrap_gkGameObjectProperties_isSoft}, 
+    {"isMeshShape", _wrap_gkGameObjectProperties_isMeshShape}, 
+    {"isActor", _wrap_gkGameObjectProperties_isActor}, 
+    {"isInvisible", _wrap_gkGameObjectProperties_isInvisible}, 
+    {"isOccluder", _wrap_gkGameObjectProperties_isOccluder}, 
+    {"isGhost", _wrap_gkGameObjectProperties_isGhost}, 
+    {"hasParticles", _wrap_gkGameObjectProperties_hasParticles}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gkGameObjectProperties_attributes[] = {
+    { "m_transform", _wrap_gkGameObjectProperties_m_transform_get, _wrap_gkGameObjectProperties_m_transform_set},
+    { "m_mode", _wrap_gkGameObjectProperties_m_mode_get, _wrap_gkGameObjectProperties_m_mode_set},
+    { "m_state", _wrap_gkGameObjectProperties_m_state_get, _wrap_gkGameObjectProperties_m_state_set},
+    { "m_physics", _wrap_gkGameObjectProperties_m_physics_get, _wrap_gkGameObjectProperties_m_physics_set},
+    { "m_findPathFlag", _wrap_gkGameObjectProperties_m_findPathFlag_get, _wrap_gkGameObjectProperties_m_findPathFlag_set},
+    { "m_parent", _wrap_gkGameObjectProperties_m_parent_get, _wrap_gkGameObjectProperties_m_parent_set},
+    { "m_boneParent", _wrap_gkGameObjectProperties_m_boneParent_get, _wrap_gkGameObjectProperties_m_boneParent_set},
+    { "m_particleObjs", _wrap_gkGameObjectProperties_m_particleObjs_get, _wrap_gkGameObjectProperties_m_particleObjs_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkGameObjectProperties_bases[] = {0};
+static const char *swig_gkGameObjectProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkGameObjectProperties = { "gkGameObjectProperties", &SWIGTYPE_p_gkGameObjectProperties,_wrap_new_gkGameObjectProperties, swig_delete_gkGameObjectProperties, swig_gkGameObjectProperties_methods, swig_gkGameObjectProperties_attributes, swig_gkGameObjectProperties_bases, swig_gkGameObjectProperties_base_names };
+
+static int _wrap_new_gkFogParams(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *result = 0 ;
+  
+  SWIG_check_num_args("gkFogParams",0,0)
+  result = (gkFogParams *)new gkFogParams();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkFogParams,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_mode_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_mode",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkFogParams *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mode",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_mode_set",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mode = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_mode_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_mode",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mode",1,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_mode_get",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  result = (int) ((arg1)->m_mode);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_start_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_start",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkFogParams *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_start",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_start_set",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_start = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_start_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_start",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_start_get",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  result = (float) ((arg1)->m_start);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_end_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_end",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_end",1,"gkFogParams *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_end",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_end_set",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_end = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_end_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_end",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_end",1,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_end_get",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  result = (float) ((arg1)->m_end);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_intensity_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_intensity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_intensity",1,"gkFogParams *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_intensity",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_intensity_set",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_intensity = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_intensity_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_intensity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_intensity",1,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_intensity_get",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  result = (float) ((arg1)->m_intensity);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_color_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_color",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_color",1,"gkFogParams *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_color",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_color_set",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkFogParams_m_color_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_color = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkFogParams_m_color_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkFogParams *arg1 = (gkFogParams *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_color",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_color",1,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkFogParams_m_color_get",1,SWIGTYPE_p_gkFogParams);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_color);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkFogParams(void *obj) {
+gkFogParams *arg1 = (gkFogParams *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkFogParams_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkFogParams_attributes[] = {
+    { "m_mode", _wrap_gkFogParams_m_mode_get, _wrap_gkFogParams_m_mode_set},
+    { "m_start", _wrap_gkFogParams_m_start_get, _wrap_gkFogParams_m_start_set},
+    { "m_end", _wrap_gkFogParams_m_end_get, _wrap_gkFogParams_m_end_set},
+    { "m_intensity", _wrap_gkFogParams_m_intensity_get, _wrap_gkFogParams_m_intensity_set},
+    { "m_color", _wrap_gkFogParams_m_color_get, _wrap_gkFogParams_m_color_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkFogParams_bases[] = {0};
+static const char *swig_gkFogParams_base_names[] = {0};
+static swig_lua_class _wrap_class_gkFogParams = { "gkFogParams", &SWIGTYPE_p_gkFogParams,_wrap_new_gkFogParams, swig_delete_gkFogParams, swig_gkFogParams_methods, swig_gkFogParams_attributes, swig_gkFogParams_bases, swig_gkFogParams_base_names };
+
+static int _wrap_new_gkSoundSceneProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkSoundSceneProperties",0,0)
+  result = (gkSoundSceneProperties *)new gkSoundSceneProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkSoundSceneProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_distModel_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_distModel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_distModel",1,"gkSoundSceneProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_distModel",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_distModel_set",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_distModel = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_distModel_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_distModel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_distModel",1,"gkSoundSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_distModel_get",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  result = (int) ((arg1)->m_distModel);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_dopplerFactor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_dopplerFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_dopplerFactor",1,"gkSoundSceneProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_dopplerFactor",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_dopplerFactor_set",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_dopplerFactor = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_dopplerFactor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_dopplerFactor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_dopplerFactor",1,"gkSoundSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_dopplerFactor_get",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  result = (float) ((arg1)->m_dopplerFactor);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_sndSpeed_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_sndSpeed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_sndSpeed",1,"gkSoundSceneProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_sndSpeed",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_sndSpeed_set",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_sndSpeed = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_sndSpeed_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_sndSpeed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_sndSpeed",1,"gkSoundSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_sndSpeed_get",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  result = (float) ((arg1)->m_sndSpeed);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_globalVolume_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_globalVolume",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_globalVolume",1,"gkSoundSceneProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_globalVolume",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_globalVolume_set",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_globalVolume = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSoundSceneProperties_m_globalVolume_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_globalVolume",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_globalVolume",1,"gkSoundSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSoundSceneProperties,0))){
+    SWIG_fail_ptr("gkSoundSceneProperties_m_globalVolume_get",1,SWIGTYPE_p_gkSoundSceneProperties);
+  }
+  
+  result = (float) ((arg1)->m_globalVolume);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkSoundSceneProperties(void *obj) {
+gkSoundSceneProperties *arg1 = (gkSoundSceneProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkSoundSceneProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkSoundSceneProperties_attributes[] = {
+    { "m_distModel", _wrap_gkSoundSceneProperties_m_distModel_get, _wrap_gkSoundSceneProperties_m_distModel_set},
+    { "m_dopplerFactor", _wrap_gkSoundSceneProperties_m_dopplerFactor_get, _wrap_gkSoundSceneProperties_m_dopplerFactor_set},
+    { "m_sndSpeed", _wrap_gkSoundSceneProperties_m_sndSpeed_get, _wrap_gkSoundSceneProperties_m_sndSpeed_set},
+    { "m_globalVolume", _wrap_gkSoundSceneProperties_m_globalVolume_get, _wrap_gkSoundSceneProperties_m_globalVolume_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkSoundSceneProperties_bases[] = {0};
+static const char *swig_gkSoundSceneProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkSoundSceneProperties = { "gkSoundSceneProperties", &SWIGTYPE_p_gkSoundSceneProperties,_wrap_new_gkSoundSceneProperties, swig_delete_gkSoundSceneProperties, swig_gkSoundSceneProperties_methods, swig_gkSoundSceneProperties_attributes, swig_gkSoundSceneProperties_bases, swig_gkSoundSceneProperties_base_names };
+
+static int _wrap_new_gkSceneMaterial(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *result = 0 ;
+  
+  SWIG_check_num_args("gkSceneMaterial",0,0)
+  result = (gkSceneMaterial *)new gkSceneMaterial();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkSceneMaterial,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_type_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_type",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkSceneMaterial *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_type",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_type_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_type = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_type_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_type",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_type",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_type_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result = (int) ((arg1)->m_type);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_name_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_name",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkSceneMaterial *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_name",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_name_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_name = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_name_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_name",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_name_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result =  ((arg1)->m_name);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_horizon_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_horizon",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_horizon",1,"gkSceneMaterial *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_horizon",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_horizon_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_horizon_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_horizon = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_horizon_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_horizon",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_horizon",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_horizon_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_horizon);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_zenith_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_zenith",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_zenith",1,"gkSceneMaterial *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_zenith",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_zenith_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_zenith_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_zenith = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_zenith_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_zenith",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_zenith",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_zenith_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_zenith);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_ambient_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *arg2 = (gkColor *) 0 ;
+  
+  SWIG_check_num_args("m_ambient",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_ambient",1,"gkSceneMaterial *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_ambient",2,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_ambient_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_ambient_set",2,SWIGTYPE_p_gkColor);
+  }
+  
+  if (arg1) (arg1)->m_ambient = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_ambient_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("m_ambient",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_ambient",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_ambient_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result = (gkColor *)& ((arg1)->m_ambient);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_distance_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_distance",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_distance",1,"gkSceneMaterial *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_distance",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_distance_set",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_distance = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneMaterial_m_distance_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneMaterial *arg1 = (gkSceneMaterial *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_distance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_distance",1,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneMaterial_m_distance_get",1,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  result = (float) ((arg1)->m_distance);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkSceneMaterial(void *obj) {
+gkSceneMaterial *arg1 = (gkSceneMaterial *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkSceneMaterial_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkSceneMaterial_attributes[] = {
+    { "m_type", _wrap_gkSceneMaterial_m_type_get, _wrap_gkSceneMaterial_m_type_set},
+    { "m_name", _wrap_gkSceneMaterial_m_name_get, _wrap_gkSceneMaterial_m_name_set},
+    { "m_horizon", _wrap_gkSceneMaterial_m_horizon_get, _wrap_gkSceneMaterial_m_horizon_set},
+    { "m_zenith", _wrap_gkSceneMaterial_m_zenith_get, _wrap_gkSceneMaterial_m_zenith_set},
+    { "m_ambient", _wrap_gkSceneMaterial_m_ambient_get, _wrap_gkSceneMaterial_m_ambient_set},
+    { "m_distance", _wrap_gkSceneMaterial_m_distance_get, _wrap_gkSceneMaterial_m_distance_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkSceneMaterial_bases[] = {0};
+static const char *swig_gkSceneMaterial_base_names[] = {0};
+static swig_lua_class _wrap_class_gkSceneMaterial = { "gkSceneMaterial", &SWIGTYPE_p_gkSceneMaterial,_wrap_new_gkSceneMaterial, swig_delete_gkSceneMaterial, swig_gkSceneMaterial_methods, swig_gkSceneMaterial_attributes, swig_gkSceneMaterial_bases, swig_gkSceneMaterial_base_names };
+
+static int _wrap_new_gkSceneProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkSceneProperties",0,0)
+  result = (gkSceneProperties *)new gkSceneProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkSceneProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_manager_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_manager",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_manager",1,"gkSceneProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_manager",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_manager_set",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_manager = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_manager_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_manager",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_manager",1,"gkSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_manager_get",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  result = (int) ((arg1)->m_manager);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_gravity_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_gravity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_gravity",1,"gkSceneProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_gravity",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_gravity_set",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_gravity_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_gravity = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_gravity_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_gravity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_gravity",1,"gkSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_gravity_get",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_gravity);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_material_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkSceneMaterial *arg2 = (gkSceneMaterial *) 0 ;
+  
+  SWIG_check_num_args("m_material",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkSceneProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_material",2,"gkSceneMaterial *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_material_set",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkSceneMaterial,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_material_set",2,SWIGTYPE_p_gkSceneMaterial);
+  }
+  
+  if (arg1) (arg1)->m_material = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_material_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkSceneMaterial *result = 0 ;
+  
+  SWIG_check_num_args("m_material",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_material_get",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  result = (gkSceneMaterial *)& ((arg1)->m_material);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkSceneMaterial,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_fog_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkFogParams *arg2 = (gkFogParams *) 0 ;
+  
+  SWIG_check_num_args("m_fog",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_fog",1,"gkSceneProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_fog",2,"gkFogParams *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_fog_set",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkFogParams,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_fog_set",2,SWIGTYPE_p_gkFogParams);
+  }
+  
+  if (arg1) (arg1)->m_fog = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkSceneProperties_m_fog_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSceneProperties *arg1 = (gkSceneProperties *) 0 ;
+  gkFogParams *result = 0 ;
+  
+  SWIG_check_num_args("m_fog",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_fog",1,"gkSceneProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSceneProperties,0))){
+    SWIG_fail_ptr("gkSceneProperties_m_fog_get",1,SWIGTYPE_p_gkSceneProperties);
+  }
+  
+  result = (gkFogParams *)& ((arg1)->m_fog);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkFogParams,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkSceneProperties(void *obj) {
+gkSceneProperties *arg1 = (gkSceneProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkSceneProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkSceneProperties_attributes[] = {
+    { "m_manager", _wrap_gkSceneProperties_m_manager_get, _wrap_gkSceneProperties_m_manager_set},
+    { "m_gravity", _wrap_gkSceneProperties_m_gravity_get, _wrap_gkSceneProperties_m_gravity_set},
+    { "m_material", _wrap_gkSceneProperties_m_material_get, _wrap_gkSceneProperties_m_material_set},
+    { "m_fog", _wrap_gkSceneProperties_m_fog_get, _wrap_gkSceneProperties_m_fog_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkSceneProperties_bases[] = {0};
+static const char *swig_gkSceneProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkSceneProperties = { "gkSceneProperties", &SWIGTYPE_p_gkSceneProperties,_wrap_new_gkSceneProperties, swig_delete_gkSceneProperties, swig_gkSceneProperties_methods, swig_gkSceneProperties_attributes, swig_gkSceneProperties_bases, swig_gkSceneProperties_base_names };
+
+static int _wrap_gkParticleSettingsProperties_m_name_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_name",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkParticleSettingsProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_name",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_name_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_name = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_name_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_name",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_name_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result =  ((arg1)->m_name);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_amount_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_amount",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_amount",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_amount",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_amount_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_amount = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_amount_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_amount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_amount",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_amount_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_amount);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_emitfrom_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_emitfrom",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_emitfrom",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_emitfrom",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_emitfrom_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_emitfrom = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_emitfrom_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_emitfrom",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_emitfrom",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_emitfrom_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_emitfrom);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_lifetime_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_lifetime",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_lifetime",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_lifetime",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_lifetime_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_lifetime = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_lifetime_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_lifetime",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_lifetime",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_lifetime_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_lifetime);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_start_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_start",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_start",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_start_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_start = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_start_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_start",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_start",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_start_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_start);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_end_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_end",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_end",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_end",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_end_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_end = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_end_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_end",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_end",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_end_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_end);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_random_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_random",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_random",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_random",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_random_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_random = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_random_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_random",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_random",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_random_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_random);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_jitter_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_jitter",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_jitter",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_jitter",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_jitter_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_jitter = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_jitter_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_jitter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_jitter",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_jitter_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_jitter);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_render_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_render",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_render",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_render",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_render_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_render = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_render_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_render",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_render",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_render_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_render);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velocity_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  gkVector3 *arg2 = (gkVector3 *) 0 ;
+  
+  SWIG_check_num_args("m_velocity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velocity",1,"gkParticleSettingsProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_velocity",2,"gkVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velocity_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVector3,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velocity_set",2,SWIGTYPE_p_gkVector3);
+  }
+  
+  if (arg1) (arg1)->m_velocity = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velocity_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("m_velocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velocity",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velocity_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (gkVector3 *)& ((arg1)->m_velocity);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velNormal_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_velNormal",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velNormal",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_velNormal",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velNormal_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_velNormal = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velNormal_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_velNormal",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velNormal",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velNormal_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_velNormal);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velTanget_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_velTanget",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velTanget",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_velTanget",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velTanget_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_velTanget = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_velTanget_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_velTanget",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_velTanget",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_velTanget_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_velTanget);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_phyType_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_phyType",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_phyType",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_phyType",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_phyType_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_phyType = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_phyType_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_phyType",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_phyType",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_phyType_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_phyType);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_size_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_size",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_size",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_size",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_size_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_size = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_size_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_size",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_size",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_size_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_size);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_mass_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_mass",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mass",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_mass",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_mass_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_mass = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_mass_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_mass",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mass",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_mass_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_mass);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_sizeRandom_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_sizeRandom",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_sizeRandom",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_sizeRandom",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_sizeRandom_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_sizeRandom = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_sizeRandom_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_sizeRandom",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_sizeRandom",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_sizeRandom_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_sizeRandom);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_material_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_material",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_material",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_material_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_material = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_material_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_material",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_material_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_material);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_trailCount_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_trailCount",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_trailCount",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_trailCount",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_trailCount_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_trailCount = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_trailCount_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_trailCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_trailCount",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_trailCount_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (int) ((arg1)->m_trailCount);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_drawEmitter_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("m_drawEmitter",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_drawEmitter",1,"gkParticleSettingsProperties *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("m_drawEmitter",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_drawEmitter_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  if (arg1) (arg1)->m_drawEmitter = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_drawEmitter_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("m_drawEmitter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_drawEmitter",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_drawEmitter_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (bool) ((arg1)->m_drawEmitter);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_gravity_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("m_gravity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_gravity",1,"gkParticleSettingsProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_gravity",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_gravity_set",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_gravity = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSettingsProperties_m_gravity_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("m_gravity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_gravity",1,"gkParticleSettingsProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSettingsProperties,0))){
+    SWIG_fail_ptr("gkParticleSettingsProperties_m_gravity_get",1,SWIGTYPE_p_gkParticleSettingsProperties);
+  }
+  
+  result = (float) ((arg1)->m_gravity);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkParticleSettingsProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSettingsProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkParticleSettingsProperties",0,0)
+  result = (gkParticleSettingsProperties *)new gkParticleSettingsProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkParticleSettingsProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkParticleSettingsProperties(void *obj) {
+gkParticleSettingsProperties *arg1 = (gkParticleSettingsProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkParticleSettingsProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkParticleSettingsProperties_attributes[] = {
+    { "m_name", _wrap_gkParticleSettingsProperties_m_name_get, _wrap_gkParticleSettingsProperties_m_name_set},
+    { "m_amount", _wrap_gkParticleSettingsProperties_m_amount_get, _wrap_gkParticleSettingsProperties_m_amount_set},
+    { "m_emitfrom", _wrap_gkParticleSettingsProperties_m_emitfrom_get, _wrap_gkParticleSettingsProperties_m_emitfrom_set},
+    { "m_lifetime", _wrap_gkParticleSettingsProperties_m_lifetime_get, _wrap_gkParticleSettingsProperties_m_lifetime_set},
+    { "m_start", _wrap_gkParticleSettingsProperties_m_start_get, _wrap_gkParticleSettingsProperties_m_start_set},
+    { "m_end", _wrap_gkParticleSettingsProperties_m_end_get, _wrap_gkParticleSettingsProperties_m_end_set},
+    { "m_random", _wrap_gkParticleSettingsProperties_m_random_get, _wrap_gkParticleSettingsProperties_m_random_set},
+    { "m_jitter", _wrap_gkParticleSettingsProperties_m_jitter_get, _wrap_gkParticleSettingsProperties_m_jitter_set},
+    { "m_render", _wrap_gkParticleSettingsProperties_m_render_get, _wrap_gkParticleSettingsProperties_m_render_set},
+    { "m_velocity", _wrap_gkParticleSettingsProperties_m_velocity_get, _wrap_gkParticleSettingsProperties_m_velocity_set},
+    { "m_velNormal", _wrap_gkParticleSettingsProperties_m_velNormal_get, _wrap_gkParticleSettingsProperties_m_velNormal_set},
+    { "m_velTanget", _wrap_gkParticleSettingsProperties_m_velTanget_get, _wrap_gkParticleSettingsProperties_m_velTanget_set},
+    { "m_phyType", _wrap_gkParticleSettingsProperties_m_phyType_get, _wrap_gkParticleSettingsProperties_m_phyType_set},
+    { "m_size", _wrap_gkParticleSettingsProperties_m_size_get, _wrap_gkParticleSettingsProperties_m_size_set},
+    { "m_mass", _wrap_gkParticleSettingsProperties_m_mass_get, _wrap_gkParticleSettingsProperties_m_mass_set},
+    { "m_sizeRandom", _wrap_gkParticleSettingsProperties_m_sizeRandom_get, _wrap_gkParticleSettingsProperties_m_sizeRandom_set},
+    { "m_material", _wrap_gkParticleSettingsProperties_m_material_get, _wrap_gkParticleSettingsProperties_m_material_set},
+    { "m_trailCount", _wrap_gkParticleSettingsProperties_m_trailCount_get, _wrap_gkParticleSettingsProperties_m_trailCount_set},
+    { "m_drawEmitter", _wrap_gkParticleSettingsProperties_m_drawEmitter_get, _wrap_gkParticleSettingsProperties_m_drawEmitter_set},
+    { "m_gravity", _wrap_gkParticleSettingsProperties_m_gravity_get, _wrap_gkParticleSettingsProperties_m_gravity_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkParticleSettingsProperties_bases[] = {0};
+static const char *swig_gkParticleSettingsProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkParticleSettingsProperties = { "gkParticleSettingsProperties", &SWIGTYPE_p_gkParticleSettingsProperties,_wrap_new_gkParticleSettingsProperties, swig_delete_gkParticleSettingsProperties, swig_gkParticleSettingsProperties_methods, swig_gkParticleSettingsProperties_attributes, swig_gkParticleSettingsProperties_bases, swig_gkParticleSettingsProperties_base_names };
+
+static int _wrap_gkParticleSystemProperties_m_name_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_name",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkParticleSystemProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_name",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_name_set",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_name = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_name_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_name",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_name",1,"gkParticleSystemProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_name_get",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  result =  ((arg1)->m_name);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_seed_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("m_seed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_seed",1,"gkParticleSystemProperties *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("m_seed",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_seed_set",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->m_seed = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_seed_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("m_seed",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_seed",1,"gkParticleSystemProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_seed_get",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  result = (int) ((arg1)->m_seed);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_settings_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_settings",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_settings",1,"gkParticleSystemProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_settings",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_settings_set",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_settings = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_settings_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_settings",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_settings",1,"gkParticleSystemProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_settings_get",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  result =  ((arg1)->m_settings);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_material_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString arg2 ;
+  
+  SWIG_check_num_args("m_material",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkParticleSystemProperties *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("m_material",2,"gkString");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_material_set",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  
+  arg2 = gkString((const char*)lua_tostring(L, 2));
+  
+  if (arg1) (arg1)->m_material = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_material_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("m_material",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_material",1,"gkParticleSystemProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_material_get",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  result =  ((arg1)->m_material);
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_mesh_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkMesh *arg2 = (gkMesh *) 0 ;
+  
+  SWIG_check_num_args("m_mesh",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mesh",1,"gkParticleSystemProperties *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("m_mesh",2,"gkMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_mesh_set",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkMesh,SWIG_POINTER_DISOWN))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_mesh_set",2,SWIGTYPE_p_gkMesh);
+  }
+  
+  if (arg1) (arg1)->m_mesh = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkParticleSystemProperties_m_mesh_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) 0 ;
+  gkMesh *result = 0 ;
+  
+  SWIG_check_num_args("m_mesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("m_mesh",1,"gkParticleSystemProperties *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkParticleSystemProperties,0))){
+    SWIG_fail_ptr("gkParticleSystemProperties_m_mesh_get",1,SWIGTYPE_p_gkParticleSystemProperties);
+  }
+  
+  result = (gkMesh *) ((arg1)->m_mesh);
+  if (result) {
+    SWIG_arg += GS_LUA_OBJECT_STORE(result, Mesh); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkParticleSystemProperties(lua_State* L) {
+  int SWIG_arg = 0;
+  gkParticleSystemProperties *result = 0 ;
+  
+  SWIG_check_num_args("gkParticleSystemProperties",0,0)
+  result = (gkParticleSystemProperties *)new gkParticleSystemProperties();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkParticleSystemProperties,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkParticleSystemProperties(void *obj) {
+gkParticleSystemProperties *arg1 = (gkParticleSystemProperties *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkParticleSystemProperties_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkParticleSystemProperties_attributes[] = {
+    { "m_name", _wrap_gkParticleSystemProperties_m_name_get, _wrap_gkParticleSystemProperties_m_name_set},
+    { "m_seed", _wrap_gkParticleSystemProperties_m_seed_get, _wrap_gkParticleSystemProperties_m_seed_set},
+    { "m_settings", _wrap_gkParticleSystemProperties_m_settings_get, _wrap_gkParticleSystemProperties_m_settings_set},
+    { "m_material", _wrap_gkParticleSystemProperties_m_material_get, _wrap_gkParticleSystemProperties_m_material_set},
+    { "m_mesh", _wrap_gkParticleSystemProperties_m_mesh_get, _wrap_gkParticleSystemProperties_m_mesh_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkParticleSystemProperties_bases[] = {0};
+static const char *swig_gkParticleSystemProperties_base_names[] = {0};
+static swig_lua_class _wrap_class_gkParticleSystemProperties = { "gkParticleSystemProperties", &SWIGTYPE_p_gkParticleSystemProperties,_wrap_new_gkParticleSystemProperties, swig_delete_gkParticleSystemProperties, swig_gkParticleSystemProperties_methods, swig_gkParticleSystemProperties_attributes, swig_gkParticleSystemProperties_bases, swig_gkParticleSystemProperties_base_names };
+
 static int _wrap_Vector3_x_set(lua_State* L) {
   int SWIG_arg = 0;
   gsVector3 *arg1 = (gsVector3 *) 0 ;
@@ -2713,6 +11253,47 @@ static int _wrap_lerp(lua_State* L) {
   {
     gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
     SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getTriNormal(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = 0 ;
+  gkVertex *arg2 = 0 ;
+  gkVertex *arg3 = 0 ;
+  gkVector3 result;
+  
+  SWIG_check_num_args("getTriNormal",3,3)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("getTriNormal",1,"gkVertex const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getTriNormal",2,"gkVertex const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("getTriNormal",3,"gkVertex const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("getTriNormal",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("getTriNormal",2,SWIGTYPE_p_gkVertex);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("getTriNormal",3,SWIGTYPE_p_gkVertex);
+  }
+  
+  result = getTriNormal((gkVertex const &)*arg1,(gkVertex const &)*arg2,(gkVertex const &)*arg3);
+  {
+    gkVector3 * resultptr = new gkVector3((const gkVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gkVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -4295,6 +12876,23 @@ static swig_lua_class *swig_gkVector2_bases[] = {0};
 static const char *swig_gkVector2_base_names[] = {0};
 static swig_lua_class _wrap_class_gkVector2 = { "gkVector2", &SWIGTYPE_p_gkVector2,_wrap_new_gkVector2, swig_delete_gkVector2, swig_gkVector2_methods, swig_gkVector2_attributes, swig_gkVector2_bases, swig_gkVector2_base_names };
 
+static int _wrap_new_gkVector3(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVector3 *result = 0 ;
+  
+  SWIG_check_num_args("gkVector3",0,0)
+  result = (gkVector3 *)new gkVector3();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_gkVector3_x_set(lua_State* L) {
   int SWIG_arg = 0;
   gkVector3 *arg1 = (gkVector3 *) 0 ;
@@ -4435,23 +13033,6 @@ static int _wrap_gkVector3_z_get(lua_State* L) {
   
   result = (float) ((arg1)->z);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_gkVector3(lua_State* L) {
-  int SWIG_arg = 0;
-  gkVector3 *result = 0 ;
-  
-  SWIG_check_num_args("gkVector3::gkVector3",0,0)
-  result = (gkVector3 *)new gkVector3();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector3,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4746,6 +13327,33 @@ fail:
 }
 
 
+static int _wrap_gkVertex_getUV(lua_State* L) {
+  int SWIG_arg = 0;
+  gkVertex *arg1 = (gkVertex *) 0 ;
+  int arg2 ;
+  gkVector2 *result = 0 ;
+  
+  SWIG_check_num_args("getUV",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getUV",1,"gkVertex *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getUV",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gkVertex_getUV",1,SWIGTYPE_p_gkVertex);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkVector2 *) &(arg1)->getUV(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVector2,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_new_gkVertex(lua_State* L) {
   int SWIG_arg = 0;
   gkVertex *result = 0 ;
@@ -4768,6 +13376,7 @@ gkVertex *arg1 = (gkVertex *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gkVertex_methods[] = {
+    {"getUV", _wrap_gkVertex_getUV}, 
     {0,0}
 };
 static swig_lua_attribute swig_gkVertex_attributes[] = {
@@ -4781,6 +13390,491 @@ static swig_lua_attribute swig_gkVertex_attributes[] = {
 static swig_lua_class *swig_gkVertex_bases[] = {0};
 static const char *swig_gkVertex_base_names[] = {0};
 static swig_lua_class _wrap_class_gkVertex = { "gkVertex", &SWIGTYPE_p_gkVertex,_wrap_new_gkVertex, swig_delete_gkVertex, swig_gkVertex_methods, swig_gkVertex_attributes, swig_gkVertex_bases, swig_gkVertex_base_names };
+
+static int _wrap_new_gkColor(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  gkColor *result = 0 ;
+  
+  SWIG_check_num_args("gkColor",4,4)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gkColor",1,"float");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gkColor",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("gkColor",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("gkColor",4,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  result = (gkColor *)new gkColor(arg1,arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkColor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_r_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("r",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("r",1,"gkColor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("r",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_r_set",1,SWIGTYPE_p_gkColor);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->r = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_r_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("r",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("r",1,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_r_get",1,SWIGTYPE_p_gkColor);
+  }
+  
+  result = (float) ((arg1)->r);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_g_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("g",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("g",1,"gkColor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("g",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_g_set",1,SWIGTYPE_p_gkColor);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->g = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_g_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("g",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("g",1,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_g_get",1,SWIGTYPE_p_gkColor);
+  }
+  
+  result = (float) ((arg1)->g);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_b_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("b",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("b",1,"gkColor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("b",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_b_set",1,SWIGTYPE_p_gkColor);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->b = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_b_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("b",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("b",1,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_b_get",1,SWIGTYPE_p_gkColor);
+  }
+  
+  result = (float) ((arg1)->b);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_a_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("a",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("a",1,"gkColor *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("a",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_a_set",1,SWIGTYPE_p_gkColor);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->a = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkColor_a_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkColor *arg1 = (gkColor *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("a",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("a",1,"gkColor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkColor,0))){
+    SWIG_fail_ptr("gkColor_a_get",1,SWIGTYPE_p_gkColor);
+  }
+  
+  result = (float) ((arg1)->a);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkColor(void *obj) {
+gkColor *arg1 = (gkColor *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkColor_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkColor_attributes[] = {
+    { "r", _wrap_gkColor_r_get, _wrap_gkColor_r_set},
+    { "g", _wrap_gkColor_g_get, _wrap_gkColor_g_set},
+    { "b", _wrap_gkColor_b_get, _wrap_gkColor_b_set},
+    { "a", _wrap_gkColor_a_get, _wrap_gkColor_a_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkColor_bases[] = {0};
+static const char *swig_gkColor_base_names[] = {0};
+static swig_lua_class _wrap_class_gkColor = { "gkColor", &SWIGTYPE_p_gkColor,_wrap_new_gkColor, swig_delete_gkColor, swig_gkColor_methods, swig_gkColor_attributes, swig_gkColor_bases, swig_gkColor_base_names };
+
+static int _wrap_gkTriangle_i0_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("i0",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i0",1,"gkTriangle *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i0",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i0_set",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i0 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_i0_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("i0",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i0",1,"gkTriangle *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i0_get",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  result = (unsigned int) ((arg1)->i0);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_i1_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("i1",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gkTriangle *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i1",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i1_set",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i1 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_i1_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("i1",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gkTriangle *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i1_get",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  result = (unsigned int) ((arg1)->i1);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_i2_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("i2",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gkTriangle *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("i2",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i2_set",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->i2 = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_i2_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("i2",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gkTriangle *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_i2_get",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  result = (unsigned int) ((arg1)->i2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_flag_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("flag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gkTriangle *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("flag",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_flag_set",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->flag = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gkTriangle_flag_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *arg1 = (gkTriangle *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("flag",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gkTriangle *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkTriangle,0))){
+    SWIG_fail_ptr("gkTriangle_flag_get",1,SWIGTYPE_p_gkTriangle);
+  }
+  
+  result = (int) ((arg1)->flag);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gkTriangle(lua_State* L) {
+  int SWIG_arg = 0;
+  gkTriangle *result = 0 ;
+  
+  SWIG_check_num_args("gkTriangle::gkTriangle",0,0)
+  result = (gkTriangle *)new gkTriangle();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkTriangle,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gkTriangle(void *obj) {
+gkTriangle *arg1 = (gkTriangle *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkTriangle_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gkTriangle_attributes[] = {
+    { "i0", _wrap_gkTriangle_i0_get, _wrap_gkTriangle_i0_set},
+    { "i1", _wrap_gkTriangle_i1_get, _wrap_gkTriangle_i1_set},
+    { "i2", _wrap_gkTriangle_i2_get, _wrap_gkTriangle_i2_set},
+    { "flag", _wrap_gkTriangle_flag_get, _wrap_gkTriangle_flag_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gkTriangle_bases[] = {0};
+static const char *swig_gkTriangle_base_names[] = {0};
+static swig_lua_class _wrap_class_gkTriangle = { "gkTriangle", &SWIGTYPE_p_gkTriangle,_wrap_new_gkTriangle, swig_delete_gkTriangle, swig_gkTriangle_methods, swig_gkTriangle_attributes, swig_gkTriangle_bases, swig_gkTriangle_base_names };
 
 static int _wrap_new_ObjectList__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -15338,12 +24432,11 @@ static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(lua_State* L) {
   gsVector3 arg3 ;
   gsVector3 arg4 ;
   gsVector3 arg5 ;
-  gkScalar arg6 ;
+  float arg6 ;
   gkString temp2 ;
   gsVector3 *argp3 ;
   gsVector3 *argp4 ;
   gsVector3 *argp5 ;
-  gkScalar *argp6 ;
   
   SWIG_check_num_args("applyBoneChannelTransform",6,6)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("applyBoneChannelTransform",1,"gsSkeleton *");
@@ -15351,7 +24444,7 @@ static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(lua_State* L) {
   if(!lua_isuserdata(L,3)) SWIG_fail_arg("applyBoneChannelTransform",3,"gsVector3");
   if(!lua_isuserdata(L,4)) SWIG_fail_arg("applyBoneChannelTransform",4,"gsVector3");
   if(!lua_isuserdata(L,5)) SWIG_fail_arg("applyBoneChannelTransform",5,"gsVector3");
-  if(!lua_isuserdata(L,6)) SWIG_fail_arg("applyBoneChannelTransform",6,"gkScalar");
+  if(!lua_isnumber(L,6)) SWIG_fail_arg("applyBoneChannelTransform",6,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSkeleton,0))){
     SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",1,SWIGTYPE_p_gsSkeleton);
@@ -15379,12 +24472,7 @@ static int _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(lua_State* L) {
   }
   arg5 = *argp5;
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&argp6,SWIGTYPE_p_gkScalar,0))){
-    SWIG_fail_ptr("Skeleton_applyBoneChannelTransform",6,SWIGTYPE_p_gkScalar);
-  }
-  arg6 = *argp6;
-  
+  arg6 = (float)lua_tonumber(L, 6);
   (arg1)->applyBoneChannelTransform((gkString const &)*arg2,arg3,arg4,arg5,arg6);
   
   return SWIG_arg;
@@ -15757,12 +24845,7 @@ static int _wrap_Skeleton_applyBoneChannelTransform(lua_State* L) {
             }
             if (_v) {
               {
-                void *ptr;
-                if (lua_isuserdata(L,argv[5])==0 || SWIG_ConvertPtr(L,argv[5], (void **) &ptr, SWIGTYPE_p_gkScalar, 0)) {
-                  _v = 0;
-                } else {
-                  _v = 1;
-                }
+                _v = lua_isnumber(L,argv[5]);
               }
               if (_v) {
                 return _wrap_Skeleton_applyBoneChannelTransform__SWIG_0(L);
@@ -15776,7 +24859,7 @@ static int _wrap_Skeleton_applyBoneChannelTransform(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'Skeleton_applyBoneChannelTransform'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3,gsVector3,gkScalar)\n"
+    "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3,gsVector3,float)\n"
     "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3,gsVector3)\n"
     "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3,gsVector3)\n"
     "    applyBoneChannelTransform(gsSkeleton *,gkString const &,gsVector3)\n"
@@ -16249,6 +25332,316 @@ static swig_lua_class *swig_gsDebugger_bases[] = {0};
 static const char *swig_gsDebugger_base_names[] = {0};
 static swig_lua_class _wrap_class_gsDebugger = { "Debugger", &SWIGTYPE_p_gsDebugger,_wrap_new_Debugger, swig_delete_Debugger, swig_gsDebugger_methods, swig_gsDebugger_attributes, swig_gsDebugger_bases, swig_gsDebugger_base_names };
 
+static int _wrap_new_gsSubMesh__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *result = 0 ;
+  
+  SWIG_check_num_args("gsSubMesh",0,0)
+  result = (gsSubMesh *)new gsSubMesh();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSubMesh,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsSubMesh__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gkSubMesh *arg1 = (gkSubMesh *) 0 ;
+  gsSubMesh *result = 0 ;
+  
+  SWIG_check_num_args("gsSubMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSubMesh",1,"gkSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSubMesh,0))){
+    SWIG_fail_ptr("new_gsSubMesh",1,SWIGTYPE_p_gkSubMesh);
+  }
+  
+  result = (gsSubMesh *)new gsSubMesh(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSubMesh,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsSubMesh(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_gsSubMesh__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gkSubMesh, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_gsSubMesh__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_gsSubMesh'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsSubMesh()\n"
+    "    gsSubMesh(gkSubMesh *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_gsSubMesh_getVertex(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int arg2 ;
+  gkVertex *result = 0 ;
+  
+  SWIG_check_num_args("getVertex",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertex",1,"gsSubMesh *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVertex",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getVertex",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gkVertex *)(arg1)->getVertex(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVertex,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_getVertexAmount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getVertexAmount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertexAmount",1,"gsSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getVertexAmount",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  result = (int)(arg1)->getVertexAmount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_addTriangle(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  gkVertex *arg2 = 0 ;
+  unsigned int arg3 ;
+  gkVertex *arg4 = 0 ;
+  unsigned int arg5 ;
+  gkVertex *arg6 = 0 ;
+  unsigned int arg7 ;
+  gkTriangle result;
+  
+  SWIG_check_num_args("addTriangle",7,7)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTriangle",1,"gsSubMesh *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("addTriangle",2,"gkVertex const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("addTriangle",3,"unsigned int");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("addTriangle",4,"gkVertex const &");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("addTriangle",5,"unsigned int");
+  if(!lua_isuserdata(L,6)) SWIG_fail_arg("addTriangle",6,"gkVertex const &");
+  if(!lua_isnumber(L,7)) SWIG_fail_arg("addTriangle",7,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",2,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
+  arg3 = (unsigned int)lua_tonumber(L, 3);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",4,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,5)>=0),"number must not be negative")
+  arg5 = (unsigned int)lua_tonumber(L, 5);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&arg6,SWIGTYPE_p_gkVertex,0))){
+    SWIG_fail_ptr("gsSubMesh_addTriangle",6,SWIGTYPE_p_gkVertex);
+  }
+  
+  SWIG_contract_assert((lua_tonumber(L,7)>=0),"number must not be negative")
+  arg7 = (unsigned int)lua_tonumber(L, 7);
+  result = (arg1)->addTriangle((gkVertex const &)*arg2,arg3,(gkVertex const &)*arg4,arg5,(gkVertex const &)*arg6,arg7);
+  {
+    gkTriangle * resultptr = new gkTriangle((const gkTriangle &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gkTriangle,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_getMaterial(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  gkMaterialProperties *result = 0 ;
+  
+  SWIG_check_num_args("getMaterial",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getMaterial",1,"gsSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getMaterial",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  result = (gkMaterialProperties *) &(arg1)->getMaterial();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkMaterialProperties,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_setUVCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("setUVCount",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setUVCount",1,"gsSubMesh *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setUVCount",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_setUVCount",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->setUVCount(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_getUVCount(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getUVCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getUVCount",1,"gsSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_getUVCount",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  result = (int)(arg1)->getUVCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsSubMesh_setMaterialName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("setMaterialName",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setMaterialName",1,"gsSubMesh *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setMaterialName",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsSubMesh_setMaterialName",1,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->setMaterialName((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gsSubMesh(void *obj) {
+gsSubMesh *arg1 = (gsSubMesh *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsSubMesh_methods[] = {
+    {"getVertex", _wrap_gsSubMesh_getVertex}, 
+    {"getVertexAmount", _wrap_gsSubMesh_getVertexAmount}, 
+    {"addTriangle", _wrap_gsSubMesh_addTriangle}, 
+    {"getMaterial", _wrap_gsSubMesh_getMaterial}, 
+    {"setUVCount", _wrap_gsSubMesh_setUVCount}, 
+    {"getUVCount", _wrap_gsSubMesh_getUVCount}, 
+    {"setMaterialName", _wrap_gsSubMesh_setMaterialName}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsSubMesh_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsSubMesh_bases[] = {0};
+static const char *swig_gsSubMesh_base_names[] = {0};
+static swig_lua_class _wrap_class_gsSubMesh = { "gsSubMesh", &SWIGTYPE_p_gsSubMesh,_wrap_new_gsSubMesh, swig_delete_gsSubMesh, swig_gsSubMesh_methods, swig_gsSubMesh_attributes, swig_gsSubMesh_bases, swig_gsSubMesh_base_names };
+
 static int _wrap_new_gsMesh(lua_State* L) {
   int SWIG_arg = 0;
   gkMesh *arg1 = (gkMesh *) 0 ;
@@ -16326,6 +25719,36 @@ fail:
 }
 
 
+static int _wrap_gsMesh_addSubMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  gsMesh *arg1 = (gsMesh *) 0 ;
+  gsSubMesh *arg2 = (gsSubMesh *) 0 ;
+  
+  SWIG_check_num_args("addSubMesh",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addSubMesh",1,"gsMesh *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("addSubMesh",2,"gsSubMesh *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMesh,0))){
+    SWIG_fail_ptr("gsMesh_addSubMesh",1,SWIGTYPE_p_gsMesh);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsSubMesh,0))){
+    SWIG_fail_ptr("gsMesh_addSubMesh",2,SWIGTYPE_p_gsSubMesh);
+  }
+  
+  (arg1)->addSubMesh(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_gsMesh_reload(lua_State* L) {
   int SWIG_arg = 0;
   gsMesh *arg1 = (gsMesh *) 0 ;
@@ -16356,6 +25779,7 @@ delete arg1;
 static swig_lua_method swig_gsMesh_methods[] = {
     {"getSubMeshAmount", _wrap_gsMesh_getSubMeshAmount}, 
     {"getSubMesh", _wrap_gsMesh_getSubMesh}, 
+    {"addSubMesh", _wrap_gsMesh_addSubMesh}, 
     {"reload", _wrap_gsMesh_reload}, 
     {0,0}
 };
@@ -16365,154 +25789,6 @@ static swig_lua_attribute swig_gsMesh_attributes[] = {
 static swig_lua_class *swig_gsMesh_bases[] = {0};
 static const char *swig_gsMesh_base_names[] = {0};
 static swig_lua_class _wrap_class_gsMesh = { "gsMesh", &SWIGTYPE_p_gsMesh,_wrap_new_gsMesh, swig_delete_gsMesh, swig_gsMesh_methods, swig_gsMesh_attributes, swig_gsMesh_bases, swig_gsMesh_base_names };
-
-static int _wrap_new_gsSubMesh(lua_State* L) {
-  int SWIG_arg = 0;
-  gkSubMesh *arg1 = (gkSubMesh *) 0 ;
-  gsSubMesh *result = 0 ;
-  
-  SWIG_check_num_args("gsSubMesh",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsSubMesh",1,"gkSubMesh *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkSubMesh,0))){
-    SWIG_fail_ptr("new_gsSubMesh",1,SWIGTYPE_p_gkSubMesh);
-  }
-  
-  result = (gsSubMesh *)new gsSubMesh(arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSubMesh,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsSubMesh_getVertex(lua_State* L) {
-  int SWIG_arg = 0;
-  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
-  int arg2 ;
-  gkVertex *result = 0 ;
-  
-  SWIG_check_num_args("getVertex",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertex",1,"gsSubMesh *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVertex",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
-    SWIG_fail_ptr("gsSubMesh_getVertex",1,SWIGTYPE_p_gsSubMesh);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  result = (gkVertex *)(arg1)->getVertex(arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkVertex,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsSubMesh_getVertexAmount(lua_State* L) {
-  int SWIG_arg = 0;
-  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("getVertexAmount",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVertexAmount",1,"gsSubMesh *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
-    SWIG_fail_ptr("gsSubMesh_getVertexAmount",1,SWIGTYPE_p_gsSubMesh);
-  }
-  
-  result = (int)(arg1)->getVertexAmount();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsSubMesh_addTriangle(lua_State* L) {
-  int SWIG_arg = 0;
-  gsSubMesh *arg1 = (gsSubMesh *) 0 ;
-  gkVertex *arg2 = 0 ;
-  unsigned int arg3 ;
-  gkVertex *arg4 = 0 ;
-  unsigned int arg5 ;
-  gkVertex *arg6 = 0 ;
-  unsigned int arg7 ;
-  
-  SWIG_check_num_args("addTriangle",7,7)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTriangle",1,"gsSubMesh *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("addTriangle",2,"gkVertex const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("addTriangle",3,"unsigned int");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("addTriangle",4,"gkVertex const &");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("addTriangle",5,"unsigned int");
-  if(!lua_isuserdata(L,6)) SWIG_fail_arg("addTriangle",6,"gkVertex const &");
-  if(!lua_isnumber(L,7)) SWIG_fail_arg("addTriangle",7,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSubMesh,0))){
-    SWIG_fail_ptr("gsSubMesh_addTriangle",1,SWIGTYPE_p_gsSubMesh);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gkVertex,0))){
-    SWIG_fail_ptr("gsSubMesh_addTriangle",2,SWIGTYPE_p_gkVertex);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,3)>=0),"number must not be negative")
-  arg3 = (unsigned int)lua_tonumber(L, 3);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gkVertex,0))){
-    SWIG_fail_ptr("gsSubMesh_addTriangle",4,SWIGTYPE_p_gkVertex);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,5)>=0),"number must not be negative")
-  arg5 = (unsigned int)lua_tonumber(L, 5);
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,6,(void**)&arg6,SWIGTYPE_p_gkVertex,0))){
-    SWIG_fail_ptr("gsSubMesh_addTriangle",6,SWIGTYPE_p_gkVertex);
-  }
-  
-  SWIG_contract_assert((lua_tonumber(L,7)>=0),"number must not be negative")
-  arg7 = (unsigned int)lua_tonumber(L, 7);
-  (arg1)->addTriangle((gkVertex const &)*arg2,arg3,(gkVertex const &)*arg4,arg5,(gkVertex const &)*arg6,arg7);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_gsSubMesh(void *obj) {
-gsSubMesh *arg1 = (gsSubMesh *) obj;
-delete arg1;
-}
-static swig_lua_method swig_gsSubMesh_methods[] = {
-    {"getVertex", _wrap_gsSubMesh_getVertex}, 
-    {"getVertexAmount", _wrap_gsSubMesh_getVertexAmount}, 
-    {"addTriangle", _wrap_gsSubMesh_addTriangle}, 
-    {0,0}
-};
-static swig_lua_attribute swig_gsSubMesh_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_gsSubMesh_bases[] = {0};
-static const char *swig_gsSubMesh_base_names[] = {0};
-static swig_lua_class _wrap_class_gsSubMesh = { "gsSubMesh", &SWIGTYPE_p_gsSubMesh,_wrap_new_gsSubMesh, swig_delete_gsSubMesh, swig_gsSubMesh_methods, swig_gsSubMesh_attributes, swig_gsSubMesh_bases, swig_gsSubMesh_base_names };
 
 static int _wrap_gsTriangleIdx_i1_set(lua_State* L) {
   int SWIG_arg = 0;
@@ -16872,6 +26148,53 @@ static int _wrap_isSoundAvailable(lua_State* L) {
   SWIG_check_num_args("isSoundAvailable",0,0)
   result = (bool)isSoundAvailable();
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_isMaterialInitialized(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  gkString temp1 ;
+  bool result;
+  
+  SWIG_check_num_args("isMaterialInitialized",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("isMaterialInitialized",1,"gkString const &");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  result = (bool)isMaterialInitialized((gkString const &)*arg1);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_initMaterial(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  gkString temp1 ;
+  
+  SWIG_check_num_args("initMaterial",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("initMaterial",1,"gkString const &");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  initMaterial((gkString const &)*arg1);
+  
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -33043,23 +42366,17 @@ fail:
 static int _wrap_Process_update(lua_State* L) {
   int SWIG_arg = 0;
   gsProcess *arg1 = (gsProcess *) 0 ;
-  gkScalar arg2 ;
-  gkScalar *argp2 ;
+  float arg2 ;
   
   SWIG_check_num_args("update",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("update",1,"gsProcess *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("update",2,"gkScalar");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("update",2,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProcess,0))){
     SWIG_fail_ptr("Process_update",1,SWIGTYPE_p_gsProcess);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_gkScalar,0))){
-    SWIG_fail_ptr("Process_update",2,SWIGTYPE_p_gkScalar);
-  }
-  arg2 = *argp2;
-  
+  arg2 = (float)lua_tonumber(L, 2);
   (arg1)->update(arg2);
   
   return SWIG_arg;
@@ -34023,6 +43340,7 @@ static swig_lua_class _wrap_class_gsProcessManager = { "ProcessManager", &SWIGTY
 
 static const struct luaL_reg swig_commands[] = {
     { "lerp", _wrap_lerp},
+    { "getTriNormal", _wrap_getTriNormal},
     { "Vec3Negate", _wrap_Vec3Negate},
     { "Vec3AddVec3", _wrap_Vec3AddVec3},
     { "Vec3SubVec3", _wrap_Vec3SubVec3},
@@ -34049,6 +43367,8 @@ static const struct luaL_reg swig_commands[] = {
     { "import", _wrap_import},
     { "getPlatform", _wrap_getPlatform},
     { "isSoundAvailable", _wrap_isSoundAvailable},
+    { "isMaterialInitialized", _wrap_isMaterialInitialized},
+    { "initMaterial", _wrap_initMaterial},
     { "getCurrentController", _wrap_getCurrentController},
     { "setGlobalVolume", _wrap_setGlobalVolume},
     { "getGlobalVolume", _wrap_getGlobalVolume},
@@ -34060,6 +43380,130 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
+{ SWIG_LUA_INT,     (char *)"GK_MAX_TEXTURE", (long) 18, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_MIXTURE", (long) GK_BT_MIXTURE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_MULTIPLY", (long) GK_BT_MULTIPLY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_ADDITIVE", (long) GK_BT_ADDITIVE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_SUBTRACT", (long) GK_BT_SUBTRACT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_SCREEN", (long) GK_BT_SCREEN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_DARKEN", (long) GK_BT_DARKEN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_LIGHTEN", (long) GK_BT_LIGHTEN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BT_COLOR", (long) GK_BT_COLOR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_SPLAT", (long) gkTextureProperties::TM_SPLAT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_INVERT", (long) gkTextureProperties::TM_INVERT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_ALPHA", (long) gkTextureProperties::TM_ALPHA, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_SPECULAR", (long) gkTextureProperties::TM_SPECULAR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_EMMISIVE", (long) gkTextureProperties::TM_EMMISIVE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_AMBIENT", (long) gkTextureProperties::TM_AMBIENT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_REFRACTION", (long) gkTextureProperties::TM_REFRACTION, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_MIRROR", (long) gkTextureProperties::TM_MIRROR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TM_NORMAL", (long) gkTextureProperties::TM_NORMAL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TX_NEGATIVE", (long) gkTextureProperties::TX_NEGATIVE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TX_STENCIL", (long) gkTextureProperties::TX_STENCIL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TX_RGBTOINTEN", (long) gkTextureProperties::TX_RGBTOINTEN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_TX_OBJ_SPACE", (long) gkTextureProperties::TX_OBJ_SPACE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_IMT_IMAGE", (long) gkTextureProperties::IMT_IMAGE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkTextureProperties_IMT_CUBEMAP", (long) gkTextureProperties::IMT_CUBEMAP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_RECEIVESHADOWS", (long) gkMaterialProperties::MA_RECEIVESHADOWS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_LIGHTINGENABLED", (long) gkMaterialProperties::MA_LIGHTINGENABLED, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_WIREFRAME", (long) gkMaterialProperties::MA_WIREFRAME, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_DEPTHWRITE", (long) gkMaterialProperties::MA_DEPTHWRITE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_INVISIBLE", (long) gkMaterialProperties::MA_INVISIBLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_TWOSIDE", (long) gkMaterialProperties::MA_TWOSIDE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_ALPHABLEND", (long) gkMaterialProperties::MA_ALPHABLEND, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_ADDITIVEBLEND", (long) gkMaterialProperties::MA_ADDITIVEBLEND, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_HASFACETEX", (long) gkMaterialProperties::MA_HASFACETEX, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_HASRAMPBLEND", (long) gkMaterialProperties::MA_HASRAMPBLEND, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkMaterialProperties_MA_ALPHACLIP", (long) gkMaterialProperties::MA_ALPHACLIP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkCameraProperties_CA_PERSPECTIVE", (long) gkCameraProperties::CA_PERSPECTIVE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkCameraProperties_CA_ORTHOGRAPHIC", (long) gkCameraProperties::CA_ORTHOGRAPHIC, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkCurveProperties_CU_Bezier", (long) gkCurveProperties::CU_Bezier, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkCurveProperties_CU_Spline", (long) gkCurveProperties::CU_Spline, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkCurveProperties_CU_Points", (long) gkCurveProperties::CU_Points, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkLightProperties_LI_POINT", (long) gkLightProperties::LI_POINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkLightProperties_LI_SPOT", (long) gkLightProperties::LI_SPOT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkLightProperties_LI_DIR", (long) gkLightProperties::LI_DIR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_NO_COLLISION", (long) GK_NO_COLLISION, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_STATIC", (long) GK_STATIC, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_DYNAMIC", (long) GK_DYNAMIC, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_RIGID", (long) GK_RIGID, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_SOFT", (long) GK_SOFT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_SENSOR", (long) GK_SENSOR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_NAVMESH", (long) GK_NAVMESH, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CHARACTER", (long) GK_CHARACTER, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_NO_SLEEP", (long) GK_NO_SLEEP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CONTACT", (long) GK_CONTACT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_LINV_X", (long) GK_LOCK_LINV_X, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_LINV_Y", (long) GK_LOCK_LINV_Y, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_LINV_Z", (long) GK_LOCK_LINV_Z, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_ANGV_X", (long) GK_LOCK_ANGV_X, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_ANGV_Y", (long) GK_LOCK_ANGV_Y, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LOCK_ANGV_Z", (long) GK_LOCK_ANGV_Z, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_COMPOUND", (long) GK_COMPOUND, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_COMPOUND_CHILD", (long) GK_COMPOUND_CHILD, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_BOX", (long) SH_BOX, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_CONE", (long) SH_CONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_CYLINDER", (long) SH_CYLINDER, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_SPHERE", (long) SH_SPHERE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_CONVEX_TRIMESH", (long) SH_CONVEX_TRIMESH, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_GIMPACT_MESH", (long) SH_GIMPACT_MESH, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_BVH_MESH", (long) SH_BVH_MESH, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"SH_CAPSULE", (long) SH_CAPSULE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_BALL_CONSTRAINT", (long) GK_BALL_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_HINGE_CONSTRAINT", (long) GK_HINGE_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CONETWIST_CONSTRAINT", (long) GK_CONETWIST_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_VEHICLE_CONSTRAINT", (long) GK_VEHICLE_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_D6_CONSTRAINT", (long) GK_D6_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_SLIDER_CONSTRAINT", (long) GK_SLIDER_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CONTACT_CONSTRAINT", (long) GK_CONTACT_CONSTRAINT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_OB_NULL", (long) GK_OB_NULL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CAMERA", (long) GK_CAMERA, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_LIGHT", (long) GK_LIGHT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_ENTITY", (long) GK_ENTITY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_OBJECT", (long) GK_OBJECT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_SKELETON", (long) GK_SKELETON, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_PARTICLES", (long) GK_PARTICLES, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_CURVE", (long) GK_CURVE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_GHOST", (long) GK_GHOST, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_ACTOR", (long) GK_ACTOR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_INVISIBLE", (long) GK_INVISIBLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_OCCLUDER", (long) GK_OCCLUDER, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_HAS_LOGIC", (long) GK_HAS_LOGIC, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_IMMOVABLE", (long) GK_IMMOVABLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"GK_STATIC_GEOM", (long) GK_STATIC_GEOM, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkFogParams_FM_NONE", (long) gkFogParams::FM_NONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkFogParams_FM_LIN", (long) gkFogParams::FM_LIN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkFogParams_FM_EXP", (long) gkFogParams::FM_EXP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkFogParams_FM_QUAD", (long) gkFogParams::FM_QUAD, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_NONE", (long) gkSoundSceneProperties::DM_NONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_INVERSE", (long) gkSoundSceneProperties::DM_INVERSE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_LINEAR", (long) gkSoundSceneProperties::DM_LINEAR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_EXPONENT", (long) gkSoundSceneProperties::DM_EXPONENT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_INVERSE_CLAMP", (long) gkSoundSceneProperties::DM_INVERSE_CLAMP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_LINEAR_CLAMP", (long) gkSoundSceneProperties::DM_LINEAR_CLAMP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSoundSceneProperties_DM_EXPONENT_CLAMP", (long) gkSoundSceneProperties::DM_EXPONENT_CLAMP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneMaterial_FLAT", (long) gkSceneMaterial::FLAT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneMaterial_LINEAR", (long) gkSceneMaterial::LINEAR, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneMaterial_RADIAL", (long) gkSceneMaterial::RADIAL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneMaterial_REFLECTED", (long) gkSceneMaterial::REFLECTED, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneProperties_MA_GENERIC", (long) gkSceneProperties::MA_GENERIC, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkSceneProperties_MA_OCTREE", (long) gkSceneProperties::MA_OCTREE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_PHY_NONE", (long) gkParticleSettingsProperties::PHY_NONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_PHY_NEWTON", (long) gkParticleSettingsProperties::PHY_NEWTON, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_PHY_KEYED", (long) gkParticleSettingsProperties::PHY_KEYED, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_PHY_BOIDS", (long) gkParticleSettingsProperties::PHY_BOIDS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_PHY_FLUID", (long) gkParticleSettingsProperties::PHY_FLUID, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_EF_VERTS", (long) gkParticleSettingsProperties::EF_VERTS, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_EF_FACES", (long) gkParticleSettingsProperties::EF_FACES, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_EF_VOLUME", (long) gkParticleSettingsProperties::EF_VOLUME, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_EF_PARTICLES", (long) gkParticleSettingsProperties::EF_PARTICLES, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_NONE", (long) gkParticleSettingsProperties::R_NONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_HALO", (long) gkParticleSettingsProperties::R_HALO, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_LINE", (long) gkParticleSettingsProperties::R_LINE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_PATH", (long) gkParticleSettingsProperties::R_PATH, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_OBJECT", (long) gkParticleSettingsProperties::R_OBJECT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_GROUP", (long) gkParticleSettingsProperties::R_GROUP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"gkParticleSettingsProperties_R_BILLBOARD", (long) gkParticleSettingsProperties::R_BILLBOARD, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"OGRE_RS_GL", (long) GS_RS_GL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"OGRE_RS_GLES", (long) GS_RS_GLES, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"OGRE_RS_D3D9", (long) GS_RS_D3D9, 0, 0, 0},
@@ -34519,17 +43963,37 @@ static void *_p_gsScriptControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM
 }
 static swig_type_info _swigt__p_Array = {"_p_Array", "Array *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_BrickList = {"_p_BrickList", "BrickList *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_CollisionMask = {"_p_CollisionMask", "CollisionMask *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Iterator = {"_p_Iterator", "Iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_UTsize = {"_p_UTsize", "UTsize *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_float = {"_p_float", "float *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkCameraProperties = {"_p_gkCameraProperties", "gkCameraProperties *", 0, 0, (void*)&_wrap_class_gkCameraProperties, 0};
 static swig_type_info _swigt__p_gkCharacter = {"_p_gkCharacter", "gkCharacter *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkColor = {"_p_gkColor", "gkColor *", 0, 0, (void*)&_wrap_class_gkColor, 0};
+static swig_type_info _swigt__p_gkCurveProperties = {"_p_gkCurveProperties", "gkCurveProperties *", 0, 0, (void*)&_wrap_class_gkCurveProperties, 0};
 static swig_type_info _swigt__p_gkDynamicsWorld = {"_p_gkDynamicsWorld", "gkDynamicsWorld *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkEntityProperties = {"_p_gkEntityProperties", "gkEntityProperties *", 0, 0, (void*)&_wrap_class_gkEntityProperties, 0};
+static swig_type_info _swigt__p_gkFogParams = {"_p_gkFogParams", "gkFogParams *", 0, 0, (void*)&_wrap_class_gkFogParams, 0};
 static swig_type_info _swigt__p_gkGameObjectInstance = {"_p_gkGameObjectInstance", "gkGameObjectInstance *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkGameObjectProperties = {"_p_gkGameObjectProperties", "gkGameObjectProperties *", 0, 0, (void*)&_wrap_class_gkGameObjectProperties, 0};
+static swig_type_info _swigt__p_gkLightProperties = {"_p_gkLightProperties", "gkLightProperties *", 0, 0, (void*)&_wrap_class_gkLightProperties, 0};
 static swig_type_info _swigt__p_gkLogicManager = {"_p_gkLogicManager", "gkLogicManager *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "gsSelf *|gsFunction *|gkLuaCurState *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkMaterialProperties = {"_p_gkMaterialProperties", "gkMaterialProperties *", 0, 0, (void*)&_wrap_class_gkMaterialProperties, 0};
 static swig_type_info _swigt__p_gkMesh = {"_p_gkMesh", "gkMesh *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkParticleSettingsProperties = {"_p_gkParticleSettingsProperties", "gkParticleSettingsProperties *", 0, 0, (void*)&_wrap_class_gkParticleSettingsProperties, 0};
+static swig_type_info _swigt__p_gkParticleSystemProperties = {"_p_gkParticleSystemProperties", "gkParticleSystemProperties *", 0, 0, (void*)&_wrap_class_gkParticleSystemProperties, 0};
+static swig_type_info _swigt__p_gkPhysicsConstraintProperties = {"_p_gkPhysicsConstraintProperties", "gkPhysicsConstraintProperties *", 0, 0, (void*)&_wrap_class_gkPhysicsConstraintProperties, 0};
+static swig_type_info _swigt__p_gkPhysicsProperties = {"_p_gkPhysicsProperties", "gkPhysicsProperties *", 0, 0, (void*)&_wrap_class_gkPhysicsProperties, 0};
 static swig_type_info _swigt__p_gkProcessManager = {"_p_gkProcessManager", "gkProcessManager *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_gkScalar = {"_p_gkScalar", "gkScalar *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_gkScene = {"_p_gkScene", "gkScene *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkSceneMaterial = {"_p_gkSceneMaterial", "gkSceneMaterial *", 0, 0, (void*)&_wrap_class_gkSceneMaterial, 0};
+static swig_type_info _swigt__p_gkSceneProperties = {"_p_gkSceneProperties", "gkSceneProperties *", 0, 0, (void*)&_wrap_class_gkSceneProperties, 0};
+static swig_type_info _swigt__p_gkSoundSceneProperties = {"_p_gkSoundSceneProperties", "gkSoundSceneProperties *", 0, 0, (void*)&_wrap_class_gkSoundSceneProperties, 0};
 static swig_type_info _swigt__p_gkSubMesh = {"_p_gkSubMesh", "gkSubMesh *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkTextureProperties = {"_p_gkTextureProperties", "gkTextureProperties *", 0, 0, (void*)&_wrap_class_gkTextureProperties, 0};
+static swig_type_info _swigt__p_gkTransformState = {"_p_gkTransformState", "gkTransformState *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkTriangle = {"_p_gkTriangle", "gkTriangle *", 0, 0, (void*)&_wrap_class_gkTriangle, 0};
 static swig_type_info _swigt__p_gkVector2 = {"_p_gkVector2", "gkVector2 *", 0, 0, (void*)&_wrap_class_gkVector2, 0};
 static swig_type_info _swigt__p_gkVector3 = {"_p_gkVector3", "gkVector3 *", 0, 0, (void*)&_wrap_class_gkVector3, 0};
 static swig_type_info _swigt__p_gkVertex = {"_p_gkVertex", "gkVertex *", 0, 0, (void*)&_wrap_class_gkVertex, 0};
@@ -34619,22 +44083,45 @@ static swig_type_info _swigt__p_utArrayT_gkLogicActuator_p_t = {"_p_utArrayT_gkL
 static swig_type_info _swigt__p_utArrayT_gkLogicController_p_t = {"_p_utArrayT_gkLogicController_p_t", "gsArray< gsController,gkLogicController >::Array *|utArray< gkLogicController * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_utArrayT_gkLogicLink_p_t = {"_p_utArrayT_gkLogicLink_p_t", "gsArray< gsLogicObject,gkLogicLink >::Array *|utArray< gkLogicLink * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_utArrayT_gkLogicSensor_p_t = {"_p_utArrayT_gkLogicSensor_p_t", "gsArray< gsSensor,gkLogicSensor >::Array *|utArray< gkLogicSensor * > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_utArrayT_gkPhysicsConstraintProperties_t = {"_p_utArrayT_gkPhysicsConstraintProperties_t", "utArray< gkPhysicsConstraintProperties > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_utArrayT_gkProcess_p_t = {"_p_utArrayT_gkProcess_p_t", "gsArray< gsProcess,gkProcess >::Array *|utArray< gkProcess * > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_utArrayT_gkString_t = {"_p_utArrayT_gkString_t", "utArray< gkString > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_utArrayT_gkVector3_t = {"_p_utArrayT_gkVector3_t", "utArray< gkVector3 > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Array,
   &_swigt__p_BrickList,
+  &_swigt__p_CollisionMask,
   &_swigt__p_Iterator,
+  &_swigt__p_UTsize,
+  &_swigt__p_float,
+  &_swigt__p_gkCameraProperties,
   &_swigt__p_gkCharacter,
+  &_swigt__p_gkColor,
+  &_swigt__p_gkCurveProperties,
   &_swigt__p_gkDynamicsWorld,
+  &_swigt__p_gkEntityProperties,
+  &_swigt__p_gkFogParams,
   &_swigt__p_gkGameObjectInstance,
+  &_swigt__p_gkGameObjectProperties,
+  &_swigt__p_gkLightProperties,
   &_swigt__p_gkLogicManager,
   &_swigt__p_gkLuaCurState,
+  &_swigt__p_gkMaterialProperties,
   &_swigt__p_gkMesh,
+  &_swigt__p_gkParticleSettingsProperties,
+  &_swigt__p_gkParticleSystemProperties,
+  &_swigt__p_gkPhysicsConstraintProperties,
+  &_swigt__p_gkPhysicsProperties,
   &_swigt__p_gkProcessManager,
-  &_swigt__p_gkScalar,
   &_swigt__p_gkScene,
+  &_swigt__p_gkSceneMaterial,
+  &_swigt__p_gkSceneProperties,
+  &_swigt__p_gkSoundSceneProperties,
   &_swigt__p_gkSubMesh,
+  &_swigt__p_gkTextureProperties,
+  &_swigt__p_gkTransformState,
+  &_swigt__p_gkTriangle,
   &_swigt__p_gkVector2,
   &_swigt__p_gkVector3,
   &_swigt__p_gkVertex,
@@ -34724,22 +44211,45 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_utArrayT_gkLogicController_p_t,
   &_swigt__p_utArrayT_gkLogicLink_p_t,
   &_swigt__p_utArrayT_gkLogicSensor_p_t,
+  &_swigt__p_utArrayT_gkPhysicsConstraintProperties_t,
   &_swigt__p_utArrayT_gkProcess_p_t,
+  &_swigt__p_utArrayT_gkString_t,
+  &_swigt__p_utArrayT_gkVector3_t,
 };
 
 static swig_cast_info _swigc__p_Array[] = {  {&_swigt__p_Array, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_BrickList[] = {  {&_swigt__p_BrickList, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_CollisionMask[] = {  {&_swigt__p_CollisionMask, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Iterator[] = {  {&_swigt__p_Iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_UTsize[] = {  {&_swigt__p_UTsize, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkCameraProperties[] = {  {&_swigt__p_gkCameraProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkCharacter[] = {  {&_swigt__p_gkCharacter, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkColor[] = {  {&_swigt__p_gkColor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkCurveProperties[] = {  {&_swigt__p_gkCurveProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkDynamicsWorld[] = {  {&_swigt__p_gkDynamicsWorld, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkEntityProperties[] = {  {&_swigt__p_gkEntityProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkFogParams[] = {  {&_swigt__p_gkFogParams, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkGameObjectInstance[] = {  {&_swigt__p_gkGameObjectInstance, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkGameObjectProperties[] = {  {&_swigt__p_gkGameObjectProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkLightProperties[] = {  {&_swigt__p_gkLightProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLogicManager[] = {  {&_swigt__p_gkLogicManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLuaCurState[] = {  {&_swigt__p_gkLuaCurState, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkMaterialProperties[] = {  {&_swigt__p_gkMaterialProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkMesh[] = {  {&_swigt__p_gkMesh, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkParticleSettingsProperties[] = {  {&_swigt__p_gkParticleSettingsProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkParticleSystemProperties[] = {  {&_swigt__p_gkParticleSystemProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkPhysicsConstraintProperties[] = {  {&_swigt__p_gkPhysicsConstraintProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkPhysicsProperties[] = {  {&_swigt__p_gkPhysicsProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkProcessManager[] = {  {&_swigt__p_gkProcessManager, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gkScalar[] = {  {&_swigt__p_gkScalar, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkScene[] = {  {&_swigt__p_gkScene, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkSceneMaterial[] = {  {&_swigt__p_gkSceneMaterial, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkSceneProperties[] = {  {&_swigt__p_gkSceneProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkSoundSceneProperties[] = {  {&_swigt__p_gkSoundSceneProperties, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkSubMesh[] = {  {&_swigt__p_gkSubMesh, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkTextureProperties[] = {  {&_swigt__p_gkTextureProperties, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkTransformState[] = {  {&_swigt__p_gkTransformState, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkTriangle[] = {  {&_swigt__p_gkTriangle, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkVector2[] = {  {&_swigt__p_gkVector2, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkVector3[] = {  {&_swigt__p_gkVector3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkVertex[] = {  {&_swigt__p_gkVertex, 0, 0, 0},{0, 0, 0, 0}};
@@ -34829,22 +44339,45 @@ static swig_cast_info _swigc__p_utArrayT_gkLogicActuator_p_t[] = {  {&_swigt__p_
 static swig_cast_info _swigc__p_utArrayT_gkLogicController_p_t[] = {  {&_swigt__p_utArrayT_gkLogicController_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_utArrayT_gkLogicLink_p_t[] = {  {&_swigt__p_utArrayT_gkLogicLink_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_utArrayT_gkLogicSensor_p_t[] = {  {&_swigt__p_utArrayT_gkLogicSensor_p_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_utArrayT_gkPhysicsConstraintProperties_t[] = {  {&_swigt__p_utArrayT_gkPhysicsConstraintProperties_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_utArrayT_gkProcess_p_t[] = {  {&_swigt__p_utArrayT_gkProcess_p_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_utArrayT_gkString_t[] = {  {&_swigt__p_utArrayT_gkString_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_utArrayT_gkVector3_t[] = {  {&_swigt__p_utArrayT_gkVector3_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Array,
   _swigc__p_BrickList,
+  _swigc__p_CollisionMask,
   _swigc__p_Iterator,
+  _swigc__p_UTsize,
+  _swigc__p_float,
+  _swigc__p_gkCameraProperties,
   _swigc__p_gkCharacter,
+  _swigc__p_gkColor,
+  _swigc__p_gkCurveProperties,
   _swigc__p_gkDynamicsWorld,
+  _swigc__p_gkEntityProperties,
+  _swigc__p_gkFogParams,
   _swigc__p_gkGameObjectInstance,
+  _swigc__p_gkGameObjectProperties,
+  _swigc__p_gkLightProperties,
   _swigc__p_gkLogicManager,
   _swigc__p_gkLuaCurState,
+  _swigc__p_gkMaterialProperties,
   _swigc__p_gkMesh,
+  _swigc__p_gkParticleSettingsProperties,
+  _swigc__p_gkParticleSystemProperties,
+  _swigc__p_gkPhysicsConstraintProperties,
+  _swigc__p_gkPhysicsProperties,
   _swigc__p_gkProcessManager,
-  _swigc__p_gkScalar,
   _swigc__p_gkScene,
+  _swigc__p_gkSceneMaterial,
+  _swigc__p_gkSceneProperties,
+  _swigc__p_gkSoundSceneProperties,
   _swigc__p_gkSubMesh,
+  _swigc__p_gkTextureProperties,
+  _swigc__p_gkTransformState,
+  _swigc__p_gkTriangle,
   _swigc__p_gkVector2,
   _swigc__p_gkVector3,
   _swigc__p_gkVertex,
@@ -34934,7 +44467,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_utArrayT_gkLogicController_p_t,
   _swigc__p_utArrayT_gkLogicLink_p_t,
   _swigc__p_utArrayT_gkLogicSensor_p_t,
+  _swigc__p_utArrayT_gkPhysicsConstraintProperties_t,
   _swigc__p_utArrayT_gkProcess_p_t,
+  _swigc__p_utArrayT_gkString_t,
+  _swigc__p_utArrayT_gkVector3_t,
 };
 
 

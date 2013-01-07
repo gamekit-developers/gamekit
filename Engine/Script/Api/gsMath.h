@@ -73,7 +73,7 @@ public:
 };
 
 extern gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t);
-
+extern gkVector3 getTriNormal(const gkVertex& v0,const gkVertex& v1,const gkVertex& v2);
 class gsQuaternion
 #ifndef SWIG
 	: public gkQuaternion

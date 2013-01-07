@@ -31,9 +31,11 @@
 #include "gsMath.h"
 #include "gsUtils.h"
 #include "gkMesh.h"
+#include "gkSerialize.h"
 
 #ifdef OGREKIT_USE_PROCESSMANAGER
 # include "gsProcess.h"
+
 #endif
 
 
@@ -656,6 +658,32 @@ public:
 	void clear(void);
 };
 
+class gsSubMesh {
+	friend class gsMesh;
+public:
+	gsSubMesh();
+	gsSubMesh(gkSubMesh* submesh);
+	~gsSubMesh();
+
+	gkVertex* getVertex(int nr){ return &(m_submesh->getVertexBuffer().at(nr));};
+	int getVertexAmount(){ return m_submesh->getVertexBuffer().size();};
+	const gkTriangle addTriangle(const gkVertex& v0,
+            unsigned int i0,
+            const gkVertex& v1,
+            unsigned int i1,
+            const gkVertex& v2,
+            unsigned int i2);
+
+	gkMaterialProperties& getMaterial(void)                 {return m_submesh->getMaterial();}
+	void setUVCount(int count) { m_submesh->setTotalLayers(1);}
+	int getUVCount() { return m_submesh->getUvLayerCount();}
+	void setMaterialName(const gkString& materialName);
+
+private:
+	gkSubMesh* m_submesh;
+	bool m_isMeshCreator;
+};
+
 class gsMesh
 {
 public:
@@ -663,29 +691,13 @@ public:
 	~gsMesh() {};
 	int getSubMeshAmount() { return m_mesh->m_submeshes.size();}
 	gkSubMesh* getSubMesh(int nr) { return m_mesh->m_submeshes.at(nr); }
+	void addSubMesh(gsSubMesh* submesh);
 	void reload() {m_mesh->reload();}
 private:
 	gkMesh* m_mesh;
 };
 
-class gsSubMesh {
-public:
-	gsSubMesh(gkSubMesh* submesh);
-	~gsSubMesh(){}
 
-	gkVertex* getVertex(int nr){ return &(m_submesh->getVertexBuffer().at(nr));};
-	int getVertexAmount(){ return m_submesh->getVertexBuffer().size();};
-	void addTriangle(const gkVertex& v0,
-            unsigned int i0,
-            const gkVertex& v1,
-            unsigned int i1,
-            const gkVertex& v2,
-            unsigned int i2);
-
-
-private:
-	gkSubMesh* m_submesh;
-};
 
 struct gsTriangleIdx {
 	int i1, i2, i3;
@@ -716,5 +728,8 @@ extern void import(const gkString& scriptName);
 extern gkString getPlatform();
 
 extern bool isSoundAvailable();
+
+extern bool isMaterialInitialized(const gkString& matName);
+extern void initMaterial(const gkString& matName);
 
 #endif//_OgreKitApi_h_
