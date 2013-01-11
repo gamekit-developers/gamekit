@@ -114,7 +114,6 @@ GS_SCRIPT_NAME(HUD)
 GS_SCRIPT_NAME(HUDElement)
 GS_SCRIPT_NAME(Curve)
 
-
 // Enums
 GS_SCRIPT_NAME(RenderSystem)
 GS_SCRIPT_NAME(PropertyType)

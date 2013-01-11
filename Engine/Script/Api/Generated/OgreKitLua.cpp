@@ -1621,9 +1621,9 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsSubMesh swig_types[109]
 #define SWIGTYPE_p_gsSweptTest swig_types[110]
 #define SWIGTYPE_p_gsTouchSensor swig_types[111]
-#define SWIGTYPE_p_gsTriangleIdx swig_types[112]
-#define SWIGTYPE_p_gsUserDefs swig_types[113]
-#define SWIGTYPE_p_gsVector3 swig_types[114]
+#define SWIGTYPE_p_gsUserDefs swig_types[112]
+#define SWIGTYPE_p_gsVector3 swig_types[113]
+#define SWIGTYPE_p_gsVector4 swig_types[114]
 #define SWIGTYPE_p_gsVisibilityActuator swig_types[115]
 #define SWIGTYPE_p_gsWhenEvent swig_types[116]
 #define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[117]
@@ -11226,6 +11226,747 @@ static swig_lua_attribute swig_gsVector3_attributes[] = {
 static swig_lua_class *swig_gsVector3_bases[] = {0};
 static const char *swig_gsVector3_base_names[] = {0};
 static swig_lua_class _wrap_class_gsVector3 = { "Vector3", &SWIGTYPE_p_gsVector3,_wrap_new_Vector3, swig_delete_Vector3, swig_gsVector3_methods, swig_gsVector3_attributes, swig_gsVector3_bases, swig_gsVector3_base_names };
+
+static int _wrap_Vector4_x_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("x",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("x",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_x_set",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->x = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_x_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("x",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_x_get",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (float) ((arg1)->x);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_y_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("y",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("y",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_y_set",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->y = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_y_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("y",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_y_get",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (float) ((arg1)->y);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_z_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("z",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("z",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_z_set",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->z = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_z_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("z",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_z_get",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (float) ((arg1)->z);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_w_set(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("w",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("w",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_w_set",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->w = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_w_get(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("w",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_w_get",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (float) ((arg1)->w);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_Vector4__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *result = 0 ;
+  
+  SWIG_check_num_args("gsVector4",0,0)
+  result = (gsVector4 *)new gsVector4();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector4,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_Vector4__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  float arg2 ;
+  float arg3 ;
+  gsVector4 *result = 0 ;
+  
+  SWIG_check_num_args("gsVector4",3,3)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gsVector4",1,"float");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsVector4",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("gsVector4",3,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  result = (gsVector4 *)new gsVector4(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector4,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_Vector4__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = 0 ;
+  gsVector4 *result = 0 ;
+  
+  SWIG_check_num_args("gsVector4",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVector4",1,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("new_Vector4",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (gsVector4 *)new gsVector4((gsVector4 const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector4,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_Vector4(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_Vector4__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_Vector4__SWIG_2(L);
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      _v = lua_isnumber(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_new_Vector4__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_Vector4'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsVector4()\n"
+    "    gsVector4(float,float,float)\n"
+    "    gsVector4(gsVector4 const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Vector4___tostring(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("__str__",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___tostring",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (char *)(arg1)->__str__();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4_dot(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 *arg2 = 0 ;
+  float result;
+  
+  SWIG_check_num_args("dot",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dot",1,"gsVector4 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("dot",2,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_dot",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4_dot",2,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (float)(arg1)->dot((gsVector4 const &)*arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___unm(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator -",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___unm",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (arg1)->operator -();
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___add(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 *arg2 = 0 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator +",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator +",1,"gsVector4 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator +",2,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___add",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___add",2,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (arg1)->operator +((gsVector4 const &)*arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___sub(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 *arg2 = 0 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator -",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsVector4 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator -",2,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___sub",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___sub",2,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (arg1)->operator -((gsVector4 const &)*arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___mul__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 *arg2 = 0 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator *",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsVector4 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___mul",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___mul",2,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (arg1)->operator *((gsVector4 const &)*arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___mul__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator *",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("operator *",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___mul",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  result = (arg1)->operator *(arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___mul(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Vector4___mul__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Vector4___mul__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Vector4___mul'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    operator *(gsVector4 *,gsVector4 const &)\n"
+    "    operator *(gsVector4 *,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_Vector4___div__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  gsVector4 *arg2 = 0 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator /",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"gsVector4 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator /",2,"gsVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___div",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___div",2,SWIGTYPE_p_gsVector4);
+  }
+  
+  result = (arg1)->operator /((gsVector4 const &)*arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___div__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector4 *arg1 = (gsVector4 *) 0 ;
+  float arg2 ;
+  gsVector4 result;
+  
+  SWIG_check_num_args("operator /",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"gsVector4 *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("operator /",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("Vector4___div",1,SWIGTYPE_p_gsVector4);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  result = (arg1)->operator /(arg2);
+  {
+    gsVector4 * resultptr = new gsVector4((const gsVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Vector4___div(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_Vector4___div__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_Vector4___div__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'Vector4___div'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    operator /(gsVector4 *,gsVector4 const &)\n"
+    "    operator /(gsVector4 *,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static void swig_delete_Vector4(void *obj) {
+gsVector4 *arg1 = (gsVector4 *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsVector4_methods[] = {
+    {"__tostring", _wrap_Vector4___tostring}, 
+    {"dot", _wrap_Vector4_dot}, 
+    {"__unm", _wrap_Vector4___unm}, 
+    {"__add", _wrap_Vector4___add}, 
+    {"__sub", _wrap_Vector4___sub}, 
+    {"__mul", _wrap_Vector4___mul}, 
+    {"__div", _wrap_Vector4___div}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsVector4_attributes[] = {
+    { "x", _wrap_Vector4_x_get, _wrap_Vector4_x_set},
+    { "y", _wrap_Vector4_y_get, _wrap_Vector4_y_set},
+    { "z", _wrap_Vector4_z_get, _wrap_Vector4_z_set},
+    { "w", _wrap_Vector4_w_get, _wrap_Vector4_w_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_gsVector4_bases[] = {0};
+static const char *swig_gsVector4_base_names[] = {0};
+static swig_lua_class _wrap_class_gsVector4 = { "Vector4", &SWIGTYPE_p_gsVector4,_wrap_new_Vector4, swig_delete_Vector4, swig_gsVector4_methods, swig_gsVector4_attributes, swig_gsVector4_bases, swig_gsVector4_base_names };
 
 static int _wrap_lerp(lua_State* L) {
   int SWIG_arg = 0;
@@ -26056,241 +26797,6 @@ static swig_lua_class *swig_gsMesh_bases[] = {0};
 static const char *swig_gsMesh_base_names[] = {0};
 static swig_lua_class _wrap_class_gsMesh = { "gsMesh", &SWIGTYPE_p_gsMesh,_wrap_new_gsMesh, swig_delete_gsMesh, swig_gsMesh_methods, swig_gsMesh_attributes, swig_gsMesh_bases, swig_gsMesh_base_names };
 
-static int _wrap_gsTriangleIdx_i1_set(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int arg2 ;
-  
-  SWIG_check_num_args("i1",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gsTriangleIdx *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("i1",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i1_set",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  if (arg1) (arg1)->i1 = arg2;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_i1_get(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("i1",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i1",1,"gsTriangleIdx *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i1_get",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  result = (int) ((arg1)->i1);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_i2_set(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int arg2 ;
-  
-  SWIG_check_num_args("i2",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gsTriangleIdx *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("i2",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i2_set",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  if (arg1) (arg1)->i2 = arg2;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_i2_get(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("i2",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i2",1,"gsTriangleIdx *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i2_get",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  result = (int) ((arg1)->i2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_i3_set(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int arg2 ;
-  
-  SWIG_check_num_args("i3",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i3",1,"gsTriangleIdx *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("i3",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i3_set",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  if (arg1) (arg1)->i3 = arg2;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_i3_get(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("i3",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("i3",1,"gsTriangleIdx *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_i3_get",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  result = (int) ((arg1)->i3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_flag_set(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int arg2 ;
-  
-  SWIG_check_num_args("flag",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gsTriangleIdx *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("flag",2,"int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_flag_set",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  arg2 = (int)lua_tonumber(L, 2);
-  if (arg1) (arg1)->flag = arg2;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_gsTriangleIdx_flag_get(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *arg1 = (gsTriangleIdx *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("flag",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flag",1,"gsTriangleIdx *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTriangleIdx,0))){
-    SWIG_fail_ptr("gsTriangleIdx_flag_get",1,SWIGTYPE_p_gsTriangleIdx);
-  }
-  
-  result = (int) ((arg1)->flag);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_gsTriangleIdx(lua_State* L) {
-  int SWIG_arg = 0;
-  gsTriangleIdx *result = 0 ;
-  
-  SWIG_check_num_args("gsTriangleIdx::gsTriangleIdx",0,0)
-  result = (gsTriangleIdx *)new gsTriangleIdx();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsTriangleIdx,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_gsTriangleIdx(void *obj) {
-gsTriangleIdx *arg1 = (gsTriangleIdx *) obj;
-delete arg1;
-}
-static swig_lua_method swig_gsTriangleIdx_methods[] = {
-    {0,0}
-};
-static swig_lua_attribute swig_gsTriangleIdx_attributes[] = {
-    { "i1", _wrap_gsTriangleIdx_i1_get, _wrap_gsTriangleIdx_i1_set},
-    { "i2", _wrap_gsTriangleIdx_i2_get, _wrap_gsTriangleIdx_i2_set},
-    { "i3", _wrap_gsTriangleIdx_i3_get, _wrap_gsTriangleIdx_i3_set},
-    { "flag", _wrap_gsTriangleIdx_flag_get, _wrap_gsTriangleIdx_flag_set},
-    {0,0,0}
-};
-static swig_lua_class *swig_gsTriangleIdx_bases[] = {0};
-static const char *swig_gsTriangleIdx_base_names[] = {0};
-static swig_lua_class _wrap_class_gsTriangleIdx = { "gsTriangleIdx", &SWIGTYPE_p_gsTriangleIdx,_wrap_new_gsTriangleIdx, swig_delete_gsTriangleIdx, swig_gsTriangleIdx_methods, swig_gsTriangleIdx_attributes, swig_gsTriangleIdx_bases, swig_gsTriangleIdx_base_names };
-
 static int _wrap_sendMessage(lua_State* L) {
   int SWIG_arg = 0;
   char *arg1 = (char *) 0 ;
@@ -26468,6 +26974,221 @@ static int _wrap_initMaterial(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_setMaterialParam__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  int arg2 ;
+  gkString *arg3 = 0 ;
+  float arg4 ;
+  gkString temp1 ;
+  gkString temp3 ;
+  
+  SWIG_check_num_args("setMaterialParam",4,4)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setMaterialParam",1,"gkString const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setMaterialParam",2,"int");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("setMaterialParam",3,"gkString const &");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setMaterialParam",4,"float");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  
+  temp3 = gkString((const char*)lua_tostring(L, 3));
+  arg3 = &temp3;
+  
+  arg4 = (float)lua_tonumber(L, 4);
+  setMaterialParam((gkString const &)*arg1,arg2,(gkString const &)*arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_setMaterialParam__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  int arg2 ;
+  gkString *arg3 = 0 ;
+  gsVector3 *arg4 = (gsVector3 *) 0 ;
+  gkString temp1 ;
+  gkString temp3 ;
+  
+  SWIG_check_num_args("setMaterialParam",4,4)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setMaterialParam",1,"gkString const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setMaterialParam",2,"int");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("setMaterialParam",3,"gkString const &");
+  if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("setMaterialParam",4,"gsVector3 *");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  
+  temp3 = gkString((const char*)lua_tostring(L, 3));
+  arg3 = &temp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("setMaterialParam",4,SWIGTYPE_p_gsVector3);
+  }
+  
+  setMaterialParam((gkString const &)*arg1,arg2,(gkString const &)*arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_setMaterialParam__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gkString *arg1 = 0 ;
+  int arg2 ;
+  gkString *arg3 = 0 ;
+  gsVector4 *arg4 = (gsVector4 *) 0 ;
+  gkString temp1 ;
+  gkString temp3 ;
+  
+  SWIG_check_num_args("setMaterialParam",4,4)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setMaterialParam",1,"gkString const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setMaterialParam",2,"int");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("setMaterialParam",3,"gkString const &");
+  if(!SWIG_isptrtype(L,4)) SWIG_fail_arg("setMaterialParam",4,"gsVector4 *");
+  
+  temp1 = gkString((const char*)lua_tostring(L, 1));
+  arg1 = &temp1;
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  
+  temp3 = gkString((const char*)lua_tostring(L, 3));
+  arg3 = &temp3;
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector4,0))){
+    SWIG_fail_ptr("setMaterialParam",4,SWIGTYPE_p_gsVector4);
+  }
+  
+  setMaterialParam((gkString const &)*arg1,arg2,(gkString const &)*arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_setMaterialParam(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 4) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isstring(L,argv[2]);
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (SWIG_isptrtype(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_setMaterialParam__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isstring(L,argv[2]);
+        }
+        if (_v) {
+          {
+            void *ptr;
+            if (SWIG_isptrtype(L,argv[3])==0 || SWIG_ConvertPtr(L,argv[3], (void **) &ptr, SWIGTYPE_p_gsVector4, 0)) {
+              _v = 0;
+            } else {
+              _v = 1;
+            }
+          }
+          if (_v) {
+            return _wrap_setMaterialParam__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isstring(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_setMaterialParam__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'setMaterialParam'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setMaterialParam(gkString const &,int,gkString const &,float)\n"
+    "    setMaterialParam(gkString const &,int,gkString const &,gsVector3 *)\n"
+    "    setMaterialParam(gkString const &,int,gkString const &,gsVector4 *)\n");
+  lua_error(L);return 0;
 }
 
 
@@ -43635,6 +44356,7 @@ static const struct luaL_reg swig_commands[] = {
     { "isSoundAvailable", _wrap_isSoundAvailable},
     { "isMaterialInitialized", _wrap_isMaterialInitialized},
     { "initMaterial", _wrap_initMaterial},
+    { "setMaterialParam",_wrap_setMaterialParam},
     { "getCurrentController", _wrap_getCurrentController},
     { "setGlobalVolume", _wrap_setGlobalVolume},
     { "getGlobalVolume", _wrap_getGlobalVolume},
@@ -44341,9 +45063,9 @@ static swig_type_info _swigt__p_gsStateActuator = {"_p_gsStateActuator", "gsStat
 static swig_type_info _swigt__p_gsSubMesh = {"_p_gsSubMesh", "gsSubMesh *", 0, 0, (void*)&_wrap_class_gsSubMesh, 0};
 static swig_type_info _swigt__p_gsSweptTest = {"_p_gsSweptTest", "gsSweptTest *", 0, 0, (void*)&_wrap_class_gsSweptTest, 0};
 static swig_type_info _swigt__p_gsTouchSensor = {"_p_gsTouchSensor", "gsTouchSensor *", 0, 0, (void*)&_wrap_class_gsTouchSensor, 0};
-static swig_type_info _swigt__p_gsTriangleIdx = {"_p_gsTriangleIdx", "gsTriangleIdx *", 0, 0, (void*)&_wrap_class_gsTriangleIdx, 0};
 static swig_type_info _swigt__p_gsUserDefs = {"_p_gsUserDefs", "gsUserDefs *", 0, 0, (void*)&_wrap_class_gsUserDefs, 0};
 static swig_type_info _swigt__p_gsVector3 = {"_p_gsVector3", "gsVector3 *", 0, 0, (void*)&_wrap_class_gsVector3, 0};
+static swig_type_info _swigt__p_gsVector4 = {"_p_gsVector4", "gsVector4 *", 0, 0, (void*)&_wrap_class_gsVector4, 0};
 static swig_type_info _swigt__p_gsVisibilityActuator = {"_p_gsVisibilityActuator", "gsVisibilityActuator *", 0, 0, (void*)&_wrap_class_gsVisibilityActuator, 0};
 static swig_type_info _swigt__p_gsWhenEvent = {"_p_gsWhenEvent", "gsWhenEvent *", 0, 0, (void*)&_wrap_class_gsWhenEvent, 0};
 static swig_type_info _swigt__p_utArrayT_gkGameObject_p_t = {"_p_utArrayT_gkGameObject_p_t", "gsArray< gsGameObject,gkGameObject >::Array *|utArray< gkGameObject * > *", 0, 0, (void*)0, 0};
@@ -44469,9 +45191,9 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsSubMesh,
   &_swigt__p_gsSweptTest,
   &_swigt__p_gsTouchSensor,
-  &_swigt__p_gsTriangleIdx,
   &_swigt__p_gsUserDefs,
   &_swigt__p_gsVector3,
+  &_swigt__p_gsVector4,
   &_swigt__p_gsVisibilityActuator,
   &_swigt__p_gsWhenEvent,
   &_swigt__p_utArrayT_gkGameObject_p_t,
@@ -44597,9 +45319,9 @@ static swig_cast_info _swigc__p_gsStateActuator[] = {  {&_swigt__p_gsStateActuat
 static swig_cast_info _swigc__p_gsSubMesh[] = {  {&_swigt__p_gsSubMesh, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSweptTest[] = {  {&_swigt__p_gsSweptTest, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsTouchSensor[] = {  {&_swigt__p_gsTouchSensor, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsTriangleIdx[] = {  {&_swigt__p_gsTriangleIdx, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsUserDefs[] = {  {&_swigt__p_gsUserDefs, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVector3[] = {  {&_swigt__p_gsVector3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsVector4[] = {  {&_swigt__p_gsVector4, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVisibilityActuator[] = {  {&_swigt__p_gsVisibilityActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsWhenEvent[] = {  {&_swigt__p_gsWhenEvent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_utArrayT_gkGameObject_p_t[] = {  {&_swigt__p_utArrayT_gkGameObject_p_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -44725,9 +45447,9 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsSubMesh,
   _swigc__p_gsSweptTest,
   _swigc__p_gsTouchSensor,
-  _swigc__p_gsTriangleIdx,
   _swigc__p_gsUserDefs,
   _swigc__p_gsVector3,
+  _swigc__p_gsVector4,
   _swigc__p_gsVisibilityActuator,
   _swigc__p_gsWhenEvent,
   _swigc__p_utArrayT_gkGameObject_p_t,

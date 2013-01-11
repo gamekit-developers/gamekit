@@ -702,23 +702,7 @@ private:
 
 
 
-struct gsTriangleIdx {
-	int i1, i2, i3;
-	int flag;
-};
 
-//class gsVertex {
-//public:
-//	gsVertex(gkVertex* vert);
-//	~gsVertex() {};
-//	gsVector3       getCoordinate(){};                 // vertex coordinates
-//	gkVector3       no;                 // normals
-//	unsigned int    vcol;               // vertex color
-//	gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
-//	int             vba;
-//private:
-//	gkVertex* m_vert;
-//};
 
 extern void sendMessage(const char* from,const char* to,const char* subject,const char* body);
 
@@ -734,5 +718,9 @@ extern bool isSoundAvailable();
 
 extern bool isMaterialInitialized(const gkString& matName);
 extern void initMaterial(const gkString& matName);
+
+extern void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, float value);
+extern void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, gsVector3* vec3);
+extern void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, gsVector4* vec4);
 
 #endif//_OgreKitApi_h_

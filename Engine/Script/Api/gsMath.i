@@ -32,6 +32,7 @@
 GS_SCRIPT_NAME(Quaternion)      
 GS_SCRIPT_NAME(Ray)             
 GS_SCRIPT_NAME(Vector3)         
+GS_SCRIPT_NAME(Vector4)
 		     
 GS_SCRIPT_NAME(Vec3Negate)      
 GS_SCRIPT_NAME(Vec3AddVec3)     

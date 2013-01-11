@@ -72,6 +72,42 @@ public:
 	gsVector3 operator/ (float v)             { return ((const gkVector3&) * this).operator / (v); }
 };
 
+class gsVector4
+#ifndef SWIG
+	: public gkVector4
+#endif
+{
+public:
+
+
+#ifdef SWIG
+	float x, y, z, w;
+#else
+	gsVector4(const gkVector4& rhs) : gkVector4(rhs.x, rhs.y, rhs.z, rhs.w) {}
+#endif
+	gsVector4() : gkVector4(0, 0, 0,0) {}
+	gsVector4(float _x, float _y, float _z) : gkVector4(_x, _y, _z, w) {}
+	gsVector4(const gsVector4& rhs) : gkVector4(rhs.x, rhs.y, rhs.z, rhs.w) {}
+
+	const char* __str__(void)
+	{
+		static char buffer[72];
+		sprintf(buffer, "%f, %f, %f, %f", x, y, z , w);
+		return buffer;
+	}
+
+	float       dot(const gsVector4& v)            { return dotProduct(v); }
+
+	gsVector4 operator- (void)                { return -(gkVector4) * this; }
+	gsVector4 operator+ (const gsVector4& v)  { return ((const gkVector4&) * this).operator + (v); }
+	gsVector4 operator- (const gsVector4& v)  { return ((const gkVector4&) * this).operator - (v); }
+	gsVector4 operator* (const gsVector4& v)  { return ((const gkVector4&) * this).operator * (v); }
+	gsVector4 operator* (float v)             { return ((const gkVector4&) * this).operator * (v); }
+	gsVector4 operator/ (const gsVector4& v)  { return ((const gkVector4&) * this).operator / (v); }
+	gsVector4 operator/ (float v)             { return ((const gkVector4&) * this).operator / (v); }
+};
+
+
 extern gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t);
 extern gkVector3 getTriNormal(const gkVertex& v0,const gkVertex& v1,const gkVertex& v2);
 class gsQuaternion
