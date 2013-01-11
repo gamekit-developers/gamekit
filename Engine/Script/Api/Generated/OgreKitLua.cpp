@@ -20235,6 +20235,39 @@ static int _wrap_GameObject_setLinearVelocity__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
   gsVector3 *arg2 = 0 ;
+  gsTransformSpace arg3 ;
+  
+  SWIG_check_num_args("setLinearVelocity",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"gsTransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
+  (arg1)->setLinearVelocity((gsVector3 const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setLinearVelocity__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setLinearVelocity",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsGameObject *");
@@ -20261,7 +20294,42 @@ fail:
 }
 
 
-static int _wrap_GameObject_setLinearVelocity__SWIG_1(lua_State* L) {
+static int _wrap_GameObject_setLinearVelocity__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  gsTransformSpace arg5 ;
+  
+  SWIG_check_num_args("setLinearVelocity",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsGameObject *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("setLinearVelocity",5,"gsTransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (gsTransformSpace)(int)lua_tonumber(L, 5);
+  (arg1)->setLinearVelocity(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setLinearVelocity__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
@@ -20295,8 +20363,8 @@ fail:
 
 static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
   int argc;
-  int argv[5]={
-    1,2,3,4,5
+  int argv[6]={
+    1,2,3,4,5,6
   };
   
   argc = lua_gettop(L);
@@ -20320,7 +20388,36 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
         }
       }
       if (_v) {
-        return _wrap_GameObject_setLinearVelocity__SWIG_0(L);
+        return _wrap_GameObject_setLinearVelocity__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_GameObject_setLinearVelocity__SWIG_0(L);
+        }
       }
     }
   }
@@ -20347,7 +20444,41 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
             _v = lua_isnumber(L,argv[3]);
           }
           if (_v) {
-            return _wrap_GameObject_setLinearVelocity__SWIG_1(L);
+            return _wrap_GameObject_setLinearVelocity__SWIG_3(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_GameObject_setLinearVelocity__SWIG_2(L);
+            }
           }
         }
       }
@@ -20356,13 +20487,48 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setLinearVelocity'\n"
     "  Possible C/C++ prototypes are:\n"
+    "    setLinearVelocity(gsGameObject *,gsVector3 const &,gsTransformSpace)\n"
     "    setLinearVelocity(gsGameObject *,gsVector3 const &)\n"
+    "    setLinearVelocity(gsGameObject *,float,float,float,gsTransformSpace)\n"
     "    setLinearVelocity(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_setAngularVelocity__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsTransformSpace arg3 ;
+  
+  SWIG_check_num_args("setAngularVelocity",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"gsTransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
+  (arg1)->setAngularVelocity((gsVector3 const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setAngularVelocity__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
   gsVector3 *arg2 = 0 ;
@@ -20392,7 +20558,42 @@ fail:
 }
 
 
-static int _wrap_GameObject_setAngularVelocity__SWIG_1(lua_State* L) {
+static int _wrap_GameObject_setAngularVelocity__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  gsTransformSpace arg5 ;
+  
+  SWIG_check_num_args("setAngularVelocity",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"gsGameObject *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("setAngularVelocity",5,"gsTransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (gsTransformSpace)(int)lua_tonumber(L, 5);
+  (arg1)->setAngularVelocity(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_setAngularVelocity__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
@@ -20426,8 +20627,8 @@ fail:
 
 static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
   int argc;
-  int argv[5]={
-    1,2,3,4,5
+  int argv[6]={
+    1,2,3,4,5,6
   };
   
   argc = lua_gettop(L);
@@ -20451,7 +20652,36 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
         }
       }
       if (_v) {
-        return _wrap_GameObject_setAngularVelocity__SWIG_0(L);
+        return _wrap_GameObject_setAngularVelocity__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_GameObject_setAngularVelocity__SWIG_0(L);
+        }
       }
     }
   }
@@ -20478,7 +20708,41 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
             _v = lua_isnumber(L,argv[3]);
           }
           if (_v) {
-            return _wrap_GameObject_setAngularVelocity__SWIG_1(L);
+            return _wrap_GameObject_setAngularVelocity__SWIG_3(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_GameObject_setAngularVelocity__SWIG_2(L);
+            }
           }
         }
       }
@@ -20487,7 +20751,9 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setAngularVelocity'\n"
     "  Possible C/C++ prototypes are:\n"
+    "    setAngularVelocity(gsGameObject *,gsVector3 const &,gsTransformSpace)\n"
     "    setAngularVelocity(gsGameObject *,gsVector3 const &)\n"
+    "    setAngularVelocity(gsGameObject *,float,float,float,gsTransformSpace)\n"
     "    setAngularVelocity(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
@@ -43509,6 +43775,8 @@ static swig_lua_const_info swig_constants[] = {
 { SWIG_LUA_INT,     (char *)"OGRE_RS_D3D9", (long) GS_RS_D3D9, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"OGRE_RS_D3D10", (long) GS_RS_D3D10, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"OGRE_RS_D3D11", (long) GS_RS_D3D11, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ST_VERTEX", (long) ST_VERTEX, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ST_FRAGMENT", (long) ST_FRAGMENT, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"PROP_NULL", (long) PROP_NULL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"PROP_BOOL", (long) PROP_BOOL, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"PROP_NUMBER", (long) PROP_NUMBER, 0, 0, 0},

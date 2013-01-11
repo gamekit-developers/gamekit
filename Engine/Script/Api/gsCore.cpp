@@ -1367,34 +1367,34 @@ gsVector3 gsGameObject::getAngularVelocity(void)
 
 
 
-void gsGameObject::setLinearVelocity(const gsVector3& v)
+void gsGameObject::setLinearVelocity(const gsVector3& v,gsTransformSpace space)
 {
 	if (m_object)
-		cast<gkGameObject>()->setLinearVelocity(v);
+		cast<gkGameObject>()->setLinearVelocity(v,space);
 }
 
 
 
-void gsGameObject::setLinearVelocity(float x, float y, float z)
+void gsGameObject::setLinearVelocity(float x, float y, float z,gsTransformSpace space)
 {
 	if (m_object)
-		cast<gkGameObject>()->setLinearVelocity(gkVector3(x, y, z));
+		cast<gkGameObject>()->setLinearVelocity(gkVector3(x, y, z),space);
 }
 
 
 
-void gsGameObject::setAngularVelocity(const gsVector3& v)
+void gsGameObject::setAngularVelocity(const gsVector3& v,gsTransformSpace space)
 {
 	if (m_object)
-		cast<gkGameObject>()->setAngularVelocity(v);
+		cast<gkGameObject>()->setAngularVelocity(v,space);
 }
 
 
 
-void gsGameObject::setAngularVelocity(float x, float y, float z)
+void gsGameObject::setAngularVelocity(float x, float y, float z,gsTransformSpace space)
 {
 	if (m_object)
-		cast<gkGameObject>()->setAngularVelocity(gkVector3(x, y, z));
+		cast<gkGameObject>()->setAngularVelocity(gkVector3(x, y, z),space);
 }
 
 
@@ -2248,6 +2248,81 @@ bool gsSetCompositorChain(gsCompositorOp op, const gkString& compositorName)
 	return false;
 #endif
 }
+
+void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, float value)
+{
+	Ogre::MaterialPtr matPtr = Ogre::MaterialManager::getSingleton().getByName(matName);
+	if (!matPtr.isNull())
+	{
+		Ogre::Material::TechniqueIterator iter(matPtr.get()->getTechniqueIterator());
+		while (iter.hasMoreElements())
+		{
+			Ogre::Technique* technique = iter.getNext();
+			Ogre::Technique::PassIterator passIter(technique->getPassIterator());
+			while (passIter.hasMoreElements())
+			{
+				Ogre::Pass* pass = passIter.getNext();
+				if (shaderType == ST_VERTEX)
+				{
+					Ogre::GpuProgramParametersSharedPtr params = pass->getVertexProgramParameters();
+					if (!params.isNull()){
+						params.get()->setNamedConstant(paramName,value);
+					}
+				}
+				else if (shaderType == ST_FRAGMENT)
+				{
+					Ogre::GpuProgramParametersSharedPtr params = pass->getFragmentProgramParameters();
+					if (!params.isNull() && params.get()->_findNamedConstantDefinition(paramName,false)){
+						params.get()->setNamedConstant(paramName,value);
+					}
+				}
+
+
+
+			}
+		}
+	} else {
+		gkDebugScreen::printTo("Unknown Material:"+matName);
+	}
+}
+
+void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, gsVector3* value)
+{
+	Ogre::MaterialPtr matPtr = Ogre::MaterialManager::getSingleton().getByName(matName);
+	if (!matPtr.isNull())
+	{
+		Ogre::Material::TechniqueIterator iter(matPtr.get()->getTechniqueIterator());
+		while (iter.hasMoreElements())
+		{
+			Ogre::Technique* technique = iter.getNext();
+			Ogre::Technique::PassIterator passIter(technique->getPassIterator());
+			while (passIter.hasMoreElements())
+			{
+				Ogre::Pass* pass = passIter.getNext();
+				if (shaderType == ST_VERTEX)
+				{
+					Ogre::GpuProgramParametersSharedPtr params = pass->getVertexProgramParameters();
+					if (!params.isNull()){
+						params.get()->setNamedConstant(paramName,gkVector3(*value));
+					}
+				}
+				else if (shaderType == ST_FRAGMENT)
+				{
+					Ogre::GpuProgramParametersSharedPtr params = pass->getFragmentProgramParameters();
+					if (!params.isNull() && params.get()->_findNamedConstantDefinition(paramName,false)){
+						params.get()->setNamedConstant(paramName,gkVector3(*value));
+					}
+				}
+
+
+
+			}
+		}
+	} else {
+		gkDebugScreen::printTo("Unknown Material:"+matName);
+	}
+}
+
 
 gkGameObjectInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkEngine* eng = gkEngine::getSingletonPtr();

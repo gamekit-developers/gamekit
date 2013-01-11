@@ -48,7 +48,10 @@ enum gsRenderSystem
 	GS_RS_D3D11,
 };
 
-
+enum gsShaderProgrammType {
+	ST_VERTEX,
+	ST_FRAGMENT
+};
 
 enum gsPropertyType
 {
@@ -452,11 +455,11 @@ public:
 	gsVector3 getLinearVelocity(void);
 	gsVector3 getAngularVelocity(void);
 
-	void setLinearVelocity(const gsVector3& v);
-	void setLinearVelocity(float x, float y, float z);
+	void setLinearVelocity(const gsVector3& v, gsTransformSpace ts=TS_PARENT);
+	void setLinearVelocity(float x, float y, float z, gsTransformSpace ts=TS_PARENT);
 
-	void setAngularVelocity(const gsVector3& v);
-	void setAngularVelocity(float x, float y, float z);
+	void setAngularVelocity(const gsVector3& v, gsTransformSpace ts=TS_PARENT);
+	void setAngularVelocity(float x, float y, float z, gsTransformSpace ts=TS_PARENT);
 
 	void setPosition(const gsVector3& v);
 	void setPosition(float x, float y, float z);
