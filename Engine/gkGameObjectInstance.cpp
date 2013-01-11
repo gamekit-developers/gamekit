@@ -36,7 +36,7 @@
 #include "gkEntity.h"
 #include "gkBone.h"
 #include "gkSkeletonResource.h"
-
+#include "gkGroupManager.h"
 
 
 gkGameObjectInstance::gkGameObjectInstance(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)

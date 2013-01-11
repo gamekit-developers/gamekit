@@ -30,6 +30,7 @@
 #include "gkGameObject.h"
 #include "gkTransformState.h"
 #include "gkMathUtils.h"
+#include "gkGameObjectGroup.h"
 
 
 class gkGameObjectInstance : public gkInstancedObject, public gkGameObject::Notifier
