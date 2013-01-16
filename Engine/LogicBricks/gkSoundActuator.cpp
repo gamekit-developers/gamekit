@@ -37,7 +37,8 @@ gkSoundActuator::gkSoundActuator(gkGameObject* object, gkLogicLink* link, const 
 	:   gkLogicActuator(object, link, name),
 	    m_mode(SA_PLAY_STOP),
 	    m_sndInit(false),
-	    m_sndRef("")
+	    m_sndRef(""),
+	    m_didPlay(false)
 #ifdef OGREKIT_OPENAL_SOUND
 	    ,
 	    m_sound(0),
@@ -144,25 +145,38 @@ void gkSoundActuator::execute(void)
 			if (isPulseOff())
 			{
 				if (m_player->isPlaying())
+				{
 					m_player->stop();
+					m_didPlay = false;
+				}
 			}
 			else
 			{
-				if (!m_player->isPlaying())
+				if (!m_didPlay || (!m_player->isPlaying() && m_player->isLooped()) )
+				{
 					m_player->play();
+					m_didPlay = true;
+				}
 			}
 		}
 		else if (tmode == SA_PLAY_END)
 		{
-			// play untill finished
+			// play until finished
 			if (isPulseOff())
+			{
+				// reset the flag that the sound started to be
+				// ready for the next positive pulse
+				m_didPlay = false;
 				return;
+			}
 			else
 			{
-				if (!m_player->isPlaying())
+				if (!m_didPlay || (!m_player->isPlaying() && m_player->isLooped()) )
 				{
+					// TODO this should be done automatically in the streamer/buffer
 					m_player->stop();
 					m_player->play();
+					m_didPlay = true;
 				}
 			}
 		}

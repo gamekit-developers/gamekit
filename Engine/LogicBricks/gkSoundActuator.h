@@ -55,7 +55,7 @@ private:
 	int                 m_mode;         // playback mode
 	bool                m_sndInit;      // state chech
 	gkString            m_sndRef;       // reference to the sould block name
-
+	bool 	            m_didPlay;
 #ifdef OGREKIT_OPENAL_SOUND
 
 	gkSound*             m_sound;       // the sound to play
