@@ -2360,7 +2360,6 @@ void setMaterialParam(const gkString& matName, int shaderType,const gkString& pa
 	}
 }
 
-
 gkGameObjectInstance* createGroupInstance(gkString groupName,gsVector3 loc,gsVector3 rot,gsVector3 scale){
 	gkEngine* eng = gkEngine::getSingletonPtr();
 	if (eng && eng->isInitialized()){
