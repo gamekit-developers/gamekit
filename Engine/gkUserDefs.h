@@ -64,6 +64,8 @@ public:
 	bool                    disableSound;       // Disable OpenAL sound.
 	bool                    fsaa;               // Enable Full scene anti aliasing.
 	int                     fsaaSamples;        // Anti aliasing samples.
+	bool                    vsync;              // Enable vertical sync.
+	int                     vsyncRate;          // VSync interval.
 	bool                    enableshadows;
 	int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
 	gkString                shaderCachePath;    // RTShaderSystem cache file path

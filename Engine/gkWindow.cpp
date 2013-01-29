@@ -223,6 +223,16 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			params["FSAA"] = Ogre::StringConverter::toString(prefs.fsaaSamples);
 		}
 
+		if (prefs.vsync)
+		{
+			params["vsync"] = Ogre::StringConverter::toString(prefs.vsync);
+
+			if (prefs.vsyncRate > 0)
+			{
+				params["vsyncInterval"] = Ogre::StringConverter::toString(prefs.vsyncRate);
+			}
+		}
+
 		if (!prefs.extWinhandle.empty())
 		{
 			params["externalWindowHandle"] = prefs.extWinhandle;

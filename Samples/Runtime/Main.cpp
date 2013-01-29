@@ -89,6 +89,9 @@ int OgreKit::setup(int argc, char** argv)
 		TCLAP::ValueArg<bool>			matblending_arg			("",  "matblending",			"Enable material pass blending mode.", false, m_prefs.matblending, "bool");		
 		TCLAP::ValueArg<bool>			grapInput_arg			("g", "grabinput",				"Grap mouse input.", false, m_prefs.grabInput, "bool");
 		TCLAP::ValueArg<bool>			debugFps_arg			("d", "debugfps",				"Display debug fps.", false, m_prefs.debugFps, "bool");
+		TCLAP::ValueArg<bool>			vsync_arg				("", "vsync",					"enable vertical-sync.", false, m_prefs.vsync, "bool");
+		TCLAP::ValueArg<int>			vsyncrate_arg			("",  "vsync-rate",				"Set vsync-rate ", 0, m_prefs.vsyncRate, "int");
+
 		TCLAP::ValueArg<bool>			debugPhysics_arg		("p", "debugphysics",			"Display debug physics.", false, m_prefs.debugPhysics, "bool");
 		TCLAP::ValueArg<bool>			debugPhysicsAabb_arg	("a", "debugphysicsaabb",		"Display debug physics aabb.", false, m_prefs.debugPhysicsAabb, "bool");
 		TCLAP::ValueArg<bool>			buildStaticGeometry_arg	("",  "buildinstances",			"Build Static Geometry.", false, m_prefs.buildStaticGeometry, "bool");
@@ -121,6 +124,8 @@ int OgreKit::setup(int argc, char** argv)
 		cmdl.add(grapInput_arg);
 		cmdl.add(debugFps_arg);
 		cmdl.add(debugPhysics_arg);	
+		cmdl.add(vsync_arg);
+		cmdl.add(vsyncrate_arg);
 		cmdl.add(debugPhysicsAabb_arg);	
 		cmdl.add(buildStaticGeometry_arg);
 		cmdl.add(useBulletDbvt_arg);
@@ -172,6 +177,9 @@ int OgreKit::setup(int argc, char** argv)
 		m_prefs.showDebugProps			= showDebugProps_arg.getValue();
 		m_prefs.debugSounds				= debugSounds_arg.getValue();
 		m_prefs.disableSound			= disableSound_arg.getValue();
+
+		m_prefs.vsync					= vsync_arg.getValue();
+		m_prefs.vsyncRate				= vsyncrate_arg.getValue();
 
 		m_prefs.fsaa					= fsaa_arg.getValue();
 		m_prefs.fsaaSamples				= fsaaSamples_arg.getValue();

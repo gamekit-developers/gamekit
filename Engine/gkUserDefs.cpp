@@ -73,6 +73,8 @@ gkUserDefs::gkUserDefs()
 	debugSounds(false),
 	fsaa(false),
 	fsaaSamples(4),
+	vsync(false),
+	vsyncRate(0),
 	disableSound(false),
 	shadowtechnique("stencilmodulative"),
 	colourshadow(0.8f, 0.8f, 0.8f),
@@ -291,14 +293,24 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		fsaa = Ogre::StringConverter::parseBool(val);
 		return;
 	}
-	if (KeyEq("rtss"))
-	{
-		rtss = Ogre::StringConverter::parseBool(val);
-		return;
-	}
 	if (KeyEq("fsaasamples"))
 	{
 		fsaaSamples = gkClamp<int>(Ogre::StringConverter::parseInt(val), 0, 16);
+		return;
+	}
+	if (KeyEq("vsync"))
+	{
+		vsync = Ogre::StringConverter::parseBool(val);
+		return;
+	}
+	if (KeyEq("vsyncRate"))
+	{
+		vsyncRate = gkClamp<int>(Ogre::StringConverter::parseInt(val), 0, 400);
+		return;
+	}
+	if (KeyEq("rtss"))
+	{
+		rtss = Ogre::StringConverter::parseBool(val);
 		return;
 	}
 	if (KeyEq("defaultmipmap"))
