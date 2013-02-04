@@ -963,6 +963,26 @@ bool gkGameObject::hasVariable(const gkString& name)
 	return m_variables.find(name) != UT_NPOS;
 }
 
+const gkGameObject::VariableMap &gkGameObject::getVariables() const
+{
+	return m_variables;
+}
+
+gkGameObject::VariableList gkGameObject::getVariableList() const
+{
+	gkGameObject::VariableList list;
+	gkGameObject::VariableMap::ConstIterator it = m_variables.iterator();
+
+	while (it.hasMoreElements())
+	{
+		gkGameObject::VariableMap::ConstEntry entry = it.getNext();
+
+		list.push_back(entry.first);
+	}
+
+	return list;
+}
+
 void gkGameObject::removeVariable(const gkString& name)
 {
        gkVariable* v;

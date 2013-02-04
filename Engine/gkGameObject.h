@@ -42,6 +42,7 @@ class gkCurve;
 class gkGameObject : public gkInstancedObject
 {
 public:
+	typedef utArray<gkHashedString>   VariableList;
 	typedef utHashTable<gkHashedString, gkVariable*>   VariableMap;
 
 	// Life counter of a cloned object
@@ -152,6 +153,8 @@ public:
 	gkVariable* createVariable(const gkString& name, bool debug);
 	gkVariable* getVariable(const gkString& name);
 	bool        hasVariable(const gkString& name);
+	const VariableMap& getVariables() const;
+	VariableList getVariableList() const;
 	void        removeVariable(const gkString& name);
 	void        clearVariables(void);
 
