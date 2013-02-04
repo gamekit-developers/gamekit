@@ -184,6 +184,16 @@ gkString gkPath::directory(void) const
 	split(sp);
 
 	gkString dir;
+
+	if (isAbs())
+	{
+#if GK_PLATFORM == GK_PLATFORM_WIN32
+		dir = m_path.substr(0, 3);
+#else
+		dir = m_path.substr(0, 1);
+#endif
+	}
+
 	if (!sp.empty())
 	{
 		size_t size = sp.size() - 1;
