@@ -27,6 +27,7 @@
 #include "gkCommon.h"
 
 #include "OgreException.h"
+#include "OgreRoot.h"
 #include "OgreTexture.h"
 #include "OgreTextureManager.h"
 
@@ -271,15 +272,14 @@ void gkBlendFile::buildTextFiles(void)
 	// Create a list of all internal text blocks
 
 	gkTextManager& txtMgr = gkTextManager::getSingleton();
-
 	gkBlendListIterator iter = m_file->getTextList();
+
 	while (iter.hasMoreElements())
 	{
 		Blender::Text* txt = (Blender::Text*)iter.getNext();
-	
 		Blender::TextLine* tl = (Blender::TextLine*)txt->lines.first;
-
 		std::stringstream ss;
+
 		while (tl)
 		{
 			tl->line[tl->len] = 0;
@@ -288,9 +288,7 @@ void gkBlendFile::buildTextFiles(void)
 			tl = tl->next;
 		}
 
-
 		gkString str = ss.str();
-
 		gkResourceName txtName(GKB_IDNAME(txt), m_group);
 
 		if (!str.empty() && !txtMgr.exists(txtName))
@@ -311,6 +309,7 @@ void gkBlendFile::buildTextFiles(void)
 void gkBlendFile::buildAllTextures(void)
 {
 	gkBlendListIterator iter = m_file->getImageList();
+
 	while (iter.hasMoreElements())	
 	{
 		Blender::Image* ima = (Blender::Image*)iter.getNext();
@@ -321,6 +320,7 @@ void gkBlendFile::buildAllTextures(void)
 		gkString name(GKB_IDNAME(ima));
 
 		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(name, m_group);
+
 		if (tex.isNull())
 		{
 			if (ima->packedfile) // is the texture packed with blender?
@@ -337,14 +337,53 @@ void gkBlendFile::buildAllTextures(void)
 			else
 			{
 				gkString texName = GKB_IDNAME(ima);
-				try {
+				bool found = false;
+
+				try
+				{
 					gkLogger::write("Texture "+texName+" not packed! Try to locate it via ogre-resources in group:'"+m_group+"'",true);
-					tex = Ogre::TextureManager::getSingleton().load(GKB_IDNAME(ima), m_group,Ogre::TEX_TYPE_2D,gkEngine::getSingleton().getUserDefs().defaultMipMap);
-					if (tex.isNull()) {
-					} else {
-						gkLogger::write("FOUND("+texName+")!!!",true);
+
+					tex = Ogre::TextureManager::getSingleton().load(texName, m_group, Ogre::TEX_TYPE_2D, gkEngine::getSingleton().getUserDefs().defaultMipMap);
+
+					if (!tex.isNull())
+					{
+						found = true;
 					}
-				} catch (...) {
+				}
+				catch (...)
+				{
+					gkString texPath(ima->name);
+
+					if (texPath.find_first_of("//") == 0)
+					{
+						gkPath blendPath(m_file->getFileGlobal()->filename);
+						gkPath locPath(blendPath.directory());
+						gkPath texDir(texPath.substr(2));
+						locPath.append(texDir.directory());
+
+						gkLogger::write("Texture "+texName+" not found! Try to add relative FileSystem location in group:'"+m_group+"' " + locPath.getPath() + " - " + blendPath.getPath(), true);
+
+						Ogre::Root::getSingleton().addResourceLocation(locPath.getPath(), "FileSystem", m_group);
+
+						try
+						{
+							tex = Ogre::TextureManager::getSingleton().load(texName, m_group, Ogre::TEX_TYPE_2D, gkEngine::getSingleton().getUserDefs().defaultMipMap);
+
+							if (!tex.isNull())
+							{
+								found = true;
+							}
+						}
+						catch (...) {}
+					}
+				}
+
+				if (found)
+				{
+					gkLogger::write("FOUND("+texName+")!!!",true);
+				}
+				else
+				{
 					gkLogger::write("NOT FOUND("+texName+")!!!",true);
 				}
 			}
@@ -377,6 +416,7 @@ void gkBlendFile::buildAllSounds(void)
 		return;
 	
 	gkBlendListIterator iter = m_file->getSoundList();
+
 	while (iter.hasMoreElements())	
 	{
 		Blender::bSound* sound = (Blender::bSound*)iter.getNext();
