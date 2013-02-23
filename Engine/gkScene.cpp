@@ -863,39 +863,40 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 
 				// if the skeleton is attached to an entity parent the attached obj to the entity
 				// due to calculation of the proper delta-translation between the bone and the attached-object
-				if (skel->getController())
-				{
-					skel->getController()->addChild(gobj);
-					gkMatrix4 omat, pmat;
+				gkGameObject* parentTo = skel->getController()?
+													static_cast<gkGameObject*>(skel->getController())
+													:static_cast<gkGameObject*>(skel);
 
-					gobj->getProperties().m_transform.toMatrix(omat);
-					skel->getController()->getProperties().m_transform.toMatrix(pmat);
-					omat = pmat.inverse() * omat;
+				parentTo->addChild(gobj);
+				gkMatrix4 omat, pmat;
 
-					gkTransformState st;
-					gkMathUtils::extractTransform(omat, st.loc, st.rot, st.scl);
+				gobj->getProperties().m_transform.toMatrix(omat);
+				parentTo->getProperties().m_transform.toMatrix(pmat);
+				omat = pmat.inverse() * omat;
+
+				gkTransformState st;
+				gkMathUtils::extractTransform(omat, st.loc, st.rot, st.scl);
 
 
-					// apply
-					gobj->setTransform(st);
+				// apply
+				gobj->setTransform(st);
 
 //  calculate the delta-position to the bone to keep the distance :D
-					if (!gobj->_getBoneTransform())
-					{
+				if (!gobj->_getBoneTransform())
+				{
 
-						gkMatrix4 objMat = st.toMatrix();
-						gkBone* bone = skel->getBone(gobj->getProperties().m_boneParent);
+					gkMatrix4 objMat = st.toMatrix();
+					gkBone* bone = skel->getBone(gobj->getProperties().m_boneParent);
 
-						// get the transformation of this bone in restposition (you have to save all animations
-						// that should be attached in rest position
-						gkMatrix4 boneMat = bone->getRestTransform();
-						gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
-						gkTransformState* ts = new gkTransformState(objInBoneSpace);
-						gobj->_setBoneTransform(ts);
+					// get the transformation of this bone in restposition (you have to save all animations
+					// that should be attached in rest position
+					gkMatrix4 boneMat = bone->getRestTransform();
+					gkMatrix4 objInBoneSpace = boneMat.inverse() * objMat ;
+					gkTransformState* ts = new gkTransformState(objInBoneSpace);
+					gobj->_setBoneTransform(ts);
 
-					}
-					continue;
 				}
+				continue;
 			}
 
 

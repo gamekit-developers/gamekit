@@ -85,9 +85,11 @@ void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar wei
 		m_pose.scl = gkMathUtils::interp(m_tempBlendMat.scl, m_pose.scl, weight);
 	}
 
-	m_bone->setPosition(m_pose.loc);
-	m_bone->setOrientation(m_pose.rot);
-	m_bone->setScale(m_pose.scl);
+	if(m_bone) {
+		m_bone->setPosition(m_pose.loc);
+		m_bone->setOrientation(m_pose.rot);
+		m_bone->setScale(m_pose.scl);
+	}
 
 	AttachedObjectList::Iterator iter(m_attachedObjects);
 	while (iter.hasMoreElements())
