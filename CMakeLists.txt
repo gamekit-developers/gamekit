@@ -217,6 +217,5 @@ if(NOT OGREKIT_ONLY_DEPENDENCIES)
 	endif()
 
 
-	subdirs(Projects)
 
 endif()
