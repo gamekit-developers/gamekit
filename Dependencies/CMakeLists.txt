@@ -4,6 +4,21 @@ cmake_minimum_required(VERSION 2.6)
 project(Dependencies)
 SET(Dependencies 1.0)
 
+
+if (OGREKIT_CREATE_OGRE_DEPENDENCY_DIR)
+	set(OGRE_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/PrebuiltDependencies)
+	if (OGREKIT_BUILD_ANDROID)
+		set(OGRE_PREBUILT_DEPENDENCY_LIB_DIR ${OGRE_DEPENDENCIES_DIR}/lib/${ANDROID_ABI})
+	else()
+		set(OGRE_PREBUILT_DEPENDENCY_LIB_DIR ${OGRE_DEPENDENCIES_DIR}/lib)
+	endif()
+	set(OGRE_PREBUILT_DEPENDENCY_INCLUDE_DIR ${OGRE_DEPENDENCIES_DIR}/include)
+	
+	file(MAKE_DIRECTORY ${OGRE_PREBUILT_DEPENDENCY_LIB_DIR})
+	file(MAKE_DIRECTORY ${OGRE_PREBUILT_DEPENDENCY_INCLUDE_DIR})
+endif()
+
+
 subdirs(Source/GameKit/Utils)
 subdirs(Source/GameKit/AnimKit)
 
@@ -60,4 +75,3 @@ endif()
 if (OGREKIT_COMPILE_LIBROCKET)
 	subdirs(Source/libRocket/Build)
 endif()
-

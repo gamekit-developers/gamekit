@@ -1018,8 +1018,6 @@ set(Resources_FILES)
 
 if (OGREKIT_GENERATE_BUILTIN_RES)
 
-
-	
 	#particle
 	set(PARTICLE_TMPL
 		User/flare_alpha_64.png
@@ -1072,7 +1070,6 @@ if (OGREKIT_BUILD_ANDROID)
 	include_directories(./Android)
 endif()
 
-
 include_directories(
 	${OGREKIT_OGRE_INCLUDE}
 	${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
@@ -1093,7 +1090,11 @@ include_directories(
 	./Graphics
 	./GUI
 	)
-	
+
+if (GAMEKIT_GRAPHIC_BACKEND EQUAL GAMEKIT_GRAPHIC_BACKEND_19_mercurial)
+	include_directories(./External/Ogre/supp)
+endif()
+
 if (OGREKIT_USE_BPARSE)
 	include_directories(
 		../Dependencies/Source/Blender25/Serialize/BlenderSerialize/${BPARSE_BLENDER_HEADER_DIR}	
@@ -1108,6 +1109,8 @@ if (OGREKIT_COMPILE_SOFTBODY)
 	config_target_if_iphone_build(BulletSoftBody TRUE)
 endif()	
 config_target_if_iphone_build(LinearMath TRUE)
+
+message(STATUS "OGREKIT_OGRE_LIBS: ${OGREKIT_OGRE_LIBS}")
 
 link_libraries(
 	${OGREKIT_OGRE_LIBS}

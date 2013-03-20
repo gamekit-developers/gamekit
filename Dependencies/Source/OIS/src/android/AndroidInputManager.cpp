@@ -70,9 +70,9 @@ DeviceList AndroidInputManager::freeDeviceList()
 	//if( bMultiTouchUsed == false )
 		ret.insert(std::make_pair(OISMultiTouch, mInputSystemName));
 
-		if (mAccelerometer){
-			ret.insert(std::make_pair(OISJoyStick, mInputSystemName));
-		}
+	if (mAccelerometer){
+		ret.insert(std::make_pair(OISJoyStick, mInputSystemName));
+	}
 
 	return ret;
 }
@@ -439,16 +439,36 @@ AndroidMultiTouch::AndroidMultiTouch(InputManager* creator)
 		mOffsetX(0), mOffsetY(0),
 		mWidth(100), mHeight(100)
 {
-	OIS::MultiTouchState state;
-	mStates.push_back(state);
+	for (int i = 0; i < OIS_MAX_NUM_TOUCHES; ++i) {
+		OIS::MultiTouchState state;
+		mStates.push_back(state);
+	}
+}
+
+void AndroidMultiTouch::injectTouches(int action, int numInputs, float data[], int stride) 
+{
+	assert(!mStates.empty());
+	assert(stride >= 2); // make sure we have at least x and y coordinates
+	int N = numInputs < OIS_MAX_NUM_TOUCHES ? numInputs : OIS_MAX_NUM_TOUCHES;
+	
+	for (int i = 0; i < N; ++i)
+	{
+		this->injectTouch(action, data[i*stride], data[i*stride + 1], i);		
+	}
 }
 
 //copied from ogre3d android samplebrower
 void AndroidMultiTouch::injectTouch(int action, float x, float y)
 {
+	this->injectTouch(action, x, y, -1);
+}
+
+//copied from ogre3d android samplebrower
+void AndroidMultiTouch::injectTouch(int action, float x, float y, int fingerId)
+{
 	assert(!mStates.empty());
 
-	OIS::MultiTouchState &state = mStates[0];
+	OIS::MultiTouchState &state = mStates[(fingerId >= 0) ? fingerId : 0];
 	state.width = mWidth;
 	state.height = mHeight;
 		

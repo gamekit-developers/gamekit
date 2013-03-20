@@ -1,17 +1,25 @@
 # Adding options only to speed up build/dev time
 
-if (OGREKIT_BUILD_ANDROID)
-	subdirs(AndroidDemo)
-elseif (OGREKIT_BUILD_IPHONE)
-	subdirs(IPhoneDemo)
-else()
-
-if (SAMPLES_ANDROIDTEST)
-    subdirs(AndroidDemo/Test)
+# skip pre-1.9mercurial-Android-stuff
+if (NOT GAMEKIT_GRAPHIC_BACKEND EQUAL GAMEKIT_GRAPHIC_BACKEND_19_mercurial)
+    if (OGREKIT_BUILD_ANDROID)
+	    subdirs(AndroidDemo)
+    elseif (OGREKIT_BUILD_IPHONE)
+	    subdirs(IPhoneDemo)
+    else()
+	if (SAMPLES_ANDROIDTEST)
+	    subdirs(AndroidDemo/Test)
+	endif()
+    endif()
 endif()
 
+
 if (SAMPLES_RUNTIME)
+    if (NOT OGREKIT_BUILD_ANDROID)
 	subdirs(Runtime)
+    else()
+	message(STATUS "**** android runtime: not yet :D")
+    endif()
 endif()
 
 if (SAMPLES_LOGICDEMO)
@@ -28,7 +36,11 @@ endif()
 
 
 if (SAMPLES_CPPDEMO)
+    if (NOT OGREKIT_BUILD_ANDROID)
 	subdirs(CppDemo)
+    else()
+	message(STATUS "**** android CppDemo: not yet :D")
+    endif()
 endif()
 
 if (SAMPLES_NODE_EDITOR)
@@ -49,6 +61,4 @@ endif()
 
 if (SAMPLES_GUIDEMO)
     subdirs(GuiDemo)
-endif()
-
 endif()

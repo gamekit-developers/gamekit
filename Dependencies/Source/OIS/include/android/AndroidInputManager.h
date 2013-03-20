@@ -66,7 +66,9 @@ public:
 	virtual Interface* queryInterface(Interface::IType type) {return 0;}
 	virtual void _initialize(){}
 	
+	void injectTouches(int action, int numInputs, float data[], int stride);
 	void injectTouch(int action, float x, float y);
+	void injectTouch(int action, float x, float y, int fingerId);
 	void setOffsets(int x, int y) { mOffsetX = x; mOffsetY = y; }
 	void setWindowSize(int w, int h) { mWidth = w; mHeight = h; }
 
@@ -135,6 +137,7 @@ public:
 	void injectAcceleration(float x,float y,float z) {if (mAccelerometer) mAccelerometer->injectAcceleration(x,y,z);}
 	void injectKey(int action, int uniChar, int keyCode) { if (mKeyboard) mKeyboard->injectKey(action, uniChar, keyCode); }
 	void injectTouch(int action, float x, float y) { if (mTouch) mTouch->injectTouch(action, x, y); }
+	void injectTouches(int action, int numInputs, float data[], int stride) { if (mTouch) mTouch->injectTouches(action, numInputs, data, stride); }
 	void setOffsets(int x, int y) { if (mTouch) mTouch->setOffsets(x,y); }
 	void setWindowSize(int w, int h) { if (mTouch) mTouch->setWindowSize(w,h); }
 };
