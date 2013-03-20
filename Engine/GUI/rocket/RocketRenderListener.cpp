@@ -3,7 +3,7 @@
  *
  * For the latest information, see http://www.librocket.com
  *
- * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
+ * Copyright (c) 2008-2013 CodePoint Ltd, Shift Technology Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

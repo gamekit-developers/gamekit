@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C & Nestor Silveira.
+    Copyright (c) 2006-2013 Charlie C & Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------

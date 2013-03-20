@@ -3,9 +3,10 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2013 Charlie C.
 
     Contributor(s): Nestor Silveira.
+    				Thomas Trocha(dertom)
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages

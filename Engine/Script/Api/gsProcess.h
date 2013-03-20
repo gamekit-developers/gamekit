@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2012 Thomas Trocha(dertom)
+    Copyright (c) 2006-2013 Thomas Trocha(dertom)
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------

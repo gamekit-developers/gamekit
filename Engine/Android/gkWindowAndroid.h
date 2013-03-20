@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 harkon.kr
+    Copyright (c) 2006-2013 harkon.kr
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------

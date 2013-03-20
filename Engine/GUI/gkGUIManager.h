@@ -3,7 +3,7 @@
     This file is part of gkGUIManager.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2012 Alberto Torres Ruiz
+    Copyright (c) 2006-2013 Alberto Torres Ruiz
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
