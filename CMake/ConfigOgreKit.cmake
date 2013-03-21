@@ -63,7 +63,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	option(OGREKIT_UNITY_BUILD				"Enable / Disable Unity builds for OgreKit" OFF)			
 	option(OGRE_UNITY_BUILD					"Enable / Disable Unity builds for Ogre" ON)
 	set(OGRE_UNITY_FILES_PER_UNIT "40" CACHE STRING "Number of files per compilation unit in Unity build.")
-	option(OGREKIT_CREATE_OGRE_DEPENDENCY_DIR	"Prepare Dependencies directory for Ogre prior to Ogre configuration and build" ON)
+	option(OGREKIT_CREATE_OGRE_DEPENDENCY_DIR	"Prepare Dependencies directory for Ogre prior to Ogre configuration and build" OFF)
 	
 	if (APPLE)
 		option(OGREKIT_BUILD_IPHONE	"Build GameKit on iOS SDK"	OFF)
