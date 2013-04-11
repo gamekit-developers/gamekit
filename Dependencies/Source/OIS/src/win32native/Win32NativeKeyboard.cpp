@@ -206,7 +206,7 @@ void Win32NativeKeyboard::_initialize()
 	WNKeyAdd(VK_NUMPAD8, KC_NUMPAD8);
 	WNKeyAdd(VK_NUMPAD9, KC_NUMPAD9);
 	WNKeyAdd(VK_F1, KC_F1);
-	WNKeyAdd(VK_F1, KC_F2);
+	WNKeyAdd(VK_F2, KC_F2);
 	WNKeyAdd(VK_F3, KC_F3);
 	WNKeyAdd(VK_F4, KC_F4);
 	WNKeyAdd(VK_F5, KC_F5);
@@ -240,6 +240,18 @@ void Win32NativeKeyboard::_initialize()
 	WNKeyAdd(VK_DELETE, KC_DELETE);
 	WNKeyAdd(VK_END, KC_END);
 	WNKeyAdd(VK_HOME, KC_HOME);
+	WNKeyAdd(VK_PRIOR, KC_PGUP);
+	WNKeyAdd(VK_NEXT, KC_PGDOWN);
+
+	WNKeyAdd(VK_OEM_1, KC_SEMICOLON);
+	WNKeyAdd(VK_OEM_2, KC_SLASH );
+	WNKeyAdd(VK_OEM_3, KC_GRAVE);
+	WNKeyAdd(VK_OEM_4, KC_LBRACKET);
+	WNKeyAdd(VK_OEM_5, KC_BACKSLASH);
+	WNKeyAdd(VK_OEM_6, KC_RBRACKET);
+	WNKeyAdd(VK_OEM_7, KC_APOSTROPHE);
+	WNKeyAdd(VK_OEM_102, KC_OEM_102);
+	
 	WNKeyAdd(VK_INSERT, KC_INSERT);
 	WNKeyAdd(VK_KANA, KC_KANA);
 	WNKeyAdd(VK_KANJI, KC_KANJI);
