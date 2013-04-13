@@ -36,9 +36,9 @@ then
 	exit 1
 fi
 
-if [ "" = "${NDK}" ]; 
+if [ "" = "${ANDROID_NDK}" ]; 
 then
-	echo "NDK Path is empty."
+	echo "ANDROID_NDK Path is empty."
 	exit 1
 fi
 

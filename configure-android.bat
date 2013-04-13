@@ -17,8 +17,8 @@ if "%1" == "" (
 	@exit /b 1
 )
 
-if "%NDK%" == "" (
-	echo "NDK Path is empty."
+if "%ANDROID_NDK%" == "" (
+	echo "ANDROID_NDK Path is empty."
 	@exit /b 1
 )
 
