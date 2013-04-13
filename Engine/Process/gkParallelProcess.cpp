@@ -61,7 +61,7 @@ void gkParallelProcess::init()
 	m_currentTime = 0;
 	// reinit process-list
 	m_processList.clear();
-	for (int i=0;i<m_initalProcessList.size();i++)
+	for (UTsize i=0;i<m_initalProcessList.size();i++)
 	{
 		gkProcess* proc = m_initalProcessList.at(i);
 		proc->init();

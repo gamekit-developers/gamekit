@@ -76,7 +76,7 @@ gkGameObject* gkCurve::clone(const gkString& name)
 }
 
 const gkVector3 gkCurve::getPoint(int nr) {
-	if (nr < m_curveProps.m_points.size()) {
+	if (nr < (int)m_curveProps.m_points.size()) {
 		return getWorldTransform() * m_curveProps.m_points.at(nr);
 	}
 	else

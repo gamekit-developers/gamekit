@@ -260,7 +260,7 @@ public:
 	
 	GK_INLINE void setVisible(bool v)          {getNode()->setVisible(v, false);}
 	GK_INLINE void setVisibleRecursive(bool v) {getNode()->setVisible(v, true);}
-	GK_INLINE bool getVisible()                {getNode()->getAttachedObject(0)->getVisible();}
+	GK_INLINE bool getVisible()                {return getNode()->getAttachedObject(0)->getVisible();}
 
 
 	// Grouping

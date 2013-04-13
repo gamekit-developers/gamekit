@@ -539,7 +539,7 @@ void gkSoundManager::setGlobalVolume(gkScalar volume)
 	// now call all sources to update its sound-volume
 	if (!m_playingSources.empty())
 	{
-		UTsize i, s, f;
+		UTsize i, s;
 		Sources::Pointer p;
 
 		i = 0;

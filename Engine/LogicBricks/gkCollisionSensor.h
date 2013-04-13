@@ -64,7 +64,7 @@ public:
 	GK_INLINE const gkString& getProperty(void)                     const {return m_prop;}
 	GK_INLINE const int 	  getHitObjectCount(void)               const {return m_colObjList.size();}
 	GK_INLINE const utArray<gkGameObject*> getHitObjects(void)      const {return m_colObjList;}
-	GK_INLINE  gkGameObject*  getHitObject(int nr)                        {if (nr< (int)m_colObjList.size()) return m_colObjList[nr];}
+	GK_INLINE  gkGameObject*  getHitObject(int nr)                        {return (nr<(int)m_colObjList.size()) ? m_colObjList[nr] : NULL;}
 
 
 };

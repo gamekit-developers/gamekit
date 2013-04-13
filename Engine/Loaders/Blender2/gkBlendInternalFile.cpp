@@ -30,7 +30,7 @@
 #include "gkLogger.h"
 #include "utStreams.h"
 
-#if not OGREKIT_USE_BPARSE
+#if OGREKIT_USE_BPARSE == 0
 #include "fbtTypes.h"
 #endif
 

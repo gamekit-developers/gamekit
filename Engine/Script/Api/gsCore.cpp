@@ -1895,7 +1895,7 @@ gkGameObject* gsGameObject::getChildAt(int pos)
 {
 	if (m_object)
 	{
-		if (pos < get()->getChildren().size())
+		if (pos < (int)get()->getChildren().size())
 			return get()->getChildren().at(pos);
 		else
 		{

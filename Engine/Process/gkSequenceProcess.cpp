@@ -78,7 +78,7 @@ bool gkSequenceProcess::isFinished()
 	if (m_currentProcess->isFinished()) {
 		m_currentProcessNr++;
 		// did we reach the end of the sequential list?
-		if (m_currentProcessNr >= m_processList.size()){
+		if (m_currentProcessNr >= (int)m_processList.size()){
 			return true;
 		} else {
 			m_currentProcess = m_processList.at(m_currentProcessNr);
