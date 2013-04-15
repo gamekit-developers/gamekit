@@ -1202,9 +1202,8 @@ void gkScene::destroyInstanceImpl(void)
 	{
 		gkGameObject* gobj = it.getNext();
 
-		GK_ASSERT(gobj->isInstanced());
-
-		gobj->destroyInstance();
+		if (gobj->isInstanced()) //gkSkeleton instance was destroyed by gkEntity
+			gobj->destroyInstance();
 	//	gkGameObjectManager::getSingleton().destroy(gobj);
 	}
 	m_instanceObjects.clear(true);
