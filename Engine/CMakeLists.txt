@@ -647,7 +647,6 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsCore.i		
 		Script/Api/gsMacros.i
 		Script/Api/gsMath.i
-		Script/Api/gsNetwork.i
 		Script/Api/gsNodes.i
 		Script/Api/gsParticles.i
 		Script/Api/gsPhysics.i
@@ -684,7 +683,6 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsConstraints.h
 		Script/Api/gsCore.h
 		Script/Api/gsMath.h
-		Script/Api/gsNetwork.h
 		Script/Api/gsNodes.h
 		Script/Api/gsParticles.h
 		Script/Api/gsPhysics.h
@@ -717,7 +715,6 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsConstraints.cpp
 		Script/Api/gsCore.cpp		
 		Script/Api/gsMath.cpp
-		Script/Api/gsNetwork.cpp
 		Script/Api/gsNodes.cpp
 		Script/Api/gsParticles.cpp
 		Script/Api/gsPhysics.cpp
@@ -734,7 +731,13 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		list(APPEND Script_HEADER Script/Api/gsProcess.h)	
 		list(APPEND Script_INC Script/Api/gsProcess.i)	
 	endif()
-	
+
+	if (OGREKIT_COMPILE_ENET)
+		list(APPEND Script_SOURCE Script/Api/gsNetwork.cpp)	
+		list(APPEND Script_HEADER Script/Api/gsNetwork.h)	
+		list(APPEND Script_INC Script/Api/gsNetwork.i)	
+	endif()	
+
 	set(Script_SOURCE_2
 		${Script_TMPL}
 		${SWIG_API2_OUTPUT_LUA}
@@ -900,11 +903,17 @@ endif()
 # ---------------------------------------------------------
 set(Network_SOURCE
 	# ----- Source -----
+	Network/gkNetworkInstance.cpp
+	Network/gkNetworkServer.cpp
+	Network/gkNetworkClient.cpp
 	Network/gkNetworkManager.cpp
 )
 
 set(Network_HEADER
 	# ----- Header -----
+	Network/gkNetworkInstance.h
+	Network/gkNetworkServer.h
+	Network/gkNetworkClient.h
 	Network/gkNetworkManager.h
 )
 
@@ -1138,6 +1147,13 @@ if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
 endif()
 
+if (OGREKIT_COMPILE_ENET)
+	set(Extra_SOURCE ${Network_SOURCE}    ${Network_HEADER})
+	link_libraries(${OGREKIT_ENET_LIB})
+
+	add_definitions(-DSTATIC_LIB)
+endif()
+
 if (OGREKIT_COMPILE_LIBROCKET)
 	set(Extra_SOURCE ${Extra_SOURCE} ${GUI_SOURCE} ${GUI_HEADER})
 	link_libraries(${OGREKIT_LIBROCKET_LIBS})
@@ -1147,6 +1163,7 @@ if (OGREKIT_COMPILE_LIBROCKET)
 endif()
 
 ogrekit_add_library(OgreKitCore STATIC
+			${WinHeader_HEADER}
 			${Core_SOURCE}       ${Core_HEADER}
 			${Logic_SOURCE}      ${Logic_HEADER}
 			${Blend_SOURCE}      ${Blend_HEADER}
@@ -1154,7 +1171,6 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Animation_SOURCE}  ${Animation_HEADER}
 			${Constraint_SOURCE} ${Constraint_HEADER}
 			${Physics_SOURCE}    ${Physics_HEADER}
-			${Network_SOURCE}    ${Network_HEADER}
 			${Graphics_SOURCE}    ${Graphics_HEADER}
 			${NLogic_SOURCE}     ${NLogic_HEADER}
 			${Thread_SOURCE}     ${Thread_HEADER}

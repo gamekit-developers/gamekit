@@ -54,6 +54,10 @@
 #include "gkParticleManager.h"
 #include "gkHUDManager.h"
 
+#ifdef OGREKIT_COMPILE_ENET
+#include "Network/gkNetworkManager.h"
+#endif
+
 #ifdef OGREKIT_USE_NNODE
 #include "gkNodeManager.h"
 #endif
@@ -250,6 +254,9 @@ void gkEngine::initialize()
 	// gk Managers
 	new gkResourceGroupManager();
 	new gkSceneManager();
+#ifdef OGREKIT_COMPILE_ENET
+	new gkNetworkManager();
+#endif
 #ifdef OGREKIT_USE_NNODE
 	new gkNodeManager();
 #endif
@@ -371,6 +378,9 @@ void gkEngine::finalize()
 	tmgr = gkGameObjectManager::getSingletonPtr();
 	tmgr->destroyAll();
 
+#ifdef OGREKIT_COMPILE_ENET
+	delete gkNetworkManager::getSingletonPtr();
+#endif
 #ifdef OGREKIT_USE_NNODE
 	delete gkNodeManager::getSingletonPtr();
 #endif

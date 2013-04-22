@@ -14,6 +14,8 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 if (MSVC)
+	add_definitions( -D_WINSOCKAPI_ )
+
 	add_definitions( -D_CRT_SECURE_NO_WARNINGS )
 	add_definitions( -D_CRT_SECURE_NO_DEPRECATE )
 	add_definitions( -DNOMINMAX)
@@ -117,6 +119,7 @@ ENDIF(MSVC)
 
 # ---------------------------------------------------------
 # Common base paths
+
 set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
                     ${OGREKIT_SOURCE_DIR}/Engine
                     ${OGREKIT_SOURCE_DIR}/Engine/AI

@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2013 Kai-Ting (Danil) Ko
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,50 +24,36 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-%module OgreKit
-%{
-#include "gsCommon.h"
-%}
 
-// internal binding utils don't bother 
-%ignore OGRE_KIT_WRAP_CLASS_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS;
-%ignore OGRE_KIT_INTERNAL_CAST;
-%ignore OGRE_KIT_WRAP_BASE_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS_DEF_CTOR;
-%ignore OGRE_KIT_TEMPLATE_CAST;
-%ignore OGRE_KIT_TEMPLATE_NEW;
-%ignore OGRE_KIT_TEMPLATE_NEW_INLINE;
+#ifndef _gkNetworkClient_h_
+#define _gkNetworkClient_h_
 
-#define GK_INLINE
-#define gkScalar float
+#include "gkCommon.h"
+#include "gkHashedString.h"
+#include "gkSerialize.h"
+#include "gkNetworkInstance.h"
+#include "gkNetworkClient.h"
 
-// dependent types
-%include "gsTypes.i"
+// Network system server
+class gkNetworkClient : public gkNetworkInstance
+{
+protected:
+	// initialize
+	// Input: None
+	// Return: bool to indicate whether the instance inititailze successfully
+	// To initialize a client to connect to the server with inputted configuration information
+	bool initialize(void);
 
-%include "gsCommon.h"
-%include "../../gkSerialize.h"
-%include "gsUtils.i"
-%include "gsMath.i"
-%include "gsCore.i"
-// sub modules
-%include "gsAI.i"
-%include "gsAnimation.i"
-%include "gsBricks.i"
-%include "gsConstraints.i"
+public:
+	// Constructor
+	// Input: pName The name for the instance
+	// Return: None
+	// Set name
+	gkNetworkClient(const gkString& pName);
+	// Destructor
+	// Input: None
+	// Return: None
+	virtual ~gkNetworkClient();
+};  // gkNetworkClient
 
-#ifdef OGREKIT_COMPILE_ENET
-%include "gsNetwork.i"
-#endif
-
-%include "gsNodes.i"
-%include "gsParticles.i"
-%include "gsPhysics.i"
-%include "gsSound.i"
-%include "gsThread.i"
-%include "gsTypeConverters.i"
-%include "gsScript.i"
-
-#ifdef OGREKIT_USE_PROCESSMANAGER
-%include "gsProcess.i"
-#endif
+#endif  // _gkNetworkClient_h_

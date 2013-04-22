@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 2.6)
 project(Dependencies)
 SET(Dependencies 1.0)
 
+if (OGREKIT_COMPILE_ENET)
+	subdirs(Source/enet/)
+endif()
 
 if (OGREKIT_CREATE_OGRE_DEPENDENCY_DIR)
 	set(OGRE_DEPENDENCIES_DIR ${CMAKE_BINARY_DIR}/PrebuiltDependencies)

@@ -47,6 +47,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
+	option(OGREKIT_COMPILE_ENET			"Enable / Disable enet build" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
 	option(OGREKIT_COMPILE_TCL				"Compile TemplateGenerator" OFF)
 	option(OGREKIT_COMPILE_RECAST			"Enable / Disable Recast build" OFF)
@@ -390,6 +391,20 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	if (OGREKIT_COMPILE_LIBROCKET)
 		list(APPEND OGREKIT_DEP_INCLUDE
 			${OGREKIT_LIBROCKET_INCLUDE}
+		)
+	endif()
+
+	set(OGREKIT_ENET_INCLUDE ${OGREKIT_DEP_DIR}/enet/include)
+	set(OGREKIT_ENET_LIB enet)
+	
+	if (OGREKIT_COMPILE_ENET)
+
+		if (WIN32)
+			set(OGRE_UNITY_BUILD FALSE CACHE BOOL "Forcing OGRE_UNITY_BUILD Off" FORCE)
+		endif()
+
+		list(APPEND OGREKIT_DEP_INCLUDE
+			${OGREKIT_ENET_INCLUDE}
 		)
 	endif()
 

@@ -73,6 +73,13 @@
 
 #include "AI/gkFSM.h"
 
+#ifdef OGREKIT_COMPILE_ENET
+#include "Network/gkNetworkInstance.h"
+#include "Network/gkNetworkClient.h"
+#include "Network/gkNetworkServer.h"
+#include "Network/gkNetworkManager.h"
+#endif
+
 #ifdef OGREKIT_COMPILE_RECAST
 #include "AI/gkRecast.h"
 #endif
