@@ -40,35 +40,258 @@ public:
 
 
 #ifdef SWIG
-	float x, y, z;
+	/**
+		\LuaMethod{Vector3,x}
+
+		x axis component.
+
+		\code
+		number Vector3.x		
+		\endcode		 
+	*/
+	float x;
+	/**
+		\LuaMethod{Vector3,y}
+
+		y axis component.
+
+		\code
+		number Vector3.y	
+		\endcode		 
+	*/
+	float y;
+	/**
+		\LuaMethod{Vector3,z}
+
+		z axis component.
+
+		\code
+		number Vector3.z
+		\endcode		 
+	*/
+	float z;
 #else
 	gsVector3(const gkVector3& rhs) : gkVector3(rhs.x, rhs.y, rhs.z) {}
 #endif
+	/**
+
+	*/
 	gsVector3() : gkVector3(0, 0, 0) {}
+	/**
+		\LuaMethod{Vector3,constructor}
+
+		Constructs a new vector.
+
+		\code
+		function Vector3:constructor(x, y, z)
+		\endcode
+
+		\param x x component.
+		\param y y component.
+		\param z z component.
+	*/
 	gsVector3(float _x, float _y, float _z) : gkVector3(_x, _y, _z) {}
+	/**
+		\sectionseperator{Overload:}
+
+		Constructs a new copy.
+
+		\code
+		function Vector3:constructor(vec)
+		\endcode
+
+		\param vec The \LuaClassRef{Vector3} to copy.	
+	*/
 	gsVector3(const gsVector3& rhs) : gkVector3(rhs.x, rhs.y, rhs.z) {}
 
+	/**
+		\LuaMethod{Vector3,__tostring}
+
+		Vector3 string meta method.
+
+		\code
+		function Vector3:__tostring()
+		\endcode
+
+		\returns string x, y, z
+	*/
 	const char* __str__(void)
 	{
 		static char buffer[72];
 		sprintf(buffer, "%f, %f, %f", x, y, z);
 		return buffer;
 	}
+	/**
+		\LuaMethod{Vector3,normalize}
 
+		Normalizes the vector.
+
+		\code
+		function Vector3:normalize()
+		\endcode
+
+		\returns number The previous length.
+	*/
 	float       normalize(void)                    { return normalise(); }
+	/**
+		\LuaMethod{Vector3,dot}
+
+		Returns the dot product.
+
+		\code
+		function Vector3:dot(vec)
+		\endcode
+
+		\param vec The other vector.
+		\returns number
+	*/
 	float       dot(const gsVector3& v)            { return dotProduct(v); }
+	/**
+
+	*/
 	gsVector3   cross(const gsVector3& v)          { return gsVector3(crossProduct(v));}
+	/**
+		\LuaMethod{Vector3,length}
+
+		Returns sqrt(length).
+
+		\code
+		function Vector3:length(vec)
+		\endcode
+
+		\returns number
+	*/
 	float       length(void)                       { return gkVector3::length(); }
+	/**
+		\LuaMethod{Vector3,length2}
+
+		Returns the squared length.
+
+		\code
+		function Vector3:length2(vec)
+		\endcode
+
+		\returns number
+	*/
 	float       length2(void)                      { return gkVector3::squaredLength(); }
+	/**
+		\LuaMethod{Vector3,distance}
+
+		Returns sqrt(distance2).
+
+		\code
+		function Vector3:distance(vec)
+		\endcode
+
+		\returns number
+	*/
 	float       distance(const gsVector3& v)       { return gkVector3::distance(v); }
+	/**
+		\LuaMethod{Vector3,distance2}
+
+		Returns the squared distance.
+
+		\code
+		function Vector3:distance2(vec)
+		\endcode
+
+		\returns number
+	*/
 	float       distance2(const gsVector3& v)      { return gkVector3::squaredDistance(v); }
 
+	/**
+		\LuaMethod{Vector3,__add}
+
+		Vector3 addition meta method.
+
+		\code
+		function Vector3:__add(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Vector3}
+		\returns \LuaClassRef{Vector3} a + b		
+	*/
 	gsVector3 operator- (void)                { return -(gkVector3) * this; }
+	/**
+		\LuaMethod{Vector3,__add}
+
+		Vector3 addition meta method.
+
+		\code
+		function Vector3:__add(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Vector3}
+		\returns \LuaClassRef{Vector3} a + b
+	*/
 	gsVector3 operator+ (const gsVector3& v)  { return ((const gkVector3&) * this).operator + (v); }
+	/**
+		\LuaMethod{Vector3,__sub}
+
+		Vector3 subtraction meta method.
+
+		\code
+		function Vector3:__sub(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Vector3}
+		\returns \LuaClassRef{Vector3} a - b 
+	*/
 	gsVector3 operator- (const gsVector3& v)  { return ((const gkVector3&) * this).operator - (v); }
+	/**
+		\LuaMethod{Vector3,__mul}
+
+		Vector3 multiplication meta method.
+
+		\code
+		function Vector3:__mul(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Vector3}
+		\returns \LuaClassRef{Vector3} a * b
+	*/
 	gsVector3 operator* (const gsVector3& v)  { return ((const gkVector3&) * this).operator * (v); }
+	/**
+		\sectionseperator{Overload:}
+
+		\code
+		function Vector3:__mul(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b number
+		\returns \LuaClassRef{Vector3} a * b
+	*/
 	gsVector3 operator* (float v)             { return ((const gkVector3&) * this).operator * (v); }
+	/**
+		\LuaMethod{Vector3,__div}
+
+		Vector3 division meta method.
+
+		\code
+		function Vector3:__div(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Vector3}
+		\returns \LuaClassRef{Vector3} a / b
+	*/
 	gsVector3 operator/ (const gsVector3& v)  { return ((const gkVector3&) * this).operator / (v); }
+	/**
+		\sectionseperator{Overload:}
+
+		\code
+		function Vector3:__div(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b number
+		\returns \LuaClassRef{Vector3} a / b
+	*/
 	gsVector3 operator/ (float v)             { return ((const gkVector3&) * this).operator / (v); }
 };
 
@@ -81,7 +304,10 @@ public:
 
 
 #ifdef SWIG
-	float x, y, z, w;
+	float x;
+	float y;
+	float z;
+	float w;
 #else
 	gsVector4(const gkVector4& rhs) : gkVector4(rhs.x, rhs.y, rhs.z, rhs.w) {}
 #endif
@@ -110,6 +336,7 @@ public:
 
 extern gsVector3 lerp(const gsVector3& vec1,const gsVector3& vec2, float t);
 extern gkVector3 getTriNormal(const gkVertex& v0,const gkVertex& v1,const gkVertex& v2);
+
 class gsQuaternion
 #ifndef SWIG
 	: public gkQuaternion
@@ -118,31 +345,226 @@ class gsQuaternion
 public:
 
 #ifdef SWIG
-	float w, x, y, z;
+	/**
+		\LuaMethod{Quaternion,w}
+
+		w component.
+
+		\code
+		number Quaternion.w
+		\endcode
+	*/
+	float w;
+	/**
+		\LuaMethod{Quaternion,x}
+
+		x component.
+
+		\code		
+		number Quaternion.x
+		\endcode
+	*/
+	float x;
+	/**
+		\LuaMethod{Quaternion,y}
+
+		y component.
+
+		\code		
+		number Quaternion.y
+		\endcode
+	*/
+	float y;
+	/**
+		\LuaMethod{Quaternion,z}
+
+		z component.
+
+		\code		
+		number Quaternion.z
+		\endcode
+	*/
+	float z;
 #else
 	gsQuaternion(const gkQuaternion& rhs) : gkQuaternion(rhs.w, rhs.x, rhs.y, rhs.z) {}
 #endif
+	/**
+	
+	*/
 	gsQuaternion() : gkQuaternion(1, 0, 0, 0) {}
+	/**
+		\LuaMethod{Quaternion,constructor}
+
+		Constructs a new quaternion.
+
+		\code
+		function Quaternion:constructor(w, x, y, z)
+		\endcode
+
+		\param w w component.
+		\param x x component.
+		\param y y component.
+		\param z z component.
+	*/
 	gsQuaternion(float _w, float _x, float _y, float _z) : gkQuaternion(_w, _x, _y, _z) {}
+	/**
+		\sectionseperator{Overload:}
+
+		Constructs a new copy.
+
+		\code
+		function Quaternion:constructor(quat)
+		\endcode
+
+		\param quat The \LuaClassRef{Quaternion} to copy.	
+	*/
 	gsQuaternion(const gsQuaternion& rhs) : gkQuaternion(rhs.w, rhs.x, rhs.y, rhs.z) {}
 
+	/**
+		\LuaMethod{Quaternion,__tostring}
 
+		Quaternion string meta method.
+
+		\code
+		function Quaternion:__tostring()
+		\endcode
+
+		\returns string w, x, y, z	
+	*/
 	const char* __str__(void)
 	{
 		static char buffer[72];
 		sprintf(buffer, "%f, %f, %f, %f", w, x, y, z);
 		return buffer;
 	}
+	/**
+		\LuaMethod{Quaternion,normalize}
 
+		Normalizes the quaternion
+
+		\code
+		function Quaternion:normalize()
+		\endcode
+
+		\returns number The previous length.	
+	*/
 	float       normalize(void)                 { return normalise(); }
+	/**
+		\LuaMethod{Quaternion,length2}
+
+		Returns the squared length.
+
+		\code
+		function Quaternion:length2()
+		\endcode
+
+		\returns number The length.		
+	*/
 	float       length2(void)                   { return Norm(); }
+	/**
+		\LuaMethod{Quaternion,dot}
+
+		Returns the dot product.
+
+		\code
+		function Quaternion:dot(quat)
+		\endcode
+
+		\param quat The other quaternion.
+		\returns number The restlt 
+	*/
 	float       dot(const gsQuaternion& v)        { return Dot(v); }
+	/**
+		\LuaMethod{Quaternion,inverse}
+
+		Returns the inverse of the quaternion
+
+		\code
+		function Quaternion:inverse()
+		\endcode
+
+		\returns \LuaClassRef{Quaternion}.	
+	*/
 	gsQuaternion  inverse(void)                   { return Inverse(); }
+	/**
+		\LuaMethod{Quaternion,__unm}
+
+		Unary minus meta method. 
+
+		\code
+		function Quaternion:__unm()
+		\endcode
+
+		\returns -\LuaClassRef{Quaternion}.	
+	*/
 	gsQuaternion operator- (void)                 { return -(gkQuaternion) * this; }
+	/**
+		\LuaMethod{Quaternion,__add}
+
+		Quaternion addition meta method.
+
+		\code
+		function Quaternion:__add(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Quaternion}
+		\param b \LuaClassRef{Quaternion}
+		\returns \LuaClassRef{Quaternion} a + b
+	*/
 	gsQuaternion operator+ (const gsQuaternion& v)  { return ((const gkQuaternion&) * this).operator + (v); }
+	/**
+		\LuaMethod{Quaternion,__sub}
+
+		Quaternion subtraction meta method.
+
+		\code
+		function Quaternion:__sub(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Quaternion}
+		\param b \LuaClassRef{Quaternion}
+		\returns \LuaClassRef{Quaternion} a - b	
+	*/
 	gsQuaternion operator- (const gsQuaternion& v)  { return ((const gkQuaternion&) * this).operator - (v); }
+	/**
+		\LuaMethod{Quaternion,__mul}
+
+		Quaternion multiplication meta method.
+
+		\code
+		function Quaternion:__mul(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Quaternion}
+		\param b \LuaClassRef{Quaternion}
+		\returns \LuaClassRef{Quaternion} a * b	
+	*/
 	gsQuaternion operator* (const gsQuaternion& v)  { return ((const gkQuaternion&) * this).operator * (v); }
+	/**
+		\sectionseperator{Overload 1:}
+
+		\code
+		function Quaternion:__mul(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Quaternion}
+		\param b number
+		\returns \LuaClassRef{Quaternion} a * b	
+	*/
 	gsQuaternion operator* (float v)              { return ((const gkQuaternion&) * this).operator * (v); }
+	/**
+		\sectionseperator{Overload 2:}
+
+		Vector3 multiplication
+
+		\code
+		function Quaternion:__mul(a, b)
+		\endcode
+
+		\param a \LuaClassRef{Vector3}
+		\param b \LuaClassRef{Quaternion}
+		\returns \LuaClassRef{Vector3} a * b	
+	*/
 	gsVector3    operator* (const gsVector3& v)     { return ((const gkQuaternion&) * this).operator * (v); }
 };
 
@@ -154,107 +576,353 @@ class gsRay
 {
 public:
 	gsRay() {}
-	gsRay(const gsVector3& origin, const gsVector3& direction) : Ogre::Ray(origin, direction) {}
+	/**
+		\LuaMethod{Ray,constructor}
 
+		Constructs a new ray.
+
+		\code
+		function Ray:constructor(origin, direction)
+		\endcode
+
+		\param origin The starting position.
+		\param direction Heading.	
+	*/
+	gsRay(const gsVector3& origin, const gsVector3& direction) : Ogre::Ray(origin, direction) {}
+	/**
+		\LuaMethod{Ray,setOrigin}
+
+		Sets the position of the ray.
+
+		\code
+		function Ray:setOrigin(origin)
+		\endcode
+
+		\param origin \LuaClassRef{Vector3} as the starting position.	
+	*/
 	void setOrigin(const gsVector3& origin)       {Ogre::Ray::setOrigin(origin);}
+	/**
+		\LuaMethod{Ray,setDirection}
+
+		Sets the heading of the ray.
+
+		\code
+		function Ray:setDirection(dir)
+		\endcode
+
+		\param dir \LuaClassRef{Vector3} as the ray heading.		
+	*/
 	void setDirection(const gsVector3& origin)    {Ogre::Ray::setDirection(origin);}
 
+	/**
+		\LuaMethod{Ray,getOrigin}
+
+		Gets the position of the ray.
+
+		\code
+		function Ray:getOrigin()
+		\endcode
+
+		\returns \LuaClassRef{Vector3} as the starting position.			
+	*/
 	gsVector3 getOrigin()       {return Ogre::Ray::getOrigin();}
+	/**
+		\LuaMethod{Ray,getDirection}
+
+		Gets the heading of the ray.
+
+		\code
+		function Ray:getDirection()
+		\endcode
+
+		\returns \LuaClassRef{Vector3} as the ray heading.	
+	*/
 	gsVector3 getDirection()    {return Ogre::Ray::getDirection();}
 };
 
 
 
+/**
+	\LuaClass{Vec3Negate}
+	\LuaSectionUp{Math}
 
+	Vector3 unary minus.
+
+
+	\code
+	function OgreKit.Vec3Negate(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns -\LuaClassRef{Vector3}
+*/
 inline gsVector3 gsVec3Negate(const gsVector3& in)
 {
 	return -(gkVector3)in;
 }
 
 
+/**
+	\LuaClass{Vec3AddVec3}
+	\LuaSectionUp{Math}
 
+	Vector3 addition.
+
+
+	\code
+	function OgreKit.Vec3AddVec3(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Vector3}
+
+	
+	
+*/
 inline gsVector3 gsVec3AddVec3(const gsVector3& a, const gsVector3& b)
 {
 	return (gkVector3)a + (gkVector3)b;
 }
 
 
+/**
+	\LuaClass{Vec3SubVec3}
+	\LuaSectionUp{Math}
 
+	Vector3 subtraction.
+
+
+	\code
+	function OgreKit.Vec3SubVec3(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Vector3}
+*/
 inline gsVector3 gsVec3SubVec3(const gsVector3& a, const gsVector3& b)
 {
 	return (gkVector3)a - (gkVector3)b;
 }
 
 
+/**
+	\LuaClass{Vec3MulVec3}
+	\LuaSectionUp{Math}
 
+	Vector3 multiplication.
+
+
+	\code
+	function OgreKit.Vec3MulVec3(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Vector3}	
+*/
 inline gsVector3 gsVec3MulVec3(const gsVector3& a, const gsVector3& b)
 {
 	return (gkVector3)a / (gkVector3)b;
 }
 
 
+/**
+	\LuaClass{Vec3DivVec3}
+	\LuaSectionUp{Math}
 
+	Vector3 division.
+
+
+	\code
+	function OgreKit.Vec3DivVec3(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Vector3}	
+*/
 inline gsVector3 gsVec3DivVec3(const gsVector3& a, const gsVector3& b)
 {
 	return (gkVector3)a / (gkVector3)b;
 }
 
 
+/**
+	\LuaClass{Vec3Mulf}
+	\LuaSectionUp{Math}
 
+	Vector3 multiplication.
+
+	\code
+	function OgreKit.Vec3Mulf(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b number
+	\returns \LuaClassRef{Vector3}	
+*/
 inline gsVector3 gsVec3Mulf(const gsVector3& a, const float& b)
 {
 	return (gkVector3)a / b;
 }
 
 
+/**
+	\LuaClass{Vec3Divf}
+	\LuaSectionUp{Math}
 
+	Vector3 division.
+
+	\code
+	function OgreKit.Vec3Divf(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b number
+	\returns \LuaClassRef{Vector3}	
+*/
 inline gsVector3 gsVec3Divf(const gsVector3& a, const float& b)
 {
 	return (gkVector3)a / b;
 }
 
 
+/**
+	\LuaClass{QuatNegate}
+	\LuaSectionUp{Math}
 
+	Quaternion unary minus.
+
+
+	\code
+	function OgreKit.QuatNegate(a)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\returns -\LuaClassRef{Quaternion}	
+*/
 inline gsQuaternion gsQuatNegate(const gsQuaternion& in)
 {
 	return -(gkQuaternion)in;
 }
 
 
+/**
+	\LuaClass{QuatAddQuat}
+	\LuaSectionUp{Math}
 
+	Quaternion addition.
+
+	\code
+	function OgreKit.QuatAddQuat(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\param b \LuaClassRef{Quaternion}
+	\returns \LuaClassRef{Quaternion}
+*/
 inline gsQuaternion gsQuatAddQuat(const gsQuaternion& a, const gsQuaternion& b)
 {
 	return (gkQuaternion)a + (gkQuaternion)b;
 }
 
 
+/**
+	\LuaClass{QuatSubQuat}
+	\LuaSectionUp{Math}
 
+	Quaternion subtraction.
+
+	\code
+	function OgreKit.QuatSubQuat(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\param b \LuaClassRef{Quaternion}
+	\returns \LuaClassRef{Quaternion}	
+*/
 inline gsQuaternion gsQuatSubQuat(const gsQuaternion& a, const gsQuaternion& b)
 {
 	return (gkQuaternion)a - (gkQuaternion)b;
 }
 
 
+/**
+	\LuaClass{QuatMulQuat}
+	\LuaSectionUp{Math}
 
+	Quaternion multiplication.
+
+	\code
+	function OgreKit.QuatMulQuat(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\param b \LuaClassRef{Quaternion}
+	\returns \LuaClassRef{Quaternion}	
+*/
 inline gsQuaternion gsQuatMulQuat(const gsQuaternion& a, const gsQuaternion& b)
 {
 	return (gkQuaternion)a * (gkQuaternion)b;
 }
 
 
+/**
+	\LuaClass{QuatMulf}
+	\LuaSectionUp{Math}
 
+	Quaternion multiplication.
+
+	\code
+	function OgreKit.QuatMulf(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\param b number
+	\returns \LuaClassRef{Quaternion}	
+*/
 inline gsQuaternion gsQuatMulf(const gsQuaternion& a, const float& b)
 {
 	return (gkQuaternion)a * b;
 }
 
 
+/**
+	\LuaClass{QuatMulVec3}
+	\LuaSectionUp{Math}
 
+	Quaternion multiplication.
+
+	\code
+	function OgreKit.QuatMulVec3(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Quaternion}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Quaternion}	
+*/
 inline gsVector3 gsQuatMulVec3(const gsQuaternion& a, const gsVector3& b)
 {
 	return (gkQuaternion)a * (gkVector3)b;
 }
 
+/**
+	\LuaClass{Vec3RotationTo}
+	\LuaSectionUp{Math}
+
+	Gets the shortest arc quaternion to rotate a vector to the b vector.
+
+	\code
+	function OgreKit.Vec3RotationTo(a, b)
+	\endcode
+
+	\param a \LuaClassRef{Vector3}
+	\param b \LuaClassRef{Vector3}
+	\returns \LuaClassRef{Quaternion}
+*/
 inline gsQuaternion gsVec3RotationTo(const gsVector3& a, const gsVector3& b) 
 { 
 	return ((gkVector3)a).getRotationTo(b); 

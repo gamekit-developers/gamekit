@@ -99,11 +99,12 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = "${CMAKE_CURRENT_SOURCE_DIR}/Source"
+INPUT                  = "${CMAKE_SOURCE_DIR}/Engine/Script/Api" \
+						    "${CMAKE_CURRENT_SOURCE_DIR}/Source"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.inl \
                          *.h
-RECURSIVE              = YES
+RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
@@ -244,12 +245,114 @@ PERLMOD_MAKEVAR_PREFIX =
 # Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = 
+PREDEFINED             = SWIG= \
+						gsLuaScript=LuaScript \
+                        gsLuaManager=LuaManager \
+                        gsRayTest=RayTest \
+                        gkString=string \
+						gsLogicManager=LogicManager \       
+						gsLogicObject=LogicObject \ 
+						gsBrick=Brick \ 
+						gsSensor=Sensor \
+						gsActuatorSensor=ActuatorSensor \
+						gsAlwaysSensor=AlwaysSensor \
+						gsCollisionSensor=CollisionSensor \
+						gsDelaySensor=DelaySensor \
+						gsKeyboardSensor=KeyboardSensor \
+						gsMessageSensor=MessageSensor \ 
+						gsMouseSensor=MouseSensor \
+						gsNearSensor=NearSensor \
+						gsPropertySensor=PropertySensor \
+						gsRaySensor=RaySensor \
+						gsRadarSensor=RadarSensor \
+						gsRandomSensor=RandomSensor \
+						gsController=Controller \ 
+						gsExpressionController=ExpressionController \
+						gsScriptController=ScriptController \
+						gsLogicOpController=LogicOpController \
+						gsActuator=Actuator \
+						gsActionActuator=ActionActuator \ 
+						gsEditObjectActuator=EditObjectActuator \
+						gsGameActuator=GameActuator \
+						gsMessageActuator=MessageActuator \ 
+						gsMotionActuator=MotionActuator \ 
+						gsParentActuator=ParentActuator \ 
+						gsPropertyActuator=PropertyActuator \
+						gsRandomActuator=RandomActuator \
+						gsSceneActuator=SceneActuator \
+						gsSoundActuator=SoundActuator \
+						gsStateActuator=StateActuator \
+						gsVisibilityActuator=VisibilityActuator \
+						gsBrickMode=BrickMode \ 
+						gsPulseMode=PulseMode \
+						gsMouseSensorType=MouseSensorType \
+						gsListenerMode=ListenerMode \
+						gsPropertySensorType=PropertySensorType \ 
+						gsRaySensorAxis=RaySensorAxis \
+						gsLogicOp=LogicOp \ 
+						gsActionActuatorType=ActionActuatorType \
+						gsGameActuatorType=GameActuatorType \
+						gsEditObjectActuatorType=EditObjectActuatorType \ 
+						gsEditObjectActuatorDynamics=EditObjectActuatorDynamics \
+						gsMessageActuatorBodyType=MessageActuatorBodyType \
+						gsParentActuatorMode=ParentActuatorMode \ 
+						gsPropertyActuatorType=PropertyActuatorType \ 
+						gsRandomActuatorDistribution=RandomActuatorDistribution \ 
+						gsSoundActuatorType=SoundActuatorType \
+						gsSceneActuatorMode=SceneActuatorMode \
+						gsStateActuatorType=StateActuatorType \						
+						gsVisibilityActuatorType=VisibilityActuatorType \
+						gsArray=Array \
+						gsArrayIterator=ArrayIterator \ 						
+						gsCamera=Camera \
+						gsCharacter=Character \
+						gsCurve=Curve \
+						gsDebugger=Debugger \
+						gsDynamicsWorld=DynamicsWorld \
+						gsEngine=Engine \ 
+						gsEntity=Entity \
+						gsFSM=FSM \
+						gsGameObject=GameObject \
+						gsGameObjectInstance=GameObjectInstance \  
+						gsHUD=HUD \
+						gsHUDElement=HUDElement \
+						gsJoystick=Joystick \
+						gsKeyboard=Keyboard \
+						gsLight=Light \
+						gsMesh=Mesh \
+						gsMouse=Mouse \ 
+						gsObject=Object \
+						gsParticles=Particles \
+						gsProcess=Process \
+						gsProcessManager=ProcessManager \
+						gsProperty=Property \
+						gsQuaternion=Quaternion \
+						gsRay=Ray \ 
+						gsScene=Scene \
+						gsSkeleton=Skeleton \ 
+						gsSubMesh=SubMesh \ 
+						gsSweptTest=SweptTest \
+						gsTouchSensor=TouchSensor \
+						gsUserDefs=UserDefs \
+						gsVector3=Vector3 \
+						gsVector4=Vector4 \
+						gsWhenEvent=WhenEvent \
+						OGRE_KIT_WRAP_CLASS(cls,membername)= \
+						OGRE_KIT_WRAP_BASE_COPY_CTOR(wrap,cls)= \
+						OGRE_KIT_WRAP_BASE_DEF_CTOR(wrap,cls)= \      
+						OGRE_KIT_WRAP_CLASS_COPY_CTOR(wrap,cls,membername)= \        
+						OGRE_KIT_WRAP_CLASS_DEF_CTOR(wrap,cls,membername)= \        
+						OGRE_KIT_TEMPLATE_CAST(T,membername)= \
+						OGRE_KIT_TEMPLATE_NEW(W,T)= \
+						OGRE_KIT_TEMPLATE_NEW_INLINE(W,T)= \
+						OGRE_KIT_INTERNAL_CAST(membername)= \
+						OGRE_KIT_LOGIC_BRICK(base)= \
+						OGRE_KIT_LOGIC_BRICK_BASE(base)= 
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 
@@ -303,6 +406,7 @@ ALIASES += LuaClassUp{1}=""
 ALIASES += LuaClass{1}="\class \1"
 ALIASES += LuaClassExtend{1}="\implements \1"
 ALIASES += LuaMethod{2}="\section \1_\2 \1.\2"
+#ALIASES += LuaMethod{2}="<b>\1.\2</b>"
 ALIASES += LuaIsA{2}="<hr>\b \1: Is a type of \LuaClassRef{\2}"
 ALIASES += LuaExtern{2}="\class \1"
 
@@ -329,6 +433,7 @@ ALIASES += LuaClassMenu{2}="<tr><td class=\"left\">\ref \1</td><td><i>\2</i></td
 ALIASES += LuaGlobalMenu{1}="<tr><td class=\"left\">\ref  \1</td><td></td></tr>"
 ALIASES += LuaGlobalMenu{2}="<tr><td class=\"left\">\ref  \1</td><td><i>\2</i></td></tr>"
 ALIASES += LuaMethodMenu{2}="<tr><td class=\"left\">\ref \1_\2</td><td></td></tr>"
+#ALIASES += LuaMethodMenu{2}="\ref \1_\2"
 ALIASES += endmenu="</table><br>\n\n"
 
 ALIASES += endpage="<br>\n\n<hr>\n\n"

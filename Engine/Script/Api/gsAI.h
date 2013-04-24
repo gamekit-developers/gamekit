@@ -38,6 +38,20 @@ class gsWhenEvent
 {
 public:
 	~gsWhenEvent();
+	/**
+		\LuaMethod{WhenEvent,when}
+
+		Defines and event to poll for before transition to a new state
+
+		\code
+		function WhenEvent:when(table, function)
+		\endcode
+
+		\param table    Pointer to a Lua table object, ie; self 
+		\param function Pointer to a Lua function, method of self. 
+
+		\LuaSee{FSM,addTransition}
+	*/
 	void when(gsSelf self, gsFunction when);
 
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsWhenEvent, gkFSM::Event, m_event);
@@ -56,22 +70,118 @@ private:
 
 public:
 
+	/**
+		\LuaMethod{FSM,constructor}
+
+		Creates a new finite state machine.
+
+		\code
+		function FSM:constructor()
+		\endcode
+	*/
 	gsFSM();
 	~gsFSM();
 
+	/**
+		\LuaMethod{FSM,update}	
+	
+		Updates the current state. 
 
+		\code
+		function FSM:update()
+		\endcode	
+	*/
 	void  update();
+
+	/**
+		\LuaMethod{FSM,setState}
+		Apply a specific state.
+		\code
+		function FSM:setState(state)
+		\endcode
+
+		\param state The new state.
+		
+	*/
 	void  setState(int state);
+	/**
+		\LuaMethod{FSM,getState}
+
+		Return the current state.
+
+		\code
+		function FSM:getState()
+		\endcode
+
+		\return number The current state.
+		
+	*/
 	int   getState();
 
 
+	/**
+		\LuaMethod{FSM,addStartTrigger}
 
+		Adds a callback to be executed at the beginning of a state transition.
+
+		\code
+		function FSM:addStartTrigger(state, table, function)
+		\endcode
+
+		\param state    Unique id representing the desired state.
+		\param table    Pointer to a Lua table object, ie; self 
+		\param function Pointer to a Lua function, method of self. 
+	*/
 	void  addStartTrigger(int state, gsSelf self, gsFunction trigger);
-	void  addEndTrigger(int state, gsSelf self, gsFunction trigger);
+	/**
+		\LuaMethod{FSM,addEndTrigger}
 
+		Adds a callback to be executed at the end of a state transition.
 
+		\code
+		function FSM:addEndTrigger(state, table, function)
+		\endcode
+
+		\param state    Unique id representing the desired state.
+		\param table    Pointer to a Lua table object, ie; self 
+		\param function Pointer to a Lua function, method of self. 	
+	*/
+	void  addEndTrigger(int state, gsSelf self, gsFunction trigger);	
+
+	/**
+		\LuaMethod{FSM,addEvent}
+
+		Adds a callback to be executed constantly while in the current state.
+
+		\code
+		function FSM:addEvent(state, table, function)
+		\endcode
+
+		\param state    Unique id representing the desired state.
+		\param table    Pointer to a Lua table object, ie; self 
+		\param function Pointer to a Lua function, method of self. 
+	*/
 	void  addEvent(int state, gsSelf self, gsFunction update);
 
+	/**
+		\LuaMethod{FSM,addTransition}
+
+		Adds a state transition. 
+
+		\code
+		function FSM:addTransition(from, to, ms=nil, table=nil, trigger=nil)
+		\endcode
+
+		\param from     The starting state
+		\param to       The destination state. 
+		\param ms       Milliseconds to wait upon transition.
+		\param table    Pointer to a Lua table object, ie; self 
+		\param trigger  Pointer to a Lua function. To be called upon transition.
+
+		\LuaMethodReturn{WhenEvent,For adding a transition test.}
+
+		\note Parameters table and trigger are a pair to be used together.
+	*/
 	gsWhenEvent* addTransition(int from, int to);
 	gsWhenEvent* addTransition(int from, int to, unsigned long ms);
 	gsWhenEvent* addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger);

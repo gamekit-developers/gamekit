@@ -3,13 +3,14 @@
 include(FindDoxygen)
 include(FindHHC)
 
-file(GLOB_RECURSE SRC Source/*.inl Source/*.h)
-
 set(OGREKIT_DOC_IMAGES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Images)
 set(OGREKIT_DOC_IMAGES_DEST ${CMAKE_CURRENT_BINARY_DIR}/html)
 
 set(OGREKIT_DOXYFILE_CPP_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.txt.in)
 set(OGREKIT_DOXYFILE_CPP ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.txt)
+
+file(GLOB_RECURSE SRC Source/*.inl Source/*.h ${OGREKIT_DOXYFILE_CPP_IN})
+
 
 if (DOXYGEN_FOUND)	
 	find_hhc_location()

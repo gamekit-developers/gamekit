@@ -34,7 +34,30 @@
 class gsLuaScript
 {
 public:
+	/**
+		\LuaMethod{LuaScript,execute}
+
+		Compile and run script.
+
+		\code
+		function LuaScript:execute()
+		\endcode
+
+		\returns bool Execution result.	
+	*/
 	bool execute(void);
+
+	/** 
+		\LuaMethod{LuaScript,getName}
+
+		Get script resource name.
+
+		\code
+		function LuaScript:getName()
+		\endcode
+
+		\returns string Resource name.		
+	*/
 	const gkString& getName(void);
 	
 	// internal          
@@ -48,7 +71,33 @@ public:
 	gsLuaManager();
 	~gsLuaManager();
 
+	/**
+		\LuaMethod{LuaManager,create}
+
+		Create new Lua script.
+
+		\code
+		function LuaManager:create(name, text)
+		\endcode
+
+		\param name Name of the scrit.
+		\param text Content of the script.
+		\returns \LuaClassRef{LuaScript} The freshly created script.
+	*/
 	gkLuaScript* getScript(const gkString& name);
+
+	/**
+		\LuaMethod{LuaManager,getScript}
+
+		Get existing Lua script.
+
+		\code
+		function LuaManager:getScript(name)
+		\endcode
+
+		\param name Name of the scrit.
+		\returns \LuaClassRef{LuaScript} The existing script with this resource name.
+	*/
 	gkLuaScript* create(const gkString& name, const gkString& text);
 	
 	// internal

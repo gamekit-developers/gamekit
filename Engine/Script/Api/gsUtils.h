@@ -54,13 +54,67 @@ public:
 	gsArrayIterator(Array& a) : m_iter(a) {}
 #endif
 
+	/**
+		\LuaMethod{ArrayIterator,constructor}
+
+
+
+		Creates an empty iterator.
+
+		\code
+		function ArrayIterator:constructor()
+		\endcode
+
+
+		
+	*/
 	gsArrayIterator()    {}
 	~gsArrayIterator()    {}
 
+	/**
+		\LuaMethod{ArrayIterator,hasMoreElements}
 
+
+		Returns true if more iterations are present.
+
+		\code
+		function ArrayIterator:hasMoreElements()
+		\endcode
+
+		\returns bool
+
+		
+	*/
 	inline bool hasMoreElements(void) {return m_iter.hasMoreElements();}
+	/**
+		\LuaMethod{ArrayIterator,moveNext}
+
+
+		Advances to the next iteration.
+
+		\code
+		function ArrayIterator:moveNext()
+		\endcode
+
+		
+	*/
 	inline void moveNext(void) { m_iter.next();}
 
+	/**
+		\LuaMethod{ArrayIterator,peekNext}
+
+
+		Returns the next iteration, without advancing.
+
+		\code
+		function ArrayIterator:peekNext()
+		\endcode
+
+		\returns T The data type contained in the array. 
+
+		
+
+	*/
 	inline B* peekNext(void)
 	{
 		if (m_iter.hasMoreElements())
@@ -71,6 +125,21 @@ public:
 		return 0;
 	}
 
+	/**
+		\LuaMethod{ArrayIterator,getNext}
+
+
+		Returns the current iteration, and advances to the next.
+
+		\code
+		function ArrayIterator:getNext()
+		\endcode
+
+		\returns T The data type contained in the array. 
+
+
+		
+	*/
 	inline B* getNext(void)
 	{
 		if (m_iter.hasMoreElements())
@@ -97,19 +166,105 @@ private:
 
 public:
 
+	/**
+		\LuaMethod{Array,constructor}
 
+
+
+		Creates an empty array.
+
+
+		\code
+		function Array:constructor()
+		\endcode
+
+
+		
+	*/
 	gsArray() {}
+	/**
+
+	*/
 	gsArray(const Array& a) : m_array(a) {}
 	~gsArray() { clear(); }
 
+	/**
+		\LuaMethod{Array,clear}
 
+
+		Removes all elements from the array.
+
+		\code
+		function Array:clear()
+		\endcode
+
+
+		
+	*/
 	inline void clear(void) { m_array.clear(); }
+	/**
+		\LuaMethod{Array,size}
 
-	inline int    size(void)  const { return (int)m_array.size(); }
+
+		Returns the number of elements in this array.
+
+		\code
+		function Array:size()
+		\endcode
+
+		\returns number
+
+
+		
+	*/
+	inline int  size(void)  const { return (int)m_array.size(); }
+	/**
+		\LuaMethod{Array,empty}
+
+
+		True if the array has no elements.
+
+		\code
+		function Array:empty()
+		\endcode
+
+		\returns bool
+
+
+		
+	*/
 	inline bool empty(void) const { return size() == 0; }
+	/**
+		\LuaMethod{Array,__index}
 
+
+		Index meta method.
+
+		\code
+		function Array:__index(number)
+		\endcode
+
+		\param number array index equal or greater than zero. 
+		\returns T or nil if the array index is greater than it's size
+
+		
+	*/
 	inline B* __getitem__(int i) {return at(i);}
+	/**
+		\LuaMethod{Array,at}
 
+
+		Returns the element at the array index specified.
+
+		\code
+		function Array:at(number)
+		\endcode
+
+		\param number array index equal or greater than zero. 
+		\returns T or nil if the array index is greater than it's size
+
+		
+	*/
 	inline B* at(int i)
 	{
 		if (i >= 0 && i < size())
@@ -120,7 +275,21 @@ public:
 		return 0;
 	}
 
+	/**
+		\LuaMethod{Array,push}
 
+
+		Adds an element to the back of the array.
+
+		\code
+		function Array:push(T)
+		\endcode
+
+
+		\param T Generic type depending on the type contained in the array.
+
+		
+	*/
 	inline void push(W* val)
 	{
 		if (val)
@@ -130,7 +299,23 @@ public:
 				m_array.push_back(intern);
 		}
 	}
+	/**
+		\LuaMethod{Array,erase}
 
+
+		Removes an element from the array.
+
+
+		\code
+		function Array:erase(T)
+		\endcode
+
+
+		\param T Generic type depending on the type contained in the array.
+		\returns bool True if the object was removed, false if T is not in the array.
+
+		
+	*/
 	bool erase(W* val)
 	{
 		if (val)
@@ -148,7 +333,22 @@ public:
 		}
 		return false;
 	}
+	/**
+		\LuaMethod{Array,iterator}
 
+
+		Returns an iterator for all elements in this array.
+
+
+		\code
+		function Array:iterator()
+		\endcode
+
+		\returns \LuaClassRef{ArrayIterator}
+
+
+		
+	*/
 	gsArrayIterator<B> iterator()
 	{
 		return gsArrayIterator<B>(m_array);
