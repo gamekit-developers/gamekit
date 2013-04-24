@@ -1143,19 +1143,21 @@ source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
 # for swig no __declspec(dllexport)
 add_definitions(-DSTATIC_LINKED)
 
+set(Extra_SOURCE)
+
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
-	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
+	list(APPEND Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
 endif()
 
 if (OGREKIT_COMPILE_ENET)
-	set(Extra_SOURCE ${Network_SOURCE}    ${Network_HEADER})
+	list(APPEND Extra_SOURCE ${Network_SOURCE}    ${Network_HEADER})
 	link_libraries(${OGREKIT_ENET_LIB})
 
 	add_definitions(-DSTATIC_LIB)
 endif()
 
 if (OGREKIT_COMPILE_LIBROCKET)
-	set(Extra_SOURCE ${Extra_SOURCE} ${GUI_SOURCE} ${GUI_HEADER})
+	list(APPEND Extra_SOURCE ${Extra_SOURCE} ${GUI_SOURCE} ${GUI_HEADER})
 	link_libraries(${OGREKIT_LIBROCKET_LIBS})
 
 	#need for libRocket link
