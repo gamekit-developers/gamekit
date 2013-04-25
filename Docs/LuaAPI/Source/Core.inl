@@ -1,3 +1,7 @@
+/** \addtogroup Core
+	@{
+*/
+
 
 /**
 	<!-- ============================================ UserDefs ============================================ -->
@@ -231,36 +235,8 @@
 */
 
 /**
-	<!-- ============================================ Compositor Op ============================================ -->
-		\LuaClass{CompositorOp }
-
-		Compositor chain operation.
-
-		\code
-		OgreKit.COP_ADD
-		OgreKit.COP_DEL
-		OgreKit.COP_REPLACE
-		OgreKit.COP_RESET 
-		\endcode
-
-	<!-- ============================================ RenderSystem ============================================ -->
-		\LuaClass{RenderSystem}
-
-
-		RenderSystem Options
-		\code
-		OgreKit.OGRE_RS_GL,     OpenGL RenderSystem
-		OgreKit.OGRE_RS_GLES,   OpenGL ES RenderSystem (TODO)
-		OgreKit.OGRE_RS_D3D9,   Direct3D 9 RenderSystem
-		OgreKit.OGRE_RS_D3D10,  Direct3D 10 RenderSystem
-		OgreKit.OGRE_RS_D3D11,  Direct3D 11 RenderSystem
-		\endcode
-
-
 	<!-- ============================================ ShadowType ============================================ -->
 		\LuaClass{ShadowType}
-
-
 
 		Shadow technique identifiers.
 
@@ -271,32 +247,6 @@
 		textureadditive
 		texturemodulativeintegrated
 		textureadditiveintegrated
-		\endcode
-
-
-	<!-- ============================================ PropertyType ============================================ -->
-		\LuaClass{PropertyType}
-
-
-		Property identifiers.
-
-		\code
-		OgreKit.PROP_NULL
-		OgreKit.PROP_BOOL
-		OgreKit.PROP_NUMBER
-		OgreKit.PROP_STRING
-		\endcode
-
-	<!-- ============================================ TransformSpace ============================================ -->
-		\LuaClass{TransformSpace}
-
-
-		GameObject transform space.
-
-		\code
-		OgreKit.TS_LOCAL
-		OgreKit.TS_PARENT
-		OgreKit.TS_WORLD
 		\endcode
 
 
@@ -315,32 +265,6 @@
 		OgreKit.OB_SKELETON
 		\endcode
 
-
-
-	<!-- ============================================ EngineEvents ============================================ -->
-		\LuaClass{EngineEvents}
-
-
-		Engine callback codes.
-
-		\code
-		OgreKit.EVT_TICK
-		\endcode
-
-		\LuaSee{Engine,connect}
-
-
-
-	<!-- ============================================ MouseButton ============================================ -->
-		\LuaClass{MouseButton}
-
-		Mouse button codes.
-
-		\code
-		OgreKit.LEFT
-		OgreKit.RIGHT
-		OgreKit.MIDDLE
-		\endcode
 
 
 	<!-- ============================================ ScanCode ============================================ -->
@@ -456,3 +380,5 @@
 		\endcode
 
 */
+
+/** @} */

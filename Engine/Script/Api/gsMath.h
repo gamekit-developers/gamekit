@@ -29,6 +29,9 @@
 
 #include "gsCommon.h"
 
+/** \addtogroup Math
+	@{
+*/
 
 
 class gsVector3
@@ -643,9 +646,6 @@ public:
 
 
 /**
-	\LuaClass{Vec3Negate}
-	\LuaSectionUp{Math}
-
 	Vector3 unary minus.
 
 
@@ -664,11 +664,7 @@ inline gsVector3 gsVec3Negate(const gsVector3& in)
 
 
 /**
-	\LuaClass{Vec3AddVec3}
-	\LuaSectionUp{Math}
-
 	Vector3 addition.
-
 
 	\code
 	function OgreKit.Vec3AddVec3(a, b)
@@ -677,9 +673,6 @@ inline gsVector3 gsVec3Negate(const gsVector3& in)
 	\param a \LuaClassRef{Vector3}
 	\param b \LuaClassRef{Vector3}
 	\returns \LuaClassRef{Vector3}
-
-	
-	
 */
 inline gsVector3 gsVec3AddVec3(const gsVector3& a, const gsVector3& b)
 {
@@ -688,9 +681,6 @@ inline gsVector3 gsVec3AddVec3(const gsVector3& a, const gsVector3& b)
 
 
 /**
-	\LuaClass{Vec3SubVec3}
-	\LuaSectionUp{Math}
-
 	Vector3 subtraction.
 
 
@@ -709,9 +699,6 @@ inline gsVector3 gsVec3SubVec3(const gsVector3& a, const gsVector3& b)
 
 
 /**
-	\LuaClass{Vec3MulVec3}
-	\LuaSectionUp{Math}
-
 	Vector3 multiplication.
 
 
@@ -730,11 +717,7 @@ inline gsVector3 gsVec3MulVec3(const gsVector3& a, const gsVector3& b)
 
 
 /**
-	\LuaClass{Vec3DivVec3}
-	\LuaSectionUp{Math}
-
 	Vector3 division.
-
 
 	\code
 	function OgreKit.Vec3DivVec3(a, b)
@@ -751,9 +734,6 @@ inline gsVector3 gsVec3DivVec3(const gsVector3& a, const gsVector3& b)
 
 
 /**
-	\LuaClass{Vec3Mulf}
-	\LuaSectionUp{Math}
-
 	Vector3 multiplication.
 
 	\code
@@ -771,9 +751,6 @@ inline gsVector3 gsVec3Mulf(const gsVector3& a, const float& b)
 
 
 /**
-	\LuaClass{Vec3Divf}
-	\LuaSectionUp{Math}
-
 	Vector3 division.
 
 	\code
@@ -791,9 +768,6 @@ inline gsVector3 gsVec3Divf(const gsVector3& a, const float& b)
 
 
 /**
-	\LuaClass{QuatNegate}
-	\LuaSectionUp{Math}
-
 	Quaternion unary minus.
 
 
@@ -811,9 +785,6 @@ inline gsQuaternion gsQuatNegate(const gsQuaternion& in)
 
 
 /**
-	\LuaClass{QuatAddQuat}
-	\LuaSectionUp{Math}
-
 	Quaternion addition.
 
 	\code
@@ -831,9 +802,6 @@ inline gsQuaternion gsQuatAddQuat(const gsQuaternion& a, const gsQuaternion& b)
 
 
 /**
-	\LuaClass{QuatSubQuat}
-	\LuaSectionUp{Math}
-
 	Quaternion subtraction.
 
 	\code
@@ -851,9 +819,6 @@ inline gsQuaternion gsQuatSubQuat(const gsQuaternion& a, const gsQuaternion& b)
 
 
 /**
-	\LuaClass{QuatMulQuat}
-	\LuaSectionUp{Math}
-
 	Quaternion multiplication.
 
 	\code
@@ -871,9 +836,6 @@ inline gsQuaternion gsQuatMulQuat(const gsQuaternion& a, const gsQuaternion& b)
 
 
 /**
-	\LuaClass{QuatMulf}
-	\LuaSectionUp{Math}
-
 	Quaternion multiplication.
 
 	\code
@@ -891,9 +853,6 @@ inline gsQuaternion gsQuatMulf(const gsQuaternion& a, const float& b)
 
 
 /**
-	\LuaClass{QuatMulVec3}
-	\LuaSectionUp{Math}
-
 	Quaternion multiplication.
 
 	\code
@@ -910,9 +869,6 @@ inline gsVector3 gsQuatMulVec3(const gsQuaternion& a, const gsVector3& b)
 }
 
 /**
-	\LuaClass{Vec3RotationTo}
-	\LuaSectionUp{Math}
-
 	Gets the shortest arc quaternion to rotate a vector to the b vector.
 
 	\code
@@ -928,5 +884,7 @@ inline gsQuaternion gsVec3RotationTo(const gsVector3& a, const gsVector3& b)
 	return ((gkVector3)a).getRotationTo(b); 
 }
 
+/** @}
+*/
 
 #endif//_gsMath_h_

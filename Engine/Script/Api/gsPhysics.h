@@ -33,6 +33,9 @@
 #include "Script/Lua/gkLuaUtils.h"
 
 
+/** \addtogroup Physics
+	@{
+*/
 
 class gsDynamicsWorld
 {
@@ -346,5 +349,7 @@ public:
 	*/
     bool isOnGround(void);
 }; 
+
+/** @} */
 
 #endif //_gsPhysics_h_

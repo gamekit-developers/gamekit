@@ -36,11 +36,23 @@
 
 #ifdef OGREKIT_USE_PROCESSMANAGER
 # include "gsProcess.h"
-
 #endif
 
-/**
+/** \addtogroup Core
+	@{
+*/
 
+
+/**
+	RenderSystem Options
+
+	\code
+	OgreKit.OGRE_RS_GL,     OpenGL RenderSystem
+	OgreKit.OGRE_RS_GLES,   OpenGL ES RenderSystem (TODO)
+	OgreKit.OGRE_RS_D3D9,   Direct3D 9 RenderSystem
+	OgreKit.OGRE_RS_D3D10,  Direct3D 10 RenderSystem
+	OgreKit.OGRE_RS_D3D11,  Direct3D 11 RenderSystem
+	\endcode
 */
 enum gsRenderSystem
 {
@@ -58,8 +70,16 @@ enum gsShaderProgrammType {
 	ST_VERTEX,
 	ST_FRAGMENT
 };
-/**
 
+/**
+	Property identifiers.
+
+	\code
+	OgreKit.PROP_NULL
+	OgreKit.PROP_BOOL
+	OgreKit.PROP_NUMBER
+	OgreKit.PROP_STRING
+	\endcode
 */
 enum gsPropertyType
 {
@@ -71,7 +91,13 @@ enum gsPropertyType
 
 
 /**
+	GameObject transform space.
 
+	\code
+	OgreKit.TS_LOCAL
+	OgreKit.TS_PARENT
+	OgreKit.TS_WORLD
+	\endcode
 */
 enum gsTransformSpace
 {
@@ -97,7 +123,13 @@ enum gsGameObjectTypes
 
 
 /**
+	Engine callback codes.
 
+	\code
+	OgreKit.EVT_TICK
+	\endcode
+
+	\LuaSee{Engine,connect}
 */
 enum gsEngineEvents
 {
@@ -106,7 +138,13 @@ enum gsEngineEvents
 
 
 /**
+	Mouse button codes.
 
+	\code
+	OgreKit.LEFT
+	OgreKit.RIGHT
+	OgreKit.MIDDLE
+	\endcode
 */
 enum gsMouseButton
 {
@@ -116,7 +154,14 @@ enum gsMouseButton
 };
 
 /**
+	Compositor chain operation.
 
+	\code
+	OgreKit.COP_ADD
+	OgreKit.COP_DEL
+	OgreKit.COP_REPLACE
+	OgreKit.COP_RESET 
+	\endcode
 */
 enum gsCompositorOp 
 { 
@@ -2374,5 +2419,6 @@ extern void setMaterialParam(const gkString& matName, int shaderType,const gkStr
 */
 extern void setMaterialParam(const gkString& matName, int shaderType,const gkString& paramName, gsVector4* vec4);
 
+/** @} */
 
 #endif//_OgreKitApi_h_

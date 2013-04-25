@@ -24,6 +24,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
+/** \addtogroup Sound
+	@{
+*/
+
 extern void setGlobalVolume(float volume);
 
 extern float getGlobalVolume(void);
+
+/** @} */

@@ -30,7 +30,9 @@
 #include "gsCommon.h"
 
 
-
+/** \addtogroup Utils
+	@{
+*/
 
 
 
@@ -373,6 +375,6 @@ public:
 };
 
 
-
+/** @} */
 
 #endif//_gsUtils_h_

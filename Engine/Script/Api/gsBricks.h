@@ -33,6 +33,10 @@
 #include "gsUtils.h"
 #include "Script/Lua/gkLuaUtils.h"
 
+/** \addtogroup Bricks
+	@{
+*/
+
 #ifndef SWIG
 #define BRICK_GET(METH, DEF) return (m_brick ? get()->METH : DEF);
 #define BRICK_SET(METH) if (m_brick) get()->METH;
@@ -2817,5 +2821,6 @@ public:
 	OGRE_KIT_LOGIC_BRICK(VisibilityActuator);
 };
 
+/** @} */
 
 #endif//_gsBricks_h_

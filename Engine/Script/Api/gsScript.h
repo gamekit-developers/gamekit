@@ -30,6 +30,10 @@
 
 #include "gsCommon.h"
 
+/** \addtogroup Script
+	@{
+*/
+
 
 class gsLuaScript
 {
@@ -80,7 +84,7 @@ public:
 		function LuaManager:create(name, text)
 		\endcode
 
-		\param name Name of the scrit.
+		\param name Name of the script.
 		\param text Content of the script.
 		\returns \LuaClassRef{LuaScript} The freshly created script.
 	*/
@@ -103,6 +107,8 @@ public:
 	// internal
 	OGRE_KIT_WRAP_CLASS(gkLuaManager, m_luaManager);
 };
+
+/** @} */
 
 
 #endif // GSSCRIPT_H

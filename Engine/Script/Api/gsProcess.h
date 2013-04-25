@@ -36,6 +36,10 @@
 #include "gkString.h"
 #include "Process/gkProcessManager.h"
 
+/** \addtogroup Process
+	@{
+*/
+
 class gsProcess
 #ifndef SWIG
 	: public gkProcess
@@ -98,6 +102,8 @@ public:
 	gkProcessManager* m_processManager;
 
 };
+
+/** @} */
 
 
 #endif//_gsProcess_h_

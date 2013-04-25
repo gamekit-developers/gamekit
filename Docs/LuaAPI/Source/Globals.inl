@@ -1,4 +1,6 @@
-/*!
+/*! \addtogroup Globals
+	@{
+
 
 <!-- ============================================ printf ============================================ -->
 \LuaClass{printf}
@@ -60,5 +62,5 @@ function BaseClass(extends)
 
 \endpage
 
-
+  @}
 */
