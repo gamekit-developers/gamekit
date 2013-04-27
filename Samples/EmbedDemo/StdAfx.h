@@ -24,7 +24,10 @@
 #include <wx/listbox.h>
 #include <wx/apptrait.h> 
 #include <wx/textfile.h>
-#include <wx/cmdline.h> 
+#include <wx/cmdline.h>
+#include <wx/dir.h>
+#include <wx/filectrl.h>
+#include <wx/filepicker.h>
 
 #include "OgreKit.h"
 
