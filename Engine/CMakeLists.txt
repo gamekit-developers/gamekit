@@ -1157,7 +1157,7 @@ if (OGREKIT_COMPILE_ENET)
 endif()
 
 if (OGREKIT_COMPILE_LIBROCKET)
-	list(APPEND Extra_SOURCE ${Extra_SOURCE} ${GUI_SOURCE} ${GUI_HEADER})
+	list(APPEND Extra_SOURCE ${GUI_SOURCE} ${GUI_HEADER})
 	link_libraries(${OGREKIT_LIBROCKET_LIBS})
 
 	#need for libRocket link
