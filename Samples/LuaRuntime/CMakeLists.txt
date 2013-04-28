@@ -21,9 +21,9 @@ endif()
 set(SRC Lua.cpp ${CONTENT})
 include_directories(
 	${OGREKIT_INCLUDE}
-	${OGREKIT_OPTS_INCLUDE}
+	../../Dependencies/Source/tclap/include
 	)
-link_libraries(${OGREKIT_LIB} ${OGREKIT_OPTS_TARGET})
+link_libraries(${OGREKIT_LIB})
 
 
 if (APPLE)

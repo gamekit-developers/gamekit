@@ -28,7 +28,7 @@
 #include "Script/Lua/gkLuaUtils.h"
 #include "gkLogger.h"
 #include "gkUtils.h"
-#include "opts.h"
+#include "tclap/CmdLine.h"
 
 #ifdef WIN32
 #include <direct.h>
@@ -47,59 +47,77 @@ int main(int argc, char** argv)
 {
 	TestMemory;
 
-	const char* startLuaFile = DEFAULT_LUA_FILE;
-	char* workingDir = 0;
-	char* luaFile = 0; 
-	char* logFile = 0;
-	int pauseFlag = 0;
-	int helpFlag = 0;
+	std::string startLuaFile = DEFAULT_LUA_FILE;
+
+	std::string workingDir = "";
+	std::string luaFile = ""; 
+	std::string logFile = "";
+	bool pauseFlag = false;
+	std::vector<std::string> extraArgs;
 	
-	option options[] = 
+	try
 	{
-		{ OTYPE_STR, 'd', "dir", "working directory", OFLAG_NONE, &workingDir, 0, 0, 0 },
-		{ OTYPE_STR, 's', "lua", "start lua file", OFLAG_NONE, &luaFile, 0, 0, 0 },
-		{ OTYPE_STR, 'l', "log", "log file", OFLAG_NONE, &logFile, 0, 0, 0 },
-		{ OTYPE_BOL, 'p', "pause", "pause flags", OFLAG_NONE, &pauseFlag, 0, 0, 0 },
-		{ OTYPE_BOL, 'h', "help", "print usage", OFLAG_NONE, &helpFlag, 0, 0, 0 },
-		{ OTYPE_END, '\0', "", "", OFLAG_NONE, 0, 0, 0, 0 }, //end of options
-	};
+		TCLAP::CmdLine cmdl("LuaRuntime", ' ', "n/a");
+		cmdl.setExceptionHandling(false);
+		//cmdl.ignoreUnmatched(true);
 
-	optsetstyle(0);
+		TCLAP::ValueArg<std::string>			workingdir_arg	("d", "dir",	"working directory", false, workingDir, "string"); 
+		TCLAP::ValueArg<std::string>			luafile_arg		("s", "lua",	"start lua file", false, luaFile, "string"); 
+		TCLAP::ValueArg<std::string>			logfile_arg		("l", "log",	"log file", false, logFile, "string"); 
+		TCLAP::ValueArg<bool>					pause_arg		("p", "puase",	"pause on exit", false, pauseFlag, "bool"); 
+		TCLAP::UnlabeledMultiArg<std::string>	extra_arg		("extra",		"extra args", false, "strings", true);
 
-	int ret = optsgets(argc, argv, options);
+		cmdl.add(workingdir_arg);
+		cmdl.add(luafile_arg);
+		cmdl.add(logfile_arg);
+		cmdl.add(pause_arg);
+		cmdl.add(extra_arg);
 
-	if (helpFlag != 0 || (ret != 0 && optsind >= argc))
+		cmdl.parse(argc, argv);
+
+		workingDir = workingdir_arg.getValue();
+		luaFile = luafile_arg.getValue();
+		logFile = logfile_arg.getValue();
+		pauseFlag = pause_arg.getValue();
+
+		extraArgs = extra_arg.getValue();
+	}
+	catch (TCLAP::ArgException& e)
 	{
-		printf("Usage: %s\n", argv[0]);
-		for (option* op = &options[0]; op->type; ++op)
-			if (!((op->type == OTYPE_NUL) && (op->flags & OFLAG_ARG)))
-				printf("\t%s\n", optsusage(op));
-		printf("\t[lua arguments ...]\n");
-		
-		optsclean(options);
-		
-		return 1;
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+		return -1;
+	}
+	catch (TCLAP::ExitException&)
+	{
+		// just return and exit app
+		return -1;
+	}
+	catch (...)
+	{
+		std::cerr << "Unknown exception." << std::endl;
+		return -1;
 	}
 
-	if (luaFile)
+
+	if (!luaFile.empty())
 		startLuaFile = luaFile;
 	else
 	{
-		if (optsind < argc && strstr(argv[optsind], "lua"))
-			startLuaFile = argv[optsind++];
+		if (!extraArgs.empty() && extraArgs[0].find("lua") != std::string::npos)
+			startLuaFile = extraArgs[0];			
 	}
 
-	if (workingDir)
+	if (!workingDir.empty())
 	{
-		printf("Set working directory: %s\n", workingDir);
+		printf("Set working directory: %s\n", workingDir.c_str());
 #ifdef WIN32
-		_chdir(workingDir);
+		_chdir(workingDir.c_str());
 #else
 		chdir(workingDir);
 #endif
 	}
 
-	if (logFile)
+	if (!logFile.empty())
 	{
 		gkLogger::enable(logFile, false);
 	}
@@ -120,10 +138,11 @@ int main(int argc, char** argv)
 	lua_newtable(L);
 
 	//remaining args
-	for (int i = optsind; i < argc; ++i) 
+	for (size_t i = 0; i < extraArgs.size(); i++) 
 	{
-		lua_pushnumber(L, i - optsind + 1); //start index: 1
-		lua_pushstring(L, argv[i]);
+		printf("lua args: %d %s\n", i, extraArgs[i].c_str());
+		lua_pushnumber(L, i + 1); //start index: 1
+		lua_pushstring(L, extraArgs[i].c_str());
 		lua_settable(L, -3);
 	}
 
@@ -154,8 +173,6 @@ int main(int argc, char** argv)
 	}
 
 	lua_close(L);
-
-	optsclean(options);
 
 #ifdef WIN32
 	if (pauseFlag) system("PAUSE");

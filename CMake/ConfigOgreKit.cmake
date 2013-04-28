@@ -60,7 +60,6 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	option(OGREKIT_USE_RTSHADER_SYSTEM		"Enable shader system instead of fixed piped functions." OFF)
 	option(OGREKIT_USE_COMPOSITOR			"Enable post effect by compositor (Bloom, BlackAndWhite, HDR, ...)" OFF)
 	option(OGREKIT_USE_COMPOSITOR_TEX		"Add Compositor texture resources (NightVision, HeatVision, ...)" OFF)
-	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)	
 	option(OGREKIT_UNITY_BUILD				"Enable / Disable Unity builds for OgreKit" OFF)			
 	option(OGRE_UNITY_BUILD					"Enable / Disable Unity builds for Ogre" ON)
 	set(OGRE_UNITY_FILES_PER_UNIT "40" CACHE STRING "Number of files per compilation unit in Unity build.")
@@ -117,7 +116,6 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	set(OGREKIT_OGGVORBIS_TARGET OggVorbis)
 	set(OGREKIT_OIS_TARGET OIS)
 	set(OGREKIT_TINYXML_TARGET TinyXml)
-	set(OGREKIT_OPTS_TARGET opts)
 	
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 	set(OGRE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Bin)
@@ -219,7 +217,6 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	endif()
 	
 	if (SAMPLES_LUARUNTIME)
-		set(OGREKIT_COMPILE_OPTS TRUE CACHE BOOL "Forcing Opts" FORCE)
 	endif()
 	
 	if (NOT OGREKIT_USE_LUA)
@@ -361,7 +358,6 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	set(OGREKIT_DETOUR_INCLUDE ${OGREKIT_DEP_DIR}/Detour/Include)
 	set(OGREKIT_OPENSTEER_INCLUDE ${OGREKIT_DEP_DIR}/OpenSteer/include)
 	set(OGREKIT_TINYXML_INCLUDE ${OGREKIT_DEP_DIR}/TinyXml)
-	set(OGREKIT_OPTS_INCLUDE ${OGREKIT_DEP_DIR}/opts)
 
 	set(OGREKIT_DEP_INCLUDE
 #		${OGREKIT_FREEIMAGE_INCLUDE} Conflicts with OpenSteer includes and needed by Ogre, not OgreKit

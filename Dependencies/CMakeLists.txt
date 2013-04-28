@@ -42,10 +42,6 @@ if (OGREKIT_COMPILE_OPENSTEER)
 	subdirs(Source/OpenSteer)
 endif()
 
-if (OGREKIT_COMPILE_OPTS)
-	subdirs(Source/opts)
-endif()
-
 if (OGREKIT_COMPILE_RECAST)
 	subdirs(Source/Recast)
 	subdirs(Source/Detour)
