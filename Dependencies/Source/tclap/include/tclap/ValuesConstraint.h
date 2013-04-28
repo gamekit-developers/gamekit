@@ -97,7 +97,8 @@ class ValuesConstraint : public Constraint<T>
 
 template<class T>
 ValuesConstraint<T>::ValuesConstraint(std::vector<T>& allowed)
-: _allowed(allowed)
+: _allowed(allowed),
+  _typeDesc("")
 { 
     for ( unsigned int i = 0; i < _allowed.size(); i++ )
     {

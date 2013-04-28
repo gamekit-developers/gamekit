@@ -36,6 +36,13 @@ namespace TCLAP {
  */
 class VersionVisitor: public Visitor
 {
+	private:
+		/**
+		 * Prevent accidental copying
+		 */
+		VersionVisitor(const VersionVisitor& rhs);
+		VersionVisitor& operator=(const VersionVisitor& rhs);
+
 	protected:
 
 		/**

@@ -64,6 +64,15 @@ namespace TCLAP {
 class Arg
 {
 	private:
+		/**
+		 * Prevent accidental copying.
+		 */
+		Arg(const Arg& rhs);
+
+		/**
+		 * Prevent accidental copying.
+		 */
+		Arg& operator=(const Arg& rhs);
 
 		/**
 		 * Indicates whether the rest of the arguments should be ignored.
@@ -208,21 +217,32 @@ class Arg
 		static char blankChar() { return (char)7; }
 
 		/**
-		 * The char that indicates the beginning of a flag.  Currently '-'.
+		 * The char that indicates the beginning of a flag.  Defaults to '-', but
+		 * clients can define TCLAP_FLAGSTARTCHAR to override.
 		 */
-		static char flagStartChar() { return '-'; }
+#ifndef TCLAP_FLAGSTARTCHAR
+#define TCLAP_FLAGSTARTCHAR '-'
+#endif
+		static char flagStartChar() { return TCLAP_FLAGSTARTCHAR; }
 
 		/**
-		 * The sting that indicates the beginning of a flag.  Currently "-".
-		 * Should be identical to flagStartChar.
+		 * The sting that indicates the beginning of a flag.  Defaults to "-", but
+		 * clients can define TCLAP_FLAGSTARTSTRING to override. Should be the same
+		 * as TCLAP_FLAGSTARTCHAR.
 		 */
-		static const std::string flagStartString() { return "-"; }
+#ifndef TCLAP_FLAGSTARTSTRING
+#define TCLAP_FLAGSTARTSTRING "-"
+#endif
+		static const std::string flagStartString() { return TCLAP_FLAGSTARTSTRING; }
 
 		/**
-		 * The sting that indicates the beginning of a name.  Currently "--".
-		 * Should be flagStartChar twice.
+		 * The sting that indicates the beginning of a name.  Defaults to "--", but
+		 *  clients can define TCLAP_NAMESTARTSTRING to override.
 		 */
-		static const std::string nameStartString() { return "--"; }
+#ifndef TCLAP_NAMESTARTSTRING
+#define TCLAP_NAMESTARTSTRING "--"
+#endif
+		static const std::string nameStartString() { return TCLAP_NAMESTARTSTRING; }
 
 		/**
 		 * The name used to identify the ignore rest argument.
@@ -570,7 +590,7 @@ inline void Arg::setRequireLabel( const std::string& s)
 inline bool Arg::argMatches( const std::string& argFlag ) const
 {
 	if ( ( argFlag == Arg::flagStartString() + _flag && _flag != "" ) ||
-		 argFlag == Arg::nameStartString() + _name )
+	       argFlag == Arg::nameStartString() + _name )
 		return true;
 	else
 		return false;

@@ -160,6 +160,12 @@ class CmdLine : public CmdLineInterface
 private:
 
 		/**
+		 * Prevent accidental copying.
+		 */
+		CmdLine(const CmdLine& rhs);
+		CmdLine& operator=(const CmdLine& rhs);
+
+		/**
 		 * Encapsulates the code common to the constructors
 		 * (which is all of it).
 		 */
@@ -176,6 +182,11 @@ private:
 		 * Whether or not to automatically create help and version switches.
 		 */
 		bool _helpAndVersion;
+
+		/**
+		 * Whether or not to ignore unmatched args.
+		 */
+		bool _ignoreUnmatched;
 
 	public:
 
@@ -307,6 +318,13 @@ private:
 		 */
 		void reset();
 
+		/**
+		 * Allows unmatched args to be ignored. By default false.
+		 * 
+		 * @param ignore If true the cmdline will ignore any unmatched args
+		 * and if false it will behave as normal.
+		 */
+		void ignoreUnmatched(const bool ignore);
 };
 
 
@@ -315,17 +333,24 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 inline CmdLine::CmdLine(const std::string& m,
-			char delim,
-			const std::string& v,
-			bool help )
-: _progName("not_set_yet"),
+                        char delim,
+                        const std::string& v,
+                        bool help )
+    :
+  _argList(std::list<Arg*>()),
+  _progName("not_set_yet"),
   _message(m),
   _version(v),
   _numRequired(0),
   _delimiter(delim),
+  _xorHandler(XorHandler()),
+  _argDeleteOnExitList(std::list<Arg*>()),
+  _visitorDeleteOnExitList(std::list<Visitor*>()),
+  _output(0),
   _handleExceptions(true),
   _userSetOutput(false),
-  _helpAndVersion(help)
+  _helpAndVersion(help),
+  _ignoreUnmatched(false)
 {
 	_constructor();
 }
@@ -353,16 +378,16 @@ inline void CmdLine::_constructor()
 	{
 		v = new HelpVisitor( this, &_output );
 		SwitchArg* help = new SwitchArg("h","help",
-						"Displays usage information and exits.",
-						false, v);
+		                      "Displays usage information and exits.",
+		                      false, v);
 		add( help );
 		deleteOnExit(help);
 		deleteOnExit(v);
 
 		v = new VersionVisitor( this, &_output );
 		SwitchArg* vers = new SwitchArg("","version",
-					"Displays version information and exits.",
-					false, v);
+		                      "Displays version information and exits.",
+		                      false, v);
 		add( vers );
 		deleteOnExit(vers);
 		deleteOnExit(v);
@@ -370,9 +395,9 @@ inline void CmdLine::_constructor()
 
 	v = new IgnoreRestVisitor();
 	SwitchArg* ignore  = new SwitchArg(Arg::flagStartString(),
-					   Arg::ignoreNameString(),
-			   "Ignores the rest of the labeled arguments following this flag.",
-					   false, v);
+	          Arg::ignoreNameString(),
+	          "Ignores the rest of the labeled arguments following this flag.",
+	          false, v);
 	add( ignore );
 	deleteOnExit(ignore);
 	deleteOnExit(v);
@@ -386,16 +411,15 @@ inline void CmdLine::xorAdd( std::vector<Arg*>& ors )
 	{
 		(*it)->forceRequired();
 		(*it)->setRequireLabel( "OR required" );
-
 		add( *it );
 	}
 }
 
 inline void CmdLine::xorAdd( Arg& a, Arg& b )
 {
-    std::vector<Arg*> ors;
-    ors.push_back( &a );
-    ors.push_back( &b );
+	std::vector<Arg*> ors;
+	ors.push_back( &a );
+	ors.push_back( &b );
 	xorAdd( ors );
 }
 
@@ -409,8 +433,8 @@ inline void CmdLine::add( Arg* a )
 	for( ArgListIterator it = _argList.begin(); it != _argList.end(); it++ )
 		if ( *a == *(*it) )
 			throw( SpecificationException(
-			       	"Argument with same flag/name already exists!",
-					a->longID() ) );
+			        "Argument with same flag/name already exists!",
+			        a->longID() ) );
 
 	a->addToList( _argList );
 
@@ -441,16 +465,17 @@ inline void CmdLine::parse(std::vector<std::string>& args)
 
 		int requiredCount = 0;
 
-		for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++) {
+		for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++) 
+		{
 			bool matched = false;
 			for (ArgListIterator it = _argList.begin();
-				 it != _argList.end(); it++) {
+			     it != _argList.end(); it++) {
 				if ( (*it)->processArg( &i, args ) )
-					{
-						requiredCount += _xorHandler.check( *it );
-						matched = true;
-						break;
-					}
+				{
+					requiredCount += _xorHandler.check( *it );
+					matched = true;
+					break;
+				}
 			}
 
 			// checks to see if the argument is an empty combined
@@ -458,10 +483,10 @@ inline void CmdLine::parse(std::vector<std::string>& args)
 			if ( !matched && _emptyCombined( args[i] ) )
 				matched = true;
 
-			if ( !matched && !Arg::ignoreRest() )
+			if ( !matched && !Arg::ignoreRest() && !_ignoreUnmatched)
 				throw(CmdLineParseException("Couldn't find match "
-											"for argument",
-											args[i]));
+				                            "for argument",
+				                            args[i]));
 		}
 
 		if ( requiredCount < _numRequired )
@@ -552,6 +577,8 @@ inline CmdLineOutput* CmdLine::getOutput()
 
 inline void CmdLine::setOutput(CmdLineOutput* co)
 {
+	if ( !_userSetOutput )
+		delete _output;
 	_userSetOutput = true;
 	_output = co;
 }
@@ -604,11 +631,14 @@ inline bool CmdLine::getExceptionHandling() const
 inline void CmdLine::reset()
 {
 	for( ArgListIterator it = _argList.begin(); it != _argList.end(); it++ )
-	{
 		(*it)->reset();
-	}
 	
 	_progName.clear();
+}
+
+inline void CmdLine::ignoreUnmatched(const bool ignore)
+{
+	_ignoreUnmatched = ignore;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

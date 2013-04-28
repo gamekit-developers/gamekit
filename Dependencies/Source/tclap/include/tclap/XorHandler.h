@@ -49,7 +49,7 @@ class XorHandler
 		/**
 		 * Constructor.  Does nothing.
 		 */
-		XorHandler( ) {}
+		XorHandler( ) : _orList(std::vector< std::vector<Arg*> >()) {}
 
 		/**
 		 * Add a list of Arg*'s that will be orred together.
@@ -107,10 +107,20 @@ inline int XorHandler::check( const Arg* a )
 		                                   _orList[i].end(), a );
 		if ( ait != _orList[i].end() )
 		{
+			// first check to see if a mutually exclusive switch
+			// has not already been set
+			for ( ArgVectorIterator it = _orList[i].begin(); 
+				  it != _orList[i].end(); 
+				  it++ )
+				if ( a != (*it) && (*it)->isSet() )
+					throw(CmdLineParseException(
+					      "Mutually exclusive argument already set!",
+					      (*it)->toString()));
+
 			// go through and set each arg that is not a
 			for ( ArgVectorIterator it = _orList[i].begin(); 
 				  it != _orList[i].end(); 
-				  it++ )	
+				  it++ )
 				if ( a != (*it) )
 					(*it)->xorSet();
 

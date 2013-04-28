@@ -236,6 +236,12 @@ class ValueArg : public Arg
         
         virtual void reset() ;
 
+private:
+       /**
+        * Prevent accidental copying
+        */
+       ValueArg<T>(const ValueArg<T>& rhs);
+       ValueArg<T>& operator=(const ValueArg<T>& rhs);
 };
 
 
@@ -335,7 +341,15 @@ bool ValueArg<T>::processArg(int *i, std::vector<std::string>& args)
     if ( argMatches( flag ) )
     {
         if ( _alreadySet )
-			throw( CmdLineParseException("Argument already set!", toString()) );
+		{
+			if ( _xorSet )
+				throw( CmdLineParseException(
+				       "Mutually exclusive argument already set!", 
+				                             toString()) );
+			else
+				throw( CmdLineParseException("Argument already set!", 
+				                             toString()) );
+		}
 
         if ( Arg::delimiter() != ' ' && value == "" )
 			throw( ArgParseException( 

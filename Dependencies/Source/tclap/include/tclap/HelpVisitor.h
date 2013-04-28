@@ -34,6 +34,13 @@ namespace TCLAP {
  */
 class HelpVisitor: public Visitor
 {
+	private:
+		/**
+		 * Prevent accidental copying.
+		 */
+		HelpVisitor(const HelpVisitor& rhs);
+		HelpVisitor& operator=(const HelpVisitor& rhs);
+
 	protected:
 
 		/**

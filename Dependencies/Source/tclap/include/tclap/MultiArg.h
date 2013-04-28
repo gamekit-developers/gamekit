@@ -221,6 +221,13 @@ public:
 	
 	virtual void reset();
 
+private:
+	/**
+	 * Prevent accidental copying
+	 */
+	MultiArg<T>(const MultiArg<T>& rhs);
+	MultiArg<T>& operator=(const MultiArg<T>& rhs);
+
 };
 
 template<class T>
@@ -229,8 +236,9 @@ MultiArg<T>::MultiArg(const std::string& flag,
                       const std::string& desc,
                       bool req,
                       const std::string& typeDesc,
-                      Visitor* v)
-: Arg( flag, name, desc, req, true, v ),
+                      Visitor* v) :
+   Arg( flag, name, desc, req, true, v ),
+  _values(std::vector<T>()),
   _typeDesc( typeDesc ),
   _constraint( NULL ),
   _allowMore(false)
@@ -247,6 +255,7 @@ MultiArg<T>::MultiArg(const std::string& flag,
                       CmdLineInterface& parser,
                       Visitor* v)
 : Arg( flag, name, desc, req, true, v ),
+  _values(std::vector<T>()),
   _typeDesc( typeDesc ),
   _constraint( NULL ),
   _allowMore(false)
@@ -266,6 +275,7 @@ MultiArg<T>::MultiArg(const std::string& flag,
                       Constraint<T>* constraint,
                       Visitor* v)
 : Arg( flag, name, desc, req, true, v ),
+  _values(std::vector<T>()),
   _typeDesc( constraint->shortID() ),
   _constraint( constraint ),
   _allowMore(false)
@@ -282,6 +292,7 @@ MultiArg<T>::MultiArg(const std::string& flag,
                       CmdLineInterface& parser,
                       Visitor* v)
 : Arg( flag, name, desc, req, true, v ),
+  _values(std::vector<T>()),
   _typeDesc( constraint->shortID() ),
   _constraint( constraint ),
   _allowMore(false)

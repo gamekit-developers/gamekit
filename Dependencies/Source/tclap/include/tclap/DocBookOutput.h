@@ -96,7 +96,7 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
 {
 	std::list<Arg*> argList = _cmd.getArgList();
 	std::string progName = _cmd.getProgramName();
-	std::string version = _cmd.getVersion();
+	std::string xversion = _cmd.getVersion();
 	theDelimiter = _cmd.getDelimiter();
 	XorHandler xorHandler = _cmd.getXorHandler();
 	std::vector< std::vector<Arg*> > xorList = xorHandler.getXorList();
@@ -163,7 +163,7 @@ inline void DocBookOutput::usage(CmdLineInterface& _cmd )
 	std::cout << "<refsect1>" << std::endl;
 	std::cout << "<title>Version</title>" << std::endl;
 	std::cout << "<para>" << std::endl;
-	std::cout << version << std::endl; 
+	std::cout << xversion << std::endl; 
 	std::cout << "</para>" << std::endl;
 	std::cout << "</refsect1>" << std::endl;
 	

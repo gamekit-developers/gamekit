@@ -30,6 +30,15 @@
 #include <config.h> // To check for long long
 #endif
 
+// If Microsoft has already typedef'd wchar_t as an unsigned 
+// short, then compiles will break because it's as if we're
+// creating ArgTraits twice for unsigned short. Thus...
+#ifdef _MSC_VER
+#ifndef _NATIVE_WCHAR_T_DEFINED
+#define TCLAP_DONT_DECLARE_WCHAR_T_ARGTRAITS
+#endif
+#endif
+
 namespace TCLAP {
 
 // ======================================================================
@@ -114,6 +123,18 @@ struct ArgTraits<unsigned char> {
     typedef ValueLike ValueCategory;
 };
 
+// Microsoft implements size_t awkwardly. 
+#if defined(_MSC_VER) && defined(_M_X64)
+/**
+ * size_ts have value-like semantics.
+ */
+template<>
+struct ArgTraits<size_t> {
+    typedef ValueLike ValueCategory;
+};
+#endif
+
+
 #ifdef HAVE_LONG_LONG
 /**
  * unsigned long longs have value-like semantics.
@@ -156,13 +177,16 @@ struct ArgTraits<bool> {
     typedef ValueLike ValueCategory;
 };
 
+
 /**
  * wchar_ts have value-like semantics.
  */
+#ifndef TCLAP_DONT_DECLARE_WCHAR_T_ARGTRAITS
 template<>
 struct ArgTraits<wchar_t> {
     typedef ValueLike ValueCategory;
 };
+#endif
 
 /**
  * Strings have string like argument traits.

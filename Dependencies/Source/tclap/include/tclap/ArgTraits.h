@@ -37,6 +37,7 @@ namespace TCLAP {
  */
 struct ValueLike {
     typedef ValueLike ValueCategory;
+	virtual ~ValueLike() {}
 };
 
 /**
@@ -44,7 +45,9 @@ struct ValueLike {
  * operator=(string). Usefull if the value type contains spaces which
  * will be broken up into individual tokens by operator>>.
  */
-struct StringLike {};
+struct StringLike {
+	virtual ~StringLike() {}
+};
 
 /**
  * A class can inherit from this object to make it have string like
@@ -53,6 +56,7 @@ struct StringLike {};
  */
 struct StringLikeTrait {
     typedef StringLike ValueCategory;
+	virtual ~StringLikeTrait() {}
 };
 
 /**
@@ -62,17 +66,19 @@ struct StringLikeTrait {
  */
 struct ValueLikeTrait {
     typedef ValueLike ValueCategory;
+	virtual ~ValueLikeTrait() {}
 };
 
 /**
  * Arg traits are used to get compile type specialization when parsing
  * argument values. Using an ArgTraits you can specify the way that
  * values gets assigned to any particular type during parsing. The two
- * supported types are string like and value like.
+ * supported types are StringLike and ValueLike.
  */
 template<typename T>
 struct ArgTraits {
     typedef typename T::ValueCategory ValueCategory;
+	virtual ~ArgTraits() {}
     //typedef ValueLike ValueCategory;
 };
 

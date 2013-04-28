@@ -84,6 +84,8 @@ class ZshCompletionOutput : public CmdLineOutput
 };
 
 ZshCompletionOutput::ZshCompletionOutput()
+: common(std::map<std::string, std::string>()),
+  theDelimiter('=')
 {
 	common["host"] = "_hosts";
 	common["hostname"] = "_hosts";
@@ -105,7 +107,7 @@ inline void ZshCompletionOutput::usage(CmdLineInterface& _cmd )
 {
 	std::list<Arg*> argList = _cmd.getArgList();
 	std::string progName = _cmd.getProgramName();
-	std::string version = _cmd.getVersion();
+	std::string xversion = _cmd.getVersion();
 	theDelimiter = _cmd.getDelimiter();
 	basename(progName);
 

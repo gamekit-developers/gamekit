@@ -116,27 +116,38 @@ class SwitchArg : public Arg
 		
 		virtual void reset();
 
+	private:
+		/**
+		 * Checks to see if we've found the last match in
+		 * a combined string.
+		 */
+		bool lastCombined(std::string& combined);
+
+		/**
+		 * Does the common processing of processArg.
+		 */
+		void commonProcessing();
 };
 
 //////////////////////////////////////////////////////////////////////
 //BEGIN SwitchArg.cpp
 //////////////////////////////////////////////////////////////////////
 inline SwitchArg::SwitchArg(const std::string& flag, 
-	 		         const std::string& name, 
-     		   		 const std::string& desc, 
-	     	    	 bool default_val,
-					 Visitor* v )
+                            const std::string& name, 
+                            const std::string& desc, 
+                            bool default_val,
+                            Visitor* v )
 : Arg(flag, name, desc, false, false, v),
   _value( default_val ),
   _default( default_val )
 { }
 
 inline SwitchArg::SwitchArg(const std::string& flag, 
-					const std::string& name, 
-					const std::string& desc, 
-					CmdLineInterface& parser,
-					bool default_val,
-					Visitor* v )
+                            const std::string& name, 
+                            const std::string& desc, 
+                            CmdLineInterface& parser,
+                            bool default_val,
+                            Visitor* v )
 : Arg(flag, name, desc, false, false, v),
   _value( default_val ),
   _default(default_val)
@@ -145,6 +156,15 @@ inline SwitchArg::SwitchArg(const std::string& flag,
 }
 
 inline bool SwitchArg::getValue() { return _value; }
+
+inline bool SwitchArg::lastCombined(std::string& combinedSwitches ) 
+{
+	for ( unsigned int i = 1; i < combinedSwitches.length(); i++ )
+		if ( combinedSwitches[i] != Arg::blankChar() )
+			return false;
+	
+	return true;
+}
 
 inline bool SwitchArg::combinedSwitchesMatch(std::string& combinedSwitches )
 {
@@ -155,7 +175,7 @@ inline bool SwitchArg::combinedSwitchesMatch(std::string& combinedSwitches )
 
 	// make sure it isn't a long name 
 	if ( combinedSwitches.substr( 0, Arg::nameStartString().length() ) == 
-		 Arg::nameStartString() )
+	     Arg::nameStartString() )
 		return false;
 
 	// make sure the delimiter isn't in the string 
@@ -181,34 +201,52 @@ inline bool SwitchArg::combinedSwitchesMatch(std::string& combinedSwitches )
 	return false;	
 }
 
+inline void SwitchArg::commonProcessing()
+{
+	if ( _xorSet )
+		throw(CmdLineParseException(
+		      "Mutually exclusive argument already set!", toString()));
+
+	if ( _alreadySet ) 
+		throw(CmdLineParseException("Argument already set!", toString()));
+
+	_alreadySet = true;
+
+	if ( _value == true )
+		_value = false;
+	else
+		_value = true;
+
+	_checkWithVisitor();
+}
 
 inline bool SwitchArg::processArg(int *i, std::vector<std::string>& args)
 {
 	if ( _ignoreable && Arg::ignoreRest() )
 		return false;
 
-	if ( argMatches( args[*i] ) || combinedSwitchesMatch( args[*i] ) )
+	// if the whole string matches the flag or name string
+	if ( argMatches( args[*i] ) )
 	{
-		// If we match on a combined switch, then we want to return false
-		// so that other switches in the combination will also have a
-		// chance to match.
-		bool ret = false;
-		if ( argMatches( args[*i] ) )
-			ret = true;
+		commonProcessing();
 
-		if ( _alreadySet || ( !ret && combinedSwitchesMatch( args[*i] ) ) )
-			throw(CmdLineParseException("Argument already set!", toString()));	
+		return true;
+	}
+	// if a substring matches the flag as part of a combination
+	else if ( combinedSwitchesMatch( args[*i] ) )
+	{
+		// check again to ensure we don't misinterpret 
+		// this as a MultiSwitchArg 
+		if ( combinedSwitchesMatch( args[*i] ) )
+			throw(CmdLineParseException("Argument already set!", 
+			                            toString()));
 
-		_alreadySet = true;
+		commonProcessing();
 
-		if ( _value == true )
-			_value = false;
-		else
-			_value = true;
-
-		_checkWithVisitor();
-
-		return ret;
+		// We only want to return true if we've found the last combined
+		// match in the string, otherwise we return true so that other 
+		// switches in the combination will have a chance to match.
+		return lastCombined( args[*i] );
 	}
 	else
 		return false;
