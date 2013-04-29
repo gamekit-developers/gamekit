@@ -41,7 +41,7 @@ Vector2f operator*(float lhs, const Vector2f& rhs)
 	return Vector2f(lhs * rhs.x, lhs * rhs.y);
 }
 
-#ifndef STATIC_LIB
+#ifndef _MSC_VER
 
 template <>
 Vector2< float > Vector2< float >::Normalise() const

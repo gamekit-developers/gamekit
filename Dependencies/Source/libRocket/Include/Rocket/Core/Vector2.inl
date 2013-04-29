@@ -66,7 +66,7 @@ Vector2< Type > Vector2< Type >::Normalise() const
 	return *this;
 }
 
-#ifndef STATIC_LIB
+#ifndef _MSC_VER
 
 template <>
 ROCKETCORE_API Vector2< float > Vector2< float >::Normalise() const;
@@ -101,7 +101,7 @@ Vector2< Type > Vector2< Type >::Rotate(float theta) const
 	return *this;
 }
 
-#ifndef STATIC_LIB
+#ifndef _MSC_VER
 
 template <>
 ROCKETCORE_API Vector2< float > Vector2< float >::Rotate(float) const;
