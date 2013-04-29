@@ -41,6 +41,8 @@ Vector2f operator*(float lhs, const Vector2f& rhs)
 	return Vector2f(lhs * rhs.x, lhs * rhs.y);
 }
 
+#ifndef STATIC_LIB
+
 template <>
 Vector2< float > Vector2< float >::Normalise() const
 {
@@ -60,6 +62,8 @@ Vector2< float > Vector2< float >::Rotate(float theta) const
 	return Vector2< float >(cos_theta * x - sin_theta * y,
 							sin_theta * x + cos_theta * y);
 }
+
+#endif
 
 }
 }

@@ -35,6 +35,8 @@ include_directories(
 	${OGREKIT_LIBROCKET_INCLUDE}
 )
 
+add_definitions(-DSTATIC_LIB)
+
 #message(STATUS ${OGREKIT_LIBROCKET_LIBS})
 
 link_libraries(

@@ -23,34 +23,24 @@ set(PROJECT_VERSION ${LIBROCKET_VERSION_MAJOR}.${LIBROCKET_VERSION_MINOR}.${LIBR
 # Search in the 'cmake' directory for additional CMake modules.
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-set(CMAKE_DEBUG_POSTFIX  "_d")
-
-#===================================
-# Environment tests ================
-#===================================
-
-include(TestForANSIForScope)
-include(TestForANSIStreamHeaders)
-include(TestForSTDNamespace)
-
+#set(CMAKE_DEBUG_POSTFIX  "_d")
 
 #===================================
 # Build options ====================
 #===================================
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING
-        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-        FORCE)
-endif()
+# if(NOT CMAKE_BUILD_TYPE)
+    # set(CMAKE_BUILD_TYPE Release CACHE STRING
+        # "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+        # FORCE)
+# endif()
 
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(BUILD_PYTHON_BINDINGS "Build python bindings" OFF)
-option(BUILD_SAMPLES "Build samples" OFF)
+#option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(LIBROCKET_PYTHON_BINDINGS "Build python bindings" OFF)
+option(LIBROCKET_LUA_BINDINGS "Build Lua bindings" ON)
+#option(BUILD_SAMPLES "Build samples" OFF)
 
-if(NOT BUILD_SHARED_LIBS)
-    add_definitions(-DSTATIC_LIB)
-endif()
+add_definitions(-DSTATIC_LIB)
 
 #on windows, check for VC10 and fix the multiple compile target issue.
 IF(WIN32)
@@ -70,7 +60,7 @@ ENDIF(WIN32)
 include_directories(${OGREKIT_FREETYPE_INCLUDE})
 
 # Boost and Python
-if(BUILD_PYTHON_BINDINGS)
+if(LIBROCKET_PYTHON_BINDINGS)
     find_package(PythonInterp REQUIRED)
     find_package(PythonLibs REQUIRED)
     execute_process(
@@ -90,6 +80,12 @@ if(BUILD_PYTHON_BINDINGS)
         list(APPEND PY_BINDINGS_LINK_LIBS ${Boost_LIBRARIES})
     endif()
 
+endif()
+
+#Lua
+if(LIBROCKET_LUA_BINDINGS)    
+	include_directories(${OGREKIT_LUA_INCLUDE})
+	#list(APPEND LUA_BINDINGS_LINK_LIBS ${OGREKIT_LUA_TARGET})
 endif()
 
 
@@ -139,7 +135,7 @@ foreach(library ${LIBRARIES})
 endforeach(library)
 
 # Build python bindings
-if(BUILD_PYTHON_BINDINGS)
+if(LIBROCKET_PYTHON_BINDINGS)
     set(LIBRARIES core controls)
 
     foreach(library ${LIBRARIES})
@@ -155,6 +151,24 @@ if(BUILD_PYTHON_BINDINGS)
     endforeach(library)
 endif()
 
+# Build Lua bindings
+if(LIBROCKET_LUA_BINDINGS)
+    set(LIBRARIES Core Controls)
+
+    foreach(library ${LIBRARIES})
+        set(NAME Rocket${library}Lua)
+
+        add_library(${NAME} STATIC ${Lua${library}_SRC_FILES}
+                            ${Lua${library}_HDR_FILES}
+                            ${Lua${library}_PUB_HDR_FILES}
+        )
+
+        set_target_properties(${NAME} PROPERTIES
+                           VERSION ${PROJECT_VERSION}
+                           SOVERSION ${LIBROCKET_VERSION_MAJOR}
+        )
+    endforeach(library)
+endif()
 
 #===================================
 # Link libraries ===================
@@ -164,109 +178,23 @@ endif()
 #target_link_libraries(RocketControls RocketCore)
 #target_link_libraries(RocketDebugger RocketCore)
 
-if(BUILD_PYTHON_BINDINGS)
+if(LIBROCKET_PYTHON_BINDINGS)
     target_link_libraries(_rocketcore RocketCore ${PY_BINDINGS_LINK_LIBS})
     target_link_libraries(_rocketcontrols RocketControls ${PY_BINDINGS_LINK_LIBS})
 endif()
 
-
-#===================================
-# Build samples ====================
-#===================================
-
-# Build and link the samples
-macro(bl_sample NAME)
-	if (WIN32)
-    	add_executable(${NAME} WIN32 ${${NAME}_SRC_FILES} ${${NAME}_HDR_FILES} )
-	elseif(APPLE)
-		add_executable(${NAME} MACOSX_BUNDLE ${${NAME}_SRC_FILES} ${${NAME}_HDR_FILES} )
-    else()
-    	add_executable(${NAME} ${${NAME}_SRC_FILES} ${${NAME}_HDR_FILES} )
-    endif()
-    
-    if (APPLE)
-    	# We only support i386 for the samples as it still uses Carbon
-    	set_target_properties(${NAME} PROPERTIES OSX_ARCHITECTURES "i386;" )
-    endif()
-
-    target_link_libraries(${NAME} ${ARGN})
-endmacro()
-
-if(BUILD_SAMPLES)
-    include(SampleFileList)
-	set(samples treeview customlog drag loaddocument)
-    
-    set(sample_LIBRARIES
-    	shell 
-    	RocketCore 
-    	RocketControls
-    	RocketDebugger
-    )
-
-	# Find OpenGL 
-	find_package(OpenGL REQUIRED)
-    	   
-    if(OPENGL_FOUND)
-    	include_directories(${OPENGL_INCLUDE_DIR})
-        list(APPEND sample_LIBRARIES ${OPENGL_LIBRARIES})
-    endif()
-    
-    # Set up required system libraries
-    if(WIN32)
-		list(APPEND samples directx)
-    	list(APPEND sample_LIBRARIES d3d9 d3dx9)
-    elseif(APPLE)
-		include(FindCarbon)
-    	find_package(Carbon REQUIRED)
-    	
-    	if (Carbon_FOUND)
-    		include_directories(${Carbon_INCLUDE_DIR})
-        	list(APPEND sample_LIBRARIES ${Carbon_LIBRARIES})
-    	endif()
-    else()
-    	find_package(X11 REQUIRED)
-        if (X11_FOUND)
-        	list(APPEND sample_LIBRARIES ${X11_LIBRARIES})
-        endif()
-    endif()
-   
-    set(SAMPLES_DIR opt/Rocket/Samples)
-
-    # The samples use the shell library
-    include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)
-
-    # Build and install sample shell library
-    add_library(shell STATIC ${shell_SRC_FILES} ${shell_HDR_FILES})
-    if (APPLE)
-    	# We only support i386 for the samples as it still uses Carbon
-    	set_target_properties(shell PROPERTIES OSX_ARCHITECTURES "i386;")
-    endif()
-
-    install(TARGETS shell
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib
-    )
-
-    # Build and install the basic samples
-    foreach(sample ${samples})
-        bl_sample(${sample} ${sample_LIBRARIES})
-
-        # The samples always set this as their current working directory
-        install(DIRECTORY DESTINATION ${SAMPLES_DIR}/basic/${sample})
-        install(TARGETS ${sample} 
-        	RUNTIME DESTINATION ${SAMPLES_DIR}/${sample}
-        	BUNDLE DESTINATION ${SAMPLES_DIR})
-    endforeach()
-
-    # Build and install invaders sample
-    bl_sample(invaders ${sample_LIBRARIES})
-    install(DIRECTORY DESTINATION ${SAMPLES_DIR}/invaders)
-    install(TARGETS invaders 
-    	RUNTIME DESTINATION ${SAMPLES_DIR}/invaders
-    	BUNDLE DESTINATION ${SAMPLES_DIR})
+if(LIBROCKET_LUA_BINDINGS)
+    target_link_libraries(RocketCoreLua RocketCore ${LUA_BINDINGS_LINK_LIBS})
+    target_link_libraries(RocketControlsLua RocketControls RocketCoreLua ${LUA_BINDINGS_LINK_LIBS})
 endif()
+
+
 
 config_target_if_iphone_build(RocketCore TRUE)
 config_target_if_iphone_build(RocketControls TRUE)
 config_target_if_iphone_build(RocketDebugger TRUE)
 
+if(LIBROCKET_LUA_BINDINGS)
+	config_target_if_iphone_build(RocketCoreLua TRUE)
+	config_target_if_iphone_build(RocketControlsLua TRUE)
+endif()

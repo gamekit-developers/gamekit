@@ -30,6 +30,9 @@
 #include "GUI/gkGUI.h"
 #include "GUI/gkGUIManager.h"
 #include "Rocket/Controls.h"
+#include "Rocket/Core/Lua/Interpreter.h"
+#include "Rocket/Controls/Lua/Controls.h"
+
 
 #define GUIDEMO_GROUP_NAME	"Rocket"
 #define DEMO_BLEND_FILE		"logo_text.blend"
@@ -93,7 +96,6 @@ int GuiDemo::setup(int argc, char** argv)
 }
 
 
-
 bool GuiDemo::setup(void)
 {
 	gkBlendFile* blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), "", GUIDEMO_GROUP_NAME);
@@ -118,8 +120,6 @@ bool GuiDemo::setup(void)
 
 	gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(ASSETS_BLEND_FILE), "", GUIDEMO_GROUP_NAME);
 
-	//--
-
 	loadGUI();
 
 
@@ -137,6 +137,12 @@ void GuiDemo::loadGUI()
 	gm->loadFont("Delicious-Bold");
 	gm->loadFont("Delicious-Italic");
 	gm->loadFont("Delicious-BoldItalic");
+
+	// Initialise the Lua interface
+    Rocket::Core::Lua::Interpreter::Initialise();
+    Rocket::Controls::Lua::RegisterTypes(Rocket::Core::Lua::Interpreter::GetLuaState());
+	//Rocket::Core::Vector2f v; v.Normalise();
+
 
 	// Create context
 	gkGUI *gui = m_scene->getDisplayWindow()->getGUI();
@@ -161,8 +167,14 @@ void GuiDemo::loadGUI()
 
 void GuiDemo::unloadGUI()
 {
-	if (m_document) m_document->RemoveReference();
-	m_document = 0;
+	if (m_document) 
+	{
+		m_document->RemoveReference();
+		m_document = 0;
+	}
+
+	// Shutdown Lua  before we shut down Rocket.
+	Rocket::Core::Lua::Interpreter::Shutdown();
 }
 
 void GuiDemo::ProcessEvent(Rocket::Core::Event& event)

@@ -65,7 +65,8 @@ gkGUIManager::~gkGUIManager()
 	Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup(DEFAULT_ROCKET_RESOURCE_GROUP);
 }
 
-void gkGUIManager::loadFont(const gkString& name){
+void gkGUIManager::loadFont(const gkString& name)
+{
 	gkFont *fnt = gkFontManager::getSingleton().getByName<gkFont>(name);
 	
 	if (fnt)
