@@ -45,7 +45,7 @@ add_definitions(-DSTATIC_LIB)
 #on windows, check for VC10 and fix the multiple compile target issue.
 IF(WIN32)
   if(MSVC)
-    if(${MSVC_VERSION} STREQUAL 1600 OR ${MSVC_VERSION} STRGREATER 1600)
+    if(${MSVC_VERSION} STREQUAL 1600)  #OR ${MSVC_VERSION} STRGREATER 1600)
       message("Visual Studio 2010 (${MSVC_VERSION}) build fix at play (/FORCE:MULTIPLE)")
       set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /FORCE:MULTIPLE")
     endif()

@@ -1136,8 +1136,12 @@ include_directories(${OGREKIT_BULLET_INCLUDE})
 
 configure_rendersystem()
 
+file(GLOB_RECURSE CMakeCMakeLists ../CMake/*.cmake)
+file(GLOB_RECURSE TemplatesFiles ../CMake/*.in)
 set(HiddenDepenCMakeLists ../Dependencies/CMakeLists.txt)
-source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
+source_group(CMakeLists\\Dependencies FILES ${HiddenDepenCMakeLists})
+source_group(CMakeLists\\CMake FILES ${CMakeCMakeLists})
+source_group(CMakeLists\\Templates FILES ${TemplatesFiles})
 
 
 # for swig no __declspec(dllexport)
@@ -1178,7 +1182,7 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Thread_SOURCE}     ${Thread_HEADER}
 			${Particles_SOURCE}  ${Particles_HEADER}
 			${External_SOURCE}   ${External_HEADER}
-			${HiddenDepenCMakeLists}
+			${HiddenDepenCMakeLists} ${CMakeCMakeLists} ${TemplatesFiles}
 			${Extra_SOURCE}
 			${Resources_FILES}
 			${Script_SOURCE}     ${Script_HEADER}
