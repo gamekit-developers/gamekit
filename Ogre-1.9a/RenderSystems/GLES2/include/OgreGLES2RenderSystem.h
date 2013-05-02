@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,7 @@ namespace Ogre {
             // local data member of _render that were moved here to improve performance
             // (save allocations)
             vector<GLuint>::type mRenderAttribsBound;
+            vector<GLuint>::type mRenderInstanceAttribsBound;
 
             GLint getCombinedMinMipFilter(void) const;
 
@@ -118,9 +119,17 @@ namespace Ogre {
 
             GLint getTextureAddressingMode(TextureUnitState::TextureAddressingMode tam) const;
             GLenum getBlendMode(SceneBlendFactor ogreBlend) const;
+            void bindVertexElementToGpu( const VertexElement &elem, HardwareVertexBufferSharedPtr vertexBuffer,
+                                        const size_t vertexStart,
+                                        vector<GLuint>::type &attribsBound,
+                                        vector<GLuint>::type &instanceAttribsBound,
+                                        bool updateVAO);
 
 			// Mipmap count of the actual bounded texture
 			size_t mCurTexMipCount;
+            GLint mViewport[4];
+            GLint mScissor[4];
+
         public:
             // Default constructor / destructor
             GLES2RenderSystem();
@@ -372,7 +381,7 @@ namespace Ogre {
              RenderSystem
              */
             void setStencilBufferParams(CompareFunction func = CMPF_ALWAYS_PASS, 
-                    uint32 refValue = 0, uint32 mask = 0xFFFFFFFF,
+                    uint32 refValue = 0, uint32 compareMask = 0xFFFFFFFF, uint32 writeMask = 0xFFFFFFFF,
                     StencilOperation stencilFailOp = SOP_KEEP,
                     StencilOperation depthFailOp = SOP_KEEP,
                     StencilOperation passOp = SOP_KEEP,

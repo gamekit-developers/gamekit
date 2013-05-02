@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -201,6 +201,12 @@ namespace Ogre {
 			pLog->logMessage(
                  "   - PVRTC: "
                  + StringConverter::toString(hasCapability(RSC_TEXTURE_COMPRESSION_PVRTC), true));
+			pLog->logMessage(
+                 "   - BC4/BC5: "
+                 + StringConverter::toString(hasCapability(RSC_TEXTURE_COMPRESSION_BC4_BC5), true));
+			pLog->logMessage(
+                 "   - BC6H/BC7: "
+                 + StringConverter::toString(hasCapability(RSC_TEXTURE_COMPRESSION_BC6H_BC7), true));
 		}
 
 		pLog->logMessage(
@@ -279,6 +285,9 @@ namespace Ogre {
 		pLog->logMessage(
 			" * Render to Vertex Buffer : "
 			+ StringConverter::toString(hasCapability(RSC_HWRENDER_TO_VERTEX_BUFFER), true));
+        pLog->logMessage(
+            " * Hardware Atomic Counters: "
+            + StringConverter::toString(hasCapability(RSC_ATOMIC_COUNTERS), true));
 
 		if (mCategoryRelevant[CAPS_CATEGORY_GL])
 		{

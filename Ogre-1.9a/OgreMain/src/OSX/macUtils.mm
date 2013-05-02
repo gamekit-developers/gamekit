@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,11 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include "macUtils.h"
+#import "macUtils.h"
 
-#include "OgreString.h"
-#include <dlfcn.h>
+#import "OgreString.h"
+#import <Foundation/Foundation.h>
+#import <dlfcn.h>
 
 namespace Ogre {
 
@@ -93,16 +94,25 @@ namespace Ogre {
         return 1;
     }
 
+    void* mac_loadFramework(String name)
+	{
+		String fullPath=name + ".framework";
+		if(name[0]!='/')
+			fullPath = macFrameworksPath()+"/"+fullPath+"/"+name;
+
+		return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+	}
+
 	void* mac_loadDylib(const char* name)
 	{
-		std::string fullPath=name;
+		String fullPath=name;
 		if(name[0]!='/')
 			fullPath = macPluginPath()+"/"+fullPath;
 		
 		return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	}
 	
-    std::string macBundlePath()
+    String macBundlePath()
     {
         char path[1024];
         CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -119,11 +129,37 @@ namespace Ogre {
         CFRelease(mainBundleURL);
         CFRelease(cfStringRef);
         
-        return std::string(path);
+        return String(path);
     }
     
-    std::string macPluginPath()
+    String macPluginPath()
 	{
 		return macBundlePath() + "/Contents/Plugins/";
 	}
+
+    String macCachePath()
+    {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cachesDirectory = [paths objectAtIndex:0];
+        
+        return [cachesDirectory cStringUsingEncoding:NSASCIIStringEncoding];
+    }
+
+    String macFrameworksPath()
+	{
+		return macBundlePath() + "/Contents/Frameworks/";
+	}
+
+    String macTempFileName()
+    {
+        NSString *tempFilePath;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        for (;;) {
+            NSString *baseName = [NSString stringWithFormat:@"tmp-%x", arc4random()];
+            tempFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:baseName];
+            if (![fileManager fileExistsAtPath:tempFilePath])
+                break;
+        }
+        return String([tempFilePath cStringUsingEncoding:NSASCIIStringEncoding]);
+    }
 }

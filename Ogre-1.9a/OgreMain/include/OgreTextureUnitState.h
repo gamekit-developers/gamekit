@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -567,7 +567,7 @@ namespace Ogre {
 
         /** Gets the index of the set of texture co-ords this layer uses.
         @note
-            Applies to both fixed-function and programmable pipeline.
+        Only applies to the fixed function pipeline and has no effect if a fragment program is used.
         */
         unsigned int getTextureCoordSet(void) const;
 
@@ -576,7 +576,7 @@ namespace Ogre {
             Default is 0 for all layers. Only change this if you have provided multiple texture co-ords per
             vertex.
         @note
-            Applies to both fixed-function and programmable pipeline.
+        Only applies to the fixed function pipeline and has no effect if a fragment program is used.
         */
         void setTextureCoordSet(unsigned int set);
 
@@ -692,6 +692,9 @@ namespace Ogre {
         /** Sets the texture addressing mode, i.e. what happens at uv values above 1.0.
         @note
             The default is TAM_WRAP i.e. the texture repeats over values of 1.0.
+		@note This is a shortcut method which sets the addressing mode for all
+			coordinates at once; you can also call the more specific method
+			to set the addressing mode per coordinate.
         @note
             This is a shortcut method which sets the addressing mode for all
             coordinates at once; you can also call the more specific method
@@ -919,7 +922,7 @@ namespace Ogre {
             is a 'fish-eye' lens view of a scene, or a 3D cubic environment map which requires 6 textures
             for each side of the inside of a cube. The type depends on what texture you set up - if you use the
             setTextureName method then a 2D fisheye lens texture is required, whereas if you used setCubicTextureName
-            then a cubic environemnt map will be used.
+            then a cubic environment map will be used.
         @par
             This effect works best if the object has lots of gradually changing normals. The texture also
             has to be designed for this effect - see the example spheremap.png included with the sample
@@ -1206,11 +1209,11 @@ protected:
 
         /// Duration of animation in seconds.
         Real mAnimDuration;
-        bool mCubic; ///< Is this a series of 6 2D textures to make up a cube?
+        bool mCubic; /// Is this a series of 6 2D textures to make up a cube?
         
         TextureType mTextureType; 
         PixelFormat mDesiredFormat;
-        int mTextureSrcMipmaps; ///< Request number of mipmaps.
+        int mTextureSrcMipmaps; /// Request number of mipmaps.
 
         unsigned int mTextureCoordSetIndex;
         UVWAddressingMode mAddressMode;
@@ -1238,7 +1241,7 @@ protected:
         /// Texture filtering - mipmapping.
         FilterOptions mMipFilter;
 
-		bool			mCompareEnabled;
+		bool mCompareEnabled;
 		CompareFunction mCompareFunc;
 
         /// Texture anisotropy.

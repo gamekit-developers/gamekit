@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -232,7 +232,7 @@ namespace Ogre {
         GpuProgramManager::Microcode cacheMicrocode = 
             GpuProgramManager::getSingleton().getMicrocodeFromCache(mName);
 
-#define READ_NAMES(list, member) for(int i = 0 ; i < list.size() ; i++){ \
+#define READ_NAMES(list, member) for(unsigned i = 0 ; i < list.size() ; i++){ \
     uint16 length = 0;          \
     cacheMicrocode->read(&length, sizeof(uint16));  \
     list[i].member = ""; \
@@ -362,6 +362,7 @@ namespace Ogre {
         OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED, message,
             "D3D11HLSLProgram::compileMicrocode");
 #else
+#pragma comment(lib, "d3dcompiler.lib")
 
         // include handler
         HLSLIncludeHandler includeHandler(this);
@@ -564,7 +565,7 @@ namespace Ogre {
 						varRefType = varRef->GetType();
 
 						// Recursively descend through the structure levels
-						processParamElement( "", curVar.Name, i, varRefType);
+						processParamElement( "", curVar.Name, varRefType);
 					}
 
 					switch (constantBufferDesc.Type)
@@ -656,7 +657,7 @@ namespace Ogre {
 #define GET_SIZE_OF_NAMES(result, list, member)                     \
                 uint32 result = 0;                                  \
                 {                                                   \
-                    for(int i = 0 ; i < list.size() ; i++)          \
+                    for(unsigned i = 0 ; i < list.size() ; i++)          \
                     {                                               \
                         if (list[i].member != NULL)                 \
                             result += strlen(list[i].member);       \
@@ -698,7 +699,7 @@ namespace Ogre {
                 GpuProgramManager::Microcode newMicrocode = 
                     GpuProgramManager::getSingleton().createMicrocode(sizeOfData);
 
-#define STORE_NAMES(list, member) for(int i = 0 ; i < list.size() ; i++){ \
+#define STORE_NAMES(list, member) for(unsigned i = 0 ; i < list.size() ; i++){ \
     uint16 length = 0;                               \
     if(list[i].member != NULL)                       \
         length = strlen(list[i].member);      \
@@ -1061,8 +1062,7 @@ namespace Ogre {
 
 	}
     //-----------------------------------------------------------------------
-    void D3D11HLSLProgram::processParamElement(String prefix, LPCSTR pName, 
-        size_t paramIndex, ID3D11ShaderReflectionType* varRefType)
+	void D3D11HLSLProgram::processParamElement(String prefix, LPCSTR pName, ID3D11ShaderReflectionType* varRefType)
     {
         D3D11_SHADER_TYPE_DESC varRefTypeDesc;
         HRESULT hr = varRefType->GetDesc(&varRefTypeDesc);
@@ -1094,7 +1094,7 @@ namespace Ogre {
             // Cascade into struct
             for (unsigned int i = 0; i < varRefTypeDesc.Members; ++i)
             {
-                processParamElement(prefix, varRefType->GetMemberTypeName(i), i,  varRefType->GetMemberTypeByIndex(i));
+                processParamElement(prefix, varRefType->GetMemberTypeName(i), varRefType->GetMemberTypeByIndex(i));
             }
         }
         else
@@ -1107,7 +1107,9 @@ namespace Ogre {
                 mSerStrings.push_back(name);
                 def.Name = &(*name)[0]; 
 
-                def.logicalIndex = paramIndex;
+				GpuConstantDefinitionWithName* prev_def = mD3d11ShaderVariableSubparts.empty() ? NULL : &mD3d11ShaderVariableSubparts.back();
+				def.logicalIndex = prev_def ? prev_def->logicalIndex + prev_def->elementSize / 4 : 0;
+
                 // populate type, array size & element size
                 populateDef(varRefTypeDesc, def);
 
@@ -1310,13 +1312,27 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const String& D3D11HLSLProgram::getCompatibleTarget(void) const
     {
-        static const String compatibleVsTarget = "vs_4_0";
-        static const String compatiblePsTarget = "ps_4_0";
+        static const String
+			vs_4_0			 = "vs_4_0",
+			vs_4_0_level_9_3 = "vs_4_0_level_9_3",
+			vs_4_0_level_9_1 = "vs_4_0_level_9_1",
+			ps_4_0			 = "ps_4_0",
+			ps_4_0_level_9_3 = "ps_4_0_level_9_3",
+			ps_4_0_level_9_1 = "ps_4_0_level_9_1";
 
         if(mEnableBackwardsCompatibility)
         {
-            if(mTarget == "vs_2_0" || mTarget == "vs_2_x" || mTarget == "vs_3_0")	return compatibleVsTarget;
-            if(mTarget == "ps_2_0" || mTarget == "ps_2_x" || mTarget == "ps_3_0")	return compatiblePsTarget;
+            if(mTarget == "vs_2_0") return vs_4_0_level_9_1;
+            if(mTarget == "vs_2_a") return vs_4_0_level_9_3;
+            if(mTarget == "vs_2_x") return vs_4_0_level_9_3;
+            if(mTarget == "vs_3_0") return vs_4_0;
+
+            if(mTarget == "ps_2_0") return ps_4_0_level_9_1;
+            if(mTarget == "ps_2_a") return ps_4_0_level_9_3;
+            if(mTarget == "ps_2_b") return ps_4_0_level_9_3;
+            if(mTarget == "ps_2_x") return ps_4_0_level_9_3;
+            if(mTarget == "ps_3_0") return ps_4_0;
+            if(mTarget == "ps_3_x") return ps_4_0;
         }
 
         return mTarget;

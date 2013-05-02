@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,8 @@ THE SOFTWARE.
 #include "OgrePlatformInformation.h"
 #include "OgreConvexBody.h"
 #include "Threading/OgreDefaultWorkQueue.h"
-	
+#include "OgreQueuedProgressiveMeshGenerator.h"
+
 #if OGRE_NO_FREEIMAGE == 0
 #include "OgreFreeImageCodec.h"
 #endif
@@ -205,6 +206,12 @@ namespace Ogre {
         // Lod strategy manager
         mLodStrategyManager = OGRE_NEW LodStrategyManager();
 
+        // Queued Progressive Mesh Generator Worker
+        mPMWorker = OGRE_NEW PMWorker();
+
+        // Queued Progressive Mesh Generator Injector
+        mPMInjector = OGRE_NEW PMInjector();
+
 #if OGRE_PROFILING
         // Profiler
         mProfiler = OGRE_NEW Profiler();
@@ -304,6 +311,9 @@ namespace Ogre {
 #endif
 
 		OGRE_DELETE mLodStrategyManager;
+		OGRE_DELETE mPMWorker;
+		OGRE_DELETE mPMInjector;
+
         OGRE_DELETE mArchiveManager;
         
 #   if OGRE_NO_ZIP_ARCHIVE == 0

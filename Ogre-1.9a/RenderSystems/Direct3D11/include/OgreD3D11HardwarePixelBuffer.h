@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -73,7 +73,7 @@ namespace Ogre {
 		bool mUsingStagingBuffer;
 		ID3D11Resource *mStagingBuffer;
 		
-		void *_map(ID3D11Resource *res, D3D11_MAP flags);
+		void _map(ID3D11Resource *res, D3D11_MAP flags, PixelBox & box);
 		void *_mapstagingbuffer(D3D11_MAP flags);
 		void *_mapstaticbuffer(PixelBox lock);
 		void _unmap(ID3D11Resource *res);

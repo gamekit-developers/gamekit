@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,8 +54,8 @@ namespace Ogre
 	public:
 		static const uint32 TERRAINLODDATA_CHUNK_ID;
 		static const uint16 TERRAINLODDATA_CHUNK_VERSION;
-		typedef std::vector<float> LodData;
-		typedef std::vector<LodData> LodsData;
+		typedef vector<float>::type LodData;
+		typedef vector<LodData>::type LodsData;
 
 		struct LoadLodRequest
 		{

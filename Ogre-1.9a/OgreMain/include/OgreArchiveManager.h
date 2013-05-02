@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,7 @@ namespace Ogre {
             @par
                 If the function fails, an exception is thrown.
         */
-        Archive* load( const String& filename, const String& archiveType, bool readOnly = true);
+        Archive* load( const String& filename, const String& archiveType, bool readOnly);
 
 		/** Unloads an archive.
 		@remarks

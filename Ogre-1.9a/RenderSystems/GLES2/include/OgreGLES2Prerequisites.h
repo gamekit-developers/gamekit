@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -59,9 +59,14 @@ THE SOFTWARE.
 #	ifndef GL_GLEXT_PROTOTYPES
 #		define  GL_GLEXT_PROTOTYPES
 #	endif
-#	include <GLES2/gl2platform.h>
-#	include <GLES2/gl2.h>
-#	include <GLES2/gl2ext.h>
+#   if OGRE_NO_GLES3_SUPPORT == 0
+#       include <GLES3/gl3platform.h>
+#	    include <GLES3/gl3.h>
+#   else
+#       include <GLES2/gl2platform.h>
+#	    include <GLES2/gl2.h>
+#       include <GLES2/gl2ext.h>
+#   endif
 #	if (OGRE_PLATFORM == OGRE_PLATFORM_NACL)
 #		include "ppapi/cpp/completion_callback.h"
 #       include "ppapi/cpp/instance.h"
@@ -71,24 +76,44 @@ THE SOFTWARE.
 #		include "ppapi/gles2/gl2ext_ppapi.h"
 #       undef GL_OES_get_program_binary
 #       undef GL_OES_mapbuffer
+#       undef GL_OES_vertex_array_object
 #	endif
 #else
-#   include <GLES2/gl2.h>
-#   include <GLES2/gl2ext.h>
+#	undef  GL_GLEXT_PROTOTYPES
+#   if OGRE_NO_GLES3_SUPPORT == 0
+#       include <GLES3/gl3platform.h>
+#       include <GLES3/gl3.h>
+#   else
+#       include <GLES2/gl2.h>
+#       include <GLES2/gl2ext.h>
+#   endif
 #   include <EGL/egl.h>
 
-// Function pointers for FBO extension methods
-// Declare them here since we don't have GLEW to do it for us
-
 #	ifndef GL_GLEXT_PROTOTYPES
+#       if OGRE_NO_GLES3_SUPPORT == 1
 extern PFNGLMAPBUFFEROESPROC glMapBufferOES;
 extern PFNGLUNMAPBUFFEROESPROC glUnmapBufferOES;
+#       endif
+#		if OGRE_PLATFORM != OGRE_PLATFORM_WIN32
 extern PFNGLDRAWBUFFERSARBPROC glDrawBuffersARB;
 extern PFNGLREADBUFFERNVPROC glReadBufferNV;
 extern PFNGLGETCOMPRESSEDTEXIMAGENVPROC glGetCompressedTexImageNV;
 extern PFNGLGETTEXIMAGENVPROC glGetTexImageNV;
 extern PFNGLGETTEXLEVELPARAMETERFVNVPROC glGetTexLevelParameterfvNV;
 extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
+#		else
+#           if OGRE_NO_GLES3_SUPPORT == 1
+typedef void (GL_APIENTRYP PFNGLBINDVERTEXARRAYOES) (GLuint vertexarray);
+typedef void (GL_APIENTRYP PFNGLDELETEVERTEXARRAYSOES) (GLsizei n, const GLuint *vertexarrays);
+typedef void (GL_APIENTRYP PFNGLGENVERTEXARRAYSOES) (GLsizei n, GLuint *vertexarrays);
+typedef GLboolean (GL_APIENTRYP PFNGLISVERTEXARRAYOES) (GLuint vertexarray);
+
+extern PFNGLBINDVERTEXARRAYOES glBindVertexArrayOES;
+extern PFNGLDELETEVERTEXARRAYSOES glDeleteVertexArraysOES;
+extern PFNGLGENVERTEXARRAYSOES glGenVertexArraysOES;
+extern PFNGLISVERTEXARRAYOES glIsVertexArrayOES;
+#           endif
+#		endif
 #	endif
 
 // If we are going to use the PVRTC_CODEC make sure we
@@ -114,8 +139,29 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
 // Define GL_NONE for convenience
 #define GL_NONE 0
 
-#if !defined(GL_BGRA) && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+#if !defined(GL_BGRA) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_NO_GLES3_SUPPORT == 1
 #   define GL_BGRA  0x80E1
+#endif
+
+// Defines for extensions that were made core in OpenGL ES 3
+#if OGRE_NO_GLES3_SUPPORT == 0
+#define glProgramBinaryOES glProgramBinary
+#define glGetProgramBinaryOES glGetProgramBinary
+#define glUnmapBufferOES glUnmapBuffer
+#define GL_WRITE_ONLY_OES GL_MAP_WRITE_BIT
+#define GL_HALF_FLOAT_OES GL_HALF_FLOAT
+#define GL_RGB8_OES GL_RGB8
+#define GL_RGBA8_OES GL_RGBA8
+#define GL_RG8_EXT GL_RG8
+#define GL_RED_EXT GL_RED
+#define GL_RG_EXT GL_RG
+#define GL_R8_EXT GL_R8
+#define GL_PROGRAM_BINARY_LENGTH_OES GL_PROGRAM_BINARY_LENGTH
+#define GL_MIN_EXT GL_MIN
+#define GL_MAX_EXT GL_MAX
+#define GL_DEPTH_COMPONENT24_OES GL_DEPTH_COMPONENT24
+#define GL_DEPTH_COMPONENT32_OES GL_DEPTH_COMPONENT32F
+#define GL_DEPTH24_STENCIL8_OES GL_DEPTH24_STENCIL8
 #endif
 
 #if (OGRE_PLATFORM == OGRE_PLATFORM_WIN32)
@@ -147,8 +193,9 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
 #define ENABLE_GL_CHECK 0
 
 #if ENABLE_GL_CHECK
-#define GL_CHECK_ERROR \
-    { \
+#define OGRE_CHECK_GL_ERROR(glFunc) \
+{ \
+        glFunc; \
         int e = glGetError(); \
         if (e != 0) \
         { \
@@ -162,12 +209,12 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
             default:                                                            break; \
             } \
             char msgBuf[4096]; \
-            sprintf(msgBuf, "OpenGL ES2 error 0x%04X %s in %s at line %i\n", e, errorString, __PRETTY_FUNCTION__, __LINE__); \
+            sprintf(msgBuf, "OpenGL error 0x%04X %s in %s at line %i for %s\n", e, errorString, __PRETTY_FUNCTION__, __LINE__, #glFunc); \
             LogManager::getSingleton().logMessage(msgBuf); \
         } \
     }
 #else
-    #define GL_CHECK_ERROR {}
+#   define OGRE_CHECK_GL_ERROR(glFunc) { glFunc; }
 #endif
 
 #if ENABLE_GL_CHECK

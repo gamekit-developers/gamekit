@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ namespace Ogre {
 		OGRE root did this steps before the overlay system transformed into a component.
     @remarks
         Before you create a concrete instance of the OverlaySystem the OGRE::Root must be created
-		but not initialized. In the ctor all relevant systems are created and registred. The dtor
+		but not initialized. In the ctor all relevant systems are created and registered. The dtor
 		must be called before you delete OGRE::Root.
 		To make the overlay's visible (= render into your viewports) you have to register this
 		instance as a RenderQueueListener in your scenemanager(s).

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,6 @@ namespace Ogre {
             // iOS 4 content scaling
             bool mIsContentScalingSupported;
             float mContentScalingFactor;
-            float mCurrentOSVersion;
 
             EAGL2Support* mGLSupport;
             EAGLES2Context* mContext;
@@ -98,6 +97,7 @@ namespace Ogre {
             void setClosed(bool closed) { mClosed = closed; }
             void swapBuffers(bool waitForVSync);
             void copyContentsToMemory(const PixelBox &dst, FrameBuffer buffer);
+            PixelFormat suggestPixelFormat() const { return PF_BYTE_RGBA; }
 
             /**
                @remarks

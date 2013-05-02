@@ -4,7 +4,7 @@
  (Object-oriented Graphics Rendering Engine)
  For the latest info, see http://www.ogre3d.org/
  
- Copyright (c) 2000-2012 Torus Knot Software Ltd
+ Copyright (c) 2000-2013 Torus Knot Software Ltd
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,9 @@
 #include "OgreStableHeaders.h"
 #include "OgreDeflate.h"
 #include "OgreException.h"
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#include "macUtils.h"
+#endif
 
 #include <zlib.h>
 
@@ -148,6 +151,8 @@ namespace Ogre
                     mTempFileName = tmpname;
                     free(tmpname);
                 }
+#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+                mTempFileName = macTempFileName();
 #else
                 char tmpname[L_tmpnam];
                 tmpnam(tmpname);

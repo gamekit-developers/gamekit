@@ -5,7 +5,7 @@ This source file is part of OGRE
 For the latest info, see http://www.ogre3d.org
 
 Copyright (c) 2008 Renato Araujo Oliveira Filho <renatox@gmail.com>
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -2006,14 +2006,14 @@ namespace Ogre {
     }
 
     void GLESRenderSystem::setStencilBufferParams(CompareFunction func,
-                                                uint32 refValue, uint32 mask,
+                                                uint32 refValue, uint32 compareMask, uint32 writeMask, 
                                                 StencilOperation stencilFailOp,
                                                 StencilOperation depthFailOp,
                                                 StencilOperation passOp,
                                                 bool twoSidedOperation)
     {
-        mStateCacheManager->setStencilMask(mask);
-        glStencilFunc(convertCompareFunction(func), refValue, mask);
+        mStateCacheManager->setStencilMask(writeMask);
+        glStencilFunc(convertCompareFunction(func), refValue, compareMask);
         glStencilOp(
             convertStencilOp(stencilFailOp, false),
             convertStencilOp(depthFailOp, false), 
@@ -2931,9 +2931,8 @@ namespace Ogre {
     {
         LogManager::getSingleton().logMessage("********************************************");
         LogManager::getSingleton().logMessage("*** OpenGL ES 1.x Reset Renderer Started ***");
-        LogManager::getSingleton().logMessage("********************************************");
+        LogManager::getSingleton().logMessage("********************************************");        
         
-        mStateCacheManager->clearCache();
         initialiseContext(win);
         
         mGLSupport->initialiseExtensions();
@@ -2952,6 +2951,7 @@ namespace Ogre {
         
         GLESRenderSystem::mResourceManager->notifyOnContextReset();
         
+		mStateCacheManager->clearCache();
         _setViewport(NULL);
         _setRenderTarget(win);
     }

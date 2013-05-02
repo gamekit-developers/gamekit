@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1445,7 +1445,7 @@ namespace Ogre
 		@param index The blend texture index (note: not layer index; derive
 		the texture index from getLayerBlendTextureIndex)
 		*/
-		const TexturePtr& getLayerBlendTexture(uint8 index);
+		const TexturePtr& getLayerBlendTexture(uint8 index) const;
 
 		/** Get the texture index and colour channel of the blend information for 
 			a given layer. 
@@ -1453,7 +1453,7 @@ namespace Ogre
 		@return A pair in which the first value is the texture index, and the 
 			second value is the colour channel (RGBA)
 		*/
-		std::pair<uint8,uint8> getLayerBlendTextureIndex(uint8 layerIndex);
+		std::pair<uint8,uint8> getLayerBlendTextureIndex(uint8 layerIndex) const;
 
 		/** Request internal implementation options for the terrain material to use, 
 			in this case vertex morphing information. 

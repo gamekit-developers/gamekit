@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -102,7 +102,7 @@ namespace Ogre {
 	}
 
 	GLRenderSystem::GLRenderSystem()
-		: mDepthWrite(true), mStencilMask(0xFFFFFFFF), mHardwareBufferManager(0),
+		: mDepthWrite(true), mStencilWriteMask(0xFFFFFFFF), mHardwareBufferManager(0),
 		mGpuProgramManager(0),
 		mGLSLProgramFactory(0),
 		mRTTManager(0),
@@ -486,7 +486,7 @@ namespace Ogre {
 			// states 3.0 here: http://developer.download.nvidia.com/opengl/specs/GL_ARB_get_program_binary.txt
 			// but not here: http://www.opengl.org/sdk/docs/man4/xhtml/glGetProgramBinary.xml
 			// and here states 4.1: http://www.geeks3d.com/20100727/opengl-4-1-allows-the-use-of-binary-shaders/
-			rsc->setCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER);
+			rsc->setCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER);			
 		}
 
 		if (GLEW_VERSION_3_3 || GLEW_ARB_instanced_arrays)
@@ -722,6 +722,11 @@ namespace Ogre {
 		// GPU Program Manager setup
 		mGpuProgramManager = new GLGpuProgramManager();
 
+		if(caps->hasCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER))
+		{
+			mGpuProgramManager->setSaveMicrocodesToCache(true);
+		}
+
 		if(caps->hasCapability(RSC_VERTEX_PROGRAM))
 		{
 			if(caps->isShaderProfileSupported("arbvp1"))
@@ -825,7 +830,7 @@ namespace Ogre {
 		if(caps->isShaderProfileSupported("glsl"))
 		{
 			// NFZ - check for GLSL vertex and fragment shader support successful
-			mGLSLProgramFactory = new GLSLProgramFactory();
+			mGLSLProgramFactory = new GLSL::GLSLProgramFactory();
 			HighLevelGpuProgramManager::getSingleton().addFactory(mGLSLProgramFactory);
 			LogManager::getSingleton().logMessage("GLSL support detected");
 		}
@@ -1080,6 +1085,11 @@ namespace Ogre {
 					mDriverVersion.release = StringConverter::parseInt(tokens[2]); 
 			}
 			mDriverVersion.build = 0;
+
+            const char* shadingLangVersion = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+            tokens = StringUtil::split(shadingLangVersion, ". ");
+            mNativeShadingLanguageVersion = (StringConverter::parseUnsignedInt(tokens[0]) * 100) + StringConverter::parseUnsignedInt(tokens[1]);
+
 			// Initialise GL after the first window has been created
 			// TODO: fire this from emulation options, and don't duplicate Real and Current capabilities
 			mRealCapabilities = createRenderSystemCapabilities();
@@ -1088,7 +1098,7 @@ namespace Ogre {
 			if(!mUseCustomCapabilities)
 				mCurrentCapabilities = mRealCapabilities;
 
-      fireEvent("RenderSystemCapabilitiesCreated");
+            fireEvent("RenderSystemCapabilitiesCreated");
 
 			initialiseFromRenderSystemCapabilities(mCurrentCapabilities, win);
 
@@ -1952,7 +1962,10 @@ namespace Ogre {
 		else
 		{
 			glEnable(GL_BLEND);
-			glBlendFuncSeparate(sourceBlend, destBlend, sourceBlendAlpha, destBlendAlpha);
+			if(GLEW_VERSION_1_4)
+				glBlendFuncSeparate(sourceBlend, destBlend, sourceBlendAlpha, destBlendAlpha);
+			else if(GLEW_EXT_blend_func_separate)
+				glBlendFuncSeparateEXT(sourceBlend, destBlend, sourceBlendAlpha, destBlendAlpha);
 		}
 
 		GLint func = GL_FUNC_ADD, alphaFunc = GL_FUNC_ADD;
@@ -2373,12 +2386,12 @@ namespace Ogre {
 	}
 	//---------------------------------------------------------------------
 	void GLRenderSystem::setStencilBufferParams(CompareFunction func, 
-		uint32 refValue, uint32 mask, StencilOperation stencilFailOp, 
+		uint32 refValue, uint32 compareMask, uint32 writeMask, StencilOperation stencilFailOp, 
 		StencilOperation depthFailOp, StencilOperation passOp, 
 		bool twoSidedOperation)
 	{
 		bool flip;
-		mStencilMask = refValue;
+		mStencilWriteMask = writeMask;
 
 		if (twoSidedOperation)
 		{
@@ -2393,15 +2406,15 @@ namespace Ogre {
 			if(GLEW_VERSION_2_0) // New GL2 commands
 			{
 				// Back
-				glStencilMaskSeparate(GL_BACK, mask);
-				glStencilFuncSeparate(GL_BACK, convertCompareFunction(func), refValue, mask);
+				glStencilMaskSeparate(GL_BACK, writeMask);
+				glStencilFuncSeparate(GL_BACK, convertCompareFunction(func), refValue, compareMask);
 				glStencilOpSeparate(GL_BACK, 
 					convertStencilOp(stencilFailOp, !flip), 
 					convertStencilOp(depthFailOp, !flip), 
 					convertStencilOp(passOp, !flip));
 				// Front
-				glStencilMaskSeparate(GL_FRONT, mask);
-				glStencilFuncSeparate(GL_FRONT, convertCompareFunction(func), refValue, mask);
+				glStencilMaskSeparate(GL_FRONT, writeMask);
+				glStencilFuncSeparate(GL_FRONT, convertCompareFunction(func), refValue, compareMask);
 				glStencilOpSeparate(GL_FRONT, 
 					convertStencilOp(stencilFailOp, flip),
 					convertStencilOp(depthFailOp, flip), 
@@ -2412,16 +2425,16 @@ namespace Ogre {
 				glEnable(GL_STENCIL_TEST_TWO_SIDE_EXT);
 				// Back
 				glActiveStencilFaceEXT(GL_BACK);
-				glStencilMask(refValue);
-				glStencilFunc(convertCompareFunction(func), refValue, mask);
+				glStencilMask(writeMask);
+				glStencilFunc(convertCompareFunction(func), refValue, compareMask);
 				glStencilOp(
 					convertStencilOp(stencilFailOp, !flip), 
 					convertStencilOp(depthFailOp, !flip), 
 					convertStencilOp(passOp, !flip));
 				// Front
 				glActiveStencilFaceEXT(GL_FRONT);
-				glStencilMask(refValue);
-				glStencilFunc(convertCompareFunction(func), refValue, mask);
+				glStencilMask(writeMask);
+				glStencilFunc(convertCompareFunction(func), refValue, compareMask);
 				glStencilOp(
 					convertStencilOp(stencilFailOp, flip),
 					convertStencilOp(depthFailOp, flip), 
@@ -2434,8 +2447,8 @@ namespace Ogre {
                 glDisable(GL_STENCIL_TEST_TWO_SIDE_EXT);
 
 			flip = false;
-			glStencilMask(refValue);
-			glStencilFunc(convertCompareFunction(func), refValue, mask);
+			glStencilMask(writeMask);
+			glStencilFunc(convertCompareFunction(func), refValue, compareMask);
 			glStencilOp(
 				convertStencilOp(stencilFailOp, flip),
 				convertStencilOp(depthFailOp, flip), 
@@ -3153,6 +3166,10 @@ GL_RGB_SCALE : GL_ALPHA_SCALE, 1);
 				mCurrentGeometryProgram = glprg;
 			}
 			break;
+        case GPT_COMPUTE_PROGRAM:
+        case GPT_DOMAIN_PROGRAM:
+        case GPT_HULL_PROGRAM:
+            break;
 		}
 
 		// Bind the program
@@ -3210,6 +3227,10 @@ GL_RGB_SCALE : GL_ALPHA_SCALE, 1);
 			mActiveFragmentGpuProgramParameters = params;
 			mCurrentFragmentProgram->bindProgramParameters(params, mask);
 			break;
+        case GPT_COMPUTE_PROGRAM:
+        case GPT_DOMAIN_PROGRAM:
+        case GPT_HULL_PROGRAM:
+            break;
 		}
 	}
 	//---------------------------------------------------------------------
@@ -3226,6 +3247,10 @@ GL_RGB_SCALE : GL_ALPHA_SCALE, 1);
 		case GPT_FRAGMENT_PROGRAM:
 			mCurrentFragmentProgram->bindProgramPassIterationParameters(mActiveFragmentGpuProgramParameters);
 			break;
+        case GPT_COMPUTE_PROGRAM:
+        case GPT_DOMAIN_PROGRAM:
+        case GPT_HULL_PROGRAM:
+            break;
 		}
 	}
 	//---------------------------------------------------------------------
@@ -3402,7 +3427,7 @@ GL_RGB_SCALE : GL_ALPHA_SCALE, 1);
 		}
 		if (buffers & FBT_STENCIL)
 		{
-			glStencilMask(mStencilMask);
+			glStencilMask(mStencilWriteMask);
 		}
 	}
 	// ------------------------------------------------------------------
@@ -3559,7 +3584,7 @@ GL_RGB_SCALE : GL_ALPHA_SCALE, 1);
 		// difference with the really state stored in GL context.
 		glDepthMask(mDepthWrite);
 		glColorMask(mColourWrite[0], mColourWrite[1], mColourWrite[2], mColourWrite[3]);
-		glStencilMask(mStencilMask);
+		glStencilMask(mStencilWriteMask);
 
 	}
 	//---------------------------------------------------------------------

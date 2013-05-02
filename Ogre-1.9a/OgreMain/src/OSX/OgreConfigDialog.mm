@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,10 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include "OgreLogManager.h"
-#include "OgreConfigDialog.h"
+#import "OgreLogManager.h"
+#import "OgreConfigDialog.h"
+
+using namespace Ogre;
 
 namespace Ogre {
 
@@ -160,8 +162,8 @@ namespace Ogre {
         [NSApp endModalSession:modalSession];
 
         // Set the rendersystem
-        Ogre::String selectedRenderSystemName = Ogre::String([[[[mWindowDelegate getRenderSystemsPopUp] selectedItem] title] UTF8String]);
-        RenderSystem *rs = Ogre::Root::getSingleton().getRenderSystemByName(selectedRenderSystemName);
+        String selectedRenderSystemName = String([[[[mWindowDelegate getRenderSystemsPopUp] selectedItem] title] UTF8String]);
+        RenderSystem *rs = Root::getSingleton().getRenderSystemByName(selectedRenderSystemName);
         Root::getSingleton().setRenderSystem(rs);
         
         // Relinquish control of the table
@@ -209,6 +211,7 @@ namespace Ogre {
         [mCancelButton setBezelStyle:NSRoundedBezelStyle];
         [mCancelButton setAction:@selector(cancelButtonPressed:)];
         [mCancelButton setTarget:self];
+        [mCancelButton setKeyEquivalent:@"\e"];
         [mCancelButton setTitle:NSLocalizedString(@"Cancel", @"cancelButtonString")];
         [[mConfigWindow contentView] addSubview:mCancelButton];
 
@@ -310,16 +313,16 @@ namespace Ogre {
 - (void)popUpValueChanged:(id)sender
 {
 #pragma unused(sender)
-    // Grab a copy of the selected RenderSystem name in Ogre::String format
-    Ogre::String selectedRenderSystemName = Ogre::String([[[mRenderSystemsPopUp selectedItem] title] UTF8String]);
+    // Grab a copy of the selected RenderSystem name in String format
+    String selectedRenderSystemName = String([[[mRenderSystemsPopUp selectedItem] title] UTF8String]);
     
     // Save the current config value
     if((0 <= [mOptionsTable selectedRow]) && [mOptionsPopUp selectedItem])
     {
-        Ogre::String value = Ogre::String([[[mOptionsPopUp selectedItem] title] UTF8String]);
-        Ogre::String name = Ogre::String([[[[mOptions keyEnumerator] allObjects] objectAtIndex:[mOptionsTable selectedRow]] UTF8String]);
+        String value = String([[[mOptionsPopUp selectedItem] title] UTF8String]);
+        String name = String([[[[mOptions keyEnumerator] allObjects] objectAtIndex:[mOptionsTable selectedRow]] UTF8String]);
         
-        Ogre::Root::getSingleton().getRenderSystemByName(selectedRenderSystemName)->setConfigOption(name, value);
+        Root::getSingleton().getRenderSystemByName(selectedRenderSystemName)->setConfigOption(name, value);
     }
 }
 
@@ -341,6 +344,7 @@ namespace Ogre {
     [mConfigWindow orderOut:nil];
 
     [NSApp abortModal];
+    [NSApp terminate:nil];
 }
 
 - (void)okButtonPressed:(id)sender
@@ -390,21 +394,28 @@ namespace Ogre {
     // Add the available options
     [mOptionsPopUp addItemsWithTitles:[mOptions objectForKey:key]];
     
-    // Grab a copy of the selected RenderSystem name in Ogre::String format
-    Ogre::String selectedRenderSystemName = Ogre::String([[[mRenderSystemsPopUp selectedItem] title] UTF8String]);
-    const Ogre::ConfigOptionMap& opts = Ogre::Root::getSingleton().getRenderSystemByName(selectedRenderSystemName)->getConfigOptions();
+    // Grab a copy of the selected RenderSystem name in String format
+    if([mRenderSystemsPopUp numberOfItems] > 0)
+    {
+        String selectedRenderSystemName = String([[[mRenderSystemsPopUp selectedItem] title] UTF8String]);
+        const ConfigOptionMap& opts = Root::getSingleton().getRenderSystemByName(selectedRenderSystemName)->getConfigOptions();
 
-    // Select the item that is the current config option, if there is no current setting, just pick the top of the list
-    Ogre::ConfigOptionMap::const_iterator it = opts.find([key UTF8String]);
-    if (it != opts.end())
-        [mOptionsPopUp selectItemWithTitle:[NSString stringWithCString:it->second.currentValue.c_str()
-                                 encoding:NSASCIIStringEncoding]];
+        // Select the item that is the current config option, if there is no current setting, just pick the top of the list
+        ConfigOptionMap::const_iterator it = opts.find([key UTF8String]);
+        if (it != opts.end())
+            [mOptionsPopUp selectItemWithTitle:[NSString stringWithCString:it->second.currentValue.c_str()
+                                     encoding:NSASCIIStringEncoding]];
 
-    if([mOptionsPopUp indexOfSelectedItem] < 0)
-        [mOptionsPopUp selectItemAtIndex:0];
+        if([mOptionsPopUp indexOfSelectedItem] < 0)
+            [mOptionsPopUp selectItemAtIndex:0];
 
-    // Always allow the new selection
-    return YES;
+        // Always allow the new selection
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 #pragma mark Getters and Setters

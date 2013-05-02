@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -584,11 +584,11 @@ namespace Ogre
 				uint8 *oldLock = (uint8*)sharedVertexBuffer->lock(0, sharedVertexData->vertexCount * vertexSize, HardwareBuffer::HBL_READ_ONLY);
 				uint8 *newLock = (uint8*)newVertexBuffer->lock(0, newVertexData->vertexCount * vertexSize, HardwareBuffer::HBL_NORMAL);
 
-				IndicesMap::iterator it = indicesMap.begin(); 
-				IndicesMap::iterator endIt = indicesMap.end();
-				for (; it != endIt; it++) 
+				IndicesMap::iterator indIt = indicesMap.begin();
+				IndicesMap::iterator endIndIt = indicesMap.end();
+				for (; indIt != endIndIt; indIt++) 
 				{
-					memcpy(newLock + vertexSize * it->second, oldLock + vertexSize * it->first, vertexSize);
+					memcpy(newLock + vertexSize * indIt->second, oldLock + vertexSize * indIt->first, vertexSize);
 				}
 
 				sharedVertexBuffer->unlock();

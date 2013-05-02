@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -107,7 +107,7 @@ namespace Ogre
 		{
 			LodInfo& lodinfo = getLodInfo(level);
 			// skip re-assign
-			if(lastTreeStart != lodinfo.treeStart)
+			if(lastTreeStart != (int)lodinfo.treeStart)
 			{
 				mTerrain->getQuadTree()->assignVertexData(lodinfo.treeStart, lodinfo.treeEnd,
 						lodinfo.resolution, lodinfo.size);
@@ -138,7 +138,7 @@ namespace Ogre
 				{
 					LodInfo& lodinfo = getLodInfo(level);
 					// skip re-load
-					if(lastTreeStart != lodinfo.treeStart)
+					if(lastTreeStart != (int)lodinfo.treeStart)
 					{
 						mTerrain->getQuadTree()->load(lodinfo.treeStart, lodinfo.treeEnd);
 						lastTreeStart = lodinfo.treeStart;

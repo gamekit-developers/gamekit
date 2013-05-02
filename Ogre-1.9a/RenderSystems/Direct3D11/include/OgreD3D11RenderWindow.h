@@ -5,7 +5,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "OgreD3D11Prerequisites.h"
 #include "OgreRenderWindow.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT
+#if OGRE_PLATFORM == OGRE_PLATFORM_WINRT 
 #pragma warning( disable : 4451 ) // http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/314b5826-0a66-4307-abfe-87b8052c3c07/
 
 #    include <agile.h>
@@ -187,7 +187,7 @@ namespace Ogre
 		Platform::Agile<Windows::UI::Core::CoreWindow> mCoreWindow;
 	};
 
-#if  OGRE_WINRT_TARGET_TYPE != PHONE
+#if (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
 
 	class D3D11RenderWindowImageSource
 		: public D3D11RenderWindowBase
@@ -215,7 +215,7 @@ namespace Ogre
 		Windows::UI::Xaml::Media::Imaging::SurfaceImageSource^	mImageSource;		// size depended, can be NULL
 		ISurfaceImageSourceNative*								mImageSourceNative;	// size depended, can be NULL
 	};
-#endif // OGRE_WINRT_TARGET_TYPE != PHONE
+#endif //  (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
 
 #endif
 

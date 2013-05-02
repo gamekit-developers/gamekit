@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -118,8 +118,11 @@ namespace Ogre {
         NSString *windowTitle = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
 		int winx = 0, winy = 0;
 		int depth = 32;
-        NameValuePairList::const_iterator opt(NULL);
-		
+#if OGRE_NO_LIBCPP_SUPPORT == 0
+        NameValuePairList::const_iterator opt{};
+#else
+        NameValuePairList::const_iterator opt;
+#endif
         mIsFullScreen = fullScreen;
 		
 		if(miscParams)
@@ -232,7 +235,11 @@ namespace Ogre {
         }
         else
         {
-            NameValuePairList::const_iterator param_useNSView_pair(NULL);
+#if OGRE_NO_LIBCPP_SUPPORT == 0
+            NameValuePairList::const_iterator param_useNSView_pair{};
+#else
+            NameValuePairList::const_iterator param_useNSView_pair;
+#endif
             param_useNSView_pair = miscParams->find("macAPICocoaUseNSView");
 
             if(param_useNSView_pair != miscParams->end())
@@ -521,13 +528,14 @@ namespace Ogre {
     {
         if(!mIsFullScreen)
         {
-            NSRect frame = [mView frame];
+            NSRect winFrame = [mWindow frame];
+            NSRect viewFrame = [mView frame];
             NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
-            mWidth = (unsigned int)frame.size.width;
-            mHeight = (unsigned int)frame.size.height;
-            mLeft = (int)frame.origin.x;
-            mTop = screenFrame.size.height - frame.size.height;
-		
+            mWidth = (unsigned int)viewFrame.size.width;
+            mHeight = (unsigned int)viewFrame.size.height;
+            mLeft = (int)winFrame.origin.x;
+            mTop = screenFrame.size.height - winFrame.size.height;
+
             mWindowOrigin = NSMakePoint(mLeft, mTop);
         }
 
@@ -660,7 +668,6 @@ namespace Ogre {
                 [mWindow setContentView:mView];
                 [mWindow setFrameOrigin:NSZeroPoint];
                 [mWindow setLevel:NSMainMenuWindowLevel+1];
-                [NSApp activateIgnoringOtherApps:YES];
 
                 mWindowOrigin = mWindow.frame.origin;
                 mLeft = mTop = 0;
@@ -691,6 +698,7 @@ namespace Ogre {
             
             // Even though OgreCocoaView doesn't accept first responder, it will get passed onto the next in the chain
             [mWindow makeFirstResponder:mView];
+            [NSApp activateIgnoringOtherApps:YES];
         }
     }
 

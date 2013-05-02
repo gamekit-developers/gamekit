@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -301,7 +301,7 @@ namespace Ogre {
 		if (mSelectedCgProfile == CG_PROFILE_UNKNOWN)
 		{
 			LogManager::getSingleton().logMessage(
-				"Attempted to load Cg program '" + mName + "', but no suported "
+				"Attempted to load Cg program '" + mName + "', but no supported "
 				"profile was found. ");
 			return;
 		}
@@ -651,7 +651,7 @@ namespace Ogre {
                             beg = findAndMark("uniform vec3 "+newName+"[4]", "uniform mat4x3 "+oldName, beg);
                     }
 
-                    // mark all occurences of the parameter name for replacement
+                    // mark all occurrences of the parameter name for replacement
                     findAndMark(newName, oldName, beg);
                 }
             }
@@ -682,7 +682,7 @@ namespace Ogre {
                 mark.pos = cur;
                 cur += search.size();
                 // check if previous or following character continue an identifier
-                // in that case, skip this occurence as it's part of a longer identifier
+                // in that case, skip this occurrence as it's part of a longer identifier
                 if (mark.pos > 0)
                 {
                     char c = source[mark.pos-1];
@@ -705,7 +705,7 @@ namespace Ogre {
 
         void buildOutput()
         {
-            // sort replacements in order of occurence
+            // sort replacements in order of occurrence
             std::sort(replacements.begin(), replacements.end());
             String::size_type cur = start;
             for (vector<ReplacementMark>::type::iterator it = replacements.begin(); it != replacements.end(); ++it)

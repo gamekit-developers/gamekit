@@ -14,7 +14,7 @@ ABI="armeabi-v7a"
 
 API_LEVEL=9  # Default is 8
 
-# See SDK/Android/android.toolchain.cmake for a full list of options.
+# See CMake/toolchain/android.toolchain.cmake for a full list of options.
 
 
 export OPTIONS=("$MAINFOLDER" -G "Unix Makefiles"
@@ -25,7 +25,7 @@ export OPTIONS=("$MAINFOLDER" -G "Unix Makefiles"
     -DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1
     -DOGREKIT_BUILD_ANDROID=1
     -DLIBRARY_OUTPUT_PATH=
-    -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/SDK/Android/android.toolchain.cmake"
+    -DCMAKE_TOOLCHAIN_FILE="$MAINFOLDER/CMake/toolchain/android.toolchain.cmake"
     -DANDROID_ABI="$ABI"
     -DANDROID_NATIVE_API_LEVEL=$API_LEVEL
 )

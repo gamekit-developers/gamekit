@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ namespace Ogre
         must have a unique name. It's wasteless to create two InstanceManagers with the same
         mesh reference, instancing technique and instances per batch count.
         This class takes care of managing batches automatically, so that more are created when
-        needed, and reuse existing ones as much as posible; thus the user doesn't have to worry
+        needed, and reuse existing ones as much as possible; thus the user doesn't have to worry
         of managing all those low level issues.
         @see InstanceBatch & @see InstanceEntity for more information.
 

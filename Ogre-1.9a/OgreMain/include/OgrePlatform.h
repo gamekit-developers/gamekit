@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -114,8 +114,7 @@ namespace Ogre {
 #			endif
 #			if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 #				define OGRE_WINRT_TARGET_TYPE PHONE
-				// For the phone we only support running from the cache file.
-#		        define ENABLE_SHADERS_CACHE_LOAD 1
+#				define ENABLE_SHADERS_CACHE_LOAD 1
 #			endif
 #		else
 #			define OGRE_PLATFORM OGRE_PLATFORM_WIN32
@@ -166,6 +165,16 @@ namespace Ogre {
 #define OGRE_QUOTE_INPLACE(x) # x
 #define OGRE_QUOTE(x) OGRE_QUOTE_INPLACE(x)
 #define OGRE_WARN( x )  message( __FILE__ "(" QUOTE( __LINE__ ) ") : " x "\n" )
+
+// For marking functions as deprecated
+#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+#   define OGRE_DEPRECATED(func) __declspec(deprecated) func
+#elif OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG
+#   define OGRE_DEPRECATED(func) func __attribute__ ((deprecated))
+#else
+#   pragma message("WARNING: You need to implement OGRE_DEPRECATED for this compiler")
+#   define OGRE_DEPRECATED(func) func
+#endif
 
 //----------------------------------------------------------------------------
 // Windows Settings
@@ -245,14 +254,6 @@ namespace Ogre {
 #       define OGRE_DEBUG_MODE 0
 #   endif
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    #define OGRE_PLATFORM_LIB "OgrePlatform.bundle"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-    #define OGRE_PLATFORM_LIB "OgrePlatform.a"
-#else //OGRE_PLATFORM_LINUX
-    #define OGRE_PLATFORM_LIB "libOgrePlatform.so"
-#endif
-
 // Always enable unicode support for the moment
 // Perhaps disable in old versions of gcc if necessary
 #define OGRE_UNICODE_SUPPORT 1
@@ -299,13 +300,22 @@ namespace Ogre {
 #    define OGRE_ENDIAN OGRE_ENDIAN_LITTLE
 #endif
 
+//----------------------------------------------------------------------------
+// Library suffixes
+// "_d" for debug builds, nothing otherwise
+#if OGRE_DEBUG_MODE
+#   define OGRE_BUILD_SUFFIX "_d"
+#else
+#   define OGRE_BUILD_SUFFIX ""
+#endif
+
 // Integer formats of fixed bit width
 typedef unsigned int uint32;
 typedef unsigned short uint16;
 typedef unsigned char uint8;
 typedef int int32;
 typedef short int16;
-typedef char int8;
+typedef signed char int8;
 // define uint64 type
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
 	typedef unsigned __int64 uint64;

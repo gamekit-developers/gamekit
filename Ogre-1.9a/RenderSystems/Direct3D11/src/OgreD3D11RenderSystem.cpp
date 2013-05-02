@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,14 @@ THE SOFTWARE.
 
 //---------------------------------------------------------------------
 #define FLOAT2DWORD(f) *((DWORD*)&f)
+
+#ifndef D3D_FL9_3_SIMULTANEOUS_RENDER_TARGET_COUNT
+#	define D3D_FL9_3_SIMULTANEOUS_RENDER_TARGET_COUNT 4
+#endif
+
+#ifndef D3D_FL9_1_SIMULTANEOUS_RENDER_TARGET_COUNT
+#	define D3D_FL9_1_SIMULTANEOUS_RENDER_TARGET_COUNT 1
+#endif
 //---------------------------------------------------------------------
 #include <d3d10.h>
 
@@ -734,15 +742,14 @@ bail:
 			}
 
 			D3D_FEATURE_LEVEL requestedLevels[] = {
-#if OGRE_WINRT_TARGET_TYPE != PHONE
-#	if OGRE_PLATFORM == OGRE_PLATFORM_WINRT 
+#if (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
                 D3D_FEATURE_LEVEL_11_1,
-#	endif // OGRE_PLATFORM == OGRE_PLATFORM_WINRT 
+#endif // (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
+#if !( (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == PHONE) )
 				D3D_FEATURE_LEVEL_11_0,
 				D3D_FEATURE_LEVEL_10_1,
 				D3D_FEATURE_LEVEL_10_0,
-#endif // OGRE_WINRT_TARGET_TYPE != PHONE
-// Technically WINRT should only support up to 9_1, however to generate the proper cache file for the phone we need to be running with 9_3 on Win8.
+#endif // !( (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == PHONE) )
 				D3D_FEATURE_LEVEL_9_3,
 				D3D_FEATURE_LEVEL_9_2,
 				D3D_FEATURE_LEVEL_9_1
@@ -872,7 +879,7 @@ bail:
 				temp = mActiveD3DDriver->getVideoModeList()->item(j)->getDescription();
 
 				// In full screen we only want to allow supported resolutions, so temp and opt->second.currentValue need to 
-				// match exacly, but in windowed mode we can allow for arbitrary window sized, so we only need
+				// match exactly, but in windowed mode we can allow for arbitrary window sized, so we only need
 				// to match the colour values
 				if(fullScreen && (temp == opt->second.currentValue) ||
 				  !fullScreen && (temp.substr(temp.rfind('@')+1) == colourDepth))
@@ -1027,10 +1034,10 @@ bail:
 		}
 
 		D3D11RenderWindowBase* win = NULL;
-#if OGRE_WINRT_TARGET_TYPE != PHONE
+#if (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
  		if(win == NULL && windowType == "SurfaceImageSource")
  			win = new D3D11RenderWindowImageSource(mDevice, mpDXGIFactory);
-#endif // OGRE_WINRT_TARGET_TYPE != PHONE
+#endif // (OGRE_PLATFORM == OGRE_PLATFORM_WINRT) && (OGRE_WINRT_TARGET_TYPE == DESKTOP_APP)
 		if(win == NULL)
 			win = new D3D11RenderWindowCoreWindow(mDevice, mpDXGIFactory);
 #endif
@@ -1061,6 +1068,8 @@ bail:
 			// mCurrentCapabilities has already been loaded
 			if(!mUseCustomCapabilities)
 				mCurrentCapabilities = mRealCapabilities;
+
+			fireEvent("RenderSystemCapabilitiesCreated");
 
 			initialiseFromRenderSystemCapabilities(mCurrentCapabilities, mPrimaryWindow);
 
@@ -1183,7 +1192,15 @@ bail:
 		rsc->setCapability(RSC_HWRENDER_TO_TEXTURE);
 		rsc->setCapability(RSC_TEXTURE_FLOAT);
 
-		rsc->setNumMultiRenderTargets(std::min(D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, (int)OGRE_MAX_MULTIPLE_RENDER_TARGETS));
+#ifdef D3D_FEATURE_LEVEL_9_3
+		int numMultiRenderTargets = (mFeatureLevel > D3D_FEATURE_LEVEL_9_3) ? D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT :		// 8
+									(mFeatureLevel == D3D_FEATURE_LEVEL_9_3) ? 4/*D3D_FL9_3_SIMULTANEOUS_RENDER_TARGET_COUNT*/ :	// 4
+									1/*D3D_FL9_1_SIMULTANEOUS_RENDER_TARGET_COUNT*/;												// 1
+#else
+        int numMultiRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;		// 8
+#endif
+
+		rsc->setNumMultiRenderTargets(std::min(numMultiRenderTargets, (int)OGRE_MAX_MULTIPLE_RENDER_TARGETS));
 		rsc->setCapability(RSC_MRT_DIFFERENT_BIT_DEPTHS);
 
 		rsc->setCapability(RSC_POINT_SPRITES);
@@ -1212,7 +1229,7 @@ bail:
 		if(caps->getRenderSystemName() != getName())
 		{
 			OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, 
-				"Trying to initialize GLRenderSystem from RenderSystemCapabilities that do not support Direct3D11",
+				"Trying to initialize D3D11RenderSystem from RenderSystemCapabilities that do not support Direct3D11",
 				"D3D11RenderSystem::initialiseFromRenderSystemCapabilities");
 		}
 		
@@ -1735,7 +1752,7 @@ bail:
 	{
 		static D3D11TexturePtr dt;
 		dt = tex;
-		if (enabled && dt->getSize() > 0)
+		if (enabled && !dt.isNull() && dt->getSize() > 0)
 		{
 			// note used
 			dt->touch();
@@ -1820,28 +1837,12 @@ bail:
 		else
 		{
 			mBlendDesc.RenderTarget[0].BlendEnable = TRUE;
-            mBlendDesc.RenderTarget[0].SrcBlend = mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactor);
-            mBlendDesc.RenderTarget[0].DestBlend = mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactor);
+            mBlendDesc.RenderTarget[0].SrcBlend = D3D11Mappings::get(sourceFactor, false);
+            mBlendDesc.RenderTarget[0].DestBlend = D3D11Mappings::get(destFactor, false);
+            mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactor, true);
+            mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactor, true);
             mBlendDesc.RenderTarget[0].BlendOp = mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11Mappings::get(op);
             
-            switch(mBlendDesc.RenderTarget[0].SrcBlendAlpha)
-            {
-                case D3D11_BLEND_DEST_COLOR: 
-                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_DEST_ALPHA;
-                    break;
-                case D3D11_BLEND_SRC_COLOR: 
-                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-                    break;
-                case D3D11_BLEND_INV_DEST_COLOR: 
-                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
-                    break;
-                case D3D11_BLEND_INV_SRC_COLOR: 
-                    mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-                    break;
-                default:
-                    break;
-            }
-
 			// feature level 9 and below does not support alpha to coverage.
 			if (mFeatureLevel < D3D_FEATURE_LEVEL_10_0)
 				mBlendDesc.AlphaToCoverageEnable = false;
@@ -1861,12 +1862,12 @@ bail:
 		else
 		{
 			mBlendDesc.RenderTarget[0].BlendEnable = TRUE;
-			mBlendDesc.RenderTarget[0].SrcBlend = D3D11Mappings::get(sourceFactor);
-			mBlendDesc.RenderTarget[0].DestBlend = D3D11Mappings::get(destFactor);
+			mBlendDesc.RenderTarget[0].SrcBlend = D3D11Mappings::get(sourceFactor, false);
+			mBlendDesc.RenderTarget[0].DestBlend = D3D11Mappings::get(destFactor, false);
 			mBlendDesc.RenderTarget[0].BlendOp = D3D11Mappings::get(op) ;
+			mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactorAlpha, true);
+			mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactorAlpha, true);
 			mBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11Mappings::get(alphaOp) ;
-			mBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11Mappings::get(sourceFactorAlpha);
-			mBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11Mappings::get(destFactorAlpha);
 			mBlendDesc.AlphaToCoverageEnable = false;
 
 			mBlendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
@@ -1892,6 +1893,8 @@ bail:
 	void D3D11RenderSystem::_setCullingMode( CullingMode mode )
 	{
 		mCullingMode = mode;
+
+		// TODO: invert culling mode based on mInvertVertexWinding && mActiveRenderTarget->requiresTextureFlipping()
 		mRasterizerDesc.CullMode = D3D11Mappings::get(mode);
 	}
 	//---------------------------------------------------------------------
@@ -1905,7 +1908,6 @@ bail:
 	void D3D11RenderSystem::_setDepthBufferCheckEnabled( bool enabled )
 	{
 		mDepthStencilDesc.DepthEnable = enabled;
-		//mRasterizerDesc.DepthClipEnable = enabled;
 	}
 	//---------------------------------------------------------------------
 	void D3D11RenderSystem::_setDepthBufferWriteEnabled( bool enabled )
@@ -1964,25 +1966,27 @@ bail:
 	}
     //---------------------------------------------------------------------
     void D3D11RenderSystem::setStencilBufferParams(CompareFunction func, 
-        uint32 refValue, uint32 mask, StencilOperation stencilFailOp, 
+        uint32 refValue, uint32 compareMask, uint32 writeMask, StencilOperation stencilFailOp, 
         StencilOperation depthFailOp, StencilOperation passOp, 
         bool twoSidedOperation)
     {
+		bool flip = false; // TODO: determine from mInvertVertexWinding && mActiveRenderTarget->requiresTextureFlipping()
+
 		mDepthStencilDesc.FrontFace.StencilFunc = D3D11Mappings::get(func);
 		mDepthStencilDesc.BackFace.StencilFunc = D3D11Mappings::get(func);
 
 		mStencilRef = refValue;
-		mDepthStencilDesc.StencilReadMask = refValue;
-		mDepthStencilDesc.StencilWriteMask = mask;
+		mDepthStencilDesc.StencilReadMask = compareMask;
+		mDepthStencilDesc.StencilWriteMask = writeMask;
 
-		mDepthStencilDesc.FrontFace.StencilFailOp = D3D11Mappings::get(stencilFailOp);
-		mDepthStencilDesc.BackFace.StencilFailOp = D3D11Mappings::get(stencilFailOp);
-
-		mDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11Mappings::get(stencilFailOp);
-		mDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11Mappings::get(stencilFailOp);
-
-		mDepthStencilDesc.FrontFace.StencilPassOp = D3D11Mappings::get(passOp);
-		mDepthStencilDesc.BackFace.StencilPassOp = D3D11Mappings::get(passOp);
+		mDepthStencilDesc.FrontFace.StencilFailOp = D3D11Mappings::get(stencilFailOp, flip);
+		mDepthStencilDesc.BackFace.StencilFailOp = D3D11Mappings::get(stencilFailOp, !flip);
+		
+		mDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11Mappings::get(depthFailOp, flip);
+		mDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11Mappings::get(depthFailOp, !flip);
+		
+		mDepthStencilDesc.FrontFace.StencilPassOp = D3D11Mappings::get(passOp, flip);
+		mDepthStencilDesc.BackFace.StencilPassOp = D3D11Mappings::get(passOp, !flip);
 
 		if (!twoSidedOperation)
 		{
@@ -2760,7 +2764,7 @@ bail:
                             OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
                                 "D3D11 device cannot draw indexed\nError Description:" + errorDescription +
                                 "Active OGRE vertex shader name: " + mBoundVertexProgram->getName() +
-                                "\nActive OGRE fragment shader name: " + mBoundFragmentProgram->getName() ,
+                                "\nActive OGRE fragment shader name: " + mBoundFragmentProgram->getName(),
                                 "D3D11RenderSystem::_render");
 						}
 					}

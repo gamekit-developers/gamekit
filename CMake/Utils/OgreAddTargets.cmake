@@ -87,11 +87,9 @@ macro(create_unity_build_files TARGETNAME)
     endforeach()
     # don't forget the last set of files
     set(_FILENAME "${OGRE_BINARY_DIR}/${TARGETNAME}/compile_${TARGETNAME}_${_FILE_NUM}.cpp")
-    if (${_FILE_CNT} GREATER 0)
-        check_and_update_file(${_FILENAME} ${_FILE_CONTENTS})
-        list(APPEND _SOURCES ${_FILENAME})
-    endif()
-  endif ()
+    check_and_update_file(${_FILENAME} ${_FILE_CONTENTS})
+    list(APPEND _SOURCES ${_FILENAME})
+  endif()
 endmacro()
 
 

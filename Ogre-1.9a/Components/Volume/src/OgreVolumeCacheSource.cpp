@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -28,6 +28,15 @@ THE SOFTWARE.
 
 namespace Ogre {
 namespace Volume {
+    
+    //-----------------------------------------------------------------------
+
+    bool operator<(const Vector3& a, const Vector3& b)
+    {
+         return memcmp(&a, &b, sizeof(Vector3)) < 0;
+    }
+
+    //-----------------------------------------------------------------------
 
     CacheSource::CacheSource(const Source *src) : mSrc(src)
     {
@@ -37,34 +46,14 @@ namespace Volume {
 
     Vector4 CacheSource::getValueAndGradient(const Vector3 &position) const
     {
-        Vector4 result;
-        if (mCache.find(position) == mCache.end())
-        {
-            result = mSrc->getValueAndGradient(position);
-            mCache[position] = result;
-        }
-        else
-        {
-            result = mCache[position];
-        }
-        return result;
+        return getFromCache(position);
     }
     
     //-----------------------------------------------------------------------
 
     Real CacheSource::getValue(const Vector3 &position) const
     {
-        Vector4 result;
-        if (mCache.find(position) == mCache.end())
-        {
-            result = mSrc->getValueAndGradient(position);
-            mCache[position] = result;
-        }
-        else
-        {
-            result = mCache[position];
-        }
-        return result.w;
+        return getFromCache(position).w;
     }
 
 }

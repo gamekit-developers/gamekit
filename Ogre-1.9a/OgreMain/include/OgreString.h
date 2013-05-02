@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -80,7 +80,7 @@ namespace Ogre {
         /** Removes any whitespace characters, be it standard space or
             TABs and so on.
             @remarks
-                The user may specify wether they want to trim only the
+                The user may specify whether they want to trim only the
                 beginning or the end of the String ( the default action is
                 to trim both).
         */

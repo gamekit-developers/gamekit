@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ THE SOFTWARE.
 */
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0502 // Minimal version is Win XP SP2
 #endif
 #include "OgreWin32Window.h"
 #include "OgreRoot.h"
@@ -226,7 +226,7 @@ namespace Ogre {
 				windowAnchorPoint.y = top;
 
 
-				// Get the nearest monitor to this window.
+				// Get the default primary monitor to this window.
 				hMonitor = MonitorFromPoint(windowAnchorPoint, MONITOR_DEFAULTTOPRIMARY);
 			}
 
@@ -315,7 +315,7 @@ namespace Ogre {
 					mWidth = rc.right - rc.left;
 					mHeight = rc.bottom - rc.top;
 
-					// Clamp window rect to the nearest display monitor.
+					// Clamp window rect to the default primary display monitor.
 					if (mLeft < monitorInfoEx.rcWork.left)
 						mLeft = monitorInfoEx.rcWork.left;		
 
@@ -621,6 +621,7 @@ namespace Ogre {
 
 		// Unregister and destroy OGRE GLContext
 		delete mContext;
+        mContext = 0;
 
 		if (!mIsExternalGLContext && mGlrc)
 		{

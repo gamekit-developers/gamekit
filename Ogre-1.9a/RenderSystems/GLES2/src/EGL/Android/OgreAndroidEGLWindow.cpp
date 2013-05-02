@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,8 @@ namespace Ogre {
 	AndroidEGLWindow::AndroidEGLWindow(AndroidEGLSupport *glsupport)
 		: EGLWindow(glsupport),
 		  mMaxBufferSize(32),
-		  mMaxDepthSize(24),
-		  mMaxStencilSize(8)
+		  mMaxDepthSize(16),
+		  mMaxStencilSize(0)
 	{
 	}
 
@@ -90,7 +90,6 @@ namespace Ogre {
         {
             eglQuerySurface(mEglDisplay, mEglSurface, EGL_WIDTH, (EGLint*)&mWidth);
             eglQuerySurface(mEglDisplay, mEglSurface, EGL_HEIGHT, (EGLint*)&mHeight);
-            EGL_CHECK_ERROR
             
             // Notify viewports of resize
             ViewportList::iterator it = mViewportList.begin();
@@ -194,13 +193,17 @@ namespace Ogre {
         
         if (!mEglConfig)
         {
-
-            _createInternalResources(mWindow, config);
+			_createInternalResources(mWindow, config);
             mHwGamma = false;
         }
         
         mContext = createEGLContext();
-        
+        mContext->setCurrent();
+		       
+        eglQuerySurface(mEglDisplay, mEglSurface, EGL_WIDTH, (EGLint*)&mWidth);
+        eglQuerySurface(mEglDisplay, mEglSurface, EGL_HEIGHT, (EGLint*)&mHeight);
+        EGL_CHECK_ERROR
+
 		mActive = true;
 		mVisible = true;
 		mClosed = false;
@@ -260,10 +263,6 @@ namespace Ogre {
             bool isLandscape = (int)AConfiguration_getOrientation(config) == 2;
             mGLSupport->setConfigOption("Orientation", isLandscape ? "Landscape" : "Portrait");
         }
-        
-        eglQuerySurface(mEglDisplay, mEglSurface, EGL_WIDTH, (EGLint*)&mWidth);
-        eglQuerySurface(mEglDisplay, mEglSurface, EGL_HEIGHT, (EGLint*)&mHeight);
-        EGL_CHECK_ERROR
         
         if(mContext)
         {

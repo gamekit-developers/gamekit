@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -212,6 +212,11 @@ namespace Ogre {
         @param name The name of the program.
         */
 		virtual void addMicrocodeToCache( const String & name, const Microcode & microcode );
+
+		/** Removes a microcode for a program from the microcode cache.
+        @param name The name of the program.
+        */
+		virtual void removeMicrocodeFromCache( const String & name );
 
         /** Saves the microcode cache to disk.
         @param stream The destination stream

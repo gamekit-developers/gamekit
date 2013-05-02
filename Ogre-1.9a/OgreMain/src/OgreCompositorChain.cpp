@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -362,9 +362,6 @@ void CompositorChain::preTargetOperation(CompositorInstance::TargetOperation &op
 		mOurListener.notifyViewport(vp);
 		/// Register it
 		sm->addRenderQueueListener(&mOurListener);
-		/// Set visiblity mask
-		mOldVisibilityMask = sm->getVisibilityMask();
-		sm->setVisibilityMask(op.visibilityMask);
 		/// Set whether we find visibles
 		mOldFindVisibleObjects = sm->getFindVisibleObjects();
 		sm->setFindVisibleObjects(op.findVisibleObjects);
@@ -373,6 +370,9 @@ void CompositorChain::preTargetOperation(CompositorInstance::TargetOperation &op
 		cam->setLodBias(cam->getLodBias() * op.lodBias);
 	}
 
+    // Set the visibility mask
+    mOldVisibilityMask = vp->getVisibilityMask();
+    vp->setVisibilityMask(op.visibilityMask);
 	/// Set material scheme 
 	mOldMaterialScheme = vp->getMaterialScheme();
 	vp->setMaterialScheme(op.materialScheme);
@@ -393,11 +393,11 @@ void CompositorChain::postTargetOperation(CompositorInstance::TargetOperation &o
 		/// Unregister our listener
 		sm->removeRenderQueueListener(&mOurListener);
 		/// Restore default scene and camera settings
-		sm->setVisibilityMask(mOldVisibilityMask);
 		sm->setFindVisibleObjects(mOldFindVisibleObjects);
 		cam->setLodBias(mOldLodBias);
 	}
 
+    vp->setVisibilityMask(mOldVisibilityMask);
 	vp->setMaterialScheme(mOldMaterialScheme);
 	vp->setShadowsEnabled(mOldShadowsEnabled);
 }

@@ -37,7 +37,6 @@
 #include "OgreMath.h"
 #include "OgreQuaternion.h"
 #include "OgreColourValue.h"
-#include "OgreRectangle.h"
 #include "OgreAxisAlignedBox.h"
 
 #include <float.h>

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -73,6 +73,17 @@ namespace Ogre {
         static String toString(Real val, unsigned short precision = 6, 
             unsigned short width = 0, char fill = ' ', 
             std::ios::fmtflags flags = std::ios::fmtflags(0) );
+#if OGRE_DOUBLE_PRECISION == 1
+        /** Converts a float to a String. */
+        static String toString(float val, unsigned short precision = 6,
+                               unsigned short width = 0, char fill = ' ',
+                               std::ios::fmtflags flags = std::ios::fmtflags(0) );
+#else
+        /** Converts a double to a String. */
+        static String toString(double val, unsigned short precision = 6,
+                               unsigned short width = 0, char fill = ' ',
+                               std::ios::fmtflags flags = std::ios::fmtflags(0) );
+#endif
         /** Converts a Radian to a String. */
         static String toString(Radian val, unsigned short precision = 6, 
             unsigned short width = 0, char fill = ' ', 

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -135,6 +135,15 @@ namespace Ogre {
 		OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
 				"Uniform buffer not supported in Direct3D 9 RenderSystem.",
 				"D3D9HardwareBufferManagerBase::createUniformBuffer");
+	}
+    //-----------------------------------------------------------------------
+	HardwareCounterBufferSharedPtr
+    D3D9HardwareBufferManagerBase::createCounterBuffer(size_t sizeBytes,
+                                                          HardwareBuffer::Usage usage, bool useShadowBuffer, const String& name)
+	{
+        OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR,
+                    "D3D9 does not support atomic counter buffers",
+                    "D3D9HardwareBufferManagerBase::createCounterBuffer");
 	}
     //-----------------------------------------------------------------------
     VertexDeclaration* D3D9HardwareBufferManagerBase::createVertexDeclarationImpl(void)

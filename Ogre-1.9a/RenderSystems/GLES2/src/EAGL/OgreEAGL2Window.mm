@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,6 @@ namespace Ogre {
             mUsingExternalViewController(false),
             mIsContentScalingSupported(false),
             mContentScalingFactor(1.0),
-            mCurrentOSVersion(0.0),
             mGLSupport(glsupport),
             mContext(NULL),
             mWindow(nil),
@@ -56,8 +55,7 @@ namespace Ogre {
         mHwGamma = false;
 
         // Check for content scaling.  iOS 4 or later
-        mCurrentOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
-        if(mCurrentOSVersion >= 4.0)
+        if(mGLSupport->getCurrentOSVersion() >= 4.0)
             mIsContentScalingSupported = true;
     }
 
@@ -166,8 +164,7 @@ namespace Ogre {
         if(mContext->mIsMultiSampleSupported && mContext->mNumSamples > 0)
         {
             // Bind the FSAA buffer if we're doing multisampling
-            glBindFramebuffer(GL_FRAMEBUFFER, mContext->mFSAAFramebuffer);
-            GL_CHECK_ERROR
+            OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, mContext->mFSAAFramebuffer));
         }
     }
 
@@ -195,11 +192,6 @@ namespace Ogre {
                 w = StringConverter::parseUnsignedInt(val.substr(0, pos));
                 h = StringConverter::parseUnsignedInt(val.substr(pos + 1));
             }
-        }
-
-        if ((opt = mGLSupport->getConfigOptions().find("Content Scaling Factor")) != end)
-        {
-            mContentScalingFactor = StringConverter::parseReal(opt->second.currentValue);
         }
 
         // Set us up with an external window, or create our own.
@@ -271,7 +263,8 @@ namespace Ogre {
         
         OgreAssert(mContext != nil, "EAGL2Window: Failed to create OpenGL ES context");
 
-        [mWindow addSubview:mViewController.view];
+        if(!mUsingExternalViewController)
+            [mWindow addSubview:mViewController.view];
         
         mViewController.mGLSupport = mGLSupport;
         
@@ -281,7 +274,8 @@ namespace Ogre {
         if(!mUsingExternalView)
             [mView release];
     
-        [mWindow makeKeyAndVisible];
+        if(!mUsingExternalViewController)
+            [mWindow makeKeyAndVisible];
 
         mContext->createFramebuffer();
         
@@ -313,6 +307,14 @@ namespace Ogre {
         mWidth = width;
         mHeight = height;
 
+        // Check the configuration. This may be overridden later by the value sent via miscParams
+        ConfigOptionMap::const_iterator configOpt;
+        ConfigOptionMap::const_iterator configEnd = mGLSupport->getConfigOptions().end();
+        if ((configOpt = mGLSupport->getConfigOptions().find("Content Scaling Factor")) != configEnd)
+        {
+            mContentScalingFactor = StringConverter::parseReal(configOpt->second.currentValue);
+        }
+
         if (miscParams)
         {
             NameValuePairList::const_iterator opt;
@@ -328,7 +330,7 @@ namespace Ogre {
             {
                 frequency = (short)StringConverter::parseInt(opt->second);
             }
-            
+
             if ((opt = miscParams->find("contentScalingFactor")) != end)
             {
                 mContentScalingFactor = StringConverter::parseReal(opt->second);
@@ -423,32 +425,24 @@ namespace Ogre {
         
         if(mContext->mIsMultiSampleSupported && mContext->mNumSamples > 0)
         {
-            glDisable(GL_SCISSOR_TEST);     
-            glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, mContext->mFSAAFramebuffer);
-            GL_CHECK_ERROR
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, mContext->mViewFramebuffer);
-            GL_CHECK_ERROR
-            glResolveMultisampleFramebufferAPPLE();
-            GL_CHECK_ERROR
-            glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, attachmentCount, attachments);
-            GL_CHECK_ERROR
-            
-            glBindFramebuffer(GL_FRAMEBUFFER, mContext->mViewFramebuffer);
-            GL_CHECK_ERROR
+            OGRE_CHECK_GL_ERROR(glDisable(GL_SCISSOR_TEST));
+            OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, mContext->mFSAAFramebuffer));
+            OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, mContext->mViewFramebuffer));
+            OGRE_CHECK_GL_ERROR(glResolveMultisampleFramebufferAPPLE());
+            OGRE_CHECK_GL_ERROR(glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, attachmentCount, attachments));
+
+            OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, mContext->mViewFramebuffer));
         }
         else
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, mContext->mViewFramebuffer);
-            GL_CHECK_ERROR
-            glDiscardFramebufferEXT(GL_FRAMEBUFFER, attachmentCount, attachments);
-            GL_CHECK_ERROR
+            OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, mContext->mViewFramebuffer));
+            OGRE_CHECK_GL_ERROR(glDiscardFramebufferEXT(GL_FRAMEBUFFER, attachmentCount, attachments));
         }
         
-        glBindRenderbuffer(GL_RENDERBUFFER, mContext->mViewRenderbuffer);
-        GL_CHECK_ERROR
+        OGRE_CHECK_GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, mContext->mViewRenderbuffer));
         if ([mContext->getContext() presentRenderbuffer:GL_RENDERBUFFER] == NO)
         {
-            GL_CHECK_ERROR
+            glGetError();
             OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR,
                         "Failed to swap buffers in ",
                         __FUNCTION__);
@@ -508,29 +502,31 @@ namespace Ogre {
 		RenderSystem* rsys = Root::getSingleton().getRenderSystem();
 		rsys->_setViewport(this->getViewport(0));
 
+        OGRE_CHECK_GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, mContext->mViewRenderbuffer));
+
         // The following code is adapted from Apple Technical Q & A QA1704
         // http://developer.apple.com/library/ios/#qa/qa1704/_index.html
         NSInteger width = dst.getWidth(), height = dst.getHeight();
-        NSInteger dataLength = width * height * 4;
+        NSInteger dataLength = width * height * PixelUtil::getComponentCount(dst.format);
         GLubyte *data = (GLubyte*)malloc(dataLength * sizeof(GLubyte));
+        GLenum format = GLES2PixelUtil::getGLOriginFormat(dst.format);
+        GLenum type = GLES2PixelUtil::getGLOriginDataType(dst.format);
 
         // Read pixel data from the framebuffer
-        glPixelStorei(GL_PACK_ALIGNMENT, 4);
-        GL_CHECK_ERROR
-
-		glReadPixels((GLint)dst.left, (GLint)dst.top,
-                     (GLsizei)dst.getWidth(), (GLsizei)dst.getHeight(),
-                     GL_RGBA, GL_UNSIGNED_BYTE, data);
-        GL_CHECK_ERROR
+		OGRE_CHECK_GL_ERROR(glReadPixels((GLint)dst.left, (GLint)dst.top,
+                                         (GLsizei)width, (GLsizei)height,
+                                         format, type, data));
+        OGRE_CHECK_GL_ERROR(glPixelStorei(GL_PACK_ALIGNMENT, 4));
 
         // Create a CGImage with the pixel data
         // If your OpenGL ES content is opaque, use kCGImageAlphaNoneSkipLast to ignore the alpha channel
         // otherwise, use kCGImageAlphaPremultipliedLast
         CGDataProviderRef ref = CGDataProviderCreateWithData(NULL, data, dataLength, NULL);
         CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-        CGImageRef iref = CGImageCreate(width, height, 8, 32, width * 4, colorspace,
-                                        kCGBitmapByteOrder32Big | PixelUtil::hasAlpha(dst.format) ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNoneSkipLast,
-                                        ref, NULL, true, kCGRenderingIntentDefault);
+        CGImageRef iref = CGImageCreate(width, height, 8, PixelUtil::getNumElemBits(dst.format),
+                                        width * PixelUtil::getComponentCount(dst.format), colorspace,
+                                        kCGBitmapByteOrderDefault,
+                                        ref, NULL, YES, kCGRenderingIntentDefault);
 
         // OpenGL ES measures data in PIXELS
         // Create a graphics context with the target size measured in POINTS
@@ -544,11 +540,11 @@ namespace Ogre {
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(widthInPoints, heightInPoints), NO, scale);
 
         CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetBlendMode(context, kCGBlendModeCopy);
         CGContextDrawImage(context, CGRectMake(0.0, 0.0, widthInPoints, heightInPoints), iref);
 
         // Retrieve the UIImage from the current context
-        size_t rowSpan = dst.getWidth() * PixelUtil::getNumElemBytes(dst.format);
-        memcpy(dst.data, CGBitmapContextGetData(context), rowSpan * dst.getHeight());
+        memcpy(dst.data, CGBitmapContextGetData(context), CGBitmapContextGetBytesPerRow(context) * height);
         UIGraphicsEndImageContext();
 
         // Clean up

@@ -32,7 +32,7 @@ clear_if_changed(ZZip_PREFIX_PATH
   ZZip_INCLUDE_DIR
 )
 
-set(ZZip_LIBRARY_NAMES zzip zziplib)
+set(ZZip_LIBRARY_NAMES zziplib zzip)
 get_debug_names(ZZip_LIBRARY_NAMES)
 
 use_pkgconfig(ZZip_PKGC zziplib)
@@ -41,16 +41,8 @@ findpkg_framework(ZZip)
 
 find_path(ZZip_INCLUDE_DIR NAMES zzip/zzip.h HINTS ${ZZip_INC_SEARCH_PATH} ${ZZip_PKGC_INCLUDE_DIRS})
 
-if (SYMBIAN) 
-set(ORIGINAL_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
-set(CMAKE_PREFIX_PATH ${CMAKE_SYSYEM_OUT_DIR})
-message(STATUS "Lib will be searched in Symbian out dir: ${CMAKE_SYSYEM_OUT_DIR}")
-endif (SYMBIAN)
-find_library(ZZip_LIBRARY_REL NAMES ${ZZip_LIBRARY_NAMES} HINTS ${ZZip_LIB_SEARCH_PATH} ${ZZip_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" release relwithdebinfo minsizerel)
-find_library(ZZip_LIBRARY_DBG NAMES ${ZZip_LIBRARY_NAMES_DBG} HINTS ${ZZip_LIB_SEARCH_PATH} ${ZZip_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" debug)
-if (SYMBIAN) 
-set(CMAKE_PREFIX_PATH ${ORIGINAL_CMAKE_PREFIX_PATH})
-endif (SYMBIAN)
+find_library(ZZip_LIBRARY_REL NAMES ${ZZip_LIBRARY_NAMES} HINTS ${ZZip_LIB_SEARCH_PATH} ${ZZip_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" Release RelWithDebInfo MinSizeRel)
+find_library(ZZip_LIBRARY_DBG NAMES ${ZZip_LIBRARY_NAMES_DBG} HINTS ${ZZip_LIB_SEARCH_PATH} ${ZZip_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" Debug)
 
 make_library_set(ZZip_LIBRARY)
 

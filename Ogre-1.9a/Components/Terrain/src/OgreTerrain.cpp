@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,9 @@ THE SOFTWARE.
 #include "OgreHardwareBufferManager.h"
 #include "OgreDeflate.h"
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#include "macUtils.h"
+#endif
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
 // we do lots of conversions here, casting them all is tedious & cluttered, we know what we're doing
@@ -264,7 +267,13 @@ namespace Ogre
 		// force to load highest lod, or quadTree may contain hole
 		load(0,true);
 
-		DataStreamPtr stream = Root::getSingleton().createFileStream(filename, _getDerivedResourceGroup(), true);
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+		DataStreamPtr stream = Root::getSingleton().createFileStream(macBundlePath() + "/../Documents/" + filename,
+                                                                   _getDerivedResourceGroup(), true);
+#else
+		DataStreamPtr stream = Root::getSingleton().createFileStream(filename,
+                                                                   _getDerivedResourceGroup(), true);
+#endif
 		StreamSerialiser ser(stream);
 		save(ser);
 	}
@@ -588,8 +597,13 @@ namespace Ogre
 		freeLodData();
 		mLodManager = OGRE_NEW TerrainLodManager( this, filename );
 
-		DataStreamPtr stream = Root::getSingleton().openFileStream(filename, 
-			_getDerivedResourceGroup());
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+		DataStreamPtr stream = Root::getSingleton().openFileStream(macBundlePath() + "/../Documents/" + filename,
+                                                                   _getDerivedResourceGroup());
+#else
+		DataStreamPtr stream = Root::getSingleton().openFileStream(filename,
+                                                                   _getDerivedResourceGroup());
+#endif
 		
 		StreamSerialiser ser(stream);
 		return prepare(ser);
@@ -1965,30 +1979,30 @@ namespace Ogre
 				tmgr->remove((*i)->getHandle());
 			}
 			mBlendTextureList.clear();
-		}
 
-		if (!mTerrainNormalMap.isNull())
-		{
-			tmgr->remove(mTerrainNormalMap->getHandle());
-			mTerrainNormalMap.setNull();
-		}
+            if (!mTerrainNormalMap.isNull())
+            {
+                tmgr->remove(mTerrainNormalMap->getHandle());
+                mTerrainNormalMap.setNull();
+            }
 
-		if (!mColourMap.isNull())
-		{
-			tmgr->remove(mColourMap->getHandle());
-			mColourMap.setNull();
-		}
+            if (!mColourMap.isNull())
+            {
+                tmgr->remove(mColourMap->getHandle());
+                mColourMap.setNull();
+            }
 
-		if (!mLightmap.isNull())
-		{
-			tmgr->remove(mLightmap->getHandle());
-			mLightmap.setNull();
-		}
+            if (!mLightmap.isNull())
+            {
+                tmgr->remove(mLightmap->getHandle());
+                mLightmap.setNull();
+            }
 
-		if (!mCompositeMap.isNull())
-		{
-			tmgr->remove(mCompositeMap->getHandle());
-			mCompositeMap.setNull();
+            if (!mCompositeMap.isNull())
+            {
+                tmgr->remove(mCompositeMap->getHandle());
+                mCompositeMap.setNull();
+            }
 		}
 
 		if (!mMaterial.isNull())
@@ -2257,7 +2271,8 @@ namespace Ogre
 			Real A = 1.0f / Math::Tan(cam->getFOVy() * 0.5f);
 			// T = 2 * maxPixelError / vertRes
 			Real maxPixelError = TerrainGlobalOptions::getSingleton().getMaxPixelError() * cam->_getLodBiasInverse();
-			Real T = 2.0f * maxPixelError / (Real)vp->getActualHeight();
+            Viewport* lodVp = cam->getViewport();
+			Real T = 2.0f * maxPixelError / (Real)lodVp->getActualHeight();
 
 			// CFactor = A / T
 			Real cFactor = A / T;
@@ -2956,14 +2971,14 @@ namespace Ogre
 		}
 	}
 	//---------------------------------------------------------------------
-	const TexturePtr& Terrain::getLayerBlendTexture(uint8 index)
+	const TexturePtr& Terrain::getLayerBlendTexture(uint8 index) const
 	{
 		assert(index < mBlendTextureList.size());
 
 		return mBlendTextureList[index];
 	}
 	//---------------------------------------------------------------------
-	std::pair<uint8,uint8> Terrain::getLayerBlendTextureIndex(uint8 layerIndex)
+	std::pair<uint8,uint8> Terrain::getLayerBlendTextureIndex(uint8 layerIndex) const
 	{
 		assert(layerIndex > 0 && layerIndex < mLayers.size());
 		uint8 idx = layerIndex - 1;

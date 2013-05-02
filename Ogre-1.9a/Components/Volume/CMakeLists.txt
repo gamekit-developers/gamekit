@@ -17,8 +17,9 @@ PROJECT(OgreVolume)
 set (HEADER_FILES
 	include/OgreVolumeCacheSource.h
 	include/OgreVolumeCSGSource.h
-	include/OgreVolumeDualCell.h
 	include/OgreVolumeDualGridGenerator.h
+	include/OgreVolumeGridSource.h
+	include/OgreVolumeHalfFloatGridSource.h
 	include/OgreVolumeIsoSurface.h
 	include/OgreVolumeIsoSurfaceMC.h
 	include/OgreVolumeIsoSurfaceTablesMC.h
@@ -34,8 +35,9 @@ set (HEADER_FILES
 set(SOURCE_FILES
 	src/OgreVolumeCacheSource.cpp
 	src/OgreVolumeCSGSource.cpp
-	src/OgreVolumeDualCell.cpp
 	src/OgreVolumeDualGridGenerator.cpp
+	src/OgreVolumeGridSource.cpp
+	src/OgreVolumeHalfFloatGridSource.cpp
 	src/OgreVolumeIsoSurface.cpp
 	src/OgreVolumeIsoSurfaceMC.cpp
 	src/OgreVolumeMeshBuilder.cpp
@@ -57,28 +59,16 @@ include_directories(${OGRE_SOURCE_DIR}/OgreMain/include)
 
 # setup target
 ogre_add_library(OgreVolume ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
-set_target_properties(OgreVolume PROPERTIES VERSION ${OGRE_SOVERSION})
+set_target_properties(OgreVolume PROPERTIES VERSION ${OGRE_SOVERSION} SOVERSION ${OGRE_SOVERSION})
 target_link_libraries(OgreVolume OgreMain)
 if (OGRE_CONFIG_THREADS)
-  target_link_libraries(OgreVolume ${Boost_LIBRARIES})
+  target_link_libraries(OgreVolume ${OGRE_THREAD_LIBRARIES})
 endif ()
 
 
 # install 
+ogre_config_framework(OgreVolume)
 ogre_config_component(OgreVolume)
-
-if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
-    # Set the INSTALL_PATH so that Components can be installed in the application package
-    set_target_properties(OgreVolume
-       PROPERTIES BUILD_WITH_INSTALL_RPATH 1
-       INSTALL_NAME_DIR "@executable_path/../Components"
-    )
-
-	# Copy headers into the main Ogre framework
-	add_custom_command(TARGET OgreVolume POST_BUILD
-	  COMMAND ditto ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/
-	)
-endif()
 
 install(FILES ${HEADER_FILES}
   DESTINATION include/OGRE/Volume

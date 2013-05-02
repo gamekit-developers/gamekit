@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -41,131 +41,160 @@ namespace Volume {
 
     const String Chunk::MOVABLE_TYPE_NAME = "VolumeChunk";
     const uint16 Chunk::WORKQUEUE_LOAD_REQUEST = 1;
-    size_t Chunk::mGeneratedTriangles = 0;
     size_t Chunk::mChunksBeingProcessed = 0;
     
     //-----------------------------------------------------------------------
 
-    void Chunk::doLoad(SceneNode *parent, const Vector3 &from, const Vector3 &to, const Vector3 &totalFrom, const Vector3 &totalTo, const size_t level, const size_t maxLevels, const ChunkParameters *parameters)
+    void Chunk::loadChunk(SceneNode *parent, const Vector3 &from, const Vector3 &to, const Vector3 &totalFrom, const Vector3 &totalTo, const size_t level, const size_t maxLevels, const ChunkParameters *parameters)
     {
-        // Set to invisible for now.
-        mInvisible = true;
-        mVisible  = false;
-
-        // Don't generate this chunk if it doesn't contribute to the whole volume.
-        Real centralValue = parameters->src->getValue((to - from) / (Real)2.0 + from);
-        if (Math::Abs(centralValue) > (to - from).length() * (Real)1.5)
+        // This might already exist on update
+        if (!mNode)
         {
-            return;
+            mNode = parent->createChildSceneNode();
         }
+        if (parameters->createGeometryFromLevel == 0 || level <= parameters->createGeometryFromLevel)
+        {
+            mChunksBeingProcessed++;
+
+            // Call worker
+            ChunkRequest req;
+            req.totalFrom = totalFrom;
+            req.totalTo = totalTo;
+            req.parameters = parameters;
+            req.level = level;
+            req.maxLevels = maxLevels;
+            req.isUpdate = parameters->updateFrom != Vector3::ZERO || parameters->updateTo != Vector3::ZERO;
+
+            req.origin = this;
+            req.root = OGRE_NEW OctreeNode(from, to);
+            req.mb = OGRE_NEW MeshBuilder();
+            req.dualGridGenerator = OGRE_NEW DualGridGenerator();
+
+            WorkQueue* wq = Root::getSingleton().getWorkQueue();
+            uint16 workQueueChannel = wq->getChannel("Ogre/VolumeRendering");
+            wq->addRequest(workQueueChannel, WORKQUEUE_LOAD_REQUEST, Any(req));
+        }
+        else
+        {
+            mInvisible = false;
+        }
+    }
+
+    //-----------------------------------------------------------------------
+
+    bool Chunk::contributesToVolumeMesh(const Vector3 &from, const Vector3 &to, const Source *src) const
+    {
+        Real centralValue = src->getValue((to - from) / (Real)2.0 + from);
+        return Math::Abs(centralValue) <= (to - from).length() * (Real)1.5;
+    }
+
+    //-----------------------------------------------------------------------
     
-        mChunksBeingProcessed++;
-        mNode = parent->createChildSceneNode();
-        mScale = parameters->scale;
-        mMaxScreenSpaceError = parameters->maxScreenSpaceError;
-
-        // Call worker
-        ChunkRequest req;
-        req.totalFrom = totalFrom;
-        req.totalTo = totalTo;
-        req.parameters = parameters;
-        req.level = level;
-        req.maxLevels = maxLevels;
-
-        req.origin = this;
-        req.root = OGRE_NEW OctreeNode(from, to);
-        req.mb = OGRE_NEW MeshBuilder();
-        req.dualGridGenerator = OGRE_NEW DualGridGenerator();
-
-        WorkQueue* wq = Root::getSingleton().getWorkQueue();
-        uint16 workQueueChannel = wq->getChannel("Ogre/VolumeRendering");
-        wq->addRequest(workQueueChannel, WORKQUEUE_LOAD_REQUEST, Any(req));
-    
+    void Chunk::loadChildren(SceneNode *parent, const Vector3 &from, const Vector3 &to, const Vector3 &totalFrom, const Vector3 &totalTo, const size_t level, const size_t maxLevels, const ChunkParameters *parameters)
+    {
         // Now recursively create the more detailed children
         if (level > 2)
         {
             Vector3 newCenter, xWidth, yWidth, zWidth;
             OctreeNode::getChildrenDimensions(from, to, newCenter, xWidth, yWidth, zWidth);
-            mChildren = new Chunk*[OctreeNode::OCTREE_CHILDREN_COUNT];
-            mChildren[0] = createInstance();
+            if (!mChildren)
+            {
+                mChildren = new Chunk*[OctreeNode::OCTREE_CHILDREN_COUNT];
+                mChildren[0] = createInstance();
+                mChildren[1] = createInstance();
+                mChildren[2] = createInstance();
+                mChildren[3] = createInstance();
+                mChildren[4] = createInstance();
+                mChildren[5] = createInstance();
+                mChildren[6] = createInstance();
+                mChildren[7] = createInstance();
+                mChildren[0]->shared = shared;
+                mChildren[1]->shared = shared;
+                mChildren[2]->shared = shared;
+                mChildren[3]->shared = shared;
+                mChildren[4]->shared = shared;
+                mChildren[5]->shared = shared;
+                mChildren[6]->shared = shared;
+                mChildren[7]->shared = shared;
+            }
             mChildren[0]->doLoad(mNode, from, newCenter, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[1] = createInstance();
             mChildren[1]->doLoad(mNode, from + xWidth, newCenter + xWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[2] = createInstance();
             mChildren[2]->doLoad(mNode, from + xWidth + zWidth, newCenter + xWidth + zWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[3] = createInstance();
             mChildren[3]->doLoad(mNode, from + zWidth, newCenter + zWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[4] = createInstance();
             mChildren[4]->doLoad(mNode, from + yWidth, newCenter + yWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[5] = createInstance();
             mChildren[5]->doLoad(mNode, from + yWidth + xWidth, newCenter + yWidth + xWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[6] = createInstance();
             mChildren[6]->doLoad(mNode, from + yWidth + xWidth + zWidth, newCenter + yWidth + xWidth + zWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[7] = createInstance();
             mChildren[7]->doLoad(mNode, from + yWidth + zWidth, newCenter + yWidth + zWidth, totalFrom, totalTo, level - 1, maxLevels, parameters);
         }
         // Just load one child of the same size as the parent for the leafes because they actually don't need to be subdivided as they
         // are all rendered anyway.
         else if (level > 1)
         {
-            mChildren = new Chunk*[2];
-            mChildren[0] = createInstance();
+            if (!mChildren)
+            {
+                mChildren = new Chunk*[2];
+                mChildren[0] = createInstance();
+                mChildren[0]->shared = shared;
+                mChildren[1] = 0; // Indicator that there are no more children.
+            }
             mChildren[0]->doLoad(mNode, from, to, totalFrom, totalTo, level - 1, maxLevels, parameters);
-            mChildren[1] = 0; // Indicator that there are no more children.
         }
+    }
+
+    //-----------------------------------------------------------------------
+    
+    void Chunk::doLoad(SceneNode *parent, const Vector3 &from, const Vector3 &to, const Vector3 &totalFrom, const Vector3 &totalTo, const size_t level, const size_t maxLevels, const ChunkParameters *parameters)
+    {
+
+        // Handle the situation where we update an existing tree
+        if (parameters->updateFrom != Vector3::ZERO || parameters->updateTo != Vector3::ZERO)
+        {
+            // Early out if an update of a part of the tree volume is going on and this chunk is outside of the area.
+            AxisAlignedBox chunkCube(from, to);
+            AxisAlignedBox updatedCube(parameters->updateFrom, parameters->updateTo);
+            if (!chunkCube.intersects(updatedCube))
+            {
+                return;
+            }
+            // Free memory from old mesh version
+            if (mRenderOp.vertexData)
+            {
+                OGRE_DELETE mRenderOp.vertexData;
+                mRenderOp.vertexData = 0;
+            }
+            if (mRenderOp.indexData)
+            {
+                OGRE_DELETE mRenderOp.indexData;
+                mRenderOp.indexData = 0;
+            }
+        }
+
+        // Set to invisible for now.
+        mInvisible = true;
+        mVisible  = false;
+        
+        // Don't generate this chunk if it doesn't contribute to the whole volume.
+        if (!contributesToVolumeMesh(from, to, parameters->src))
+        {
+            return;
+        }
+    
+        loadChunk(parent, from, to, totalFrom, totalTo, level, maxLevels, parameters);
+        
+        loadChildren(parent, from, to, totalFrom, totalTo, level, maxLevels, parameters);
     }
     
     //-----------------------------------------------------------------------
 
     void Chunk::prepareGeometry(const ChunkRequest *chunkRequest)
     {
-        OctreeNodeSplitPolicy policy(chunkRequest->parameters->src, chunkRequest->parameters->errorMultiplicator * chunkRequest->parameters->baseError);
+        OctreeNodeSplitPolicy policy(chunkRequest->parameters->src, chunkRequest->parameters->errorMultiplicator * chunkRequest->parameters->baseError, chunkRequest->parameters->octreeNodeDistanceCheckDiagonalFactor);
         mError = (Real)chunkRequest->level * chunkRequest->parameters->errorMultiplicator * chunkRequest->parameters->baseError;
         chunkRequest->root->split(&policy, chunkRequest->parameters->src, mError);
-
-        chunkRequest->dualGridGenerator->generateDualGrid(chunkRequest->root);
-
-        IsoSurface *is = OGRE_NEW IsoSurfaceMC(chunkRequest->parameters->src);
-        size_t count = chunkRequest->dualGridGenerator->getDualCellCount();
-        const Vector3 *corners;
-        const Vector4 *values;
         Real maxMSDistance = (Real)chunkRequest->level * chunkRequest->parameters->errorMultiplicator * chunkRequest->parameters->baseError * chunkRequest->parameters->skirtFactor;
-    
-        Vector3 from = chunkRequest->root->getFrom();
-        Vector3 to = chunkRequest->root->getTo();
-
-        for (size_t i = 0; i < count; ++i)
-        {
-            DualCell cell = chunkRequest->dualGridGenerator->getDualCell(i);
-            corners = cell.getCorners();
-            values = cell.hasValues() ? cell.getValues() : 0;
-            is->addMarchingCubesTriangles(corners, values, chunkRequest->mb);
-
-            if (corners[0].z == from.z && corners[0].z != chunkRequest->totalFrom.z)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BACK, maxMSDistance, chunkRequest->mb);
-            }
-            if (corners[2].z == to.z && corners[2].z != chunkRequest->totalTo.z)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_FRONT, maxMSDistance, chunkRequest->mb);
-            }
-            if (corners[0].x == from.x && corners[0].x != chunkRequest->totalFrom.x)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_LEFT, maxMSDistance, chunkRequest->mb);
-            }
-            if (corners[1].x == to.x && corners[1].x != chunkRequest->totalTo.x)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_RIGHT, maxMSDistance, chunkRequest->mb);
-            }
-            if (corners[5].y == to.y && corners[5].y != chunkRequest->totalTo.y)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_TOP, maxMSDistance, chunkRequest->mb);
-            }
-            if (corners[0].y == from.y && corners[0].y != chunkRequest->totalFrom.y)
-            {
-                is->addMarchingSquaresTriangles(corners, values, IsoSurface::MS_CORNERS_BOTTOM, maxMSDistance, chunkRequest->mb);
-            }
-        }
+        IsoSurface *is = OGRE_NEW IsoSurfaceMC(chunkRequest->parameters->src);
+        chunkRequest->dualGridGenerator->generateDualGrid(chunkRequest->root, is, chunkRequest->mb, maxMSDistance,
+            chunkRequest->totalFrom, chunkRequest->totalTo, chunkRequest->parameters->createDualGridVisualization);
         OGRE_DELETE is;
     }
     
@@ -174,7 +203,6 @@ namespace Volume {
     void Chunk::loadGeometry(const ChunkRequest *chunkRequest)
     {
         size_t chunkTriangles = chunkRequest->mb->generateBuffers(mRenderOp);
-        chunkRequest->origin->mGeneratedTriangles += chunkTriangles;
         chunkRequest->origin->mInvisible = chunkTriangles == 0;
 
         if (!mInvisible && chunkRequest->parameters->lodCallback && chunkRequest->parameters->lodCallbackLod  == chunkRequest->maxLevels - chunkRequest->level + 1)
@@ -186,9 +214,14 @@ namespace Volume {
 
         if (!mInvisible)
         {
+            if (chunkRequest->isUpdate)
+            {
+                mNode->detachObject(this);
+            }
             mNode->attachObject(this);
         }
-        mVisible = false ;
+
+        mVisible = false;
 
         if (chunkRequest->parameters->createDualGridVisualization)
         {
@@ -210,8 +243,7 @@ namespace Volume {
     
     //-----------------------------------------------------------------------
 
-    Chunk::Chunk(void) : mDualGrid(0), mOctree(0), mChildren(0), mOctreeVisible(false),
-        mDualGridVisible(false), mInvisible(false), mVolumeVisible(true)
+    Chunk::Chunk(void) : mDualGrid(0), mOctree(0), mChildren(0), mNode(0), isRoot(false)
     {
     }
     
@@ -237,6 +269,10 @@ namespace Volume {
             }
         }
         delete[] mChildren;
+        if (isRoot)
+        {
+            delete shared;
+        }
     }
     
     //-----------------------------------------------------------------------
@@ -250,14 +286,14 @@ namespace Volume {
 
     Real Chunk::getSquaredViewDepth(const Camera* camera) const
     {
-        return (mBox.getCenter() * mScale).squaredDistance(camera->getPosition());
+        return (mBox.getCenter() * shared->scale).squaredDistance(camera->getPosition());
     }
     
     //-----------------------------------------------------------------------
 
     Real Chunk::getBoundingRadius() const
     {
-        return mBox.getMinimum().distance(mBox.getCenter()) * mScale;
+        return mBox.getMinimum().distance(mBox.getCenter()) * shared->scale;
     }
     
     //-----------------------------------------------------------------------
@@ -271,10 +307,18 @@ namespace Volume {
                 "Invalid parameters given!",
                 __FUNCTION__);
         }
-        mGeneratedTriangles = 0;
-        Timer t;
+        mChunksBeingProcessed = 0;
 
-        parent->scale(Vector3(parameters->scale));
+        isRoot = true;
+
+        // Don't recreate the shared parameters on update.
+        if (parameters->updateFrom == Vector3::ZERO && parameters->updateTo == Vector3::ZERO)
+        {
+            shared = new ChunkTreeSharedData();
+            shared->maxScreenSpaceError = parameters->maxScreenSpaceError;
+            shared->scale = parameters->scale;
+            parent->scale(Vector3(parameters->scale));
+        }
 
         WorkQueue* wq = Root::getSingleton().getWorkQueue();
         uint16 workQueueChannel = wq->getChannel("Ogre/VolumeRendering");
@@ -286,20 +330,23 @@ namespace Volume {
         // Wait for the threads.
         while(mChunksBeingProcessed)
         {
-            OGRE_THREAD_SLEEP(0)
+            OGRE_THREAD_SLEEP(0);
             wq->processResponses();
         }
     
         wq->removeRequestHandler(workQueueChannel, this);
         wq->removeResponseHandler(workQueueChannel, this);
     
-        LogManager::getSingleton().stream() << "Loaded chunks in " << t.getMilliseconds() << "ms, generated " << mGeneratedTriangles << " triangles";
-        Root::getSingleton().addFrameListener(this);
+        // Just add the frame listener on initial load
+        if (parameters->updateFrom == Vector3::ZERO && parameters->updateTo == Vector3::ZERO)
+        {
+            Root::getSingleton().addFrameListener(this);
+        }
     }
     
     //-----------------------------------------------------------------------
 
-    void Chunk::load(SceneNode *parent, SceneManager *sceneManager, const String& filename, MeshBuilderCallback *lodCallback, size_t lodCallbackLod, const String& resourceGroup)
+    ChunkParameters Chunk::load(SceneNode *parent, SceneManager *sceneManager, const String& filename, Source **sourceResult, MeshBuilderCallback *lodCallback, size_t lodCallbackLod, const String& resourceGroup)
     {
         ConfigFile config;
         config.loadFromResourceSystem(filename, resourceGroup);
@@ -310,21 +357,22 @@ namespace Volume {
         bool trilinearGradient = StringConverter::parseBool(config.getSetting("trilinearGradient"));
         bool sobelGradient = StringConverter::parseBool(config.getSetting("sobelGradient"));
 
-        TextureSource textureSource(source, dimensions.x, dimensions.y, dimensions.z, trilinearValue, trilinearGradient, sobelGradient);
+        TextureSource *textureSource = new TextureSource(source, dimensions.x, dimensions.y, dimensions.z, trilinearValue, trilinearGradient, sobelGradient);
     
         Vector3 from = StringConverter::parseVector3(config.getSetting("scanFrom"));
         Vector3 to = StringConverter::parseVector3(config.getSetting("scanTo"));
         size_t level = StringConverter::parseUnsignedInt(config.getSetting("level"));
         Real scale = StringConverter::parseReal(config.getSetting("scale"));
-        Real maxPixelError = StringConverter::parseReal(config.getSetting("maxScreenSpaceError"));
+        Real maxScreenSpaceError = StringConverter::parseReal(config.getSetting("maxScreenSpaceError"));
     
         ChunkParameters parameters;
         parameters.sceneManager = sceneManager;
         parameters.lodCallback = lodCallback;
         parameters.lodCallbackLod = lodCallbackLod;
-        parameters.src = &textureSource;
+        parameters.src = textureSource;
         parameters.scale = scale;
-        parameters.maxScreenSpaceError = maxPixelError;
+        parameters.maxScreenSpaceError = maxScreenSpaceError;
+        parameters.createGeometryFromLevel = StringConverter::parseInt(config.getSetting("createGeometryFromLevel"));
         parameters.baseError = StringConverter::parseReal(config.getSetting("baseError"));
         parameters.errorMultiplicator = StringConverter::parseReal(config.getSetting("errorMultiplicator"));
         parameters.createOctreeVisualization = StringConverter::parseBool(config.getSetting("createOctreeVisualization"));
@@ -332,6 +380,15 @@ namespace Volume {
         parameters.skirtFactor = StringConverter::parseReal(config.getSetting("skirtFactor"));
     
         load(parent, from, to, level, &parameters);
+        
+        if (sourceResult)
+        {
+            *sourceResult = textureSource;
+        }
+        else
+        {
+            delete textureSource;
+        }
 
         String material = config.getSetting("material");
         setMaterial(material);
@@ -346,13 +403,15 @@ namespace Volume {
                 setMaterialOfLevel(i, materialOfLevel);
             }
         }
+        parameters.src = 0;
+        return parameters;
     }
     
     //-----------------------------------------------------------------------
 
     void Chunk::setDualGridVisible(const bool visible)
     {
-        mDualGridVisible = visible;
+        shared->dualGridVisible = visible;
         if (mChildren)
         {
             mChildren[0]->setDualGridVisible(visible);
@@ -373,14 +432,14 @@ namespace Volume {
 
     bool Chunk::getDualGridVisible(void) const
     {
-        return mDualGridVisible;
+        return shared->dualGridVisible;
     }
     
     //-----------------------------------------------------------------------
 
     void Chunk::setOctreeVisible(const bool visible)
     {
-        mOctreeVisible = visible;
+        shared->octreeVisible = visible;
         if (mChildren)
         {
             mChildren[0]->setOctreeVisible(visible);
@@ -401,14 +460,14 @@ namespace Volume {
 
     bool Chunk::getOctreeVisible(void) const
     {
-        return mOctreeVisible;
+        return shared->octreeVisible;
     }
     
     //-----------------------------------------------------------------------
 
     bool Chunk::getVolumeVisible(void) const
     {
-        return mVolumeVisible;
+        return shared->volumeVisible;
     }
     
     //-----------------------------------------------------------------------
@@ -418,6 +477,23 @@ namespace Volume {
     
         if (mInvisible)
         {
+            return true;
+        }
+
+        // This might be a chunk on a lower LOD level without geometry, so lets just proceed here.
+        if (!mRenderOp.vertexData && mChildren)
+        {
+            mChildren[0]->frameStarted(evt);
+            if (mChildren[1])
+            {
+                mChildren[1]->frameStarted(evt);
+                mChildren[2]->frameStarted(evt);
+                mChildren[3]->frameStarted(evt);
+                mChildren[4]->frameStarted(evt);
+                mChildren[5]->frameStarted(evt);
+                mChildren[6]->frameStarted(evt);
+                mChildren[7]->frameStarted(evt);
+            }
             return true;
         }
 
@@ -432,7 +508,7 @@ namespace Volume {
         
         // Get the distance to the center.
         Vector3 camPos = mCamera->getRealPosition();
-        Real d = (mBox.getCenter() * mScale).distance(camPos);
+        Real d = (mBox.getCenter() * shared->scale).distance(camPos);
         if (d < 1.0)
         {
             d = 1.0;
@@ -440,7 +516,7 @@ namespace Volume {
 
         Real screenSpaceError = mError / d * k;
 
-        if (screenSpaceError <= mMaxScreenSpaceError / mScale)
+        if (screenSpaceError <= shared->maxScreenSpaceError / shared->scale)
         {
             setChunkVisible(true, false);
             if (mChildren)
@@ -596,14 +672,14 @@ namespace Volume {
 
     Real Chunk::getScale(void) const
     {
-        return mScale;
+        return shared->scale;
     }
     
     //-----------------------------------------------------------------------
 
     void Chunk::setVolumeVisible(bool visible)
     {
-        mVolumeVisible = visible;
+        shared->volumeVisible = visible;
         mVisible = visible;
         if (mChildren)
         {

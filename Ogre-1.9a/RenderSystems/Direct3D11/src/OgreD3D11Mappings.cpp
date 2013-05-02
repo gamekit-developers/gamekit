@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -186,30 +186,20 @@ namespace Ogre
 	return 0;
 	}*/
 	//---------------------------------------------------------------------
-	D3D11_BLEND D3D11Mappings::get(SceneBlendFactor sbf)
+	D3D11_BLEND D3D11Mappings::get(SceneBlendFactor sbf, bool forAlpha)
 	{
 		switch( sbf )
 		{
-		case SBF_ONE:
-			return D3D11_BLEND_ONE;
-		case SBF_ZERO:
-			return D3D11_BLEND_ZERO;
-		case SBF_DEST_COLOUR:
-			return D3D11_BLEND_DEST_COLOR;
-		case SBF_SOURCE_COLOUR:
-			return D3D11_BLEND_SRC_COLOR;
-		case SBF_ONE_MINUS_DEST_COLOUR:
-			return D3D11_BLEND_INV_DEST_COLOR;
-		case SBF_ONE_MINUS_SOURCE_COLOUR:
-			return D3D11_BLEND_INV_SRC_COLOR;
-		case SBF_DEST_ALPHA:
-			return D3D11_BLEND_DEST_ALPHA;
-		case SBF_SOURCE_ALPHA:
-			return D3D11_BLEND_SRC_ALPHA;
-		case SBF_ONE_MINUS_DEST_ALPHA:
-			return D3D11_BLEND_INV_DEST_ALPHA;
-		case SBF_ONE_MINUS_SOURCE_ALPHA:
-			return D3D11_BLEND_INV_SRC_ALPHA;
+		case SBF_ONE:						return D3D11_BLEND_ONE;
+		case SBF_ZERO:						return D3D11_BLEND_ZERO;
+		case SBF_DEST_COLOUR:				return forAlpha ? D3D11_BLEND_DEST_ALPHA : D3D11_BLEND_DEST_COLOR;
+		case SBF_SOURCE_COLOUR:				return forAlpha ? D3D11_BLEND_SRC_ALPHA : D3D11_BLEND_SRC_COLOR;
+		case SBF_ONE_MINUS_DEST_COLOUR: 	return forAlpha ? D3D11_BLEND_INV_DEST_ALPHA : D3D11_BLEND_INV_DEST_COLOR;
+		case SBF_ONE_MINUS_SOURCE_COLOUR:   return forAlpha ? D3D11_BLEND_INV_SRC_ALPHA : D3D11_BLEND_INV_SRC_COLOR;
+		case SBF_DEST_ALPHA:                return D3D11_BLEND_DEST_ALPHA;
+		case SBF_SOURCE_ALPHA:              return D3D11_BLEND_SRC_ALPHA;
+		case SBF_ONE_MINUS_DEST_ALPHA:      return D3D11_BLEND_INV_DEST_ALPHA;
+		case SBF_ONE_MINUS_SOURCE_ALPHA:    return D3D11_BLEND_INV_SRC_ALPHA;
 		}
 		return D3D11_BLEND_ZERO;
 	}
@@ -428,14 +418,7 @@ namespace Ogre
 		DWORD ret = 0;
 		if (usage & HardwareBuffer::HBU_DYNAMIC)
 		{
-#if OGRE_D3D_MANAGE_BUFFERS
-			// Only add the dynamic flag for default pool, and
-			// we use default pool when buffer is discardable
-			if (usage & HardwareBuffer::HBU_DISCARDABLE)
-				ret |= D3D11_USAGE_DYNAMIC;
-#else
 			ret |= D3D11_USAGE_DYNAMIC;
-#endif
 		}
 		if (usage & HardwareBuffer::HBU_WRITE_ONLY)
 		{
@@ -449,16 +432,9 @@ namespace Ogre
 		D3D11_MAP ret = D3D11_MAP_READ_WRITE;
 		if (options == HardwareBuffer::HBL_DISCARD)
 		{
-#if OGRE_D3D_MANAGE_BUFFERS
-			// Only add the discard flag for dynamic usgae and default pool
-			if ((usage & HardwareBuffer::HBU_DYNAMIC) &&
-				(usage & HardwareBuffer::HBU_DISCARDABLE))
-				ret = D3D11_MAP_WRITE_DISCARD;
-#else
 			// D3D doesn't like discard or no_overwrite on non-dynamic buffers
 			if (usage & HardwareBuffer::HBU_DYNAMIC)
 				ret = D3D11_MAP_WRITE_DISCARD;
-#endif
 		}
 		if (options == HardwareBuffer::HBL_READ_ONLY)
 		{
@@ -471,16 +447,9 @@ namespace Ogre
 		}
 		if (options == HardwareBuffer::HBL_NO_OVERWRITE)
 		{
-#if OGRE_D3D_MANAGE_BUFFERS
-			// Only add the nooverwrite flag for dynamic usgae and default pool
-			if ((usage & HardwareBuffer::HBU_DYNAMIC) &&
-				(usage & HardwareBuffer::HBU_DISCARDABLE))
-				ret = D3D11_MAP_WRITE_NO_OVERWRITE;
-#else
 			// D3D doesn't like discard or no_overwrite on non-dynamic buffers
 			if (usage & HardwareBuffer::HBU_DYNAMIC)
 				ret = D3D11_MAP_WRITE_NO_OVERWRITE;
-#endif 
 		}
 
 		return ret;
@@ -711,7 +680,7 @@ namespace Ogre
 		case DXGI_FORMAT_B8G8R8A8_UNORM:			return PF_A8R8G8B8;
 		case DXGI_FORMAT_B8G8R8X8_UNORM:			return PF_X8R8G8B8;
 
-#if defined(_WIN32_WINNT_WIN8) && (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+#if defined(_WIN32_WINNT_WIN8) && (_WIN32_WINNT >= _WIN32_WINNT_WIN8) && defined(DXGI_FORMAT_AYUV)
 		case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:return PF_UNKNOWN;
 		case DXGI_FORMAT_B8G8R8A8_TYPELESS:         return PF_UNKNOWN;
 		case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:       return PF_A8R8G8B8;
@@ -751,7 +720,7 @@ namespace Ogre
 		{
 		case PF_L8:				return DXGI_FORMAT_R8_UNORM;
 		case PF_L16:			return DXGI_FORMAT_R16_UNORM;
-		case PF_A8:				return DXGI_FORMAT_UNKNOWN;
+		case PF_A8:				return DXGI_FORMAT_A8_UNORM;
 		case PF_A4L4:			return DXGI_FORMAT_UNKNOWN;
 		case PF_BYTE_LA:		return DXGI_FORMAT_UNKNOWN; 
 		case PF_R3G3B2:			return DXGI_FORMAT_UNKNOWN;
@@ -759,7 +728,7 @@ namespace Ogre
 		case PF_R5G6B5:			return DXGI_FORMAT_UNKNOWN;
 		case PF_A4R4G4B4:		return DXGI_FORMAT_UNKNOWN;
 		case PF_R8G8B8:			return DXGI_FORMAT_UNKNOWN;
-		case PF_A8R8G8B8:		return DXGI_FORMAT_UNKNOWN;
+		case PF_A8R8G8B8:		return DXGI_FORMAT_B8G8R8A8_UNORM;
 		case PF_A8B8G8R8:		return DXGI_FORMAT_R8G8B8A8_UNORM;
 		case PF_X8R8G8B8:		return DXGI_FORMAT_UNKNOWN;
 		case PF_X8B8G8R8:		return DXGI_FORMAT_UNKNOWN;

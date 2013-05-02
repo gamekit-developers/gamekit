@@ -5,7 +5,7 @@ This source file is part of OGRE
 For the latest info, see http://www.ogre3d.org
 
 Copyright (c) 2008 Renato Araujo Oliveira Filho <renatox@gmail.com>
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -378,7 +378,7 @@ namespace Ogre {
              RenderSystem
              */
             void setStencilBufferParams(CompareFunction func = CMPF_ALWAYS_PASS, 
-                    uint32 refValue = 0, uint32 mask = 0xFFFFFFFF,
+                    uint32 refValue = 0, uint32 compareMask = 0xFFFFFFFF, uint32 writeMask = 0xFFFFFFFF, 
                     StencilOperation stencilFailOp = SOP_KEEP,
                     StencilOperation depthFailOp = SOP_KEEP,
                     StencilOperation passOp = SOP_KEEP,

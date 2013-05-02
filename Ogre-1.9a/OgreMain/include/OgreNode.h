@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -450,7 +450,7 @@ namespace Ogre {
             This method translates the node by a vector which is relative to
             a custom set of axes.
         @param axes
-            A 3x3 Matrix containg 3 column vectors each representing the
+            A 3x3 Matrix containing 3 column vectors each representing the
             axes X, Y and Z respectively. In this format the standard cartesian
             axes would be expressed as:
             <pre>
@@ -470,7 +470,7 @@ namespace Ogre {
             This method translates the node by a vector which is relative to
             a custom set of axes.
         @param axes
-            A 3x3 Matrix containg 3 column vectors each representing the
+            A 3x3 Matrix containing 3 column vectors each representing the
             axes X, Y and Z respectively. In this format the standard cartesian
             axes would be expressed as
             <pre>

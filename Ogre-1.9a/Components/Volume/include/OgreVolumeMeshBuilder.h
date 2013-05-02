@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2012 Torus Knot Software Ltd
+Copyright (c) 2000-2013 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ THE SOFTWARE.
 namespace Ogre {
 namespace Volume {
 
-    /** Leightweight struct to represent a mesh vertex.
+    /** Lightweight struct to represent a mesh vertex.
     */
     typedef struct _OgreVolumeExport Vertex
     {
@@ -61,7 +61,7 @@ namespace Volume {
         /// Z component of the normal
         Real nZ;
 
-        /** Convinience constructor.
+        /** Convenience constructor.
         @param v
             The vertex position.
         @param n
@@ -72,9 +72,12 @@ namespace Volume {
             nX(n.x), nY(n.y), nZ(n.z)
         {
         }
+        Vertex()
+        {
+        }
     } Vertex;
 
-    /** Leightweight triangle.
+    /** Lightweight triangle.
     */
     typedef struct _OgreVolumeExport Triangle
     {
@@ -87,7 +90,7 @@ namespace Volume {
         /// The third triangle corner.
         const Vertex mV2;
         
-        /** Convinience constructor.
+        /** Convenience constructor.
         @param v0
             The first vertex of the triangle.
         @param n0
@@ -127,11 +130,11 @@ namespace Volume {
 
     /** To hold vertices.
     */
-    typedef _OgreVolumeExport vector<Vertex>::type VecVertex;
+    typedef vector<Vertex>::type VecVertex;
 
     /** To hold indices.
     */
-    typedef _OgreVolumeExport vector<size_t>::type VecIndices;
+    typedef vector<size_t>::type VecIndices;
 
     /** Callback class when the user needs information about the triangles of
         chunks of a LOD level.
