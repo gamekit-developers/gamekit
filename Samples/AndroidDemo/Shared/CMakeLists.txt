@@ -10,7 +10,8 @@ include_directories(
 link_libraries(
 	${OGREKIT_LIB}	
 	log
-	GLESv2		
+	GLESv2	
+	android
 )
 
 set(HiddenCMakeLists ../CMakeLists.txt)
@@ -21,6 +22,8 @@ ADD_LIBRARY(${PROJECT_NAME}
 	Main.cpp
 	AndroidLogListener.h
 	AndroidLogListener.cpp
+	${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
+	#${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
 )
 
 if (1) #cp && strip
@@ -44,6 +47,8 @@ add_custom_command(
 	POST_BUILD
 	COMMAND ${CMAKE_STRIP}
 	ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME})	
+	
+	
 endif()
 
 message (STATUS "android-outputdir  ${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME}")

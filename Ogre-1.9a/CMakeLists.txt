@@ -30,7 +30,7 @@ endif()
 	
 set(OGRE_CONFIG_ENABLE_FREEIMAGE TRUE)
 set(OGRE_CONFIG_ENABLE_DDS       TRUE)
-
+set(OGRE_SET_DISABLE_LIBCPP_SUPPORT 0)
 
 if (OGREKIT_DISABLE_ZIP)
 	set(OGRE_CONFIG_ENABLE_ZIP FALSE)
@@ -162,7 +162,8 @@ else ()
   set(OGRE_CONFIG_LITTLE_ENDIAN 1)
 endif ()
 
-
+set(OGRE_SET_DISABLE_GLES3_SUPPORT 1)
+#set(OGRE_NO_GLES3_SUPPORT TRUE CACHE BOOL "" FORCE)
 
 
 # determine Ogre version numbers
@@ -170,7 +171,7 @@ include(OgreGetVersion)
 ogre_get_version(${OGRE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
 message(STATUS "Configuring OGRE ${OGRE_VERSION}")
 
-configure_file(${OgreLite_SOURCE_DIR}/Settings/OgreBuildSettings.h.in ${OGREKIT_BINARY_DIR}/include/OgreBuildSettings.h)
+configure_file(${OGRE_TEMPLATES_DIR}/OgreBuildSettings.h.in ${OGREKIT_BINARY_DIR}/include/OgreBuildSettings.h)
 
 # Configure version file for use by scripts
 #configure_file("${OGRE_TEMPLATES_DIR}/version.txt.in" "${OGRE_BINARY_DIR}/version.txt" @ONLY)

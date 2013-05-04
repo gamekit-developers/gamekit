@@ -25,8 +25,8 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef __AndroidLogListener_H__
-#define __AndroidLogListener_H__
+#ifndef __OgreKitAndroidLogListener_H__
+#define __OgreKitAndroidLogListener_H__
 
 #include "OgreLog.h"
 
