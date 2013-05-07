@@ -252,7 +252,7 @@
 
 #define wxUSE_DYNAMIC_LOADER 1
 
-#define wxUSE_SOCKETS 1
+#define wxUSE_SOCKETS 0
 
 #define wxUSE_IPV6          0
 
@@ -262,7 +262,7 @@
 
 #define wxUSE_FS_ARCHIVE 1
 
-#define wxUSE_FS_INET 1
+#define wxUSE_FS_INET 0
 
 #define wxUSE_ARCHIVE_STREAMS 1
 
@@ -282,13 +282,13 @@
 
 #define wxUSE_MIMETYPE 1
 
-#define wxUSE_PROTOCOL 1
+#define wxUSE_PROTOCOL 0
 
 #define wxUSE_PROTOCOL_FILE 1
-#define wxUSE_PROTOCOL_FTP 1
-#define wxUSE_PROTOCOL_HTTP 1
+#define wxUSE_PROTOCOL_FTP 0
+#define wxUSE_PROTOCOL_HTTP 0
 
-#define wxUSE_URL 1
+#define wxUSE_URL 0
 
 #define wxUSE_URL_NATIVE 0
 
