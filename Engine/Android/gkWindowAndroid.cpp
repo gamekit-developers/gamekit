@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2013 harkon.kr
 
-    Contributor(s): none yet.
+    Contributor(s): Thomas Trocha(dertom), xrgo
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -174,6 +174,17 @@ void gkWindowAndroid::transformInputState(OIS::MultiTouchState& state)
 bool gkWindowAndroid::touchPressed(const OIS::MultiTouchEvent& arg)
 {
 	gkMouse& data = m_mouse;
+	OIS::MultiTouchState state = arg.state;;
+
+	transformInputState(state);
+
+	data.position.x = (gkScalar)state.X.abs;
+	data.position.y = (gkScalar)state.Y.abs;
+	data.relative.x = (gkScalar)state.X.rel;
+	data.relative.y = (gkScalar)state.Y.rel;
+	data.moved = true;
+
+	data.wheelDelta = 0;
 
 	data.buttons[gkMouse::Left] = GK_Pressed;
 
@@ -182,6 +193,7 @@ bool gkWindowAndroid::touchPressed(const OIS::MultiTouchEvent& arg)
 		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
+			node->mouseMoved(data);
 			node->mousePressed(data);
 			node = node->getNext();
 		}
