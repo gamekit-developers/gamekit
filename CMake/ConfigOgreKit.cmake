@@ -523,12 +523,15 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 
 	if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
 
-		if (DirectX_FOUND)
+		if (DirectX9_FOUND)
 			option(OGREKIT_BUILD_D3D9RS	 "Enable the Direct3D 9 render system" ON)
+		endif()
+
+		if (DirectX11_FOUND)
 			option(OGREKIT_BUILD_D3D11RS "Enable the Direct3D 11 render system" OFF)
 		endif()
 
-		if (DirectX_FOUND AND OGREKIT_BUILD_D3D9RS)
+		if (DirectX9_FOUND AND OGREKIT_BUILD_D3D9RS)
 			set(OGRE_BUILD_RENDERSYSTEM_D3D9   TRUE)
 			set(OGREKIT_D3D9_LIBS              RenderSystem_Direct3D9)
 			set(OGREKIT_D3D9_ROOT              ${OGREPATH}/RenderSystems/Direct3D9)
@@ -536,7 +539,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 		endif()
 
 
-		if (DirectX_FOUND AND OGREKIT_BUILD_D3D11RS)
+		if (DirectX11_FOUND AND OGREKIT_BUILD_D3D11RS)
 			set(OGRE_BUILD_RENDERSYSTEM_D3D11  TRUE)
 			set(OGREKIT_D3D11_LIBS             RenderSystem_Direct3D11)
 			set(OGREKIT_D3D11_ROOT             ${OGREPATH}/RenderSystems/Direct3D11)
@@ -706,14 +709,14 @@ macro(configure_rendersystem)
 		)
 		
 		link_libraries(
-			${DirectX_D3D9_LIBRARY}
+			${DirectX9_D3D9_LIBRARY}
 			${OGREKIT_D3D9_LIBS} 
 		)
 			
 	endif()
 	
 
-	if (OGREKIT_BUILD_D3D11RS AND DirectX_D3D11_FOUND)
+	if (OGREKIT_BUILD_D3D11RS) # AND DirectX_D3D11_FOUND)
 		
 		include_directories(
 			${OGREKIT_D3D11_ROOT}/include
@@ -721,7 +724,7 @@ macro(configure_rendersystem)
 		
 		link_libraries(
 			${OGREKIT_D3D11_LIBS} 
-			${DirectX_D3D10_LIBRARIES}
+			#${DirectX_D3D10_LIBRARIES}
 		)
 
 	endif()

@@ -47,7 +47,13 @@ if (WIN32)
 	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
     
 	find_package(DirectX)
-	macro_log_feature(DirectX_FOUND "DirectX" "Support for the DirectX render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
+	macro_log_feature(DirectX9_FOUND "DirectX" "Support for the DirectX9 render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
+
+	find_package(DirectXInput)
+	macro_log_feature(Direct_FOUND "DirectInput/XInput" "Support for the DirectInput/XInput" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
+
+	find_package(DirectX11)
+	macro_log_feature(DirectX11_FOUND "DirectX11" "Support for the DirectX11 render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
 endif()
 
 
@@ -96,7 +102,8 @@ if (NOT OGREKIT_BUILD_MOBILE)
 		${OPENGL_INCLUDE_DIRS}
 		${Cg_INCLUDE_DIRS}
 		${X11_INCLUDE_DIR}
-		${DirectX_INCLUDE_DIRS}
+		${DirectX9_INCLUDE_DIRS}
+		${DirectX11_INCLUDE_DIRS}
 		${Carbon_INCLUDE_DIRS}
 		${Cocoa_INCLUDE_DIRS}
 	)
@@ -105,7 +112,8 @@ if (NOT OGREKIT_BUILD_MOBILE)
 		${OPENGL_LIBRARY_DIRS}
 		${Cg_LIBRARY_DIRS}
 		${X11_LIBRARY_DIRS}
-		${DirectX_LIBRARY_DIRS}
+		${DirectX9_LIBRARY_DIRS}
+		${DirectX11_LIBRARY_DIRS}
 	)
 
 endif()

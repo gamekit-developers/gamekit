@@ -60,8 +60,8 @@ if (WIN32)
 			include/win32/Win32KeyBoard.h
 			include/win32/Win32Mouse.h
 			include/win32/Win32Prereqs.h
-			)
-		link_libraries(${DirectX_DXGUID_LIBRARY} ${DirectX_DINPUT8_LIBRARY} ${DirectX_XINPUT_LIBRARY})
+			)		
+		link_libraries(${DirectX_LIBRARIES}) #link with directinput/xinput
 	else ()
 		set(OIS_PLAT 
 			include/win32native/Win32NativeInputManager.h
