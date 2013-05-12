@@ -146,7 +146,7 @@ namespace Ogre {
         
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
         mAndroidLogger = OGRE_NEW AndroidLogListener();
-        mLogManager->getDefaultLog()->addListener(mAndroidLogger);
+        LogManager::getSingleton().getDefaultLog()->addListener(mAndroidLogger);
 #endif
 
         // Dynamic library manager

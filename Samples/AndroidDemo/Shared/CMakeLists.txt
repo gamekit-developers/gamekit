@@ -1,10 +1,13 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT(ogrekit)
+PROJECT(OgreKit)
 
 include_directories(
 	${OGREKIT_INCLUDE}
+	${OGREKIT_GLES2RS_INCLUDE}
+	${OGREKIT_GLES2RS_INCLUDE}/EGL
+	${ANDROID_NDK}/sources/android/native_app_glue
 )
 
 link_libraries(
@@ -23,7 +26,7 @@ ADD_LIBRARY(${PROJECT_NAME}
 	AndroidLogListener.h
 	AndroidLogListener.cpp
 	${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
-	#${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
+	${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
 )
 
 if (1) #cp && strip

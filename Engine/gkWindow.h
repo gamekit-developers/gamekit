@@ -131,6 +131,11 @@ public:
 	bool buttonReleased(const OIS::JoyStickEvent& arg, int i);
 	bool axisMoved(const OIS::JoyStickEvent& arg, int i);
 
+	void windowMovedOrResized();
+	bool isActive();
+
+	Ogre::RenderWindow* getOgreRenderWindow();
+
 	static int getKeyCode(int kc);
 	int getKeyModifier();
 

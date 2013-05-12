@@ -78,6 +78,7 @@ public:
 	gkScalar                animFps;            // Default animation fps
 	bool                    rtss;               // Enable RTShadingSystem
 	bool                    hasFixedCapability; // Renderer supports fixed-function pipeline
+	gkString				androidConfig;		// Android Config Handle (Ogre 1.9)
 
 	GK_INLINE bool          isD3DRenderSystem() { return isD3DRenderSystem(rendersystem); }
 

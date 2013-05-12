@@ -50,7 +50,6 @@
 #endif
 
 
-
 //using namespace Ogre;
 
 gkWindow::gkWindow() 
@@ -283,8 +282,8 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			winsizey = m_requestedHeight;
 		}
 #ifdef __ANDROID__
-		params["externalWindowHandle"] = Ogre::StringConverter::toString(0);
-		params["externalGLContext"] = Ogre::StringConverter::toString(0);
+		params["externalWindowHandle"] = prefs.extWinhandle;
+		params["androidConfig"] = prefs.androidConfig;
 #endif
 		m_rwindow = Ogre::Root::getSingleton().createRenderWindow(prefs.wintitle,
 				   winsizex, winsizey, prefs.fullscreen, &params);
@@ -624,6 +623,26 @@ bool gkWindow::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 		}
 	}
 	return true;
+}
+
+void gkWindow::windowMovedOrResized()
+{
+	if (!m_rwindow)
+		return;
+
+	m_rwindow->windowMovedOrResized();
+	windowMoved(m_rwindow);
+	windowResized(m_rwindow);
+}
+
+bool gkWindow::isActive()
+{
+	return m_rwindow && m_rwindow->isActive();
+}
+
+Ogre::RenderWindow* gkWindow::getOgreRenderWindow()
+{
+	return m_rwindow;
 }
 
 void gkWindow::windowResized(Ogre::RenderWindow* rw)
