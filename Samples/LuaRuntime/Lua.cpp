@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 #ifdef WIN32
 		_chdir(workingDir.c_str());
 #else
-		chdir(workingDir);
+		chdir(workingDir.c_str());
 #endif
 	}
 
