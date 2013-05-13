@@ -282,6 +282,7 @@ endmacro(MAKE_HEADER)
 #----------------------------------------------------------
 macro(SETUP_WX_ALL TARGET)
 
+	message(STATUS "wxAll_INC: " ${wxALL_INC})
 	include_directories(${wxALL_INC})
 
 	add_definitions(-DWXBUILDING -D_UNICODE -DwxUSE_BASE=1)
