@@ -130,7 +130,7 @@ void gkFont::loadManualOgreFont(Ogre::Font* font, Ogre::DataStreamPtr &dataStrea
 			FT_Face face;
 			// Add a gap between letters vert and horz
 			// prevents nasty artefacts when letters are too close together
-			uint char_spacer = 5;
+			Ogre::uint char_spacer = 5;
 
 			// Locate ttf file, load it pre-buffered into memory by wrapping the
 			// original DataStream in a MemoryDataStream
