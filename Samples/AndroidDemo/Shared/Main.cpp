@@ -169,7 +169,8 @@ bool OgreKit::init(const gkString& blend)
 	m_blend = gkDefaultBlend;
 	if (!blend.empty()) m_blend = blend;
 
-	getPrefs().wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
+	getPrefs().debugFps = true;
+	getPrefs().wintitle = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
 	getPrefs().blendermat=true;
 	//	getPrefs().viewportOrientation="portrait";
 	//	m_prefs.disableSound=false;
@@ -392,8 +393,6 @@ public:
 					
 					okit.assetMgr = app->activity->assetManager;
 
-
-
 					okit.getPrefs().extWinhandle  = Ogre::StringConverter::toString((int)app->window);
 					okit.getPrefs().androidConfig = Ogre::StringConverter::toString((int)config);
 					okit.getPrefs().verbose = true;
@@ -414,8 +413,6 @@ public:
 								ASENSOR_TYPE_ACCELEROMETER);
 						okit.sensorEventQueue = ASensorManager_createEventQueue(okit.sensorManager,
 								okit.state->looper, LOOPER_ID_USER, NULL, NULL);
-
-
 
 						gkEngine::getSingleton().initializeStepLoop();
 						
