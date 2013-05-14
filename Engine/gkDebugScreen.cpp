@@ -28,6 +28,7 @@
 #include "gkLogger.h"
 #include "gkWindowSystem.h"
 #include "gkEngine.h"
+#include "gkFont.h"
 
 #include "OgreOverlayManager.h"
 #include "OgreOverlayElement.h"
@@ -58,7 +59,7 @@ public:
 		font->setTrueTypeResolution(SCREEN_SIZE * 4);
 
 		Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void*)gkBuiltinFontPtr, gkBuiltinFontSize));
-		font->loadManualResource(memStream);
+		gkFont::loadManualOgreFont(font, memStream);
 	}
 
 };

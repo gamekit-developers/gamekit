@@ -415,9 +415,6 @@ namespace Ogre
 			when the Texture that this font creates needs to (re)load.
 		*/
 		void loadResource(Resource* resource);
-
-		// added by gamekit for loading fonts from stream
-		void loadManualResource(DataStreamPtr &dataStreamPtr);
     };
 	/** Specialisation of SharedPtr to allow SharedPtr to be assigned to FontPtr 
 	@note Has to be a subclass since we need operator=.

@@ -49,7 +49,6 @@ public:
 		UTsize m_size, m_resolution;
 
 	public:
-
 		Loader(gkFont* parent, UTsize size, UTsize resolution)
 			: m_parent(parent), m_font(0), m_size(size), m_resolution(resolution)
 		{
@@ -75,10 +74,9 @@ public:
 	UTsize          getSize(void)    {return m_data->size();}
 	utMemoryStream*  getBuffer(void) {return m_data;}
 
-
-
 	Loader* addLoader(UTsize size, UTsize resolution);
 
+	static void loadManualOgreFont(Ogre::Font* font, Ogre::DataStreamPtr &dataStreamPtr);
 
 private:
 	utMemoryStream* m_data;
@@ -86,6 +84,7 @@ private:
 	friend class Loader;
 	Loaders m_loaders;
 };
+
 
 
 #endif
