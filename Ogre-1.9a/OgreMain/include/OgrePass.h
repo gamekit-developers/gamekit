@@ -294,6 +294,7 @@ namespace Ogre {
         /// Returns true if this pass uses a shadow receiver fragment program
         bool hasShadowReceiverFragmentProgram(void) const { return mShadowReceiverFragmentProgramUsage != NULL; }
 
+        size_t calculateSize(void) const;
 
         /// Gets the index of this Pass in the parent Technique
         unsigned short getIndex(void) const { return mIndex; }
@@ -1486,7 +1487,7 @@ namespace Ogre {
 		void _load(void);
 		/** Internal method for unloading this pass. */
 		void _unload(void);
-        // Is this loaded?
+        /// Is this loaded?
         bool isLoaded(void) const;
 
         /** Gets the 'hash' of this pass, ie a precomputed number to use for sorting

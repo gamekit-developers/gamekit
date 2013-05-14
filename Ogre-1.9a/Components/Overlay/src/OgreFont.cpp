@@ -541,5 +541,6 @@ namespace Ogre
 			}
 		}
 	}
-}
 
+
+		}

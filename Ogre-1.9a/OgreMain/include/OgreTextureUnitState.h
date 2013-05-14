@@ -560,6 +560,11 @@ namespace Ogre {
         */
         bool getIsAlpha(void) const;
 
+        /// @copydoc Texture::getGamma
+        Real getGamma() const { return mGamma; }
+        /// @copydoc Texture::setGamma
+        void setGamma(Real gamma) { mGamma = gamma; }
+
         /// @copydoc Texture::setHardwareGammaEnabled
         void setHardwareGammaEnabled(bool enabled);
         /// @copydoc Texture::isHardwareGammaEnabled
@@ -1198,6 +1203,8 @@ namespace Ogre {
         /** Set the texture pointer for a given frame (internal use only!). */
         void _setTexturePtr(const TexturePtr& texptr, size_t frame);
 
+		size_t calculateSize(void) const;
+
         /** Gets the animation controller (as created because of setAnimatedTexture)
             if it exists.
         */
@@ -1227,6 +1234,7 @@ protected:
         mutable bool mTextureLoadFailed;
         bool mIsAlpha;
         bool mHwGamma;
+        Real mGamma;
 
         mutable bool mRecalcTexMatrix;
         Real mUMod, mVMod;
