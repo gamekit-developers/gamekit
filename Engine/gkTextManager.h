@@ -31,7 +31,7 @@
 #include "gkResourceManager.h"
 #include "utSingleton.h"
 
-
+class utScript;
 
 class gkTextManager : public gkResourceManager, public utSingleton<gkTextManager>
 {
@@ -51,11 +51,42 @@ public:
 		TT_XML,      // Undefined: Some other XML source (*.xml)
 		TT_NTREE,    // todo: NodeTree script (*.ntree)
 		TT_BFONT,    // Blender VFont script (Blender::VFont to Ogre::Font (*.bfont) )
+        TT_USER      // Allows registering custom user-defined script types
 	};
 
 
-	typedef utArray<gkTextFile*> TextArray;
+    typedef utArray<gkTextFile*> TextArray;
 
+    // Manage/handle custom text types
+    class TextTypeManager
+    {
+    public:
+        virtual ~TextTypeManager() {}
+
+        virtual void notifyScriptResourceLoaded(gkResource* res, utScript* script) {}
+    };
+
+protected:
+    struct UserType
+	{
+        int id;
+        gkString name;
+        TextTypeManager* manager;
+
+		UserType() : id(-1), manager(NULL) {}
+    };
+
+    typedef utHashTable<gkHashedString, UserType> UserTypeMap;
+
+    UserTypeMap m_userTypes;
+    int m_userTypeCount;
+
+public:
+    int registerType(const gkString& extension, const gkString& name, TextTypeManager* manager = NULL);
+    bool unregisterType(int id);
+
+protected:
+    UserType getUserType(int id);
 
 public:
 	gkTextManager();

@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-
+const utString utStringUtils::BLANK = "";
 
 void utStringUtils::trim( utString &in, const utString &expr )
 {

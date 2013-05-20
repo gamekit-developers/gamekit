@@ -45,6 +45,9 @@ typedef utArray<utString> utStringArray;
 class utStringUtils
 {
 public:
+	static const utString BLANK;
+
+public:
 	static void trim( utString &in, const utString &expr= " \t\r" );
 	static void split(utStringArray &arr, const utString &spl, const utString &expr= " \t\r" );
 	static void lower( utString &str );

@@ -135,6 +135,7 @@ public:
 
 	bool hasAttribute(const utHashedString &name);
 	utScriptAttribute *getAttribute(const utHashedString &name, bool includeExtern = true);
+	const utString &getAttributeValue(const utHashedString &name);
 
 	bool hasReferencedAttribute(const utHashedString &name);
 
@@ -270,7 +271,6 @@ public:
 	bool hasAttribute(const utHashedString &name);
 	utScriptAttribute *getAttribute(const utHashedString &name);
 
-
 protected:
 
 	const utString      m_file;
@@ -311,7 +311,7 @@ class utScript
 {
 public:
 	utScript();
-	~utScript();
+	virtual ~utScript();
 
 	void parseBuffer(const utString &name, const utString &membuf);
 

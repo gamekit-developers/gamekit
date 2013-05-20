@@ -657,10 +657,20 @@ void utScriptNode::getChildren(utScriptNode::Nodes &dest, const utString &type, 
 		if (bn != 0)
 			bn->getChildren(dest, type, fromBaseClassRecursive);
 	}
-
-
 }
 
+
+const utString &utScriptNode::getAttributeValue(const utHashedString &name)
+{
+	utScriptAttribute* attr = getAttribute(name);
+
+	if (attr != NULL)
+	{
+		return attr->getValue();
+	}
+
+	return utStringUtils::BLANK;
+}
 
 
 utScriptTree::utScriptTree(const utString &fname) :

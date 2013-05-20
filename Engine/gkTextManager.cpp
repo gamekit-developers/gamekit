@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2013 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): vekoon.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -28,6 +28,7 @@
 #include "gkTextManager.h"
 #include "gkTextFile.h"
 #include "gkLogger.h"
+#include "utScript.h"
 
 
 #ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
@@ -70,10 +71,70 @@ static TextToTypeItem TextItemMap[] =
 	{0, -1}
 };
 
+int gkTextManager::registerType(const gkString &extension, const gkString &name, TextTypeManager *manager)
+{
+    UTsize idx = m_userTypes.find(extension);
+
+    if (idx == UT_NPOS)
+    {
+        m_userTypeCount++;
+
+        UserType ut;
+
+        ut.id = ((int)TT_USER) + m_userTypeCount;
+        ut.name = name;
+        ut.manager = manager;
+
+        m_userTypes.insert(extension, ut);
+
+        return ut.id;
+    }
+
+    return 0;
+}
+
+bool gkTextManager::unregisterType(int id)
+{
+    gkTextManager::UserTypeMap::Iterator it = m_userTypes.iterator();
+
+    while (it.hasMoreElements())
+    {
+        UserTypeMap::Iterator::Pair item = it.getNext();
+        UserType ut = item.second;
+
+        if (ut.id == id)
+        {
+            m_userTypes.remove(item.first);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+gkTextManager::UserType gkTextManager::getUserType(int id)
+{
+    UserTypeMap::Iterator it = m_userTypes.iterator();
+
+    while (it.hasMoreElements())
+    {
+        UserTypeMap::Iterator::Pair item = it.getNext();
+        UserType ut = item.second;
+
+        if (ut.id == id)
+        {
+            return ut;
+        }
+    }
+
+    return gkTextManager::UserType();
+}
 
 
 gkTextManager::gkTextManager()
 	:    gkResourceManager("TextManager", "TextFile")
+	,    m_userTypeCount(0)
 {
 }
 
@@ -85,6 +146,8 @@ gkTextManager::~gkTextManager()
 
 int gkTextManager::getTextType(const gkString& name)
 {
+    gkString ext = name;
+
 	int i = 0;
 	while (TextItemMap[i].name != 0)
 	{
@@ -92,8 +155,21 @@ int gkTextManager::getTextType(const gkString& name)
 			return TextItemMap[i].type;
 		++i;
 	}
-	return TT_ANY;
 
+    UserTypeMap::Iterator it = m_userTypes.iterator();
+
+    while (it.hasMoreElements())
+    {
+        UserTypeMap::Iterator::Pair item = it.getNext();
+        UserType ut = item.second;
+
+        if (name.find(item.first.str()) != name.npos)
+        {
+            return ut.id;
+        }
+    }
+
+	return TT_ANY;
 }
 
 void gkTextManager::getTextFiles(TextArray& dest, int textType)
@@ -119,7 +195,6 @@ gkResource* gkTextManager::createImpl(const gkResourceName& name, const gkResour
 
 void gkTextManager::parseScripts(const gkString& group)
 {
-
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
@@ -189,6 +264,25 @@ void gkTextManager::parseScripts(const gkString& group)
 		if (type == TT_LUA)
 			gkLuaManager::getSingleton().createFromText(gkResourceName(tf->getResourceName().getName(), group), buf);
 #endif
+
+        if (type > TT_USER)
+        {
+            gkTextManager::UserType ut = getUserType(type);
+
+            if (ut.id == type)
+            {
+                if (ut.manager)
+                {
+                    utMemoryStream stream;
+                    stream.open(buf.c_str(), buf.size(), utStream::SM_READ);
+
+                    utScript script;
+                    script.parseBuffer(ut.name, gkString((const char*)stream.ptr()));
+
+                    ut.manager->notifyScriptResourceLoaded(tf, &script);
+                }
+            }
+        }
 	}
 
 #ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
