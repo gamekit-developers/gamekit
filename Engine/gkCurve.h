@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2013 Thomas Trocha
 
-    Contributor(s): none yet.
+    Contributor(s): oneminute.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -42,18 +42,22 @@ public:
 
 	void updateProperties(void);
 
-	int getPointCount() { return m_curveProps.m_points.size(); }
+	int getPointCount();
 
 	const gkVector3 getPoint(int nr);
 
-	bool isCyclic() { return m_curveProps.m_isCyclic; }
+	GK_INLINE bool isCyclic() { return m_curveProps.m_isCyclic; }
+
+	void generateBezierPoints(gkScalar t);
 
 	void showDebug();
 
 private:
 	gkGameObject* clone(const gkString& name);
+	void makeBezier(gkScalar _t, utArray<gkVector3>& _first, utArray<gkVector3>& _second);	
 
 	gkCurveProperties       m_curveProps;
+	utArray<gkVector3>		m_bezierPoints;
 
 	virtual void createInstanceImpl(void);
 	virtual void destroyInstanceImpl(void);

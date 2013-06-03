@@ -238,6 +238,8 @@ public:
 		CU_Points
 	};
 
+	typedef utArray<utArray<gkVector3> > BezTriples;
+
 public:
 	gkCurveProperties() :m_type(CU_Points), m_isCyclic(false)
 	{
@@ -246,7 +248,8 @@ public:
 
 	CurveType m_type;
 
-	utArray<gkVector3> m_points;
+	utArray<gkVector3> m_points;	
+	BezTriples m_BezTriples;
 	bool m_isCyclic;
 };
 

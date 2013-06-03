@@ -1065,18 +1065,45 @@ void gkBlenderSceneConverter::convertObjectCurve(gkGameObject* gobj, Blender::Ob
 	gkCurveProperties& props = obj->getCurveProperties();
 	Blender::Curve* curve = static_cast<Blender::Curve*>(bobj->data);
 	Blender::Nurb* nurb = (Blender::Nurb* )curve->nurb.first;
-	if (nurb->type != CU_NURBS) {
-		gkLogger::write("Only Nurb-Curves are supported, atm! ("+obj->getName()+")");
-		return;
-	}
 	props.m_isCyclic = (nurb->flagu & CU_CYCLIC) || (nurb->flagv & CU_CYCLIC);
 
-	for (int i=0;i<nurb->pntsu;i++){
-		short int nurbType = nurb->type;
+	switch (nurb->type)
+	{
+	case CU_NURBS:
+		{
+			for (int i=0;i<nurb->pntsu;i++){
+				short int nurbType = nurb->type;
 
-		const Blender::BPoint& pnt = nurb->bp[i];
-		// TODO: check if these are converted properly
-		gkVector3 point(pnt.vec[0],pnt.vec[1],pnt.vec[2]);
-		props.m_points.push_back(point);
+				const Blender::BPoint& pnt = nurb->bp[i];
+				// TODO: check if these are converted properly
+				gkVector3 point(pnt.vec[0],pnt.vec[1],pnt.vec[2]);
+				props.m_points.push_back(point);
+			}
+			break;
+		}
+	case CU_BEZIER:
+		{
+			for (int i = 0; i < nurb->pntsu; i++)
+			{
+				const Blender::BezTriple& trp = nurb->bezt[i];
+				utArray<gkVector3> bezTriple;
+				for (int j = 0; j < 3; j++)
+				{
+					gkVector3 bt;
+					bt.x = trp.vec[j][0];
+					bt.y = trp.vec[j][1];
+					bt.z = trp.vec[j][2];
+					bezTriple.push_back(bt);
+					printf("%f %f %f ", bt.x, bt.y, bt.z);
+				}
+				props.m_BezTriples.push_back(bezTriple);
+			}
+			printf("\n");
+			props.m_type = gkCurveProperties::CU_Bezier;
+			break;
+		}
+	default:
+		gkLogger::write("Only Nurb-Curves and Bezier-Curves are supported, atm! ("+obj->getName()+")");
+		return;
 	}
-}
+} 
