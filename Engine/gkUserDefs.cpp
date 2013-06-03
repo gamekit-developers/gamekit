@@ -79,7 +79,11 @@ gkUserDefs::gkUserDefs()
 	shadowtechnique("stencilmodulative"),
 	colourshadow(0.8f, 0.8f, 0.8f),
 	fardistanceshadow(0),
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+	defaultMipMap(0), //black texture issue
+#else
 	defaultMipMap(5),
+#endif
 	extWinhandle(""),
 	animFps(24.f),
 	shaderCachePath(""),

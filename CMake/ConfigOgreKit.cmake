@@ -118,10 +118,10 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	set(OGREKIT_TINYXML_TARGET TinyXml)
 	
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
+	set(OGREKIT_DEP_WIN_DIR ${ROOT}/Dependencies/Win32)
 	set(OGRE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
-	set(OGRELITE_SOURCE_DIR ${OGREPATH})
-	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
+	set(OGRELITE_SOURCE_DIR ${OGREPATH})	
 	set(OGREKIT_SAMPLES_DIR ${ROOT}/Samples)
 	set(OGREKIT_ANDROID_DEP_DIR ${ROOT}/Dependencies/Android)
 	
@@ -265,9 +265,9 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
         set(OGREKIT_BUILD_GLES2RS TRUE  CACHE BOOL "Forcing remove GLES2RS"   FORCE)
         
 		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
-		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE FALSE CACHE BOOL "Forcing viewport orientation support for Android" FORCE)
-		if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
-			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
+		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for Android" FORCE)
+		if (OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
+			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 0)
 		endif()
 
 		#message(${OGREKIT_BUILD_GLRS} "---" ${OGREKIT_BUILD_GLESRS} " --- " ${OPENGLES2_gl_LIBRARY})
@@ -304,8 +304,8 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 		add_definitions(-fno-regmove)
 		remove_definitions(-msse)
 	
-		if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
-			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
+		if (OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
+			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 0)
 		endif()
 	
 		if (OGREKIT_BUILD_GLES2RS)
@@ -698,7 +698,7 @@ macro(configure_rendersystem)
             #message(STATUS ${OGREKIT_OGRE_LIBS})
         endif()
 		
-		message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
+		#message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
 		
 	endif()
 	

@@ -216,7 +216,7 @@ bool gkResourceGroupManager::initRTShaderSystem(const gkString& shaderLang, cons
 
 	if (!hasFixedCapability)
 	{
-		gkMaterialLoader::createRTSSMaterial("BaseWhite");
+		gkMaterialLoader::createRTSSMaterial("BaseWhite", true);
 		gkMaterialLoader::createRTSSMaterial("BaseWhiteNoLighting", false);
 		gkMaterialLoader::createRTSSMaterial("World", false);
 	}

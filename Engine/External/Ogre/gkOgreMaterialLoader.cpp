@@ -82,10 +82,13 @@ Ogre::MaterialPtr gkMaterialLoader::createRTSSMaterial(const gkString& matName, 
 	shaderGenerator->createShaderBasedTechnique(matName, 
 		Ogre::MaterialManager::DEFAULT_SCHEME_NAME, Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);	
 	shaderGenerator->validateMaterial(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME, matName);
-	material->getTechnique(0)->getPass(0)->setVertexProgram(
-		material->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
-	material->getTechnique(0)->getPass(0)->setFragmentProgram(
-		material->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());
+	if (material->getNumTechniques() > 1)
+	{
+		material->getTechnique(0)->getPass(0)->setVertexProgram(
+			material->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
+		material->getTechnique(0)->getPass(0)->setFragmentProgram(
+			material->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());
+	}
 
 	GK_ASSERT(!material->getTechnique(0)->getPass(0)->getVertexProgram().isNull());
 	GK_ASSERT(!material->getTechnique(0)->getPass(0)->getFragmentProgram().isNull());
@@ -131,6 +134,15 @@ Ogre::Technique* gkMaterialLoader::handleSchemeNotFound(unsigned short schemeInd
 				}
 			}				
 		}
+	}
+
+	if (!generatedTech)
+	{
+		gkLogMessage("Material: " << schemeName << " isn't found.");
+	}
+	else
+	{
+		gkLogMessage("Material: " << schemeName << " is found.");
 	}
 
 	return generatedTech;

@@ -158,7 +158,7 @@ void gkCamera::setOrthoScale(const gkScalar& scale)
 		m_cameraProps.m_orthoscale = scale;
 		if (m_camera)
 		{
-		float ratio = m_camera->getAspectRatio();
+			float ratio = m_camera->getAspectRatio();
 			m_camera->setOrthoWindow(scale, scale/ratio);
 		}
 	}

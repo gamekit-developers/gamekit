@@ -1104,7 +1104,7 @@ void gkScene::createInstanceImpl(void)
 
 
 
-#if OGRE_NO_VIEWPORT_ORIENTATIONMODE != 0
+#if OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
 	const gkString& iparam = gkEngine::getSingleton().getUserDefs().viewportOrientation;
 	if (!iparam.empty())
 	{
@@ -1112,15 +1112,21 @@ void gkScene::createInstanceImpl(void)
 		if (iparam == "landscaperight") //viewport orientation is reversed.
 		{
 			oparam = Ogre::OR_LANDSCAPELEFT;
-//			gkLogger::write("Set Orientation: OR_LANDSCAPELEFT",true);
+			gkLogger::write("Set Orientation: OR_LANDSCAPELEFT",true);
+
 		}
-		else if (iparam == "landscapeleft") {
+		else if (iparam == "landscapeleft") 
+		{
 			oparam = Ogre::OR_LANDSCAPERIGHT;
-//			gkLogger::write("Set Orientation: OR_LANDSCAPERIGHT",true);
+			gkLogger::write("Set Orientation: OR_LANDSCAPERIGHT",true);
+
 		}
-		try{
+		try
+		{
 			m_viewport->getViewport()->setOrientationMode((Ogre::OrientationMode)oparam);
-		} catch (...) {
+		} 
+		catch (std::exception&) 
+		{
 			gkLogger::write("Problem setting Viewport Orientation");
 		}
 	}

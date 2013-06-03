@@ -60,9 +60,16 @@ misrepresented as being the original software.
 #undef LOG_FOOT
 #define LOG_FOOT   LOGI("%s %s %d", __FILE__, __FUNCTION__, __LINE__)
 
+#define USE_APK_ARCHIVE 1
 
 //const gkString gkDefaultBlend   = "/sdcard/gamekit/gk_android.blend";
-const gkString gkDefaultBlend   = "gk_android.blend";
+//const gkString gkDefaultBlend   = "gk_android.blend";
+// #if USE_APK_ARCHIVE
+const gkString gkDefaultBlend   = "momo_ogre_i.blend";
+// #else
+// const gkString gkDefaultBlend   = "/sdcard/gamekit/momo_ogre_i.blend";
+// #endif
+//const gkString gkDefaultBlend   = "multitouch_test.blend";
 const gkString gkDefaultConfig  = ""; //"/sdcard/OgreKitStartup.cfg";
 
 
@@ -172,9 +179,11 @@ bool OgreKit::init(const gkString& blend)
 	getPrefs().debugFps = true;
 	getPrefs().wintitle = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
 	getPrefs().blendermat=true;
-	//	getPrefs().viewportOrientation="portrait";
+	//getPrefs().shaderCachePath="/sdcard/gamekit";
+	getPrefs().enableshadows=false;
+	getPrefs().viewportOrientation="portrait";
 	//	m_prefs.disableSound=false;
-	gkPath path = cfgfname;
+	gkPath path = cfgfname;	
 
 	LOG_FOOT;
 
@@ -194,16 +203,18 @@ bool OgreKit::init(const gkString& blend)
 bool OgreKit::setup(void)
 {
 	LOG_FOOT;
-
+	  
 	if (assetMgr)
 	{
+#if USE_APK_ARCHIVE
 		Ogre::ArchiveManager::getSingleton().addArchiveFactory(new Ogre::APKFileSystemArchiveFactory(assetMgr));
 		Ogre::ArchiveManager::getSingleton().addArchiveFactory(new Ogre::APKZipArchiveFactory(assetMgr));
 
 		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("/", "APKFileSystem",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+#endif
 	}
 
-
+#if USE_APK_ARCHIVE
 	Ogre::DataStreamPtr stream = Ogre::ResourceGroupManager::getSingleton().openResource(m_blend, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	if (stream.isNull())
 	{
@@ -216,6 +227,9 @@ bool OgreKit::setup(void)
 	stream->read(buf, size);
 
 	gkBlendFile* blend = gkBlendLoader::getSingleton().loadFromMemory(buf,size,gkBlendLoader::LO_ALL_SCENES);	
+#else
+	gkBlendFile* blend = gkBlendLoader::getSingleton().loadFile(m_blend,gkBlendLoader::LO_ALL_SCENES); //, "", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);	
+#endif
 	if (!blend)
 	{
 		LOGI("File loading failed.\n");
@@ -236,6 +250,8 @@ bool OgreKit::setup(void)
 	m_scene->createInstance();
 
 	LOG_FOOT;
+	
+	m_scene->getMainCamera()->getCamera()->setAutoAspectRatio(true);
 
 	// add input hooks
 	gkWindow* win = gkWindowSystem::getSingleton().getMainWindow();
@@ -511,7 +527,12 @@ public:
 
             if(m_window != NULL && m_window->isActive())
             {
-               // m_window->windowMovedOrResized();
+				// Ogre::RenderWindow* rwin = m_window->getRenderWindow();
+				// Ogre::Viewport* vp = m_window->getViewport(0)->getViewport();
+				// Ogre::Camera* camera = vp->getCamera();
+                m_window->getRenderWindow()->windowMovedOrResized();
+				//camera->setAspectRatio((float)vp->getActualWidth() / (float)vp->getActualHeight());
+
                 gkEngine::getSingleton().stepOneFrame();
             }
         }		
