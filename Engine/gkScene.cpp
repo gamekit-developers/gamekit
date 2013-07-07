@@ -467,7 +467,7 @@ void gkScene::addObject(gkGameObject* gobj)
 void gkScene::removeObject(gkGameObject* gobj)
 {
 	const gkHashedString name = gobj->getName();
-	if (m_objects.find(name) != GK_NPOS)
+	if (m_objects.find(name) == GK_NPOS)
 	{
 		gkPrintf("Scene: object '%s' not found in this scene\n", name.str().c_str());
 		return;

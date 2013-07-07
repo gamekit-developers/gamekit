@@ -625,8 +625,7 @@ void gkEngine::addListener(gkEngine::Listener* listener)
 
 void gkEngine::removeListener(gkEngine::Listener* listener)
 {
-	if (m_listeners.find(listener))
-		m_listeners.erase(listener);
+	m_listeners.erase(listener);
 }
 
 

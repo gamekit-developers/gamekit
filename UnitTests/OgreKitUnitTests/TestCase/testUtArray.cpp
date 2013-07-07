@@ -19,6 +19,26 @@ TEST(TEST_CASE_NAME, testSize)
 	EXPECT_EQ(arr1.size(), 0);	
 }
 
+TEST(TEST_CASE_NAME, testErase)
+{
+	const int count = 10;
+	utArray<int> arr1;
+
+	for (int i = 0; i < count; i++)
+		arr1.push_back(i);
+
+	int k = 5;
+	EXPECT_EQ(arr1.find(k), 5);
+
+	arr1.erase(k);
+	EXPECT_EQ(arr1.size(), count-1);
+
+	for (UTsize i = 0; i < arr1.size(); i++)
+		EXPECT_NE(arr1[i], k);
+
+	EXPECT_EQ(arr1.find(k), UT_NPOS);
+}
+
 TEST(TEST_CASE_NAME, testCopy)
 {
 	const int count = 1000;

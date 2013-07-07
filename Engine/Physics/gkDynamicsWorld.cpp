@@ -524,7 +524,6 @@ void gkDynamicsWorld::addListener(gkDynamicsWorld::Listener *listener)
 
 void gkDynamicsWorld::removeListener(gkDynamicsWorld::Listener *listener)
 {
-	if (m_listeners.find(listener))
-		m_listeners.erase(listener);
+	m_listeners.erase(listener);
 }
 
