@@ -37,6 +37,8 @@
 #include "gkDbvt.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
+#include "BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
+#include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 
 
 
@@ -93,6 +95,10 @@ void gkDynamicsWorld::createInstanceImpl(void)
 
 	if (gkEngine::getSingleton().getUserDefs().useBulletDbvt)
 		m_dbvt = new gkDbvt();
+
+	// register gimpact-algorithm
+	btCollisionDispatcher* dispatcher = static_cast<btCollisionDispatcher *>(m_dynamicsWorld ->getDispatcher());
+	btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 }
 
 

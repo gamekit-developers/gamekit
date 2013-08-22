@@ -36,7 +36,7 @@
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
-
+#include "BulletCollision/Gimpact/btGImpactShape.h"
 
 
 
@@ -619,7 +619,15 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 					case SH_CONVEX_TRIMESH:
 						shape = new btConvexTriangleMeshShape(triMesh);
 						break;
-          case SH_GIMPACT_MESH:
+					case SH_GIMPACT_MESH:
+					{
+						btGImpactMeshShape* gimpactShape = new btGImpactMeshShape(triMesh);
+						gimpactShape->setMargin(m_props.m_margin);
+						gimpactShape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
+						gimpactShape->updateBound();
+						shape = gimpactShape;
+						break;
+					}					
 					case SH_BVH_MESH:
 						shape = new btBvhTriangleMeshShape(triMesh, true);
 						break;
@@ -643,9 +651,11 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 	if (!shape)
 		return 0;
 
-	shape->setMargin(m_props.m_margin);
-	shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
-
+	// these values are already set for gimpact-shape
+	if (m_props.m_shape != SH_GIMPACT_MESH) {
+		shape->setMargin(m_props.m_margin);
+		shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
+	}
 
 	if (m_props.isCompound())
 	{
