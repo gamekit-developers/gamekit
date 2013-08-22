@@ -617,9 +617,9 @@ btCollisionShape* gkPhysicsController::_createShape(void)
 					switch (m_props.m_shape)
 					{
 					case SH_CONVEX_TRIMESH:
-					case SH_GIMPACT_MESH:
 						shape = new btConvexTriangleMeshShape(triMesh);
 						break;
+          case SH_GIMPACT_MESH:
 					case SH_BVH_MESH:
 						shape = new btBvhTriangleMeshShape(triMesh, true);
 						break;
