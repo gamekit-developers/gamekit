@@ -80,7 +80,7 @@ void gkSkeletonResource::copyBones(gkSkeletonResource& other)
 		while (biter.hasMoreElements())
 		{
 			gkBone* sBone = biter.getNext();
-			gkBone* dBone = getBone(sBone->getName());     GK_ASSERT(dBone);
+			gkBone* dBone = getBone(sBone->getName());
 			m_rootBoneList.push_back(dBone);
 		}
 	}

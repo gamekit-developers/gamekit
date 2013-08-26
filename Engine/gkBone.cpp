@@ -31,7 +31,6 @@
 #include "gkValue.h"
 
 
-
 gkBone::gkBone(const gkString& name)
 	:    m_name(name), m_bone(0), m_bind(), m_parent(0)
 {
@@ -47,11 +46,12 @@ gkBone::~gkBone()
 }
 
 
-
 void gkBone::setRestPosition(const gkTransformState& st)
 {
+	GK_ASSERT(!st.isNaN() && "Invalid transform supplied as parameter");
+
 	m_bind = st;
-	m_manualControl = false;
+	m_manualControl = false;	
 }
 
 
@@ -60,9 +60,14 @@ void gkBone::applyRootTransform(const gkTransformState& root)
 	gkMatrix4 bonemat = m_bind.toMatrix();
 	gkMatrix4 objmat = root.toMatrix();
 
-	bonemat = objmat * bonemat;
+	gkTransformState trans(objmat * bonemat);
 
-	m_bind = gkTransformState(bonemat);
+	//GK_ASSERT(!trans.isNaN() && "Invalid transform supplied as parameter");
+	
+	if (!trans.isNaN())
+		m_bind = trans;
+	else
+		gkPrintf("Warning: root bone transform is invalid.");
 }
 
 

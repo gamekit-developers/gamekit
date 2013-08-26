@@ -50,11 +50,15 @@ void gkSkeletonConverter::buildBoneTree(Blender::Bone* cur, Blender::Bone* prev,
 	gkQuaternion rot; gkVector3 loc, scl;
 	gkMathUtils::extractTransformFast(bind, loc, rot, scl);
 
+	if (loc.isNaN())
+		loc = gkVector3(0,0,0);
 	if (rot.isNaN())
 	{
 		rot = gkQuaternion();
 		scl = gkVector3(1, 1, 1);
 	}
+	if (scl.isNaN())
+		scl = gkVector3(1, 1, 1);
 
 	bone->setRestPosition(gkTransformState(loc, rot, scl));
 

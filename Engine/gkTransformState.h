@@ -40,6 +40,8 @@ public:
 	gkTransformState(const gkMatrix4& mat)
 	{
 		gkMathUtils::extractTransform(mat, loc, rot, scl);
+
+		//GK_ASSERT(!isNaN() && "Invalid vector supplied as parameter");
 	}
 
 	gkTransformState(const gkVector3&    oloc = gkVector3::ZERO,
@@ -50,14 +52,19 @@ public:
 		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
 		loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
 		scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
+
+		//GK_ASSERT(!isNaN() && "Invalid vector supplied as parameter");
 	}
 
 	GK_INLINE const gkTransformState& operator= (const gkTransformState& o)
 	{
+		//GK_ASSERT(!o.isNaN() && "Invalid vector supplied as parameter");
+
 		rot.w = o.rot.w;
 		rot.x = o.rot.x; rot.y = o.rot.y; rot.z = o.rot.z;
 		loc.x = o.loc.x; loc.y = o.loc.y; loc.z = o.loc.z;
 		scl.x = o.scl.x; scl.y = o.scl.y; scl.z = o.scl.z;
+
 		return *this;
 	}
 
@@ -83,6 +90,8 @@ public:
 		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
 		loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
 		scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
+
+		//GK_ASSERT(!isNaN() && "Invalid vector supplied as parameter");
 	}
 
 	GK_INLINE void setIdentity(void)
@@ -91,6 +100,11 @@ public:
 		rot.x = gkScalar(0.0); rot.y = gkScalar(0.0); rot.z = gkScalar(0.0);
 		loc.x = gkScalar(0.0); loc.y = gkScalar(0.0); loc.z = gkScalar(0.0);
 		scl.x = gkScalar(1.0); scl.y = gkScalar(1.0); scl.z = gkScalar(1.0);
+	}
+
+	GK_INLINE bool isNaN(void) const
+	{
+		return loc.isNaN() || rot.isNaN() || scl.isNaN();
 	}
 
 	GK_INLINE void      toMatrix(gkMatrix4& m) const    { m.makeTransform(loc, scl, rot); }

@@ -1045,7 +1045,11 @@ void gkBlenderSceneConverter::convert(bool createGroupInstances)
 						gkMatrix4 eobmat = gkMathUtils::getFromFloat(obMe->obmat);
 						gkMatrix4 sobmat = gkMathUtils::getFromFloat(obAr->obmat);
 
-						bone->applyRootTransform(eobmat.inverse() * sobmat);
+						gkTransformState trans(eobmat.inverse() * sobmat);
+						if (!trans.isNaN())
+							bone->applyRootTransform(trans);
+						else
+							gkPrintf("Warning: Invalid bone transform.");
 					}
 
 				}
