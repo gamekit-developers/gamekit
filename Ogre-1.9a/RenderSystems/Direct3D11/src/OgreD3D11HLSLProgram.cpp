@@ -294,7 +294,7 @@ namespace Ogre {
 		READ_BYTE(Mask)
 		READ_BYTE(ReadWriteMask)
 		READ_UINT(Stream)
-		READ_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//		READ_ENUM(MinPrecision, D3D_MIN_PRECISION) // not needed and doesn't exist in June 2010 SDK
 		READ_END
 
 		READ_START(mD3d11ShaderOutputParameters, D3D11_SIGNATURE_PARAMETER_DESC)
@@ -306,7 +306,7 @@ namespace Ogre {
 		READ_BYTE(Mask)
 		READ_BYTE(ReadWriteMask)
 		READ_UINT(Stream)
-		READ_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//		READ_ENUM(MinPrecision, D3D_MIN_PRECISION) // not needed and doesn't exist in June 2010 SDK
 		READ_END
 
 		READ_START(mD3d11ShaderVariables, D3D11_SHADER_VARIABLE_DESC)
@@ -704,7 +704,7 @@ namespace Ogre {
 #define SIZE_OF_DATA_END )
 
 #define SIZE_OF_DATA_UINT(member) + sizeof(uint32)
-#define	SIZE_OF_DATA_ENUM SIZE_OF_DATA_UINT
+#define	SIZE_OF_DATA_ENUM(member, memberType) SIZE_OF_DATA_UINT(member)
 
 #define SIZE_OF_DATA_BYTE(member) +  sizeof(BYTE)
 
@@ -745,7 +745,7 @@ namespace Ogre {
 								SIZE_OF_DATA_BYTE(Mask)
 								SIZE_OF_DATA_BYTE(ReadWriteMask)
 								SIZE_OF_DATA_UINT(Stream)
-								SIZE_OF_DATA_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//								SIZE_OF_DATA_ENUM(MinPrecision, D3D_MIN_PRECISION)  // not needed and doesn't exist in June 2010 SDK
 								SIZE_OF_DATA_END
 
 								SIZE_OF_DATA_START(mD3d11ShaderOutputParameters, D3D11_SIGNATURE_PARAMETER_DESC)
@@ -757,7 +757,7 @@ namespace Ogre {
 								SIZE_OF_DATA_BYTE(Mask)
 								SIZE_OF_DATA_BYTE(ReadWriteMask)
 								SIZE_OF_DATA_UINT(Stream)
-								SIZE_OF_DATA_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//								SIZE_OF_DATA_ENUM(MinPrecision, D3D_MIN_PRECISION)  // not needed and doesn't exist in June 2010 SDK
 								SIZE_OF_DATA_END
 
 								SIZE_OF_DATA_START(mD3d11ShaderVariables, D3D11_SHADER_VARIABLE_DESC)
@@ -874,7 +874,7 @@ namespace Ogre {
 	newMicrocode->write(&tmpVal, sizeof(uint32));					\
 	}
 
-#define	WRITE_ENUM WRITE_UINT
+#define	WRITE_ENUM(member, memberType) WRITE_UINT(member)
 
 #define WRITE_BYTE(member) {										\
 	newMicrocode->write(&curItem.member, sizeof(BYTE));	\
@@ -885,7 +885,7 @@ namespace Ogre {
     if(curItem.member != NULL)                       \
         length = strlen(curItem.member);             \
     newMicrocode->write(&length, sizeof(uint16));    \
-    if(length == 0) continue;                        \
+    if(length != 0)                                  \
     newMicrocode->write(curItem.member, length);     \
                 }
 
@@ -906,7 +906,7 @@ namespace Ogre {
 				WRITE_BYTE(Mask)
 				WRITE_BYTE(ReadWriteMask)
 				WRITE_UINT(Stream)
-				WRITE_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//				WRITE_ENUM(MinPrecision, D3D_MIN_PRECISION)  // not needed and doesn't exist in June 2010 SDK
 				WRITE_END
 
 				WRITE_START(mD3d11ShaderOutputParameters, D3D11_SIGNATURE_PARAMETER_DESC)
@@ -918,7 +918,7 @@ namespace Ogre {
 				WRITE_BYTE(Mask)
 				WRITE_BYTE(ReadWriteMask)
 				WRITE_UINT(Stream)
-				WRITE_ENUM(MinPrecision, D3D_MIN_PRECISION)
+//				WRITE_ENUM(MinPrecision, D3D_MIN_PRECISION)  // not needed and doesn't exist in June 2010 SDK
 				WRITE_END
 
 				WRITE_START(mD3d11ShaderVariables, D3D11_SHADER_VARIABLE_DESC)
@@ -1209,7 +1209,7 @@ namespace Ogre {
             if (def.isFloat())
             {
                 def.physicalIndex = mFloatLogicalToPhysical->bufferSize;
-                OGRE_LOCK_MUTEX(mFloatLogicalToPhysical->mutex)
+                OGRE_LOCK_MUTEX(mFloatLogicalToPhysical->mutex);
                     mFloatLogicalToPhysical->map.insert(
                     GpuLogicalIndexUseMap::value_type(paramIndex, 
                     GpuLogicalIndexUse(def.physicalIndex, def.arraySize * def.elementSize, GPV_GLOBAL)));
@@ -1219,7 +1219,7 @@ namespace Ogre {
             else
             {
                 def.physicalIndex = mIntLogicalToPhysical->bufferSize;
-                OGRE_LOCK_MUTEX(mIntLogicalToPhysical->mutex)
+                OGRE_LOCK_MUTEX(mIntLogicalToPhysical->mutex);
                     mIntLogicalToPhysical->map.insert(
                     GpuLogicalIndexUseMap::value_type(paramIndex, 
                     GpuLogicalIndexUse(def.physicalIndex, def.arraySize * def.elementSize, GPV_GLOBAL)));
@@ -1469,7 +1469,7 @@ namespace Ogre {
         // this is a hack - to solve that problem that we are the mAssemblerProgram of ourselves
         if ( !mAssemblerProgram.isNull() )
         {
-            *( mAssemblerProgram.useCountPointer() ) = 0;
+            mAssemblerProgram.setUseCount(0);
             mAssemblerProgram.setNull();
         }
 
@@ -1517,13 +1517,27 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     const String& D3D11HLSLProgram::getCompatibleTarget(void) const
     {
-        static const String compatibleVsTarget = "vs_4_0";
-        static const String compatiblePsTarget = "ps_4_0";
+        static const String
+			vs_4_0			 = "vs_4_0",
+			vs_4_0_level_9_3 = "vs_4_0_level_9_3",
+			vs_4_0_level_9_1 = "vs_4_0_level_9_1",
+			ps_4_0			 = "ps_4_0",
+			ps_4_0_level_9_3 = "ps_4_0_level_9_3",
+			ps_4_0_level_9_1 = "ps_4_0_level_9_1";
 
         if(mEnableBackwardsCompatibility)
         {
-            if(mTarget == "vs_2_0" || mTarget == "vs_2_x" || mTarget == "vs_3_0")	return compatibleVsTarget;
-            if(mTarget == "ps_2_0" || mTarget == "ps_2_x" || mTarget == "ps_3_0")	return compatiblePsTarget;
+            if(mTarget == "vs_2_0") return vs_4_0_level_9_1;
+            if(mTarget == "vs_2_a") return vs_4_0_level_9_3;
+            if(mTarget == "vs_2_x") return vs_4_0_level_9_3;
+            if(mTarget == "vs_3_0") return vs_4_0;
+
+            if(mTarget == "ps_2_0") return ps_4_0_level_9_1;
+            if(mTarget == "ps_2_a") return ps_4_0_level_9_3;
+            if(mTarget == "ps_2_b") return ps_4_0_level_9_3;
+            if(mTarget == "ps_2_x") return ps_4_0_level_9_3;
+            if(mTarget == "ps_3_0") return ps_4_0;
+            if(mTarget == "ps_3_x") return ps_4_0;
         }
 
         return mTarget;

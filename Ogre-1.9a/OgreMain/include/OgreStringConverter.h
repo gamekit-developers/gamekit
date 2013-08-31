@@ -42,13 +42,13 @@ THE SOFTWARE.
 
 namespace Ogre {
 
-	/** \addtogroup Core
-	*  @{
-	*/
-	/** \addtogroup General
-	*  @{
-	*/
-	/** Class for converting the core Ogre data types to/from Strings.
+    /** \addtogroup Core
+    *  @{
+    */
+    /** \addtogroup General
+    *  @{
+    */
+    /** Class for converting the core Ogre data types to/from Strings.
     @remarks
         The code for converting values to and from strings is here as a separate
         class to avoid coupling String to other datatypes (and vice-versa) which reduces
@@ -72,211 +72,218 @@ namespace Ogre {
         /** Converts a Real to a String. */
         static String toString(Real val, unsigned short precision = 6, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 #if OGRE_DOUBLE_PRECISION == 1
         /** Converts a float to a String. */
         static String toString(float val, unsigned short precision = 6,
                                unsigned short width = 0, char fill = ' ',
-                               std::ios::fmtflags flags = std::ios::fmtflags(0) );
+                               std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 #else
         /** Converts a double to a String. */
         static String toString(double val, unsigned short precision = 6,
                                unsigned short width = 0, char fill = ' ',
-                               std::ios::fmtflags flags = std::ios::fmtflags(0) );
+                               std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 #endif
         /** Converts a Radian to a String. */
         static String toString(Radian val, unsigned short precision = 6, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) )
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()))
         {
-            return toString(val.valueAngleUnits(), precision, width, fill, flags);
+            return toString(val.valueAngleUnits(), precision, width, fill, flags, loc);
         }
         /** Converts a Degree to a String. */
         static String toString(Degree val, unsigned short precision = 6, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) )
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()))
         {
-            return toString(val.valueAngleUnits(), precision, width, fill, flags);
+            return toString(val.valueAngleUnits(), precision, width, fill, flags, loc);
         }
         /** Converts an int to a String. */
         static String toString(int val, unsigned short width = 0, 
             char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 #if OGRE_PLATFORM != OGRE_PLATFORM_NACL &&  ( OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64 || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS )
         /** Converts an unsigned int to a String. */
         static String toString(unsigned int val, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a size_t to a String. */
         static String toString(size_t val, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         #if OGRE_COMPILER == OGRE_COMPILER_MSVC
-                /** Converts an unsigned long to a String. */
-                static String toString(unsigned long val, 
-                    unsigned short width = 0, char fill = ' ', 
-                    std::ios::fmtflags flags = std::ios::fmtflags(0) );
-
+        /** Converts an unsigned long to a String. */
+        static String toString(unsigned long val, 
+            unsigned short width = 0, char fill = ' ', 
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         #endif
 #else
         /** Converts a size_t to a String. */
         static String toString(size_t val, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts an unsigned long to a String. */
         static String toString(unsigned long val, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 #endif
         /** Converts a long to a String. */
         static String toString(long val, 
             unsigned short width = 0, char fill = ' ', 
-            std::ios::fmtflags flags = std::ios::fmtflags(0) );
+            std::ios::fmtflags flags = std::ios::fmtflags(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a boolean to a String. 
         @param yesNo If set to true, result is 'yes' or 'no' instead of 'true' or 'false'
         */
         static String toString(bool val, bool yesNo = false);
-		/** Converts a Vector2 to a String. 
+        /** Converts a Vector2 to a String. 
         @remarks
             Format is "x y" (i.e. 2x Real values, space delimited)
         */
-        static String toString(const Vector2& val);
+        static String toString(const Vector2& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a Vector3 to a String. 
         @remarks
             Format is "x y z" (i.e. 3x Real values, space delimited)
         */
-        static String toString(const Vector3& val);
-		/** Converts a Vector4 to a String. 
+        static String toString(const Vector3& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
+        /** Converts a Vector4 to a String. 
         @remarks
             Format is "x y z w" (i.e. 4x Real values, space delimited)
         */
-        static String toString(const Vector4& val);
+        static String toString(const Vector4& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a Matrix3 to a String. 
         @remarks
             Format is "00 01 02 10 11 12 20 21 22" where '01' means row 0 column 1 etc.
         */
-        static String toString(const Matrix3& val);
+        static String toString(const Matrix3& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a Matrix4 to a String. 
         @remarks
             Format is "00 01 02 03 10 11 12 13 20 21 22 23 30 31 32 33" where 
             '01' means row 0 column 1 etc.
         */
-        static String toString(const Matrix4& val);
+        static String toString(const Matrix4& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a Quaternion to a String. 
         @remarks
             Format is "w x y z" (i.e. 4x Real values, space delimited)
         */
-        static String toString(const Quaternion& val);
+        static String toString(const Quaternion& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a ColourValue to a String. 
         @remarks
             Format is "r g b a" (i.e. 4x Real values, space delimited). 
         */
-        static String toString(const ColourValue& val);
+        static String toString(const ColourValue& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a StringVector to a string.
         @remarks
             Strings must not contain spaces since space is used as a delimiter in
             the output.
         */
-        static String toString(const StringVector& val);
+        static String toString(const StringVector& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 
         /** Converts a String to a Real. 
         @return
             0.0 if the value could not be parsed, otherwise the Real version of the String.
         */
-        static Real parseReal(const String& val, Real defaultValue = 0);
+        static Real parseReal(const String& val, Real defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to a Angle. 
         @return
             0.0 if the value could not be parsed, otherwise the Angle version of the String.
         */
-        static inline Radian parseAngle(const String& val, Radian defaultValue = Radian(0)) {
-			return Angle(parseReal(val, defaultValue.valueRadians()));
-		}
+        static inline Radian parseAngle(const String& val, Radian defaultValue = Radian(0), const std::locale &loc = std::locale(msDefaultStringLocale.c_str())) {
+            return Angle(parseReal(val, defaultValue.valueRadians(), loc));
+        }
         /** Converts a String to a whole number. 
         @return
             0.0 if the value could not be parsed, otherwise the numeric version of the String.
         */
-        static int parseInt(const String& val, int defaultValue = 0);
+        static int parseInt(const String& val, int defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to a whole number. 
         @return
             0.0 if the value could not be parsed, otherwise the numeric version of the String.
         */
-        static unsigned int parseUnsignedInt(const String& val, unsigned int defaultValue = 0);
+        static unsigned int parseUnsignedInt(const String& val, unsigned int defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to a whole number. 
         @return
             0.0 if the value could not be parsed, otherwise the numeric version of the String.
         */
-        static long parseLong(const String& val, long defaultValue = 0);
+        static long parseLong(const String& val, long defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to a whole number. 
         @return
             0.0 if the value could not be parsed, otherwise the numeric version of the String.
         */
-        static unsigned long parseUnsignedLong(const String& val, unsigned long defaultValue = 0);
+        static unsigned long parseUnsignedLong(const String& val, unsigned long defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to size_t. 
         @return
             defaultValue if the value could not be parsed, otherwise the numeric version of the String.
         */
-        static size_t parseSizeT(const String& val, size_t defaultValue = 0);
+        static size_t parseSizeT(const String& val, size_t defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Converts a String to a boolean. 
         @remarks
             Returns true if case-insensitive match of the start of the string
-			matches "true", "yes" or "1", false otherwise.
+            matches "true", "yes" or "1", false otherwise.
         */
-        static bool parseBool(const String& val, bool defaultValue = 0);
-		/** Parses a Vector2 out of a String.
+        static bool parseBool(const String& val, bool defaultValue = 0, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
+        /** Parses a Vector2 out of a String.
         @remarks
             Format is "x y" ie. 2 Real components, space delimited. Failure to parse returns
             Vector2::ZERO.
         */
-		static Vector2 parseVector2(const String& val, const Vector2& defaultValue = Vector2::ZERO);
-		/** Parses a Vector3 out of a String.
+        static Vector2 parseVector2(const String& val, const Vector2& defaultValue = Vector2::ZERO, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
+        /** Parses a Vector3 out of a String.
         @remarks
             Format is "x y z" ie. 3 Real components, space delimited. Failure to parse returns
             Vector3::ZERO.
         */
-        static Vector3 parseVector3(const String& val, const Vector3& defaultValue = Vector3::ZERO);
+        static Vector3 parseVector3(const String& val, const Vector3& defaultValue = Vector3::ZERO, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Parses a Vector4 out of a String.
         @remarks
             Format is "x y z w" ie. 4 Real components, space delimited. Failure to parse returns
             Vector4::ZERO.
         */
-        static Vector4 parseVector4(const String& val, const Vector4& defaultValue = Vector4::ZERO);
+        static Vector4 parseVector4(const String& val, const Vector4& defaultValue = Vector4::ZERO, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Parses a Matrix3 out of a String.
         @remarks
             Format is "00 01 02 10 11 12 20 21 22" where '01' means row 0 column 1 etc.
             Failure to parse returns Matrix3::IDENTITY.
         */
-        static Matrix3 parseMatrix3(const String& val, const Matrix3& defaultValue = Matrix3::IDENTITY);
+        static Matrix3 parseMatrix3(const String& val, const Matrix3& defaultValue = Matrix3::IDENTITY, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Parses a Matrix4 out of a String.
         @remarks
             Format is "00 01 02 03 10 11 12 13 20 21 22 23 30 31 32 33" where 
             '01' means row 0 column 1 etc. Failure to parse returns Matrix4::IDENTITY.
         */
-        static Matrix4 parseMatrix4(const String& val, const Matrix4& defaultValue = Matrix4::IDENTITY);
+        static Matrix4 parseMatrix4(const String& val, const Matrix4& defaultValue = Matrix4::IDENTITY, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Parses a Quaternion out of a String. 
         @remarks
             Format is "w x y z" (i.e. 4x Real values, space delimited). 
             Failure to parse returns Quaternion::IDENTITY.
         */
-        static Quaternion parseQuaternion(const String& val, const Quaternion& defaultValue = Quaternion::IDENTITY);
+        static Quaternion parseQuaternion(const String& val, const Quaternion& defaultValue = Quaternion::IDENTITY, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Parses a ColourValue out of a String. 
         @remarks
             Format is "r g b a" (i.e. 4x Real values, space delimited), or "r g b" which implies
             an alpha value of 1.0 (opaque). Failure to parse returns ColourValue::Black.
         */
-        static ColourValue parseColourValue(const String& val, const ColourValue& defaultValue = ColourValue::Black);
+        static ColourValue parseColourValue(const String& val, const ColourValue& defaultValue = ColourValue::Black, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
 
         /** Pareses a StringVector from a string.
         @remarks
             Strings must not contain spaces since space is used as a delimiter in
             the output.
         */
-        static StringVector parseStringVector(const String& val);
+        static StringVector parseStringVector(const String& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
         /** Checks the String is a valid number value. */
-        static bool isNumber(const String& val);
+        static bool isNumber(const String& val, const std::locale &loc = std::locale(msDefaultStringLocale.c_str()));
+
+        //-----------------------------------------------------------------------
+        static void setDefaultStringLocale(String loc) { msDefaultStringLocale = loc; }
+        //-----------------------------------------------------------------------
+        static String getDefaultStringLocale(void) { return msDefaultStringLocale; }
+
+    protected:
+        static String msDefaultStringLocale;
     };
 
-	/** @} */
-	/** @} */
+    /** @} */
+    /** @} */
 
 }
 

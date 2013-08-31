@@ -130,16 +130,13 @@ namespace Ogre {
         // If we can do automip generation and the user desires this, do so
         mMipmapsHardwareGenerated =
         Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_AUTOMIPMAP) && !PixelUtil::isCompressed(mFormat);
-        
-#if GL_APPLE_texture_max_level && OGRE_PLATFORM != OGRE_PLATFORM_NACL
-        mGLSupport.getStateCacheManager()->setTexParameteri(texTarget, GL_TEXTURE_MAX_LEVEL_APPLE, (mMipmapsHardwareGenerated && (mUsage & TU_AUTOMIPMAP)) ? maxMips : mNumMipmaps );
-#elif OGRE_NO_GLES3_SUPPORT == 0
-        mGLSupport.getStateCacheManager()->setTexParameteri(texTarget, GL_TEXTURE_MAX_LEVEL, (mMipmapsHardwareGenerated && (mUsage & TU_AUTOMIPMAP)) ? maxMips : mNumMipmaps );
-#endif
+
+        if(mGLSupport.checkExtension("GL_APPLE_texture_max_level") || gleswIsSupported(3, 0))
+            mGLSupport.getStateCacheManager()->setTexParameteri(texTarget, GL_TEXTURE_MAX_LEVEL_APPLE, (mMipmapsHardwareGenerated && (mUsage & TU_AUTOMIPMAP)) ? maxMips : mNumMipmaps );
 
 		// Set some misc default parameters, these can of course be changed later
 		mGLSupport.getStateCacheManager()->setTexParameteri(texTarget,
-                                                            GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                                                            GL_TEXTURE_MIN_FILTER, (mUsage & TU_AUTOMIPMAP) ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
         mGLSupport.getStateCacheManager()->setTexParameteri(texTarget,
                                                             GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         mGLSupport.getStateCacheManager()->setTexParameteri(texTarget,
@@ -228,6 +225,11 @@ namespace Ogre {
         else
         {
 #if OGRE_NO_GLES3_SUPPORT == 0
+//            LogManager::getSingleton().logMessage("GLES2Texture::create - Name: " + mName +
+//                                                      " ID: " + StringConverter::toString(mTextureID) +
+//                                                      " Width: " + StringConverter::toString(width) +
+//                                                      " Height: " + StringConverter::toString(height) +
+//                                                      " Internal Format: " + StringConverter::toString(internalformat, 0, ' ', std::ios::hex));
             switch(mTextureType)
             {
                 case TEX_TYPE_1D:

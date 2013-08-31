@@ -74,7 +74,9 @@ bool gkWindowAndroid::setupInput(const gkUserDefs& prefs)
 #endif
 		OIS::ParamList params;
 
-		params.insert(std::make_pair("WINDOW", Ogre::StringConverter::toString(handle)));
+		std::ostringstream wnd;
+		wnd << windowhandle;
+		params.insert(std::make_pair("WINDOW", wnd.str()));
 
 		m_input = OIS::InputManager::createInputSystem(params);
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
