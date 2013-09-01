@@ -62,3 +62,7 @@ endif()
 if (SAMPLES_GUIDEMO)
     subdirs(GuiDemo)
 endif()
+
+if (SAMPLES_OGREDEMO)	
+	subdirs(OgreDemo)
+endif()

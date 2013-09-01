@@ -89,6 +89,7 @@ elseif (WIN32)
       src/WIN32/OgreWin32Resources.rc
       src/WIN32/winres.h
     )
+
     source_group(Resources FILES ${RESOURCE_FILES})
     set(PLATFORM_HEADER_INSTALL "WIN32")
 

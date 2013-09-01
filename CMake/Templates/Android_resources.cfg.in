@@ -1,0 +1,17 @@
+# Resources required by the sample browser and most samples.
+[Essential]
+APKZip=/packs/SdkTrays.zip
+APKFileSystem=/thumbnails
+
+# Common sample resources needed by many of the samples.
+# Rarely used resources should be separately loaded by the
+# samples which require them.
+[Popular]
+APKFileSystem=/materials
+APKFileSystem=/RTShaderLib
+APKFileSystem=/RTShaderLib/GLSLES
+APKFileSystem=/RTShaderLib/materials
+
+[General]
+APKFileSystem=/
+

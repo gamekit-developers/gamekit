@@ -1,0 +1,16 @@
+# Resources required by the sample browser and most samples.
+[Essential]
+Zip=@OGREKIT_MEDIA_DIR@/packs/SdkTrays.zip
+Zip=@OGREKIT_MEDIA_DIR@/packs/profiler.zip
+FileSystem=@OGREKIT_MEDIA_DIR@/thumbnails
+
+# Common sample resources needed by many of the samples.
+# Rarely used resources should be separately loaded by the
+# samples which require them.
+[Popular]
+FileSystem=@OGREKIT_MEDIA_DIR@/materials
+FileSystem=@OGREKIT_MEDIA_DIR@/RTShaderLib
+FileSystem=@OGREKIT_MEDIA_DIR@/RTShaderLib/materials
+
+[General]
+FileSystem=@OGREKIT_MEDIA_DIR@
