@@ -75,7 +75,7 @@ bool gkWindowAndroid::setupInput(const gkUserDefs& prefs)
 		OIS::ParamList params;
 
 		std::ostringstream wnd;
-		wnd << windowhandle;
+		wnd << handle;
 		params.insert(std::make_pair("WINDOW", wnd.str()));
 
 		m_input = OIS::InputManager::createInputSystem(params);
