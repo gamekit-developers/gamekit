@@ -269,6 +269,8 @@ int main(int argc, char **argv)
 		//NSTimeInterval differenceInSeconds = currentFrameTime - m_lastFrameTime;
 		m_lastFrameTime = currentFrameTime;
 		
+		while(CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, TRUE) == kCFRunLoopRunHandledSource);
+		
 		m_okit.stepOneFrame();
 	}
 	else
