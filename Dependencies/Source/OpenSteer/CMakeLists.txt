@@ -57,4 +57,4 @@ include_directories(
 )
 add_library(${PROJECT_NAME} ${OPENSTEER_HDR} ${OPENSTEER_SRC})
 
-config_target_if_iphone_build(${PROJECT_NAME}  TRUE)
+config_ogrekit_target(${PROJECT_NAME}  TRUE)

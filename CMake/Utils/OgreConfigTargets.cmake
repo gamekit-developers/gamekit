@@ -203,7 +203,7 @@ function(ogre_config_common TARGETNAME)
 endfunction(ogre_config_common)
 
 # setup library build
-function(ogre_config_lib LIBNAME EXPORT)
+function(ogre_config_lib LIBNAME EXPORT)  
   ogre_config_common(${LIBNAME})
   if (OGRE_STATIC)
     # add static prefix, if compiling static version

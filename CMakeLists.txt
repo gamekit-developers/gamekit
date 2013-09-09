@@ -38,7 +38,7 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(ConfigOgreKit)
 include(ConfigGameKit)
-include(ConfigIPhone)
+include(ConfigTargets)
 include(OgreAddTargets)
 
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)

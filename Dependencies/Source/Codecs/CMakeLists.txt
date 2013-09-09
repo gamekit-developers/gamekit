@@ -58,4 +58,4 @@ set(VORBIS
 
 add_library(${OGREKIT_OGGVORBIS_TARGET} ${OGG} ${VORBIS})
 
-config_target_if_iphone_build(${OGREKIT_OGGVORBIS_TARGET} TRUE)
+config_ogrekit_target(${OGREKIT_OGGVORBIS_TARGET} TRUE)

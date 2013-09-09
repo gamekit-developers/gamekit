@@ -29,29 +29,69 @@ ADD_LIBRARY(${PROJECT_NAME}
 	${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
 )
 
+
 if (1) #cp && strip
 
+SET(ANT_EXECUTABLE "ant")
+if(${ANDROID_NATIVE_API_LEVEL} LESS 14)
+	MATH(EXPR ANDROID_SDK_API_LEVEL "${ANDROID_NATIVE_API_LEVEL}+1")
+else()
+	SET(ANDROID_SDK_API_LEVEL "${ANDROID_NATIVE_API_LEVEL}")
+	SET(SCREEN_SIZE "|screenSize")
+endif()
+
+# if(OGRE_CONFIG_ENABLE_GLES2_GLSL_OPTIMISER)
+	# SET(GLES_OPTIMISER "-lglsl_optimizer -lmesa -lglcpp-library")
+# endif()
+
+SET(ANDROID_TARGET "android-${ANDROID_SDK_API_LEVEL}")
+
+
+SET(NDKOUT "${CMAKE_BINARY_DIR}/AndroidDemo")
+file(MAKE_DIRECTORY "${NDKOUT}")
+file(MAKE_DIRECTORY "${NDKOUT}/jni")
+file(MAKE_DIRECTORY "${NDKOUT}/assets")	
+file(MAKE_DIRECTORY "${NDKOUT}/res")
+file(MAKE_DIRECTORY "${NDKOUT}/libs")
+file(MAKE_DIRECTORY "${NDKOUT}/libs/${ANDROID_ABI}")
+file(WRITE "${NDKOUT}/default.properties" "target=${ANDROID_TARGET}")
+
+set(DEMO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../Demo)
+
+set(ANDROID_MOD_NAME OgreKit)
+configure_file("${OGRE_TEMPLATES_DIR}/eclipse.project.in" "${NDKOUT}/.project" @ONLY)
+configure_file("${DEMO_SRC}/AndroidManifest.xml.in" "${NDKOUT}/AndroidManifest.xml" @ONLY)
+file(COPY "${DEMO_SRC}/assets" DESTINATION "${NDKOUT}")
+file(COPY "${DEMO_SRC}/res" DESTINATION "${NDKOUT}")
+#file(COPY "${DEMO_SRC}/.project" DESTINATION "${NDKOUT}")
+	
 set (OUTPUT_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}) #lib<name>.so
 set (STRIP_TOOL arm-linux-androideabi-strip)
 
 #message(STATUS ${PROJECT_NAME} "-------" ${OUTPUT_NAME} "-------" ${STRIP_TOOL})
 
-add_custom_command(	TARGET ${PROJECT_NAME}
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} 
-	ARGS -E copy_if_different 
-		${OUTPUT_NAME}	
-		${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME}
-)		
+set_target_properties(${PROJECT_NAME} PROPERTIES    
+		LIBRARY_OUTPUT_DIRECTORY ${NDKOUT}/libs/${ANDROID_ABI}
+		RUNTIME_OUTPUT_DIRECTORY ${NDKOUT}/libs/${ANDROID_ABI}
+		)
+
+
+# add_custom_command(	TARGET ${PROJECT_NAME}
+	# POST_BUILD
+	# COMMAND ${CMAKE_COMMAND} 
+	# ARGS -E copy_if_different 
+		# ${OUTPUT_NAME}	
+		# ${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME}
+# )		
 #		${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/armeabi/${OUTPUT_NAME}
 
 add_custom_command(
 	TARGET ${PROJECT_NAME}
 	POST_BUILD
 	COMMAND ${CMAKE_STRIP}
-	ARGS ${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME})	
+	ARGS ${NDKOUT}/libs/${ANDROID_ABI}/${OUTPUT_NAME})	
 	
 	
 endif()
 
-message (STATUS "android-outputdir  ${CMAKE_CURRENT_SOURCE_DIR}/../Demo/libs/${ANDROID_ABI}/${OUTPUT_NAME}")
+message (STATUS "android-outputdir  ${NDKOUT}")

@@ -22,6 +22,11 @@ if "%ANDROID_NDK%" == "" (
 	@exit /b 1
 )
 
+REM if "%ANDROID_SDK%" == "" (
+	REM echo "ANDROID_SDK Path is empty."
+	REM @exit /b 1
+REM )
+
 if "%LIBPATH%" == "" (
 	echo "Warning: vc++ environment is missing."
 )

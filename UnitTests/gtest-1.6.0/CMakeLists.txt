@@ -20,4 +20,4 @@ include_directories(
 add_library(${PROJECT_NAME} STATIC
 	${LIB_HDR} ${LIB_SRC})
 
-#config_target_if_iphone_build(${PROJECT_NAME} TRUE)
+#config_ogrekit_target(${PROJECT_NAME} TRUE)

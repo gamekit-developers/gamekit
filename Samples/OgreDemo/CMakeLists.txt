@@ -9,6 +9,14 @@
 
 # Configure Browser demo build
 
+file(GLOB HEADER_FILES 
+	include/*.h
+	Common/include/*.h
+	BezierPatch/include/*.h
+	ShaderSystem/include/*.h
+	)
+
+IF (0)
 set (HEADER_FILES
 	include/SampleBrowser.h
 	Common/include/Sample.h
@@ -20,6 +28,7 @@ set (HEADER_FILES
 	Common/include/OgreStaticPluginLoader.h
 	BezierPatch/include/BezierPatch.h
 )
+ENDIF()
 
 set(SOURCE_FILES src/SampleBrowser.cpp)
 # Get the list of configured samples
@@ -55,6 +64,8 @@ include_directories(
 	${OGREKIT_DEP_INCLUDE}
 )
 
+message(STATUS "ogre:"${OGREKIT_OGRE_INCLUDE})
+
 link_libraries(${OGREKIT_OGRE_LIBS} Plugin_ParticleFX)
 
 link_directories(${OGRE_LIBDIR})
@@ -68,13 +79,36 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/Common/include
 	${CMAKE_CURRENT_SOURCE_DIR}/BezierPatch/include
+	${CMAKE_CURRENT_SOURCE_DIR}/ShaderSystem/include
 )
 
 if(ANDROID)
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp "int x = 0;")
-    ADD_LIBRARY(SampleBrowserDummy MODULE ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
-    target_link_libraries(SampleBrowserDummy ${SAMPLE_LIBRARIES})
-    add_dependencies(SampleBrowserDummy ${OGRE_SAMPLES_LIST})
+	if(1)
+	include_directories(
+		${ANDROID_NDK}/sources/android/native_app_glue
+		${OGRE_SOURCE_DIR}/RenderSystems/GLES2/include/EGL
+		${OGRE_SAMPLE_DIR}/include		
+	)
+	
+	#message(STATUS "android:"${OGREKIT_OGRE_INCLUDE}/Android)
+	#message(STATUS "include:"${OGRE_SOURCE_DIR}/OgreMain/include)
+	
+
+    ADD_LIBRARY(SampleBrowser MODULE #${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp	
+		${SOURCE_FILES}
+		${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
+		${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
+	)
+    target_link_libraries(SampleBrowser ${SAMPLE_LIBRARIES}
+		log
+		GLESv2	
+		android
+	)
+    #add_dependencies(SampleBrowser ${OGRE_SAMPLES_LIST})
+	#add_dependencies(SampleBrowser Sample_BezierPatch)
+	endif()
+	
+	#file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp "int x = 0;")
 
     if(APPLE OR WIN32)
       SET(ANDROID_EXECUTABLE "android")
@@ -103,14 +137,22 @@ if(ANDROID)
     file(MAKE_DIRECTORY "${NDKOUT}/jni")
     file(MAKE_DIRECTORY "${NDKOUT}/assets")	
     file(MAKE_DIRECTORY "${NDKOUT}/res")
+	file(MAKE_DIRECTORY "${NDKOUT}/libs")
+	file(MAKE_DIRECTORY "${NDKOUT}/libs/${ANDROID_ABI}")
     file(WRITE "${NDKOUT}/default.properties" "target=${ANDROID_TARGET}")
-    file(WRITE "${NDKOUT}/jni/Application.mk" "APP_ABI := ${ANDROID_ABI}\nAPP_STL := gnustl_static ")
-    configure_file("${OGRE_TEMPLATES_DIR}/AndroidManifest.xml.in" "${NDKOUT}/AndroidManifest.xml" @ONLY)
+	
+	
+    #file(WRITE "${NDKOUT}/jni/Application.mk" "APP_ABI := ${ANDROID_ABI}\nAPP_STL := gnustl_static ")
+    configure_file("${OGRE_TEMPLATES_DIR}/AndroidManifest.xml.in" "${NDKOUT}/AndroidManifest.xml" @ONLY)	
 
 	SET(ANDROID_MOD_NAME "OgreSampleBrowser")
-	SET(JNI_SRC "LOCAL_PATH := @CMAKE_SOURCE_DIR@/Samples/Browser/src\n")
+	configure_file("${OGRE_TEMPLATES_DIR}/eclipse.project.in" "${NDKOUT}/.project" @ONLY)
+	
+	#SET(JNI_SRC "LOCAL_PATH := @CMAKE_SOURCE_DIR@/Samples/Browser/src\n")
+	SET(JNI_SRC "LOCAL_PATH := @CMAKE_CURRENT_SOURCE_DIR@/src\n")
     SET(JNI_SRC "${JNI_SRC}\tLOCAL_SRC_FILES := SampleBrowser.cpp\n")
 	
+	if (0)
     if(NOT ANDROID_GLES_ONLY)
 	 SET(SAMPLE_LDLIBS "LOCAL_LDLIBS += -lSample_BezierPatch\n")
 	 configure_file("${OGRE_TEMPLATES_DIR}/Android.mk.in" "${NDKOUT}/jni/Android.mk" @ONLY)
@@ -118,24 +160,32 @@ if(ANDROID)
      SET(SAMPLE_LDLIBS "LOCAL_LDLIBS += -lSample_BezierPatch\n")
      configure_file("${OGRE_TEMPLATES_DIR}/AndroidGLES1.mk.in" "${NDKOUT}/jni/Android.mk" @ONLY)
     endif()
+	endif()
+	
 
     configure_file("${OGRE_TEMPLATES_DIR}/Android_resources.cfg.in" "${NDKOUT}/assets/resources.cfg" @ONLY)
     configure_file("${OGRE_TEMPLATES_DIR}/samples.cfg.in" "${NDKOUT}/assets/samples.cfg" @ONLY)
     
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/models" DESTINATION "${NDKOUT}/assets")
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/particle" DESTINATION "${NDKOUT}/assets")
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/RTShaderLib" DESTINATION "${NDKOUT}/assets")
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/thumbnails" DESTINATION "${NDKOUT}/assets")
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/packs" DESTINATION "${NDKOUT}/assets")
-    file(COPY "${CMAKE_SOURCE_DIR}/Samples/Media/materials" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/models" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/particle" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/RTShaderLib" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/thumbnails" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/packs" DESTINATION "${NDKOUT}/assets")
+    file(COPY "${OGRE_MEDIA_DIR}/materials" DESTINATION "${NDKOUT}/assets")
     
-	file(COPY "${CMAKE_SOURCE_DIR}/SDK/Android/drawable-hdpi" DESTINATION "${NDKOUT}/res")
-	file(COPY "${CMAKE_SOURCE_DIR}/SDK/Android/drawable-ldpi" DESTINATION "${NDKOUT}/res")
-	file(COPY "${CMAKE_SOURCE_DIR}/SDK/Android/drawable-mdpi" DESTINATION "${NDKOUT}/res")
-	file(COPY "${CMAKE_SOURCE_DIR}/SDK/Android/drawable-xhdpi" DESTINATION "${NDKOUT}/res")
-    
+	file(COPY "${OGRE_SDK_DIR}/Android/drawable-hdpi" DESTINATION "${NDKOUT}/res")
+	file(COPY "${OGRE_SDK_DIR}/Android/drawable-ldpi" DESTINATION "${NDKOUT}/res")
+	file(COPY "${OGRE_SDK_DIR}/Android/drawable-mdpi" DESTINATION "${NDKOUT}/res")
+	file(COPY "${OGRE_SDK_DIR}/Android/drawable-xhdpi" DESTINATION "${NDKOUT}/res")
+		
+	set_target_properties(SampleBrowser PROPERTIES    
+		LIBRARY_OUTPUT_DIRECTORY ${NDKOUT}/libs/${ANDROID_ABI}
+		RUNTIME_OUTPUT_DIRECTORY ${NDKOUT}/libs/${ANDROID_ABI}
+		)	
+
+if (0)    
 	add_custom_command(
-	                    TARGET SampleBrowserDummy
+	                    TARGET SampleBrowser
                         POST_BUILD
 	                    COMMAND ${ANDROID_EXECUTABLE} update project --target ${ANDROID_TARGET} --path "${NDKOUT}"
 	                    WORKING_DIRECTORY ${NDKOUT}
@@ -143,14 +193,14 @@ if(ANDROID)
 	
 	if(DEBUG)	 
 	 	add_custom_command(
-							TARGET SampleBrowserDummy
+							TARGET SampleBrowser
 						    POST_BUILD
 					        COMMAND ${NDK_BUILD_EXECUTABLE} all -j2 V=1 NDK_DEBUG=1
 				            WORKING_DIRECTORY ${NDKOUT}
 			              )
 	else()
 		add_custom_command(
-							TARGET SampleBrowserDummy
+							TARGET SampleBrowser
 						    POST_BUILD
 					        COMMAND ${NDK_BUILD_EXECUTABLE} all -j2
 				            WORKING_DIRECTORY ${NDKOUT}
@@ -158,11 +208,13 @@ if(ANDROID)
 	endif()
 	                  
 	add_custom_command(
-	                    TARGET SampleBrowserDummy
+	                    TARGET SampleBrowser
                         POST_BUILD
 	                    COMMAND ${ANT_EXECUTABLE} debug
 	                    WORKING_DIRECTORY ${NDKOUT}
 	                  )
+
+endif()
 
 else()
 

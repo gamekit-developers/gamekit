@@ -20,4 +20,4 @@ IF (BUILD_SHARED_LIBS)
 	TARGET_LINK_LIBRARIES(BulletFileLoader LinearMath)
 ENDIF (BUILD_SHARED_LIBS)
 
-config_target_if_iphone_build(BulletFileLoader TRUE)
+config_ogrekit_target(BulletFileLoader TRUE)

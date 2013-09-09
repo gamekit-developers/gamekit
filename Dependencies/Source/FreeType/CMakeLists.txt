@@ -58,7 +58,7 @@ include_directories(include)
 add_definitions(-DFT2_BUILD_LIBRARY)
 add_library(${OGREKIT_FREETYPE_TARGET} ${FREETYPE_SRC} ${FREETYPE_PLATFORM})
 
-config_target_if_iphone_build(${OGREKIT_FREETYPE_TARGET} TRUE)
+config_ogrekit_target(${OGREKIT_FREETYPE_TARGET} TRUE)
 
 if (OGREKIT_CREATE_OGRE_DEPENDENCY_DIR)
 	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${OGRE_PREBUILT_DEPENDENCY_INCLUDE_DIR} PATTERN "include/*")

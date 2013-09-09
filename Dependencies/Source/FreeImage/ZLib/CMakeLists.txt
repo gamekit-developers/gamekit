@@ -18,4 +18,4 @@ set(ZLIB_HDRS zlib.h zconf.h)
 include_directories(${FI_INCLUDE} )
 add_library(${OGREKIT_ZLIB_TARGET} ${ZLIB_SRCS} ${ZLIB_HDRS})
 
-config_target_if_iphone_build(${OGREKIT_ZLIB_TARGET} TRUE)
+config_ogrekit_target(${OGREKIT_ZLIB_TARGET} TRUE)

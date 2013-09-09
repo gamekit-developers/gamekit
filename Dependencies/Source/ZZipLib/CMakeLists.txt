@@ -9,7 +9,7 @@ file(GLOB ZZIP_HDR "zzip/*.h")
 include_directories(./ zzip ${OGREKIT_ZLIB_INCLUDE})
 add_library(${OGREKIT_ZZIP_TARGET} ${ZZIP_SRC} ${ZZIP_HDR})
 
-config_target_if_iphone_build(${OGREKIT_ZZIP_TARGET} TRUE)
+config_ogrekit_target(${OGREKIT_ZZIP_TARGET} TRUE)
 
 
 if (OGREKIT_CREATE_OGRE_DEPENDENCY_DIR)

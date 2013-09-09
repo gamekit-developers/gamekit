@@ -34,4 +34,4 @@ INCLUDE_DIRECTORIES(
 
 ADD_LIBRARY(BlenderSerialize  ${BPARSE_FILES} )
 
-config_target_if_iphone_build(BlenderSerialize TRUE)
+config_ogrekit_target(BlenderSerialize TRUE)

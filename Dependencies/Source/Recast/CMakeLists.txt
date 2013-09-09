@@ -26,4 +26,4 @@ set(RECAST_HDR
 include_directories( Include )
 add_library(${PROJECT_NAME} ${RECAST_HDR} ${RECAST_SRC})
 
-config_target_if_iphone_build(${PROJECT_NAME}  TRUE)
+config_ogrekit_target(${PROJECT_NAME}  TRUE)

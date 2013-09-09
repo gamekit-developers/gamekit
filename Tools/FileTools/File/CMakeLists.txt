@@ -52,4 +52,4 @@ endif()
 
 add_library(fbtFile ${File_SRC} ${File_HDR} ${fbtScanner})
 
-config_target_if_iphone_build(fbtFile  TRUE)
+config_ogrekit_target(fbtFile  TRUE)

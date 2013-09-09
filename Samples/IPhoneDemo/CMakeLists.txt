@@ -48,4 +48,4 @@ add_executable(
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
 set_property(TARGET IPhoneDemo PROPERTY MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
 
-config_target_if_iphone_build(IPhoneDemo FALSE)
+config_ogrekit_target(IPhoneDemo FALSE)

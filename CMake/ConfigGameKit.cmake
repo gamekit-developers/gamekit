@@ -30,3 +30,4 @@ macro (configure_gamekit ROOT)
 	set(GAMEKIT_SERIALIZE_BLENDER_TARGET	BulletFileLoader BlenderSerialize)
 
 endmacro(configure_gamekit)
+

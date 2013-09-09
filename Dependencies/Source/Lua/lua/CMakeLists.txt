@@ -62,4 +62,4 @@ set(lua_bc_compiler		luac.c)
 
 add_library(Lua STATIC ${lua_src} ${lua_hdr})
 
-config_target_if_iphone_build(Lua TRUE)
+config_ogrekit_target(Lua TRUE)

@@ -190,11 +190,11 @@ endif()
 
 
 
-config_target_if_iphone_build(RocketCore TRUE)
-config_target_if_iphone_build(RocketControls TRUE)
-config_target_if_iphone_build(RocketDebugger TRUE)
+config_ogrekit_target(RocketCore TRUE)
+config_ogrekit_target(RocketControls TRUE)
+config_ogrekit_target(RocketDebugger TRUE)
 
 if(LIBROCKET_LUA_BINDINGS)
-	config_target_if_iphone_build(RocketCoreLua TRUE)
-	config_target_if_iphone_build(RocketControlsLua TRUE)
+	config_ogrekit_target(RocketCoreLua TRUE)
+	config_ogrekit_target(RocketControlsLua TRUE)
 endif()

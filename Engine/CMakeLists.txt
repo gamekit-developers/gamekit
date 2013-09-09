@@ -1112,12 +1112,12 @@ if (OGREKIT_USE_BPARSE)
 endif()	
 
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
-config_target_if_iphone_build(BulletDynamics TRUE)
-config_target_if_iphone_build(BulletCollision TRUE)
+config_ogrekit_target(BulletDynamics TRUE)
+config_ogrekit_target(BulletCollision TRUE)
 if (OGREKIT_COMPILE_SOFTBODY)
-	config_target_if_iphone_build(BulletSoftBody TRUE)
+	config_ogrekit_target(BulletSoftBody TRUE)
 endif()	
-config_target_if_iphone_build(LinearMath TRUE)
+config_ogrekit_target(LinearMath TRUE)
 
 message(STATUS "OGREKIT_OGRE_LIBS: ${OGREKIT_OGRE_LIBS}")
 
@@ -1195,4 +1195,4 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Thread_SOURCE_2} 
 	)
 
-config_target_if_iphone_build(OgreKitCore TRUE)
+config_ogrekit_target(OgreKitCore TRUE)
