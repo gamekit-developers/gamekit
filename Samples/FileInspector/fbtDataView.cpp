@@ -43,7 +43,8 @@
 #define fbtMakeInt(data)		((*reinterpret_cast<const int*>(data )))
 #define fbtMakeLong(data)		((*reinterpret_cast<const long*>(data )))
 #define fbtMakeFloat(data)		((*reinterpret_cast<const float*>(data )))
-#define fbtMakeDouble(data)		((*reinterpret_cast<const float*>(data )))
+#define fbtMakeDouble(data)		((*reinterpret_cast<const double*>(data )))
+
 
 
 class fbtChunkViewNode;
@@ -374,6 +375,15 @@ void fbtChunkViewModel::GetValue(wxVariant& variant, const wxDataViewItem& item,
 					fbt_snprintf(buf, 64, "%f", fp);
 					variant = wxString(buf);
 				}
+				else if (node->m_key.k16[0] == 9)
+				{
+					double fp = fbtMakeDouble(data);
+					char buf[64] = {0};
+
+					fbt_snprintf(buf, 64, "%f", fp);
+					variant = wxString(buf);
+				}
+			
 				else
 				{
 					FBTsize *ptrPtr = (FBTsize*)data;

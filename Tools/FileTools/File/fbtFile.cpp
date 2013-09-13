@@ -179,7 +179,7 @@ int fbtFile::parseHeader(fbtStream* stream, bool suppressHeaderWarning)
 	m_header.resize(12);
 	stream->read(m_header.ptr(), 12);
 
-	if (!fbtCharNEq(m_header.c_str(), m_uhid, 7) && !fbtCharNEq(m_header.c_str(), m_aluhid, 7))
+	if (!fbtCharNEq(m_header.c_str(), m_uhid, 6) && !fbtCharNEq(m_header.c_str(), m_aluhid, 7))
 	{
 		if (!suppressHeaderWarning)
 			fbtPrintf("Unknown header ID '%s'\n", m_header.c_str());
