@@ -12,6 +12,8 @@ endif()
 project(OgreLite)
 include(PrecompiledHeader)
 
+find_package(Cg)
+
 set(OgreLite 1.0)
 set (OGRE_CONFIG_HEADER 1)
 set (OGRE_SDK_BUILD 1)
@@ -69,6 +71,13 @@ else()
 endif()
 
 set(OGRE_CONFIG_ENABLE_ETC1 TRUE)
+
+
+if (Cg_FOUND AND NOT OGREKIT_BUILD_MOBILE) 
+    option(OGRE_BUILD_PLUGIN_CG                 "Enable / Disable Ogre cgProgramManager" ON)
+else()
+    set(OGRE_BUILD_PLUGIN_CG 0)
+endif()
 
 set(OGRE_SET_DOUBLE 0)
 set(OGRE_SET_ALLOCATOR ${OGRE_CONFIG_ALLOCATOR})

@@ -583,6 +583,12 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 		${OGREKIT_ZLIB_TARGET}
 		${GAMEKIT_ANIMKIT_TARGET}
 	)	
+	
+	if (OGRE_BUILD_PLUGIN_CG) 
+        list(APPEND OGREKIT_OGRE_LIBS   Plugin_CgProgramManager) 
+        list(APPEND OGREKIT_OGRE_INCLUDE ${OGREPATH}/PlugIns/CgProgramManager/include)
+	endif()
+	
 	if (OGREKIT_USE_BPARSE)
 		set(BPARSE_FILE_FORMAT 2 CACHE STRING 
 			"Select the bparse-blendfile-format:

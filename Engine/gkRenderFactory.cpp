@@ -74,7 +74,9 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 	return OGRE_RS_UNKNOWN;
 }
 
-
+#ifdef OGRE_BUILD_PLUGIN_CG
+#  include "OgreCgPlugin.h"
+#endif
 
 gkRenderFactoryPrivate::gkRenderFactoryPrivate() :
 	m_renderSystem(0), m_particleSystem(0), m_shaderLang()
@@ -154,5 +156,13 @@ void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root* r)
 #ifdef OGREKIT_USE_PARTICLE
 	m_particleSystem = new Ogre::ParticleFXPlugin();
 	r->installPlugin(m_particleSystem);
+#endif
+}
+
+void gkRenderFactoryPrivate::createCGProgrammManager(Ogre::Root* r)
+{
+#ifdef OGRE_BUILD_PLUGIN_CG
+    Ogre::Plugin* cgPlugin = new Ogre::CgPlugin();
+    r->installPlugin(cgPlugin);
 #endif
 }

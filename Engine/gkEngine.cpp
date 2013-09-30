@@ -229,6 +229,7 @@ void gkEngine::initialize()
 	Ogre::Root* root = new Ogre::Root("", "");
 	m_private->root = root;
 	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
+	m_private->plugin_factory->createCGProgrammManager(root);
 	m_private->plugin_factory->createParticleSystem(root);
 	m_private->archive_factory->addArchiveFactory();
 
