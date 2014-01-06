@@ -1,6 +1,6 @@
 #include <GLES2/gles2w.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(ANDROID)
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 #include <EGL/egl.h>
@@ -55,6 +55,8 @@ static void open_libgl(void)
 {
     CFStringRef frameworkPath = CFSTR("/System/Library/Frameworks/OpenGLES.framework");
     NSString *sysVersion = [UIDevice currentDevice].systemVersion;
+    NSArray *sysVersionComponents = [sysVersion componentsSeparatedByString:@"."];
+
     BOOL isSimulator = ([[UIDevice currentDevice].model rangeOfString:@"Simulator"].location != NSNotFound);
     if(isSimulator)
     {
@@ -67,9 +69,10 @@ static void open_libgl(void)
 
         char tempPath[PATH_MAX];
         sprintf(tempPath,
-                "%s/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator%s.sdk/System/Library/Frameworks/OpenGLES.framework",
+                "%s/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator%s.%s.sdk/System/Library/Frameworks/OpenGLES.framework",
                 xcodePath.c_str(),
-                [sysVersion cStringUsingEncoding:NSUTF8StringEncoding]);
+                [[sysVersionComponents objectAtIndex:0] cStringUsingEncoding:NSUTF8StringEncoding],
+                [[sysVersionComponents objectAtIndex:1] cStringUsingEncoding:NSUTF8StringEncoding]);
         frameworkPath = CFStringCreateWithCString(kCFAllocatorDefault, tempPath, kCFStringEncodingUTF8);
     }
 
@@ -100,15 +103,26 @@ static void *get_proc(const char *proc)
 	CFRelease(procname);
 	return res;
 }
-#else
+#elif 1 //OGRE_PLATFORM != OGRE_PLATFORM_NACL
 #include <dlfcn.h>
 #include <EGL/egl.h>
 
+#include "OgreLogManager.h"
+
 static void *libgl;
+
 
 static void open_libgl(void)
 {
+#if 1
 	libgl = dlopen("libGLESv2.so", RTLD_LAZY | RTLD_GLOBAL);
+#else
+	libgl = dlopen("libppapi_gles2.so", RTLD_LAZY | RTLD_GLOBAL);
+#endif
+	if (libgl)
+		Ogre::LogManager::getSingleton().logMessage("libgl is loaded");
+	else
+		Ogre::LogManager::getSingleton().logMessage("libgl is null");
 }
 
 static void close_libgl(void)
@@ -120,7 +134,30 @@ static void *get_proc(const char *proc)
 {
 	void *res;
     res = dlsym(libgl, proc);
+	if (res)
+		Ogre::LogManager::getSingleton().logMessage(proc);
 	return res;
+}
+#else
+#include <EGL/egl.h>
+
+#include "OgreLogManager.h"
+
+static void *libgl;
+
+
+static void open_libgl(void)
+{
+	Ogre::LogManager::getSingleton().logMessage("dummy open_libgl");
+}
+
+static void close_libgl(void)
+{	
+}
+
+static void *get_proc(const char *proc)
+{
+	return NULL;
 }
 #endif
 
@@ -140,9 +177,13 @@ static void load_procs(void);
 
 int gleswInit(void)
 {
+	Ogre::LogManager::getSingleton().logMessage("p1");
 	open_libgl();
+	Ogre::LogManager::getSingleton().logMessage("p2");
 	load_procs();
+	Ogre::LogManager::getSingleton().logMessage("p3");
 	close_libgl();
+	Ogre::LogManager::getSingleton().logMessage("p4");
 	return parse_version();
 }
 
@@ -769,4 +810,9 @@ static void load_procs(void)
 	gleswExtGetProgramBinarySourceQCOM = (PFNGLEXTGETPROGRAMBINARYSOURCEQCOMPROC) get_proc("glExtGetProgramBinarySourceQCOM");
 	gleswStartTilingQCOM = (PFNGLSTARTTILINGQCOMPROC) get_proc("glStartTilingQCOM");
 	gleswEndTilingQCOM = (PFNGLENDTILINGQCOMPROC) get_proc("glEndTilingQCOM");
+
+	if (gleswGetString)
+		Ogre::LogManager::getSingleton().logMessage("gleswGetString inited.");
+	else
+		Ogre::LogManager::getSingleton().logMessage("gleswGetString is null.");
 }

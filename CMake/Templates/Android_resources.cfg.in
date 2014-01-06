@@ -7,10 +7,27 @@ APKFileSystem=/thumbnails
 # Rarely used resources should be separately loaded by the
 # samples which require them.
 [Popular]
-APKFileSystem=/materials
+APKFileSystem=/fonts
+APKFileSystem=/materials/programs
+APKFileSystem=/materials/programs/GLSLES
+APKFileSystem=/materials/scripts
+APKFileSystem=/materials/textures
+APKFileSystem=/materials/textures/nvidia
+APKFileSystem=/models
+APKFileSystem=/particle
 APKFileSystem=/RTShaderLib
 APKFileSystem=/RTShaderLib/GLSLES
 APKFileSystem=/RTShaderLib/materials
+APKFileSystem=/materials/scripts/SSAO
+APKFileSystem=/materials/textures/SSAO
+APKZip=/packs/cubemap.zip
+APKZip=/packs/cubemapsJS.zip
+APKZip=/packs/dragon.zip
+APKZip=/packs/fresneldemo.zip
+APKZip=/packs/ogretestmap.zip
+APKZip=/packs/ogredance.zip
+APKZip=/packs/Sinbad.zip
+APKZip=/packs/skybox.zip
 
 [General]
 APKFileSystem=/

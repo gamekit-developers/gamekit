@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -105,6 +105,10 @@ namespace Ogre {
                 // 3. The name
                 if(paramTokens.size() == 3)
                 {
+					StringUtil::trim(paramTokens[0]);
+					StringUtil::trim(paramTokens[1]);
+					StringUtil::trim(paramTokens[2]);
+
                     Operand::OpSemantic semantic = Operand::OPS_IN;
                     GpuConstantType gpuType = GCT_UNKNOWN;
 
@@ -181,18 +185,26 @@ namespace Ogre {
                 {
                     StringVector moreTokens = StringUtil::split(*it, " ");
 
+					if (!moreTokens.empty())
+					{
                     FunctionMap::const_iterator itFuncCache = mFunctionCacheMap.begin();
-                    for (; itFuncCache != mFunctionCacheMap.end(); ++itFuncCache)
-                    {
-                        if(itFuncCache->first.getFunctionName() == moreTokens.back())
-                        {
-                            // Add the function declaration
-                            depVector.push_back(FunctionInvocation((*itFuncCache).first));
 
-                            discoverFunctionDependencies(itFuncCache->first, depVector);
-                        }
-                    }
-                }
+						for (; itFuncCache != mFunctionCacheMap.end(); ++itFuncCache)
+						{
+
+							FunctionInvocation fi = itFuncCache->first;
+						
+							if(fi.getFunctionName() == moreTokens.back())
+							{
+								// Add the function declaration
+								depVector.push_back(FunctionInvocation((*itFuncCache).first));
+
+								discoverFunctionDependencies(itFuncCache->first, depVector);
+							}
+						}
+					}
+				}
+                
             }
             else
             {
@@ -968,7 +980,7 @@ namespace Ogre {
                         // First, look for a return type
                         if(isBasicType(tokens[0]) && ((tokens.size() < 3) || (tokens[2] != "=")) )
                         {
-                            String functionSig = "";
+                            String functionSig;
                             String functionBody = "";
                             FunctionInvocation *functionInvoc = NULL;
 

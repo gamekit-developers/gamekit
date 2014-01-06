@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -166,9 +166,6 @@ namespace Ogre {
 		{
 			wideMsgBuf[0] = 0;
 		}
-#if OGRE_WCHAR_T_STRINGS
-        String ret = wideMsgBuf;
-#else
 		char narrowMsgBuf[2048] = "";
 		if(0 == WideCharToMultiByte(
 			CP_ACP, 0,
@@ -179,7 +176,7 @@ namespace Ogre {
 			narrowMsgBuf[0] = 0;
 		}
         String ret = narrowMsgBuf;
-#endif
+
         return ret;
 #elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE
         return String(dlerror());

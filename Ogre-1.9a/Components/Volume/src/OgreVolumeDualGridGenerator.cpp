@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -461,7 +461,7 @@ namespace Volume {
 
     //-----------------------------------------------------------------------
 
-    DualGridGenerator::DualGridGenerator(): mDualGrid(0)
+    DualGridGenerator::DualGridGenerator(): mDualGrid(0), mRoot(0), mSaveDualCells(0), mIs(0), mMb(0), mMaxMSDistance(0)
     {
     }
     
@@ -514,7 +514,7 @@ namespace Volume {
             manual->estimateVertexCount(mDualCells.size() * 8);
             manual->estimateIndexCount(mDualCells.size() * 24);
 
-            size_t baseIndex = 0;
+            uint32 baseIndex = 0;
             for (VecDualCell::iterator it = mDualCells.begin(); it != mDualCells.end(); ++it)
             {
                 MeshBuilder::addCubeToManualObject(

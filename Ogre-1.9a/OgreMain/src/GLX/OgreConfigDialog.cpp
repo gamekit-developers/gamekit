@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -152,14 +152,14 @@ public:
 	/* Class that binds a callback to a certain configuration option/value */
 	class ConfigCallbackData {
 	public:
-		ConfigCallbackData(GLXConfigurator *parent_, const std::string &optionName_, const std::string &valueName_, Widget optionmenu_):
+		ConfigCallbackData(GLXConfigurator *parent_, const String &optionName_, const String &valueName_, Widget optionmenu_):
 			parent(parent_),
 			optionName(optionName_),
 			valueName(valueName_),
 			optionmenu(optionmenu_) {
 		}
 		GLXConfigurator *parent;
-		std::string optionName, valueName;
+		String optionName, valueName;
 		Widget optionmenu;
 	};
 	std::list<ConfigCallbackData> mConfigCallbackData;
@@ -195,7 +195,7 @@ private:
 
 	/* Functions reacting to GUI */
 	void SetRenderer(RenderSystem *);
-	void SetConfigOption(const std::string &optionName, const std::string &valueName);
+	void SetConfigOption(const String &optionName, const String &valueName);
 };
 
 GLXConfigurator::GLXConfigurator():
@@ -479,7 +479,7 @@ void GLXConfigurator::SetRenderer(RenderSystem *r) {
 	}
 }
 
-void GLXConfigurator::SetConfigOption(const std::string &optionName, const std::string &valueName) {
+void GLXConfigurator::SetConfigOption(const String &optionName, const String &valueName) {
 	if(!mRenderer)
 		// No renderer set -- how can this be called?
 		return;

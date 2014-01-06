@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -326,12 +326,12 @@ namespace Ogre {
 			this MovableObject. This can be a pointer back to one of your own
 			classes for instance.		
 		*/
-		virtual void setUserAny(const Any& anything) { getUserObjectBindings().setUserAny(anything); }
+		OGRE_DEPRECATED virtual void setUserAny(const Any& anything) { getUserObjectBindings().setUserAny(anything); }
 
 		/** @deprecated use UserObjectBindings::getUserAny via getUserObjectBindings() instead.
 			Retrieves the custom user value associated with this object.
 		*/
-		virtual const Any& getUserAny(void) const { return getUserObjectBindings().getUserAny(); }
+		OGRE_DEPRECATED virtual const Any& getUserAny(void) const { return getUserObjectBindings().getUserAny(); }
 
 		/** Return an instance of user objects binding associated with this class.
 		You can use it to associate one or more custom objects with this class instance.
@@ -497,7 +497,7 @@ namespace Ogre {
         /// Define a default implementation of method from ShadowCaster which implements no shadows
         ShadowRenderableListIterator getShadowVolumeRenderableIterator(
             ShadowTechnique shadowTechnique, const Light* light, 
-            HardwareIndexBufferSharedPtr* indexBuffer, 
+            HardwareIndexBufferSharedPtr* indexBuffer, size_t* indexBufferUsedSize,
             bool extrudeVertices, Real extrusionDist, unsigned long flags = 0);
 		
         /** Overridden member from ShadowCaster. */
@@ -579,7 +579,7 @@ namespace Ogre {
 	{
 	protected:
 		/// Type flag, allocated if requested
-		unsigned long mTypeFlag;
+		uint32 mTypeFlag;
 
 		/// Internal implementation of create method - must be overridden
 		virtual MovableObject* createInstanceImpl(
@@ -625,14 +625,14 @@ namespace Ogre {
 			to a number of different types of object, should you always wish them
 			to be treated the same in queries.
 		*/
-		void _notifyTypeFlags(unsigned long flag) { mTypeFlag = flag; }
+		void _notifyTypeFlags(uint32 flag) { mTypeFlag = flag; }
 
 		/** Gets the type flag for this factory.
 		@remarks
 			A type flag is like a query flag, except that it applies to all instances
 			of a certain type of object.
 		*/
-		unsigned long getTypeFlags(void) const { return mTypeFlag; }
+		uint32 getTypeFlags(void) const { return mTypeFlag; }
 
 	};
 	/** @} */

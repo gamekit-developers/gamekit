@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -121,6 +121,13 @@ bool DualQuaternionSkinning::resolveParameters(ProgramSet* programSet)
 				
 		if(mScalingShearingSupport)
 		{
+			if (ShaderGenerator::getSingleton().getTargetLanguage() == "hlsl")
+			{
+				//set hlsl shader to use row-major matrices instead of column-major.
+				//it enables the use of auto-bound 3x4 matrices in generated hlsl shader.
+				vsProgram->setUseColumnMajorMatrices(false);
+			}
+				
 			mParamInScaleShearMatrices = vsProgram->resolveAutoParameterInt(GpuProgramParameters::ACT_WORLD_SCALE_SHEAR_MATRIX_ARRAY_3x4, 0, mBoneCount);
 			mParamBlendS = vsMain->resolveLocalParameter(Parameter::SPS_UNKNOWN, -1, "blendS", GCT_MATRIX_3X4);
 			mParamTempFloat3x3 = vsMain->resolveLocalParameter(Parameter::SPS_UNKNOWN, -1, "TempVal3x3", GCT_MATRIX_3X3);

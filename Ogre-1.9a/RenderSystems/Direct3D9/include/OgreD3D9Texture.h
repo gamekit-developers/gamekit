@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -232,7 +232,7 @@ namespace Ogre {
 		bool requiresTextureFlipping() const { return false; }
 
 		/// Override needed to deal with FSAA
-		void swapBuffers(bool waitForVSync = true);
+		void swapBuffers();
 
 	};
 

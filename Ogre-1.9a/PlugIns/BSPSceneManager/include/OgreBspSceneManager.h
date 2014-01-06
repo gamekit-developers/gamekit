@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ namespace Ogre {
         based on a BSP tree.
         This class refines the behaviour of the default SceneManager to manage
         a scene whose bulk of geometry is made up of an indoor environment which
-        is organised by a Binary Space Partition (BSP) tree. </p>
+        is organised by a Binary Space Partition (BSP) tree.
         A BSP tree progressively subdivides the space using planes which are the nodes of the tree.
         At some point we stop subdividing and everything in the remaining space is part of a 'leaf' which
         contains a number of polygons. Typically we traverse the tree to locate the leaf in which a
@@ -52,7 +52,7 @@ namespace Ogre {
         Potentially Visible Set, tells us which other leaves can been seen from this
         leaf, and we test their bounding boxes against the camera frustum to see which
         we need to draw. Leaves are also a good place to start for collision detection since
-        they divide the level into discrete areas for testing.</p>
+        they divide the level into discrete areas for testing.
         This BSP and PVS technique has been made famous by engines such as Quake and Unreal. Ogre
         provides support for loading Quake3 level files to populate your world through this class,
         by calling the BspSceneManager::setWorldGeometry. Note that this interface is made
@@ -174,7 +174,7 @@ namespace Ogre {
         */
         /*
         virtual AxisAlignedBoxSceneQuery* 
-            createAABBQuery(const AxisAlignedBox& box, unsigned long mask = 0xFFFFFFFF);
+            createAABBQuery(const AxisAlignedBox& box, uint32 mask = 0xFFFFFFFF);
         */
         /* Creates a SphereSceneQuery for this scene manager. 
         @remarks
@@ -190,7 +190,7 @@ namespace Ogre {
         */
         /*
         virtual SphereSceneQuery* 
-            createSphereQuery(const Sphere& sphere, unsigned long mask = 0xFFFFFFFF);
+            createSphereQuery(const Sphere& sphere, uint32 mask = 0xFFFFFFFF);
         */
         /** Creates a RaySceneQuery for this scene manager. 
         @remarks
@@ -205,7 +205,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual RaySceneQuery* 
-            createRayQuery(const Ray& ray, unsigned long mask = 0xFFFFFFFF);
+            createRayQuery(const Ray& ray, uint32 mask = 0xFFFFFFFF);
         /** Creates an IntersectionSceneQuery for this scene manager. 
         @remarks
             This method creates a new instance of a query object for locating
@@ -218,7 +218,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual IntersectionSceneQuery* 
-            createIntersectionQuery(unsigned long mask = 0xFFFFFFFF);
+            createIntersectionQuery(uint32 mask = 0xFFFFFFFF);
 
     };
 

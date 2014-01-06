@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -131,7 +131,7 @@ namespace Ogre {
 				Mandatory on static buffers, i.e. those created without the HBU_DYNAMIC flag. 
 				*/ 
 			    HBL_READ_ONLY,
-                /** As HBL_NORMAL, except the application guarantees not to overwrite any 
+                /** As HBL_DISCARD, except the application guarantees not to overwrite any 
                 region of the buffer which has already been used in this frame, can allow
                 some optimisation on some APIs. */
                 HBL_NO_OVERWRITE,
@@ -159,7 +159,7 @@ namespace Ogre {
     public:
 		    /// Constructor, to be called by HardwareBufferManager only
             HardwareBuffer(Usage usage, bool systemMemory, bool useShadowBuffer) 
-				: mUsage(usage), mIsLocked(false), mSystemMemory(systemMemory), 
+				: mUsage(usage), mIsLocked(false), mLockStart(0), mLockSize(0), mSystemMemory(systemMemory), 
                 mUseShadowBuffer(useShadowBuffer), mShadowBuffer(NULL), mShadowUpdated(false), 
                 mSuppressHardwareUpdate(false) 
             {

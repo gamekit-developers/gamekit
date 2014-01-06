@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +89,7 @@ namespace Ogre {
             // Global keyframe index available, map to local keyframe index directly.
             assert(timeIndex.getKeyIndex() < mKeyFrameIndexMap.size());
             i = mKeyFrames.begin() + mKeyFrameIndexMap[timeIndex.getKeyIndex()];
-#ifdef _DEBUG
+#if OGRE_DEBUG_MODE
             KeyFrame timeKey(0, timePos);
             if (i != std::lower_bound(mKeyFrames.begin(), mKeyFrames.end(), &timeKey, KeyFrameTimeLess()))
             {
@@ -911,7 +911,7 @@ namespace Ogre {
 				// Scale by animation weight
 				influence = weight * influence;
 				// Get pose
-				assert (p1->poseIndex < poseList->size());
+				assert (poseList && p1->poseIndex < poseList->size());
 				Pose* pose = (*poseList)[p1->poseIndex];
 				// apply
 				applyPoseToVertexData(pose, data, influence);
@@ -937,7 +937,7 @@ namespace Ogre {
 					// Scale by animation weight
 					influence = weight * influence;
 					// Get pose
-					assert (p2->poseIndex <= poseList->size());
+					assert (poseList && p2->poseIndex <= poseList->size());
 					const Pose* pose = (*poseList)[p2->poseIndex];
 					// apply
 					applyPoseToVertexData(pose, data, influence);

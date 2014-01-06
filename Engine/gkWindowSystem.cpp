@@ -46,6 +46,11 @@
 #include "gkWindowAndroid.h"
 #endif
 
+#ifdef OGREKIT_BUILD_NACL
+#include "gkWindowNaCl.h"
+#endif
+
+
 
 //using namespace Ogre;
 
@@ -75,6 +80,8 @@ gkWindow* gkWindowSystem::createWindow(const gkUserDefs& prefs)
 	gkWindow* window = new gkWindowIOS();
 #elif defined(OGREKIT_BUILD_ANDROID)
 	gkWindow* window = new gkWindowAndroid();
+#elif defined(OGREKIT_BUILD_NACL)
+	gkWindow* window = new gkWindowNaCl();
 #else
 	gkWindow* window = new gkWindow();
 #endif

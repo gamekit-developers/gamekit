@@ -44,7 +44,9 @@ endif()
 if (WIN32)
     # Find OpenGLES2
 	#find_package(OpenGLES2)
+	
 	find_package(AngleGLES2)
+	
 	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
     
 	find_package(DirectX)
@@ -57,12 +59,17 @@ if (WIN32)
 	macro_log_feature(DirectX11_FOUND "DirectX11" "Support for the DirectX11 render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
 endif()
 
+if (OGREKIT_BUILD_NACL)
+	find_package(NaClGLES2)
+endif()
+
+
 
 # Find Cg (Disabled Not used right now!)
 # find_package(Cg)
 # macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
 
-if(NOT WIN32 AND NOT OGREKIT_BUILD_ANDROID)
+if(NOT WIN32 AND NOT OGREKIT_BUILD_ANDROID AND NOT OGREKIT_BUILD_NACL)
 	# Use static loader On win32 platforms 
 
 	# Find OpenAL

@@ -4,7 +4,7 @@
  (Object-oriented Graphics Rendering Engine)
  For the latest info, see http://www.ogre3d.org/
  
- Copyright (c) 2000-2013 Torus Knot Software Ltd
+ Copyright (c) 2000-2014 Torus Knot Software Ltd
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -198,10 +198,10 @@ namespace Ogre {
 		// get size of binary
 		cacheMicrocode->read(&binaryFormat, sizeof(GLenum));
 
-        GLint binaryLength = cacheMicrocode->size() - sizeof(GLenum);
+        GLint binaryLength = static_cast<GLint>(cacheMicrocode->size() - sizeof(GLenum));
 
         // load binary
-		OGRE_CHECK_GL_ERROR(glProgramBinary( mGLProgramHandle,
+		OGRE_CHECK_GL_ERROR(glProgramBinary(mGLProgramHandle,
                                             binaryFormat, 
                                             cacheMicrocode->getPtr(),
                                             binaryLength));

@@ -4,7 +4,7 @@ This source file is part of OGRE
 	(Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ THE SOFTWARE.
 namespace Ogre 
 {
 	GLXContext::GLXContext(GLXGLSupport* glsupport, ::GLXFBConfig fbconfig, ::GLXDrawable drawable, ::GLXContext context) :
-		mGLSupport(glsupport), mDrawable(drawable), mContext(0), mFBConfig(fbconfig), mExternalContext(false)
+		mDrawable(drawable), mContext(0), mFBConfig(fbconfig), mGLSupport(glsupport), mExternalContext(false)
 	{
 		GL3PlusRenderSystem *renderSystem = static_cast<GL3PlusRenderSystem*>(Root::getSingleton().getRenderSystem());
 		GLXContext* mainContext = static_cast<GLXContext*>(renderSystem->_getMainContext());

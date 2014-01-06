@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -416,7 +416,7 @@ namespace Ogre
 		Chunk* c = OGRE_NEW Chunk();
 		c->id = id;
 		c->version = version;
-		c->offset = mStream->tell();
+		c->offset = static_cast<uint32>(mStream->tell());
 		c->length = 0;
 
 		mChunkStack.push_back(c);
@@ -780,10 +780,9 @@ namespace Ogre
 		for (size_t c = 0; c < count; ++c)
 		{
 			void *pData = (void *)((intptr_t)pBase + (c * size));
-			char swapByte;
 			for(size_t byteIndex = 0; byteIndex < size/2; byteIndex++)
 			{
- 				swapByte = *(char *)((intptr_t)pData + byteIndex);
+ 				char swapByte = *(char *)((intptr_t)pData + byteIndex);
  				*(char *)((intptr_t)pData + byteIndex) = 
  					*(char *)((intptr_t)pData + size - byteIndex - 1);
  				*(char *)((intptr_t)pData + size - byteIndex - 1) = swapByte;

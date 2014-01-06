@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -83,6 +83,8 @@ namespace Ogre
 		, mPSSM(0)
 		, mDepthShadows(false)
 		, mLowLodShadows(false)
+        , mSM3Available(false)
+        , mSM4Available(false)
 	{
 		HighLevelGpuProgramManager& hmgr = HighLevelGpuProgramManager::getSingleton();
         if (hmgr.isLanguageSupported("cg"))
@@ -233,10 +235,10 @@ namespace Ogre
 			--freeTextureUnits;
 		if (isShadowingEnabled(HIGH_LOD, terrain))
 		{
-			uint numShadowTextures = 1;
+			uint8 numShadowTextures = 1;
 			if (getReceiveDynamicShadowsPSSM())
 			{
-				numShadowTextures = getReceiveDynamicShadowsPSSM()->getSplitCount();
+				numShadowTextures = (uint8)getReceiveDynamicShadowsPSSM()->getSplitCount();
 			}
 			freeTextureUnits -= numShadowTextures;
 		}
@@ -357,16 +359,12 @@ namespace Ogre
             {
 				mShaderGen = OGRE_NEW ShaderHelperGLSLES();
             }
-			else
-			{
-				// todo
-			}
-
+			
 			// check SM3 features
 			mSM3Available = GpuProgramManager::getSingleton().isSyntaxSupported("ps_3_0");
 			mSM4Available = GpuProgramManager::getSingleton().isSyntaxSupported("ps_4_0");
-
 		}
+
 		HighLevelGpuProgramPtr vprog = mShaderGen->generateVertexProgram(this, terrain, tt);
 		HighLevelGpuProgramPtr fprog = mShaderGen->generateFragmentProgram(this, terrain, tt);
 
@@ -432,7 +430,7 @@ namespace Ogre
 			uint numTextures = 1;
 			if (getReceiveDynamicShadowsPSSM())
 			{
-				numTextures = getReceiveDynamicShadowsPSSM()->getSplitCount();
+				numTextures = (uint)getReceiveDynamicShadowsPSSM()->getSplitCount();
 			}
 			for (uint i = 0; i < numTextures; ++i)
 			{
@@ -556,7 +554,7 @@ namespace Ogre
 			uint numTextures = 1;
 			if (prof->getReceiveDynamicShadowsPSSM())
 			{
-				numTextures = prof->getReceiveDynamicShadowsPSSM()->getSplitCount();
+				numTextures = (uint)prof->getReceiveDynamicShadowsPSSM()->getSplitCount();
 			}
 			for (uint i = 0; i < numTextures; ++i)
 			{
@@ -600,7 +598,7 @@ namespace Ogre
 			if (prof->getReceiveDynamicShadowsPSSM())
 			{
 				PSSMShadowCameraSetup* pssm = prof->getReceiveDynamicShadowsPSSM();
-				numTextures = pssm->getSplitCount();
+				numTextures = (uint)pssm->getSplitCount();
 				Vector4 splitPoints;
 				const PSSMShadowCameraSetup::SplitPointList& splitPointList = pssm->getSplitPoints();
 				// Populate from split point 1, not 0, since split 0 isn't useful (usually 0)
@@ -661,7 +659,7 @@ namespace Ogre
 
                 uint numShadowTextures = 1;
                 if (prof->getReceiveDynamicShadowsPSSM())
-                    numShadowTextures = prof->getReceiveDynamicShadowsPSSM()->getSplitCount();
+                    numShadowTextures = (uint)prof->getReceiveDynamicShadowsPSSM()->getSplitCount();
 
                 for (uint i = 0; i < numShadowTextures; ++i)
                 {

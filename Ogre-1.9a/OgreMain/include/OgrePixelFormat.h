@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -327,7 +327,7 @@ namespace Ogre {
     		@param pixelFormat	Format of this buffer
     		@param pixelData    Pointer to the actual data
     	*/
-    	PixelBox(size_t width, size_t height, size_t depth, PixelFormat pixelFormat, void *pixelData=0):
+    	PixelBox(uint32 width, uint32 height, uint32 depth, PixelFormat pixelFormat, void *pixelData=0):
     		Box(0, 0, 0, width, height, depth),
     		data(pixelData), format(pixelFormat)
     	{
@@ -449,7 +449,7 @@ namespace Ogre {
 				width*height*depth*PixelUtil::getNumElemBytes(format). In the compressed
 				case, this does serious magic.
 		*/
-		static size_t getMemorySize(size_t width, size_t height, size_t depth, PixelFormat format);
+		static size_t getMemorySize(uint32 width, uint32 height, uint32 depth, PixelFormat format);
 		
         /** Returns the property flags for this pixel format
           @return
@@ -497,7 +497,7 @@ namespace Ogre {
 		/** Gives the masks for the R, G, B and A component
 		  @note			Only valid for native endian formats
         */
-        static void getBitMasks(PixelFormat format, uint32 rgba[4]);
+        static void getBitMasks(PixelFormat format, uint64 rgba[4]);
 
 		/** Gives the bit shifts for R, G, B and A component
 		@note			Only valid for native endian formats
@@ -628,7 +628,7 @@ namespace Ogre {
         static void bulkPixelConversion(const PixelBox &src, const PixelBox &dst);
 
       	/** Flips pixels inplace in vertical direction.
-            @param	src			PixelBox containing pixels, pitches and format
+            @param	box			PixelBox containing pixels, pitches and format
             @remarks Non consecutive pixel boxes are supported.
          */
         static void bulkPixelVerticalFlip(const PixelBox &box);

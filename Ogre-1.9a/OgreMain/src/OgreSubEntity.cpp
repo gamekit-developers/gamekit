@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,9 +48,11 @@ namespace Ogre {
         //mMaterialPtr = MaterialManager::getSingleton().getByName(mMaterialName, subMeshBasis->parent->getGroup());
         mMaterialLodIndex = 0;
         mVisible = true;
+        mRenderQueueID = 0;
         mRenderQueueIDSet = false;
         mRenderQueuePrioritySet = false;
         mSkelAnimVertexData = 0;
+        mVertexAnimationAppliedThisFrame = false;
 		mSoftwareVertexAnimVertexData = 0;
 		mHardwareVertexAnimVertexData = 0;
 		mHardwarePoseCount = 0;
@@ -90,7 +92,7 @@ namespace Ogre {
 			LogManager::getSingleton().logMessage("Can't assign material " + name +
 				" to SubEntity of " + mParentEntity->getName() + " because this "
 				"Material does not exist. Have you forgotten to define it in a "
-				".material script?");
+				".material script?", LML_CRITICAL);
 
 			material = MaterialManager::getSingleton().getByName("BaseWhite");
 
@@ -115,7 +117,7 @@ namespace Ogre {
 			LogManager::getSingleton().logMessage("Can't assign material "  
                 " to SubEntity of " + mParentEntity->getName() + " because this "
                 "Material does not exist. Have you forgotten to define it in a "
-                ".material script?");
+                ".material script?", LML_CRITICAL);
 			
 			mMaterialPtr = MaterialManager::getSingleton().getByName("BaseWhite");
 			

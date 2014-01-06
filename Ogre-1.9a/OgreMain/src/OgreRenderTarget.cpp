@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -230,12 +230,12 @@ namespace Ogre {
         {
 			StringUtil::StrStreamType str;
 			str << "Can't create another viewport for "
-				<< mName << " with Z-Order " << ZOrder
-				<< " because a viewport exists with this Z-Order already.";
+				<< mName << " with Z-order " << ZOrder
+				<< " because a viewport exists with this Z-order already.";
 			OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, str.str(), "RenderTarget::addViewport");
         }
         // Add viewport to list
-        // Order based on Z-Order
+        // Order based on Z-order
         Viewport* vp = OGRE_NEW Viewport(cam, this, left, top, width, height, ZOrder);
 
         mViewportList.insert(ViewportList::value_type(ZOrder, vp));
@@ -455,7 +455,7 @@ namespace Ogre {
 		ViewportList::iterator i = mViewportList.find(ZOrder);
 		if(i == mViewportList.end())
 		{
-			OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,"No viewport with given zorder : "
+			OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,"No viewport with given Z-order: "
 				+ StringConverter::toString(ZOrder), "RenderTarget::getViewportByZOrder");
 		}
         return i->second;
@@ -616,7 +616,7 @@ namespace Ogre {
 		if (swap)
 		{
 			// Swap buffers
-    	    swapBuffers(Root::getSingleton().getRenderSystem()->getWaitForVerticalBlank());
+    	    swapBuffers();
 		}
         OgreProfileEndGPUEvent("RenderTarget: " + getName());
     }

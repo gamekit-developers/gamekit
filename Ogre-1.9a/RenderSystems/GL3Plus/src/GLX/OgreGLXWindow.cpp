@@ -4,7 +4,7 @@ This source file is part of OGRE
 	(Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -283,7 +283,7 @@ namespace Ogre
 			};
 
 			int maxAttribs[] = {
-				GLX_SAMPLES,		samples,
+				GLX_SAMPLES,		static_cast<int>(samples),
 				GLX_DOUBLEBUFFER,   1,
 				GLX_STENCIL_SIZE,   INT_MAX,
 				GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT, 1,
@@ -660,7 +660,7 @@ namespace Ogre
 	}
 
 	//-------------------------------------------------------------------------------------------------//
-	void GLXWindow::swapBuffers(bool waitForVSync)
+	void GLXWindow::swapBuffers()
 	{
 		if (mClosed || mIsExternalGLControl)
 			return;
@@ -709,8 +709,8 @@ namespace Ogre
 		if (mClosed)
 			return;
 
-		if ((dst.left < 0) || (dst.right > mWidth) ||
-			(dst.top < 0) || (dst.bottom > mHeight) ||
+		if ((dst.right > mWidth) ||
+			(dst.bottom > mHeight) ||
 			(dst.front != 0) || (dst.back != 1))
 		{
 			OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Invalid box.", "GLXWindow::copyContentsToMemory" );

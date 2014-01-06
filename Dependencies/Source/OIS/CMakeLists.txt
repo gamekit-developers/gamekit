@@ -116,12 +116,19 @@ if (APPLE)
 		link_libraries(${IOKit_LIBRARIES})
 	endif()
 elseif (UNIX)
+
 	if (OGREKIT_BUILD_ANDROID)
 		set(OIS_PLAT
 			include/android/AndroidInputManager.h
 			
 			src/android/AndroidInputManager.cpp
-		)   
+		)
+	elseif (OGREKIT_BUILD_NACL)		
+		set(OIS_PLAT
+			include/nacl/NaClInputManager.h
+			
+			src/nacl/NaClInputManager.cpp
+		)      
 	else () 		
 		set(OIS_PLAT 
 			include/linux/EventHelpers.h

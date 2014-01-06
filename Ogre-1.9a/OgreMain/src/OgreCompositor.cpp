@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -240,7 +240,7 @@ void Compositor::createGlobalTextures()
 			if (def->pooled) 
 			{
 				LogManager::getSingleton().logMessage(
-					"Pooling global compositor textures has no effect");
+					"Pooling global compositor textures has no effect", LML_CRITICAL);
 			}
 			globalTextureNames.insert(def->name);
 
@@ -349,7 +349,7 @@ void Compositor::freeGlobalTextures()
 	while (i != mGlobalTextures.end())
 	{
 		TextureManager::getSingleton().remove(i->second->getName());
-		i++;
+		++i;
 	}
 	mGlobalTextures.clear();
 
@@ -358,7 +358,7 @@ void Compositor::freeGlobalTextures()
 	{
 		// remove MRT
 		Root::getSingleton().getRenderSystem()->destroyRenderTarget(mrti->second->getName());
-		mrti++;
+		++mrti;
 	}
 	mGlobalMRTs.clear();
 

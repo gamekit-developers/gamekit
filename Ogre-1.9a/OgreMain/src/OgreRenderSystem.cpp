@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -58,9 +58,10 @@ namespace Ogre {
         // This means CULL clockwise vertices, i.e. front of poly is counter-clockwise
         // This makes it the same as OpenGL and other right-handed systems
         , mCullingMode(CULL_CLOCKWISE)
-        , mVSync(true)
-		, mVSyncInterval(1)
 		, mWBuffer(false)
+        , mBatchCount(0)
+        , mFaceCount(0)
+        , mVertexCount(0)
         , mInvertVertexWinding(false)
         , mDisabledTexUnitsFrom(0)
         , mCurrentPassIterationCount(0)
@@ -71,9 +72,8 @@ namespace Ogre {
         , mDerivedDepthBiasSlopeScale(0.0f)
         , mGlobalInstanceVertexBufferVertexDeclaration(NULL)
         , mGlobalNumberOfInstances(1)
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 		, mEnableFixedPipeline(true)
-#endif
+        , mVertexProgramBound(false)
 		, mGeometryProgramBound(false)
         , mFragmentProgramBound(false)
 		, mTesselationHullProgramBound(false)
@@ -83,6 +83,7 @@ namespace Ogre {
 		, mRealCapabilities(0)
 		, mCurrentCapabilities(0)
 		, mUseCustomCapabilities(false)
+        , mNativeShadingLanguageVersion(0)
 		, mTexProjRelative(false)
 		, mTexProjRelativeOrigin(Vector3::ZERO)
     {
@@ -126,7 +127,7 @@ namespace Ogre {
 		}
     }
     //-----------------------------------------------------------------------
-    void RenderSystem::_swapAllRenderTargetBuffers(bool waitForVSync)
+    void RenderSystem::_swapAllRenderTargetBuffers()
     {
         // Update all in order of priority
         // This ensures render-to-texture targets get updated before render windows
@@ -135,7 +136,7 @@ namespace Ogre {
 		for( itarg = mPrioritisedRenderTargets.begin(); itarg != itargend; ++itarg )
 		{
 			if( itarg->second->isActive() && itarg->second->isAutoUpdated())
-				itarg->second->swapBuffers(waitForVSync);
+				itarg->second->swapBuffers();
 		}
     }
     //-----------------------------------------------------------------------
@@ -505,12 +506,6 @@ namespace Ogre {
         return mCullingMode;
     }
     //-----------------------------------------------------------------------
-    bool RenderSystem::getWaitForVerticalBlank(void) const
-    {
-        return mVSync;
-    }
-    //-----------------------------------------------------------------------
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
     bool RenderSystem::getFixedPipelineEnabled(void) const
     {
         return mEnableFixedPipeline;
@@ -520,7 +515,6 @@ namespace Ogre {
     {
         mEnableFixedPipeline = enabled;
     }
-#endif
     //-----------------------------------------------------------------------
 	void RenderSystem::setDepthBufferFor( RenderTarget *renderTarget )
 	{
@@ -553,14 +547,9 @@ namespace Ogre {
 			}
 			else
 				LogManager::getSingleton().logMessage( "WARNING: Couldn't create a suited DepthBuffer"
-													   "for RT: " + renderTarget->getName() );
+													   "for RT: " + renderTarget->getName() , LML_CRITICAL);
 		}
 	}
-    //-----------------------------------------------------------------------
-    void RenderSystem::setWaitForVerticalBlank(bool enabled)
-    {
-        mVSync = enabled;
-    }
     bool RenderSystem::getWBufferEnabled(void) const
     {
         return mWBuffer;
@@ -645,7 +634,7 @@ namespace Ogre {
         else
             val = op.vertexData->vertexCount;
 
-		int trueInstanceNum = std::max<size_t>(op.numberOfInstances,1);
+		size_t trueInstanceNum = std::max<size_t>(op.numberOfInstances,1);
 		val *= trueInstanceNum;
 
         // account for a pass having multiple iterations
@@ -952,7 +941,7 @@ namespace Ogre {
         return mGlobalInstanceVertexBuffer;
     }
 	//---------------------------------------------------------------------
-    void RenderSystem::setGlobalInstanceVertexBuffer( const HardwareVertexBufferSharedPtr val )
+    void RenderSystem::setGlobalInstanceVertexBuffer( const HardwareVertexBufferSharedPtr &val )
     {
         if ( !val.isNull() && !val->isInstanceData() )
         {

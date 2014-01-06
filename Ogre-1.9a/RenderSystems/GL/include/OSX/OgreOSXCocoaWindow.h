@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,7 @@ THE SOFTWARE.
 @end
 
 namespace Ogre {
+
     class _OgreGLExport OSXCocoaWindow : public RenderWindow
     {
     private:
@@ -63,6 +64,7 @@ namespace Ogre {
         String mWindowTitle;
         bool mUseNSView;
         float mContentScalingFactor;
+        bool mContentScalingSupported;
 
         void _setWindowParameters(void);
     public:
@@ -96,7 +98,7 @@ namespace Ogre {
         /** Overridden - see RenderWindow */
         void resize(unsigned int width, unsigned int height);
         /** Overridden - see RenderWindow */
-        void swapBuffers(bool waitForVSync);
+        void swapBuffers();
         /** Overridden - see RenderTarget */
         virtual void copyContentsToMemory(const PixelBox &dst, FrameBuffer buffer);
         /** Overridden - see RenderWindow */

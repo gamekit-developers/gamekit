@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#include <algorithm> // for std::sort
 #include "OgreShaderPrerequisites.h"
 #include "OgreShaderRenderState.h"
 #include "OgreShaderGenerator.h"
@@ -296,27 +297,24 @@ void TargetRenderState::link(const RenderState& rhs, Pass* srcPass, Pass* dstPas
 	}	
 }
 
+namespace {
+	struct CmpSubRenderStates {
+		bool operator()(const SubRenderState* a, const SubRenderState* b) const
+		{
+			return a->getExecutionOrder() < b->getExecutionOrder();
+		}
+	};
+}
+
 //-----------------------------------------------------------------------
 void TargetRenderState::sortSubRenderStates()
 {
 	if (mSubRenderStateSortValid == false)
 	{
-		if (mSubRenderStateList.size() > 1)
-			qsort(&mSubRenderStateList[0], mSubRenderStateList.size(), sizeof(SubRenderState*), sSubRenderStateCompare);		
-
+		std::sort(mSubRenderStateList.begin(), mSubRenderStateList.end(), CmpSubRenderStates());
 		mSubRenderStateSortValid = true;
 	}
 }
 
-//-----------------------------------------------------------------------
-int	TargetRenderState::sSubRenderStateCompare(const void * p0, const void *p1)
-{
-	SubRenderState* pInstance0 = *((SubRenderState**)p0);
-	SubRenderState* pInstance1 = *((SubRenderState**)p1);
-
-	return pInstance0->getExecutionOrder() - pInstance1->getExecutionOrder();	
-}
-
 }
 }
-

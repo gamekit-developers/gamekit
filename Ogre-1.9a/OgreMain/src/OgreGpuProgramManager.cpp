@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -223,7 +223,11 @@ namespace Ogre {
 	//---------------------------------------------------------------------
 	void GpuProgramManager::setSaveMicrocodesToCache( const bool val )
 	{
-		mSaveMicrocodesToCache = val;		
+        // Check that saving shader microcode is supported
+        if(!canGetCompiledShaderBuffer())
+            mSaveMicrocodesToCache = false;
+        else
+            mSaveMicrocodesToCache = val;
 	}
 	//---------------------------------------------------------------------
 	bool GpuProgramManager::isCacheDirty( void ) const
@@ -296,25 +300,25 @@ namespace Ogre {
 		}
 		
 		// write the size of the array
-		uint32 sizeOfArray = mMicrocodeCache.size();
+		uint32 sizeOfArray = static_cast<uint32>(mMicrocodeCache.size());
 		stream->write(&sizeOfArray, sizeof(uint32));
 		
 		// loop the array and save it
 		MicrocodeMap::const_iterator iter = mMicrocodeCache.begin();
 		MicrocodeMap::const_iterator iterE = mMicrocodeCache.end();
-		for ( ; iter != iterE ; iter++ )
+		for ( ; iter != iterE ; ++iter )
 		{
 			// saves the name of the shader
 			{
 				const String & nameOfShader = iter->first;
-				uint32 stringLength = nameOfShader.size();
+				uint32 stringLength = static_cast<uint32>(nameOfShader.size());
 				stream->write(&stringLength, sizeof(uint32));				
 				stream->write(&nameOfShader[0], stringLength);
 			}
 			// saves the microcode
 			{
 				const Microcode & microcodeOfShader = iter->second;
-				uint32 microcodeLength = microcodeOfShader->size();
+				uint32 microcodeLength = static_cast<uint32>(microcodeOfShader->size());
 				stream->write(&microcodeLength, sizeof(uint32));				
 				stream->write(microcodeOfShader->getPtr(), microcodeLength);
 			}

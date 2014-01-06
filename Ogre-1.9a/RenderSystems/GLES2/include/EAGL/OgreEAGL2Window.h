@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include "OgreRenderWindow.h"
 
 #ifdef __OBJC__
-#import <UIKit/UIKit.h>
 #import "OgreEAGL2View.h"
 #import "OgreEAGL2ViewController.h"
 
@@ -95,7 +94,7 @@ namespace Ogre {
 
             void setVisible(bool visible) { mVisible = visible; }
             void setClosed(bool closed) { mClosed = closed; }
-            void swapBuffers(bool waitForVSync);
+            void swapBuffers();
             void copyContentsToMemory(const PixelBox &dst, FrameBuffer buffer);
             PixelFormat suggestPixelFormat() const { return PF_BYTE_RGBA; }
 

@@ -90,6 +90,8 @@ restrictions:
 #else //Probably Linux
 #  if defined(__ANDROID__) || defined(ANDROID)
 #	define OIS_ANDROID_PLATFORM
+#  elif defined(NACL)
+#   define OIS_NACL_PLATFORM
 #  else
 #	define OIS_LINUX_PLATFORM
 #  endif

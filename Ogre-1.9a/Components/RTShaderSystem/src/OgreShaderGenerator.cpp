@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -63,7 +63,6 @@ String ShaderGenerator::SGTechnique::UserKey	= "SGTechnique";
 //-----------------------------------------------------------------------
 ShaderGenerator* ShaderGenerator::getSingletonPtr()
 {
-	assert( msSingleton );  
 	return msSingleton;
 }
 
@@ -91,10 +90,9 @@ ShaderGenerator::ShaderGenerator()
 	mLightCount[2]				= 0;
 	mVSOutputCompactPolicy		= VSOCP_LOW;
 	mCreateShaderOverProgrammablePass = false;
-    mIsFinalizing = false;
-
-
-	mShaderLanguage = "";
+    mIsFinalizing               = false;
+    mFSLayer                    = 0;
+	mShaderLanguage             = "";
 	
 	HighLevelGpuProgramManager& hmgr = HighLevelGpuProgramManager::getSingleton();
 
@@ -235,11 +233,11 @@ void ShaderGenerator::createSubRenderStateExFactories()
 }
 
 //-----------------------------------------------------------------------------
-void ShaderGenerator::finalize()
+void ShaderGenerator::destroy()
 {
 	if (msSingleton != NULL)
 	{
-		msSingleton->_finalize();
+		msSingleton->_destroy();
 
 		OGRE_DELETE msSingleton;
 		msSingleton = NULL;
@@ -247,7 +245,7 @@ void ShaderGenerator::finalize()
 }
 
 //-----------------------------------------------------------------------------
-void ShaderGenerator::_finalize()
+void ShaderGenerator::_destroy()
 {
     OGRE_LOCK_AUTO_MUTEX;
 	
@@ -281,7 +279,7 @@ void ShaderGenerator::_finalize()
 	// Delete FFP Emulator.
 	if (mFFPRenderStateBuilder != NULL)
 	{
-		mFFPRenderStateBuilder->finalize();
+		mFFPRenderStateBuilder->destroy();
 		OGRE_DELETE mFFPRenderStateBuilder;
 		mFFPRenderStateBuilder = NULL;
 	}

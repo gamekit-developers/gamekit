@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,7 @@ THE SOFTWARE.
 #include "OgreScriptCompiler.h"
 #include "OgreWindowEventUtilities.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 #  include "macUtils.h"
 #endif
 #if OGRE_NO_PVRTC_CODEC == 0
@@ -149,8 +149,10 @@ namespace Ogre {
         LogManager::getSingleton().getDefaultLog()->addListener(mAndroidLogger);
 #endif
 
+#if OGRE_PLATFORM != OGRE_PLATFORM_NACL
         // Dynamic library manager
         mDynLibManager = OGRE_NEW DynLibManager();
+#endif
 
         mArchiveManager = OGRE_NEW ArchiveManager();
 
@@ -666,7 +668,18 @@ namespace Ogre {
             while(iter.hasMoreElements())
             {
                 String archType = iter.peekNextKey();
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
                 String filename = iter.getNext();
+
+                // Only adjust relative directories
+                if (!StringUtil::startsWith(filename, "/", false))
+                {
+                    filename = StringUtil::replaceAll(filename, "../", "");
+                    filename = String(macBundlePath() + "/Contents/Resources/" + filename);
+                }
+#else
+                String filename = iter.getNext();
+#endif
 
                 rscManager.parseCapabilitiesFromArchive(filename, archType, true);
             }
@@ -790,39 +803,35 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Root::addFrameListener(FrameListener* newListener)
     {
-		// Check if the specified listener is scheduled for removal
-		set<FrameListener *>::type::iterator i = mRemovedFrameListeners.find(newListener);
-
-		// If yes, cancel the removal. Otherwise add it to other listeners.
-		if (i != mRemovedFrameListeners.end())
-			mRemovedFrameListeners.erase(*i);
-		else
-			mFrameListeners.insert(newListener); // Insert, unique only (set)
+        mRemovedFrameListeners.erase(newListener);
+        mAddedFrameListeners.insert(newListener);
     }
 
     //-----------------------------------------------------------------------
     void Root::removeFrameListener(FrameListener* oldListener)
     {
-		// Remove, 1 only (set), and only when this listener was added before.
-		if( mFrameListeners.find( oldListener ) != mFrameListeners.end() )
+        mAddedFrameListeners.erase(oldListener);
 			mRemovedFrameListeners.insert(oldListener);
+    }
+    //-----------------------------------------------------------------------
+    void Root::_syncAddedRemovedFrameListeners()
+        {
+        for (set<FrameListener*>::type::iterator i = mRemovedFrameListeners.begin(); i != mRemovedFrameListeners.end(); i++)
+            mFrameListeners.erase(*i);
+        mRemovedFrameListeners.clear();
+
+        for (set<FrameListener*>::type::iterator i = mAddedFrameListeners.begin(); i != mAddedFrameListeners.end(); i++)
+            mFrameListeners.insert(*i);
+        mAddedFrameListeners.clear();
     }
     //-----------------------------------------------------------------------
     bool Root::_fireFrameStarted(FrameEvent& evt)
     {
 		OgreProfileBeginGroup("Frame", OGREPROF_GENERAL);
-
-        // Remove all marked listeners
-        set<FrameListener*>::type::iterator i;
-        for (i = mRemovedFrameListeners.begin();
-            i != mRemovedFrameListeners.end(); i++)
-        {
-            mFrameListeners.erase(*i);
-        }
-        mRemovedFrameListeners.clear();
+        _syncAddedRemovedFrameListeners();
 
         // Tell all listeners
-        for (i= mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
+        for (set<FrameListener*>::type::iterator i = mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
         {
             if (!(*i)->frameStarted(evt))
                 return false;
@@ -836,18 +845,10 @@ namespace Ogre {
     {
 		// Increment next frame number
 		++mNextFrame;
-
-        // Remove all marked listeners
-        set<FrameListener*>::type::iterator i;
-        for (i = mRemovedFrameListeners.begin();
-            i != mRemovedFrameListeners.end(); i++)
-        {
-            mFrameListeners.erase(*i);
-        }
-        mRemovedFrameListeners.clear();
+        _syncAddedRemovedFrameListeners();
 
         // Tell all listeners
-        for (i= mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
+        for (set<FrameListener*>::type::iterator i = mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
         {
             if (!(*i)->frameRenderingQueued(evt))
                 return false;
@@ -859,18 +860,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     bool Root::_fireFrameEnded(FrameEvent& evt)
     {
-        // Remove all marked listeners
-        set<FrameListener*>::type::iterator i;
-        for (i = mRemovedFrameListeners.begin();
-            i != mRemovedFrameListeners.end(); i++)
-        {
-            mFrameListeners.erase(*i);
-        }
-        mRemovedFrameListeners.clear();
+        _syncAddedRemovedFrameListeners();
 
         // Tell all listeners
 		bool ret = true;
-        for (i= mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
+        for (set<FrameListener*>::type::iterator i = mFrameListeners.begin(); i != mFrameListeners.end(); ++i)
         {
             if (!(*i)->frameEnded(evt))
 			{
@@ -1422,7 +1416,7 @@ namespace Ogre {
 		// give client app opportunity to use queued GPU time
 		bool ret = _fireFrameRenderingQueued();
 		// block for final swap
-		mActiveRenderer->_swapAllRenderTargetBuffers(mActiveRenderer->getWaitForVerticalBlank());
+		mActiveRenderer->_swapAllRenderTargetBuffers();
 
         // This belongs here, as all render targets must be updated before events are
         // triggered, otherwise targets could be mismatched.  This could produce artifacts,
@@ -1440,7 +1434,7 @@ namespace Ogre {
 		// give client app opportunity to use queued GPU time
 		bool ret = _fireFrameRenderingQueued(evt);
 		// block for final swap
-		mActiveRenderer->_swapAllRenderTargetBuffers(mActiveRenderer->getWaitForVerticalBlank());
+		mActiveRenderer->_swapAllRenderTargetBuffers();
 
 		// This belongs here, as all render targets must be updated before events are
 		// triggered, otherwise targets could be mismatched.  This could produce artifacts,

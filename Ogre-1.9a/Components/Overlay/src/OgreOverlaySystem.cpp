@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,11 @@ namespace Ogre {
 	OverlaySystem::OverlaySystem()
 	{
 		mOverlayManager = OGRE_NEW Ogre::OverlayManager();
-	    mPanelFactory = OGRE_NEW Ogre::PanelOverlayElementFactory();
-		mOverlayManager->addOverlayElementFactory(mPanelFactory);
+		mOverlayManager->addOverlayElementFactory(OGRE_NEW Ogre::PanelOverlayElementFactory());
 
-		mBorderPanelFactory = OGRE_NEW Ogre::BorderPanelOverlayElementFactory();
-		mOverlayManager->addOverlayElementFactory(mBorderPanelFactory);
+		mOverlayManager->addOverlayElementFactory(OGRE_NEW Ogre::BorderPanelOverlayElementFactory());
 
-		mTextAreaFactory = OGRE_NEW Ogre::TextAreaOverlayElementFactory();
-		mOverlayManager->addOverlayElementFactory(mTextAreaFactory);
+		mOverlayManager->addOverlayElementFactory(OGRE_NEW Ogre::TextAreaOverlayElementFactory());
 
 		mFontManager = OGRE_NEW FontManager();
 #if OGRE_PROFILING

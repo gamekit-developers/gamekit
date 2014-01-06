@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -158,7 +158,6 @@ namespace Ogre {
 
 	protected:
 		void setClipPlanesImpl(const PlaneList& clipPlanes);
-		bool activateGLTextureUnit(size_t unit);
         void bindVertexElementToGpu( const VertexElement &elem, HardwareVertexBufferSharedPtr vertexBuffer,
                 const size_t vertexStart, 
                 vector<GLuint>::type &attribsBound, vector<GLuint>::type &instanceAttribsBound );

@@ -4,7 +4,7 @@
  (Object-oriented Graphics Rendering Engine)
  For the latest info, see http://www.ogre3d.org/
  
- Copyright (c) 2000-2013 Torus Knot Software Ltd
+ Copyright (c) 2000-2014 Torus Knot Software Ltd
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -981,6 +981,11 @@ namespace pp {
     /// is one instance per <embed> tag on the page.  This is the main binding
     /// point for your NaCl module with the browser.
     Module* CreateModule() {
+		
+#if 0
+		Ogre::StringConverter::setDefaultStringLocale("");
+		//fprintf(stderr, "string locale: %s\n", Ogre::StringConverter::getDefaultStringLocale().c_str());
+#endif
         return new AppDelegateModule();
     }
 }  // namespace pp

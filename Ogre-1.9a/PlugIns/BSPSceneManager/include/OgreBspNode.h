@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace Ogre {
         it's children and these elements can either be further subdivided by planes,
         or they can be undivided spaces or 'leaf nodes' - these are the nodes which actually contain
         objects and world geometry.The leaves of the tree are the stopping point of any tree walking algorithm,
-        both for rendering and collision detection etc.</p>
+        both for rendering and collision detection etc.
         Ogre chooses not to represent splitting nodes and leaves as separate structures, but to merge the two for simplicity
         of the walking algorithm. If a node is a leaf, the isLeaf() method returns true and both getFront() and
         getBack() return null pointers. If the node is a partitioning plane isLeaf() returns false and getFront()

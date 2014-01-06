@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,24 @@ THE SOFTWARE.
 #include "OgreAndroidEGLSupport.h"
 #include "android/configuration.h"
 
+#ifndef EGL_COVERAGE_BUFFERS_NV
+#define EGL_COVERAGE_BUFFERS_NV 0x30E0
+#endif
+
+#ifndef EGL_COVERAGE_SAMPLES_NV
+#define EGL_COVERAGE_SAMPLES_NV 0x30E1
+#endif
+
 namespace Ogre {
     class _OgrePrivate AndroidEGLWindow : public EGLWindow
     {
 	private:
 		uint mMaxBufferSize;
+		uint mMinBufferSize;
 		uint mMaxDepthSize;
 		uint mMaxStencilSize;
+		uint mMSAA;
+		uint mCSAA;
 		
 	protected:
 		virtual EGLContext * createEGLContext() const;

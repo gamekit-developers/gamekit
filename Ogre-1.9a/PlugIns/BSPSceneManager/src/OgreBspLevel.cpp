@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -312,7 +312,7 @@ namespace Ogre {
         String shaderName;
         int face;
         face = q3lvl.mNumFaces;
-        int matHandle;
+        ResourceHandle matHandle;
         String meshName;
 
         String resourceGroup = ResourceGroupManager::getSingleton().getWorldResourceGroupName();
@@ -888,13 +888,13 @@ namespace Ogre {
 
                 if (params[0] == "origin")
                 {
-                    origin.x = atof(params[1].c_str());
-                    origin.y = atof(params[2].c_str());
-                    origin.z = atof(params[3].c_str());
+                    origin.x = static_cast<Real>(atof(params[1].c_str()));
+                    origin.y = static_cast<Real>(atof(params[2].c_str()));
+                    origin.z = static_cast<Real>(atof(params[3].c_str()));
                 }
                 if (params[0] == "angle")
                 {
-                    angle = Degree(atof(params[1].c_str()));
+                    angle = Degree(static_cast<Real>(atof(params[1].c_str())));
                 }
                 if (params[0] == "classname" && params[1] == "info_player_deathmatch")
                 {

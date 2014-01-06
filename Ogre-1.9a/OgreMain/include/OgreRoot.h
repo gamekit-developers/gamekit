@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -183,8 +183,10 @@ namespace Ogre
         /** Set of registered frame listeners */
         set<FrameListener*>::type mFrameListeners;
 
-        /** Set of frame listeners marked for removal*/
+        /** Set of frame listeners marked for removal and addition*/
         set<FrameListener*>::type mRemovedFrameListeners;
+        set<FrameListener*>::type mAddedFrameListeners;
+        void _syncAddedRemovedFrameListeners();
 
         /** Indicates the type of event to be considered by calculateEventTime(). */
         enum FrameEventTimeType {

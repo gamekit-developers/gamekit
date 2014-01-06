@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -161,7 +161,7 @@ namespace Ogre {
             int zerr = zzip_error(mZzipDir);
             String zzDesc = getZzipErrorDescription((zzip_error_t)zerr);
             LogManager::getSingleton().logMessage(
-                mName + " - Unable to open file " + lookUpFileName + ", error was '" + zzDesc + "'");
+                mName + " - Unable to open file " + lookUpFileName + ", error was '" + zzDesc + "'", LML_CRITICAL);
                 
 			// return null pointer
 			return DataStreamPtr();
@@ -383,7 +383,7 @@ namespace Ogre {
 		else
 		{
 			// everything is going all right, relative seek
-			skip(newPos - prevPos);
+			skip((long)(newPos - prevPos));
 		}
     }
     //-----------------------------------------------------------------------
@@ -563,13 +563,13 @@ namespace Ogre {
         switch(whence)
         {
             case SEEK_CUR:
-                newPos = curEmbeddedFileData.curPos + offset;
+                newPos = (zzip_size_t)(curEmbeddedFileData.curPos + offset);
                 break;
             case SEEK_END:
-                newPos = curEmbeddedFileData.fileSize - offset;
+                newPos = (zzip_size_t)(curEmbeddedFileData.fileSize - offset);
                 break;
             case SEEK_SET:
-                newPos = offset;
+                newPos = (zzip_size_t)offset;
                 break;
             default:
                 // bad whence - return an error - nonzero value.
@@ -660,7 +660,7 @@ namespace Ogre {
         newEmbeddedFileData.fileSize = fileSize;
         newEmbeddedFileData.decryptFunc = decryptFunc;
         EmbeddedZipArchiveFactory_mEmbbedFileDataList->push_back(newEmbeddedFileData);
-        (*EmbeddedZipArchiveFactory_mFileNameToIndexMap)[name] = EmbeddedZipArchiveFactory_mEmbbedFileDataList->size();
+        (*EmbeddedZipArchiveFactory_mFileNameToIndexMap)[name] = static_cast<int>(EmbeddedZipArchiveFactory_mEmbbedFileDataList->size());
     }
     //-----------------------------------------------------------------------
     void EmbeddedZipArchiveFactory::removeEmbbeddedFile( const String& name )

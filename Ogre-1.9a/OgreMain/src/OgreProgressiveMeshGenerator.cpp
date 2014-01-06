@@ -4,7 +4,7 @@
  * (Object-oriented Graphics Rendering Engine)
  * For the latest info, see http://www.ogre3d.org/
  *
- * Copyright (c) 2000-2013 Torus Knot Software Ltd
+ * Copyright (c) 2000-2014 Torus Knot Software Ltd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,6 @@
 #include "OgreSubMesh.h"
 #include "OgreMesh.h"
 #include "OgreLodStrategy.h"
-#include "OgreLogManager.h"
 #include "OgrePixelCountLodStrategy.h"
 
 namespace Ogre
@@ -186,7 +185,7 @@ void ProgressiveMeshGenerator::addVertexData(VertexData* vertexData, bool useSha
 	// Lock the buffer for reading.
 	unsigned char* vStart = static_cast<unsigned char*>(vbuf->lock(HardwareBuffer::HBL_READ_ONLY));
 	unsigned char* vertex = vStart;
-	int vSize = vbuf->getVertexSize();
+	size_t vSize = vbuf->getVertexSize();
 	unsigned char* vEnd = vertex + vertexData->vertexCount * vSize;
 
 	VertexLookupList& lookup = useSharedVertexLookup ? mSharedVertexLookup : mVertexLookup;
@@ -218,43 +217,6 @@ void ProgressiveMeshGenerator::addVertexData(VertexData* vertexData, bool useSha
 		lookup.push_back(v);
 	}
 	vbuf->unlock();
-}
-template<typename IndexType>
-void ProgressiveMeshGenerator::addIndexDataImpl(IndexType* iPos, const IndexType* iEnd,
-                                                VertexLookupList& lookup,
-                                                unsigned short submeshID)
-{
-
-	// Loop through all triangles and connect them to the vertices.
-	for (; iPos < iEnd; iPos += 3) {
-		// It should never reallocate or every pointer will be invalid.
-		OgreAssert(mTriangleList.capacity() > mTriangleList.size(), "");
-		mTriangleList.push_back(PMTriangle());
-		PMTriangle* tri = &mTriangleList.back();
-		tri->isRemoved = false;
-		tri->submeshID = submeshID;
-		for (int i = 0; i < 3; i++) {
-			// Invalid index: Index is bigger then vertex buffer size.
-			OgreAssert(iPos[i] < lookup.size(), "");
-			tri->vertexID[i] = iPos[i];
-			tri->vertex[i] = lookup[iPos[i]];
-		}
-		if (tri->isMalformed()) {
-#if OGRE_DEBUG_MODE
-			stringstream str;
-			str << "In " << mMeshName << " malformed triangle found with ID: " << getTriangleID(tri) << ". " <<
-			std::endl;
-			printTriangle(tri, str);
-			str << "It will be excluded from LOD level calculations.";
-			LogManager::getSingleton().stream() << str.str();
-#endif
-			tri->isRemoved = true;
-			mIndexBufferInfoList[tri->submeshID].indexCount -= 3;
-			continue;
-		}
-		tri->computeNormal();
-		addTriangleToEdges(tri);
-	}
 }
 
 void ProgressiveMeshGenerator::addIndexData(IndexData* indexData, bool useSharedVertexLookup, unsigned short submeshID)
@@ -375,7 +337,7 @@ ProgressiveMeshGenerator::PMTriangle* ProgressiveMeshGenerator::isDuplicateTrian
 	// duplicate triangle detection (where all vertices has the same position)
 	VTriangles::iterator itEnd = triangle->vertex[0]->triangles.end();
 	VTriangles::iterator it = triangle->vertex[0]->triangles.begin();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		PMTriangle* t = *it;
 		if (isDuplicateTriangle(triangle, t)) {
 			return *it;
@@ -385,7 +347,7 @@ ProgressiveMeshGenerator::PMTriangle* ProgressiveMeshGenerator::isDuplicateTrian
 }
 int ProgressiveMeshGenerator::getTriangleID(PMTriangle* triangle)
 {
-	return (triangle - &mTriangleList[0]) / sizeof(PMTriangle);
+	return static_cast<int>((triangle - &mTriangleList[0]) / sizeof(PMTriangle));
 }
 void ProgressiveMeshGenerator::addTriangleToEdges(PMTriangle* triangle)
 {
@@ -423,7 +385,7 @@ bool ProgressiveMeshGenerator::isBorderVertex(const PMVertex* vertex) const
 {
 	VEdges::const_iterator it = vertex->edges.begin();
 	VEdges::const_iterator itEnd = vertex->edges.end();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		if (it->refCount == 1) {
 			return true;
 		}
@@ -435,7 +397,7 @@ ProgressiveMeshGenerator::PMTriangle* ProgressiveMeshGenerator::findSideTriangle
 {
 	VTriangles::const_iterator it = v1->triangles.begin();
 	VTriangles::const_iterator itEnd = v1->triangles.end();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		PMTriangle* triangle = *it;
 		if (triangle->hasVertex(v2)) {
 			return triangle;
@@ -455,7 +417,7 @@ void ProgressiveMeshGenerator::computeCosts()
 	mCollapseCostHeap.clear();
 	VertexList::iterator it = mVertexList.begin();
 	VertexList::iterator itEnd = mVertexList.end();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		if (!it->edges.empty()) {
 
 			computeVertexCollapseCost(&*it);
@@ -477,7 +439,7 @@ void ProgressiveMeshGenerator::computeVertexCollapseCost(PMVertex* vertex)
 	Real collapseCost = UNINITIALIZED_COLLAPSE_COST;
 	OgreAssert(!vertex->edges.empty(), "");
 	VEdges::iterator it = vertex->edges.begin();
-	for (; it != vertex->edges.end(); it++) {
+	for (; it != vertex->edges.end(); ++it) {
 		it->collapseCost = computeEdgeCollapseCost(vertex, getPointer(it));
 		if (collapseCost > it->collapseCost) {
 			collapseCost = it->collapseCost;
@@ -506,7 +468,7 @@ Real ProgressiveMeshGenerator::computeEdgeCollapseCost(PMVertex* src, PMEdge* ds
 	{
 		VTriangles::iterator it = src->triangles.begin();
 		VTriangles::iterator itEnd = src->triangles.end();
-		for (; it != itEnd; it++) {
+		for (; it != itEnd; ++it) {
 			PMTriangle* triangle = *it;
 			// Ignore the deleted faces (those including src & dest)
 			if (!triangle->hasVertex(dst)) {
@@ -561,7 +523,7 @@ Real ProgressiveMeshGenerator::computeEdgeCollapseCost(PMVertex* src, PMEdge* ds
 			collapseEdge.normalise();
 			VEdges::iterator it = src->edges.begin();
 			VEdges::iterator itEnd = src->edges.end();
-			for (; it != itEnd; it++) {
+			for (; it != itEnd; ++it) {
 				PMVertex* neighbor = it->dst;
 				if (neighbor != dst && it->refCount == 1) {
 					Vector3 otherBorderEdge = src->position - neighbor->position;
@@ -585,11 +547,11 @@ Real ProgressiveMeshGenerator::computeEdgeCollapseCost(PMVertex* src, PMEdge* ds
 		cost = 1.0f;
 		VTriangles::iterator it = src->triangles.begin();
 		VTriangles::iterator itEnd = src->triangles.end();
-		for (; it != itEnd; it++) {
+		for (; it != itEnd; ++it) {
 			Real mincurv = -1.0f; // curve for face i and closer side to it
 			PMTriangle* triangle = *it;
 			VTriangles::iterator it2 = src->triangles.begin();
-			for (; it2 != itEnd; it2++) {
+			for (; it2 != itEnd; ++it2) {
 				PMTriangle* triangle2 = *it2;
 				if (triangle2->hasVertex(dst)) {
 
@@ -616,7 +578,7 @@ Real ProgressiveMeshGenerator::computeEdgeCollapseCost(PMVertex* src, PMEdge* ds
 			PMVertex* otherSeam;
 			VEdges::iterator it = src->edges.begin();
 			VEdges::iterator itEnd = src->edges.end();
-			for (; it != itEnd; it++) {
+			for (; it != itEnd; ++it) {
 				PMVertex* neighbor = it->dst;
 				if(neighbor->seam) {
 					seamNeighbors++;
@@ -669,7 +631,7 @@ void ProgressiveMeshGenerator::updateVertexCollapseCost(PMVertex* vertex)
 	PMVertex* collapseTo = 0;
 	VEdges::iterator it = vertex->edges.begin();
 	VEdges::iterator itEnd = vertex->edges.end();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		it->collapseCost = computeEdgeCollapseCost(vertex, getPointer(it));
 		if (collapseCost > it->collapseCost) {
 			collapseCost = it->collapseCost;
@@ -838,7 +800,7 @@ void ProgressiveMeshGenerator::collapse(PMVertex* src)
 	tmpCollapsedEdges.clear();
 	VTriangles::iterator it = src->triangles.begin();
 	VTriangles::iterator itEnd = src->triangles.end();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		PMTriangle* triangle = *it;
 		if (triangle->hasVertex(dst)) {
 			// Remove a triangle
@@ -871,7 +833,7 @@ void ProgressiveMeshGenerator::collapse(PMVertex* src)
 	OgreAssert(dst->edges.find(PMEdge(src)) == dst->edges.end(), "");
 
 	it = src->triangles.begin();
-	for (; it != itEnd; it++) {
+	for (; it != itEnd; ++it) {
 		PMTriangle* triangle = *it;
 		if (!triangle->hasVertex(dst)) {
 			// Replace a triangle
@@ -906,7 +868,7 @@ void ProgressiveMeshGenerator::collapse(PMVertex* src)
 #ifndef PM_BEST_QUALITY
 	VEdges::iterator it3 = src->edges.begin();
 	VEdges::iterator it3End = src->edges.end();
-	for (; it3 != it3End; it3++) {
+	for (; it3 != it3End; ++it3) {
 		updateVertexCollapseCost(it3->dst);
 	}
 #else
@@ -916,11 +878,11 @@ void ProgressiveMeshGenerator::collapse(PMVertex* src)
 	UpdatableList updatable;
 	VEdges::iterator it3 = src->edges.begin();
 	VEdges::iterator it3End = src->edges.end();
-	for (; it3 != it3End; it3++) {
+	for (; it3 != it3End; ++it3) {
 		updatable.push_back(it3->dst);
 		VEdges::iterator it4End = it3->dst->edges.end();
 		VEdges::iterator it4 = it3->dst->edges.begin();
-		for (; it4 != it4End; it4++) {
+		for (; it4 != it4End; ++it4) {
 			updatable.push_back(it4->dst);
 		}
 	}
@@ -931,18 +893,18 @@ void ProgressiveMeshGenerator::collapse(PMVertex* src)
 	std::sort(it5, it5End);
 	it5End = std::unique(it5, it5End);
 
-	for (; it5 != it5End; it5++) {
+	for (; it5 != it5End; ++it5) {
 		updateVertexCollapseCost(*it5);
 	}
 #if OGRE_DEBUG_MODE
 	it3 = src->edges.begin();
 	it3End = src->edges.end();
-	for (; it3 != it3End; it3++) {
+	for (; it3 != it3End; ++it3) {
 		assertOutdatedCollapseCost(it3->dst);
 	}
 	it3 = dst->edges.begin();
 	it3End = dst->edges.end();
-	for (; it3 != it3End; it3++) {
+	for (; it3 != it3End; ++it3) {
 		assertOutdatedCollapseCost(it3->dst);
 	}
 	assertOutdatedCollapseCost(dst);
@@ -994,8 +956,7 @@ void ProgressiveMeshGenerator::bakeLods()
 	// Create buffers.
 	for (unsigned short i = 0; i < submeshCount; i++) {
 		SubMesh::LODFaceList& lods = mMesh->getSubMesh(i)->mLodFaceList;
-		int indexCount = mIndexBufferInfoList[i].indexCount;
-		OgreAssert(indexCount >= 0, "");
+		size_t indexCount = mIndexBufferInfoList[i].indexCount;
 		lods.push_back(OGRE_NEW IndexData());
 		lods.back()->indexStart = 0;
 

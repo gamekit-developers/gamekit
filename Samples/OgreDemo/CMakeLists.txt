@@ -74,7 +74,6 @@ link_directories(${OGRE_LIBDIR})
 configure_rendersystem()
 
 
-
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/Common/include
@@ -232,6 +231,11 @@ ENDIF()
 add_executable(SampleBrowser WIN32 ${HEADER_FILES} ${SOURCE_FILES} ${RESOURCE_FILES})
 
 target_link_libraries(SampleBrowser ${OGRE_LIBRARIES} ${OGRE_PLUGIN_LIBRARIES} ${OIS_LIBRARIES} ${SAMPLE_LIBRARIES})
+
+if (OGRE_BUILD_PLATFORM_NACL)
+	SET_TARGET_PROPERTIES(SampleBrowser PROPERTIES OUTPUT_NAME "SampleBrowser_${OGREKIT_EXE_POSTFIX}")
+endif()
+
 
 # Add samples as dependencies
 #add_dependencies(SampleBrowser ${OGRE_SAMPLES_LIST})

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -334,12 +334,11 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     Node* Node::removeChild(unsigned short index)
     {
-        Node* ret;
         if (index < mChildren.size())
         {
             ChildNodeMap::iterator i = mChildren.begin();
             while (index--) ++i;
-            ret = i->second;
+            Node* ret = i->second;
             // cancel any pending update
             cancelUpdate(ret);
 
@@ -931,9 +930,9 @@ namespace Ogre {
 
 			// indices
 			// 6 arrows
-			for (size_t i = 0; i < 6; ++i)
+			for (uint32 i = 0; i < 6; ++i)
 			{
-				size_t base = i * 7; 
+				uint32 base = i * 7;
 				mo.triangle(base + 0, base + 1, base + 2);
 				mo.triangle(base + 0, base + 2, base + 3);
 				mo.triangle(base + 4, base + 5, base + 6);

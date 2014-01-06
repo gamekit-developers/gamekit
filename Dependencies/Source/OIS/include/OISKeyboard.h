@@ -219,7 +219,7 @@ namespace OIS
 		@param key
 			A KeyCode to check
 		*/
-		virtual bool isKeyDown(KeyCode key) const = 0;
+		virtual bool isKeyDown(KeyCode key) const { return false; }
 
 		/**
 		@remarks
@@ -292,7 +292,7 @@ namespace OIS
 			Copies the state of the keys into the sent buffer
 			(in the form of 1 is down and 0 is up)
 		*/
-		virtual void copyKeyStates(char keys[256]) const = 0;
+		virtual void copyKeyStates(char keys[256]) const {}
 		
 	protected:
 		Keyboard(const std::string &vendor, bool buffered, int devID, InputManager* creator)

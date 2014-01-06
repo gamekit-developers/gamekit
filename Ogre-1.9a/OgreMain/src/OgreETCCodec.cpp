@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -183,10 +183,9 @@ namespace Ogre {
     void ETCCodec::flipEndian(void * pData, size_t size) const
     {
 #if OGRE_ENDIAN == OGRE_ENDIAN_BIG
-        char swapByte;
         for(unsigned int byteIndex = 0; byteIndex < size/2; byteIndex++)
         {
-            swapByte = *(char *)((long)pData + byteIndex);
+            char swapByte = *(char *)((long)pData + byteIndex);
             *(char *)((long)pData + byteIndex) = *(char *)((long)pData + size - byteIndex - 1);
             *(char *)((long)pData + size - byteIndex - 1) = swapByte;
         }

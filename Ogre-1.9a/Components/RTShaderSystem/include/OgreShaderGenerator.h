@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -62,9 +62,9 @@ public:
 	static bool initialize();
 
 	/** 
-	Finalize the Shader Generator instance.
+	Destroy the Shader Generator instance.
 	*/
-	static void finalize();
+	static void destroy();
 
 
 	/** Override standard Singleton retrieval.
@@ -852,8 +852,8 @@ protected:
 	/** Initialize the shader generator instance. */
 	bool _initialize();
 	
-	/** Finalize the shader generator instance. */
-	void _finalize();
+	/** Destory the shader generator instance. */
+	void _destroy();
 
 	/** Find source technique to generate shader based technique based on it. */
 	Technique* findSourceTechnique(const String& materialName, const String& groupName, const String& srcTechniqueSchemeName, bool allowProgrammable);

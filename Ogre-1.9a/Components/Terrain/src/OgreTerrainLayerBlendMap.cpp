@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -155,17 +155,17 @@ namespace Ogre
 	{
 		if (mDirty)
 		{
-			mDirtyBox.left = std::min(mDirtyBox.left, (size_t)rect.left);
-			mDirtyBox.top = std::min(mDirtyBox.top, (size_t)rect.top);
-			mDirtyBox.right = std::max(mDirtyBox.right, (size_t)rect.right);
-			mDirtyBox.bottom = std::max(mDirtyBox.bottom, (size_t)rect.bottom);
+			mDirtyBox.left = std::min(mDirtyBox.left, static_cast<uint32>(rect.left));
+			mDirtyBox.top = std::min(mDirtyBox.top, static_cast<uint32>(rect.top));
+			mDirtyBox.right = std::max(mDirtyBox.right, static_cast<uint32>(rect.right));
+			mDirtyBox.bottom = std::max(mDirtyBox.bottom, static_cast<uint32>(rect.bottom));
 		}
 		else
 		{
-			mDirtyBox.left = rect.left;
-			mDirtyBox.right = rect.right;
-			mDirtyBox.top = rect.top;
-			mDirtyBox.bottom = rect.bottom;
+			mDirtyBox.left = static_cast<uint32>(rect.left);
+			mDirtyBox.right = static_cast<uint32>(rect.right);
+			mDirtyBox.top = static_cast<uint32>(rect.top);
+			mDirtyBox.bottom = static_cast<uint32>(rect.bottom);
 			mDirty = true;
 		}
 	}

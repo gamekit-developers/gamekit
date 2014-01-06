@@ -1,6 +1,6 @@
 #include <GLES3/gles3w.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(ANDROID)
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 #include <EGL/egl.h>
@@ -55,6 +55,8 @@ static void open_libgl(void)
 {
     CFStringRef frameworkPath = CFSTR("/System/Library/Frameworks/OpenGLES.framework");
     NSString *sysVersion = [UIDevice currentDevice].systemVersion;
+    NSArray *sysVersionComponents = [sysVersion componentsSeparatedByString:@"."];
+
     BOOL isSimulator = ([[UIDevice currentDevice].model rangeOfString:@"Simulator"].location != NSNotFound);
     if(isSimulator)
     {
@@ -67,9 +69,10 @@ static void open_libgl(void)
 
         char tempPath[PATH_MAX];
         sprintf(tempPath,
-                "%s/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator%s.sdk/System/Library/Frameworks/OpenGLES.framework",
+                "%s/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator%s.%s.sdk/System/Library/Frameworks/OpenGLES.framework",
                 xcodePath.c_str(),
-                [sysVersion cStringUsingEncoding:NSUTF8StringEncoding]);
+                [[sysVersionComponents objectAtIndex:0] cStringUsingEncoding:NSUTF8StringEncoding],
+                [[sysVersionComponents objectAtIndex:1] cStringUsingEncoding:NSUTF8StringEncoding]);
         frameworkPath = CFStringCreateWithCString(kCFAllocatorDefault, tempPath, kCFStringEncodingUTF8);
     }
 
@@ -80,6 +83,7 @@ static void open_libgl(void)
     CFRelease(frameworkPath);
 
 	bundle = CFBundleCreate(kCFAllocatorDefault, bundleURL);
+    
 	assert(bundle != NULL);
 }
 
@@ -410,6 +414,47 @@ PFNGLINVALIDATESUBFRAMEBUFFERPROC gleswInvalidateSubFramebuffer;
 PFNGLTEXSTORAGE2DPROC gleswTexStorage2D;
 PFNGLTEXSTORAGE3DPROC gleswTexStorage3D;
 PFNGLGETINTERNALFORMATIVPROC gleswGetInternalformativ;
+PFNGLUSEPROGRAMSTAGESEXTPROC gleswUseProgramStagesEXT;
+PFNGLACTIVESHADERPROGRAMEXTPROC gleswActiveShaderProgramEXT;
+PFNGLCREATESHADERPROGRAMVEXTPROC gleswCreateShaderProgramvEXT;
+PFNGLBINDPROGRAMPIPELINEEXTPROC gleswBindProgramPipelineEXT;
+PFNGLDELETEPROGRAMPIPELINESEXTPROC gleswDeleteProgramPipelinesEXT;
+PFNGLGENPROGRAMPIPELINESEXTPROC gleswGenProgramPipelinesEXT;
+PFNGLISPROGRAMPIPELINEEXTPROC gleswIsProgramPipelineEXT;
+PFNGLPROGRAMPARAMETERIEXTPROC gleswProgramParameteriEXT;
+PFNGLGETPROGRAMPIPELINEIVEXTPROC gleswGetProgramPipelineivEXT;
+PFNGLPROGRAMUNIFORM1IEXTPROC gleswProgramUniform1iEXT;
+PFNGLPROGRAMUNIFORM2IEXTPROC gleswProgramUniform2iEXT;
+PFNGLPROGRAMUNIFORM3IEXTPROC gleswProgramUniform3iEXT;
+PFNGLPROGRAMUNIFORM4IEXTPROC gleswProgramUniform4iEXT;
+PFNGLPROGRAMUNIFORM1FEXTPROC gleswProgramUniform1fEXT;
+PFNGLPROGRAMUNIFORM2FEXTPROC gleswProgramUniform2fEXT;
+PFNGLPROGRAMUNIFORM3FEXTPROC gleswProgramUniform3fEXT;
+PFNGLPROGRAMUNIFORM4FEXTPROC gleswProgramUniform4fEXT;
+PFNGLPROGRAMUNIFORM1IVEXTPROC gleswProgramUniform1ivEXT;
+PFNGLPROGRAMUNIFORM2IVEXTPROC gleswProgramUniform2ivEXT;
+PFNGLPROGRAMUNIFORM3IVEXTPROC gleswProgramUniform3ivEXT;
+PFNGLPROGRAMUNIFORM4IVEXTPROC gleswProgramUniform4ivEXT;
+PFNGLPROGRAMUNIFORM1FVEXTPROC gleswProgramUniform1fvEXT;
+PFNGLPROGRAMUNIFORM2FVEXTPROC gleswProgramUniform2fvEXT;
+PFNGLPROGRAMUNIFORM3FVEXTPROC gleswProgramUniform3fvEXT;
+PFNGLPROGRAMUNIFORM4FVEXTPROC gleswProgramUniform4fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX2FVEXTPROC gleswProgramUniformMatrix2fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX3FVEXTPROC gleswProgramUniformMatrix3fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX4FVEXTPROC gleswProgramUniformMatrix4fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX2X3FVEXTPROC gleswProgramUniformMatrix2x3fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX3X2FVEXTPROC gleswProgramUniformMatrix3x2fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX2X4FVEXTPROC gleswProgramUniformMatrix2x4fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX4X2FVEXTPROC gleswProgramUniformMatrix4x2fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX3X4FVEXTPROC gleswProgramUniformMatrix3x4fvEXT;
+PFNGLPROGRAMUNIFORMMATRIX4X3FVEXTPROC gleswProgramUniformMatrix4x3fvEXT;
+PFNGLVALIDATEPROGRAMPIPELINEEXTPROC gleswValidateProgramPipelineEXT;
+PFNGLGETPROGRAMPIPELINEINFOLOGEXTPROC gleswGetProgramPipelineInfoLogEXT;
+PFNGLLABELOBJECTEXTPROC gleswLabelObjectEXT;
+PFNGLGETOBJECTLABELEXTPROC gleswGetObjectLabelEXT;
+PFNGLINSERTEVENTMARKEREXTPROC gleswInsertEventMarkerEXT;
+PFNGLPUSHGROUPMARKEREXTPROC gleswPushGroupMarkerEXT;
+PFNGLPOPGROUPMARKEREXTPROC gleswPopGroupMarkerEXT;
 
 static void load_procs(void)
 {
@@ -659,4 +704,45 @@ static void load_procs(void)
 	gleswTexStorage2D = (PFNGLTEXSTORAGE2DPROC) get_proc("glTexStorage2D");
 	gleswTexStorage3D = (PFNGLTEXSTORAGE3DPROC) get_proc("glTexStorage3D");
 	gleswGetInternalformativ = (PFNGLGETINTERNALFORMATIVPROC) get_proc("glGetInternalformativ");
+	gleswLabelObjectEXT = (PFNGLLABELOBJECTEXTPROC) get_proc("glLabelObjectEXT");
+	gleswGetObjectLabelEXT = (PFNGLGETOBJECTLABELEXTPROC) get_proc("glGetObjectLabelEXT");
+	gleswInsertEventMarkerEXT = (PFNGLINSERTEVENTMARKEREXTPROC) get_proc("glInsertEventMarkerEXT");
+	gleswPushGroupMarkerEXT = (PFNGLPUSHGROUPMARKEREXTPROC) get_proc("glPushGroupMarkerEXT");
+	gleswPopGroupMarkerEXT = (PFNGLPOPGROUPMARKEREXTPROC) get_proc("glPopGroupMarkerEXT");
+	gleswUseProgramStagesEXT = (PFNGLUSEPROGRAMSTAGESEXTPROC) get_proc("glUseProgramStagesEXT");
+	gleswActiveShaderProgramEXT = (PFNGLACTIVESHADERPROGRAMEXTPROC) get_proc("glActiveShaderProgramEXT");
+	gleswCreateShaderProgramvEXT = (PFNGLCREATESHADERPROGRAMVEXTPROC) get_proc("glCreateShaderProgramvEXT");
+	gleswBindProgramPipelineEXT = (PFNGLBINDPROGRAMPIPELINEEXTPROC) get_proc("glBindProgramPipelineEXT");
+	gleswDeleteProgramPipelinesEXT = (PFNGLDELETEPROGRAMPIPELINESEXTPROC) get_proc("glDeleteProgramPipelinesEXT");
+	gleswGenProgramPipelinesEXT = (PFNGLGENPROGRAMPIPELINESEXTPROC) get_proc("glGenProgramPipelinesEXT");
+	gleswIsProgramPipelineEXT = (PFNGLISPROGRAMPIPELINEEXTPROC) get_proc("glIsProgramPipelineEXT");
+	gleswProgramParameteriEXT = (PFNGLPROGRAMPARAMETERIEXTPROC) get_proc("glProgramParameteriEXT");
+	gleswGetProgramPipelineivEXT = (PFNGLGETPROGRAMPIPELINEIVEXTPROC) get_proc("glGetProgramPipelineivEXT");
+	gleswProgramUniform1iEXT = (PFNGLPROGRAMUNIFORM1IEXTPROC) get_proc("glProgramUniform1iEXT");
+	gleswProgramUniform2iEXT = (PFNGLPROGRAMUNIFORM2IEXTPROC) get_proc("glProgramUniform2iEXT");
+	gleswProgramUniform3iEXT = (PFNGLPROGRAMUNIFORM3IEXTPROC) get_proc("glProgramUniform3iEXT");
+	gleswProgramUniform4iEXT = (PFNGLPROGRAMUNIFORM4IEXTPROC) get_proc("glProgramUniform4iEXT");
+	gleswProgramUniform1fEXT = (PFNGLPROGRAMUNIFORM1FEXTPROC) get_proc("glProgramUniform1fEXT");
+	gleswProgramUniform2fEXT = (PFNGLPROGRAMUNIFORM2FEXTPROC) get_proc("glProgramUniform2fEXT");
+	gleswProgramUniform3fEXT = (PFNGLPROGRAMUNIFORM3FEXTPROC) get_proc("glProgramUniform3fEXT");
+	gleswProgramUniform4fEXT = (PFNGLPROGRAMUNIFORM4FEXTPROC) get_proc("glProgramUniform4fEXT");
+	gleswProgramUniform1ivEXT = (PFNGLPROGRAMUNIFORM1IVEXTPROC) get_proc("glProgramUniform1ivEXT");
+	gleswProgramUniform2ivEXT = (PFNGLPROGRAMUNIFORM2IVEXTPROC) get_proc("glProgramUniform2ivEXT");
+	gleswProgramUniform3ivEXT = (PFNGLPROGRAMUNIFORM3IVEXTPROC) get_proc("glProgramUniform3ivEXT");
+	gleswProgramUniform4ivEXT = (PFNGLPROGRAMUNIFORM4IVEXTPROC) get_proc("glProgramUniform4ivEXT");
+	gleswProgramUniform1fvEXT = (PFNGLPROGRAMUNIFORM1FVEXTPROC) get_proc("glProgramUniform1fvEXT");
+	gleswProgramUniform2fvEXT = (PFNGLPROGRAMUNIFORM2FVEXTPROC) get_proc("glProgramUniform2fvEXT");
+	gleswProgramUniform3fvEXT = (PFNGLPROGRAMUNIFORM3FVEXTPROC) get_proc("glProgramUniform3fvEXT");
+	gleswProgramUniform4fvEXT = (PFNGLPROGRAMUNIFORM4FVEXTPROC) get_proc("glProgramUniform4fvEXT");
+	gleswProgramUniformMatrix2fvEXT = (PFNGLPROGRAMUNIFORMMATRIX2FVEXTPROC) get_proc("glProgramUniformMatrix2fvEXT");
+	gleswProgramUniformMatrix3fvEXT = (PFNGLPROGRAMUNIFORMMATRIX3FVEXTPROC) get_proc("glProgramUniformMatrix3fvEXT");
+	gleswProgramUniformMatrix4fvEXT = (PFNGLPROGRAMUNIFORMMATRIX4FVEXTPROC) get_proc("glProgramUniformMatrix4fvEXT");
+	gleswProgramUniformMatrix2x3fvEXT = (PFNGLPROGRAMUNIFORMMATRIX2X3FVEXTPROC) get_proc("glProgramUniformMatrix2x3fvEXT");
+	gleswProgramUniformMatrix4x2fvEXT = (PFNGLPROGRAMUNIFORMMATRIX3X2FVEXTPROC) get_proc("glProgramUniformMatrix3x2fvEXT");
+	gleswProgramUniformMatrix2x4fvEXT = (PFNGLPROGRAMUNIFORMMATRIX2X4FVEXTPROC) get_proc("glProgramUniformMatrix2x4fvEXT");
+	gleswProgramUniformMatrix4x2fvEXT = (PFNGLPROGRAMUNIFORMMATRIX4X2FVEXTPROC) get_proc("glProgramUniformMatrix4x2fvEXT");
+	gleswProgramUniformMatrix3x4fvEXT = (PFNGLPROGRAMUNIFORMMATRIX3X4FVEXTPROC) get_proc("glProgramUniformMatrix3x4fvEXT");
+	gleswProgramUniformMatrix4x3fvEXT = (PFNGLPROGRAMUNIFORMMATRIX4X3FVEXTPROC) get_proc("glProgramUniformMatrix4x3fvEXT");
+	gleswValidateProgramPipelineEXT = (PFNGLVALIDATEPROGRAMPIPELINEEXTPROC) get_proc("glValidateProgramPipelineEXT");
+	gleswGetProgramPipelineInfoLogEXT = (PFNGLGETPROGRAMPIPELINEINFOLOGEXTPROC) get_proc("glGetProgramPipelineInfoLogEXT");
 }

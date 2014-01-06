@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -343,7 +343,7 @@ namespace Ogre {
 	{
 		// is the name valid and already loaded?
 		// check with the high level program manager to see if it was loaded
-		HighLevelGpuProgramPtr hlProgram = HighLevelGpuProgramManager::getSingleton().getByName(name);
+		HighLevelGpuProgramPtr hlProgram = HighLevelGpuProgramManager::getSingleton().getByName(name).staticCast<HighLevelGpuProgram>();
 		if (!hlProgram.isNull())
 		{
 			if (hlProgram->getSyntaxCode() == "glsl")

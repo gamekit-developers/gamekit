@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -104,7 +104,7 @@ namespace Ogre {
             {
 				access |= GL_MAP_WRITE_BIT;
                 access |= GL_MAP_FLUSH_EXPLICIT_BIT;
-                if(options == HBL_DISCARD)
+                if(options == HBL_DISCARD || options == HBL_NO_OVERWRITE)
                 {
                     // Discard the buffer
                     access |= GL_MAP_INVALIDATE_RANGE_BIT;

@@ -4,7 +4,7 @@ This source file is a part of OGRE
 
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -737,6 +737,7 @@ namespace Ogre {
 		bool mShadowMaterialInitDone;
         HardwareIndexBufferSharedPtr mShadowIndexBuffer;
 		size_t mShadowIndexBufferSize;
+		size_t mShadowIndexBufferUsedSize;
         Rectangle2D* mFullScreenQuad;
         Real mShadowDirLightExtrudeDist;
         IlluminationRenderStage mIlluminationStage;
@@ -2581,7 +2582,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual AxisAlignedBoxSceneQuery* 
-            createAABBQuery(const AxisAlignedBox& box, unsigned long mask = 0xFFFFFFFF);
+            createAABBQuery(const AxisAlignedBox& box, uint32 mask = 0xFFFFFFFF);
         /** Creates a SphereSceneQuery for this scene manager. 
         @remarks
             This method creates a new instance of a query object for this scene manager, 
@@ -2595,7 +2596,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual SphereSceneQuery* 
-            createSphereQuery(const Sphere& sphere, unsigned long mask = 0xFFFFFFFF);
+            createSphereQuery(const Sphere& sphere, uint32 mask = 0xFFFFFFFF);
         /** Creates a PlaneBoundedVolumeListSceneQuery for this scene manager. 
         @remarks
         This method creates a new instance of a query object for this scene manager, 
@@ -2609,7 +2610,7 @@ namespace Ogre {
         certain objects; see SceneQuery for details.
         */
         virtual PlaneBoundedVolumeListSceneQuery* 
-            createPlaneBoundedVolumeQuery(const PlaneBoundedVolumeList& volumes, unsigned long mask = 0xFFFFFFFF);
+            createPlaneBoundedVolumeQuery(const PlaneBoundedVolumeList& volumes, uint32 mask = 0xFFFFFFFF);
 
 
         /** Creates a RaySceneQuery for this scene manager. 
@@ -2625,7 +2626,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual RaySceneQuery* 
-            createRayQuery(const Ray& ray, unsigned long mask = 0xFFFFFFFF);
+            createRayQuery(const Ray& ray, uint32 mask = 0xFFFFFFFF);
         //PyramidSceneQuery* createPyramidQuery(const Pyramid& p, unsigned long mask = 0xFFFFFFFF);
         /** Creates an IntersectionSceneQuery for this scene manager. 
         @remarks
@@ -2639,7 +2640,7 @@ namespace Ogre {
             certain objects; see SceneQuery for details.
         */
         virtual IntersectionSceneQuery* 
-            createIntersectionQuery(unsigned long mask = 0xFFFFFFFF);
+            createIntersectionQuery(uint32 mask = 0xFFFFFFFF);
 
         /** Destroys a scene query of any type. */
         virtual void destroyQuery(SceneQuery* query);
@@ -2805,7 +2806,8 @@ namespace Ogre {
 		/** Set the detailed configuration for a shadow texture.
 		@param shadowIndex The index of the texture to configure, must be < the
 			number of shadow textures setting
-		@param width, height The dimensions of the texture
+		@param width The width of the texture
+        @param height The height of the texture
 		@param format The pixel format of the texture
         @param fsaa The level of multisampling to use. Ignored if the device does not support it.
 		@param depthBufferPoolId The pool # it should query the depth buffers from
@@ -2870,9 +2872,8 @@ namespace Ogre {
 		{return mShadowTextureCountPerType[type]; }
 
         /** Sets the size and count of textures used in texture-based shadows. 
-        @remarks
-            @see setShadowTextureSize and setShadowTextureCount for details, this
-            method just allows you to change both at once, which can save on 
+        @see setShadowTextureSize and setShadowTextureCount for details, this
+            method just allows you to change both at once, which can save on
             reallocation if the textures have already been created.
 		@note This is the simple form, see setShadowTextureConfig for the more 
 			complex form.
@@ -3163,7 +3164,7 @@ namespace Ogre {
 		@param technique Technique to use, which may be shader based, or hardware based.
 		@param numInstancesPerBatch Suggested number of instances per batch. The actual number
 		may end up being lower if the technique doesn't support having so many. It can't be zero
-		@param flags @see InstanceManagerFlags
+		@param flags Flags to pass to the InstanceManager @see InstanceManagerFlags
 		@param subMeshIdx InstanceManager only supports using one submesh from the base mesh. This parameter
 		says which submesh to pick (must be <= Mesh::getNumSubMeshes())
 		@return The new InstanceManager instance

@@ -5,7 +5,7 @@ This source file is part of OGRE
 For the latest info, see http://www.ogre3d.org
 
 Copyright (c) 2008 Renato Araujo Oliveira Filho <renatox@gmail.com>
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -260,6 +260,8 @@ namespace Ogre {
 
         // Vertex Buffer Objects are always supported by OpenGL ES
         rsc->setCapability(RSC_VBO);
+        if(mGLSupport->checkExtension("GL_OES_element_index_uint"))
+            rsc->setCapability(RSC_32BIT_INDEX);
 
         // OpenGL ES - Check for these extensions too
         // For 1.1, http://www.khronos.org/registry/gles/api/1.1/glext.h
@@ -643,7 +645,7 @@ namespace Ogre {
 
     void GLESRenderSystem::_destroyDepthBuffer(RenderWindow* pWin)
     {
-        GLESContext *windowContext;
+        GLESContext *windowContext = 0;
         pWin->getCustomAttribute("GLCONTEXT", &windowContext);
         
         //1 Window <-> 1 Context, should be always true
@@ -900,8 +902,8 @@ namespace Ogre {
             // Equations are supposedly the same once you factor in vp height
             Real correction = 0.005;
             // scaling required
-            float val[4] = { constant, linear * correction,
-                             quadratic * correction, 1};
+            float val[4] = { static_cast<float>(constant), static_cast<float>(linear * correction),
+                             static_cast<float>(quadratic * correction), 1};
             glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, val);
             GL_CHECK_ERROR;
             glPointParameterf(GL_POINT_SIZE_MIN, adjMinSize);
@@ -1282,7 +1284,7 @@ namespace Ogre {
             GL_CHECK_ERROR;
         }
 
-        float blendValue[4] = {0, 0, 0, bm.factor};
+        float blendValue[4] = {0, 0, 0, static_cast<float>(bm.factor)};
         switch (bm.operation)
         {
             case LBX_BLEND_DIFFUSE_COLOUR:
@@ -2825,7 +2827,7 @@ namespace Ogre {
 
 #if OGRE_DOUBLE_PRECISION
 		// Must convert to float*
-		float tmp[4] = {vec.x, vec.y, vec.z, vec.w};
+		float tmp[4] = {static_cast<float>(vec.x), static_cast<float>(vec.y), static_cast<float>(vec.z), static_cast<float>(vec.w)};
 		glLightfv(lightindex, GL_POSITION, tmp);
 #else
 		glLightfv(lightindex, GL_POSITION, vec.ptr());
@@ -2837,7 +2839,7 @@ namespace Ogre {
 			vec.w = 0.0; 
 #if OGRE_DOUBLE_PRECISION
 			// Must convert to float*
-			float tmp2[4] = {vec.x, vec.y, vec.z, vec.w};
+            float tmp2[4] = {static_cast<float>(vec.x), static_cast<float>(vec.y), static_cast<float>(vec.z), static_cast<float>(vec.w)};
 			glLightfv(lightindex, GL_SPOT_DIRECTION, tmp2);
 #else
 			glLightfv(lightindex, GL_SPOT_DIRECTION, vec.ptr());

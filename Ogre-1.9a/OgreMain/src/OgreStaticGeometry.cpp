@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -289,7 +289,7 @@ namespace Ogre {
 		{
 			LogManager::getSingleton().logMessage(
 				"WARNING (StaticGeometry): Manual LOD is not supported. "
-				"Using only highest LOD level for mesh " + msh->getName());
+				"Using only highest LOD level for mesh " + msh->getName(), LML_CRITICAL);
 		}
 
 		AxisAlignedBox sharedWorldBounds;
@@ -392,12 +392,10 @@ namespace Ogre {
 		// and while we're at it, build the remap we can use later
 		bool use32bitIndexes =
 			id->indexBuffer->getType() == HardwareIndexBuffer::IT_32BIT;
-		uint16 *p16;
-		uint32 *p32;
 		IndexRemap indexRemap;
 		if (use32bitIndexes)
 		{
-			p32 = static_cast<uint32*>(id->indexBuffer->lock(
+			uint32 *p32 = static_cast<uint32*>(id->indexBuffer->lock(
 				id->indexStart, 
 				id->indexCount * id->indexBuffer->getIndexSize(), 
 				HardwareBuffer::HBL_READ_ONLY));
@@ -406,7 +404,7 @@ namespace Ogre {
 		}
 		else
 		{
-			p16 = static_cast<uint16*>(id->indexBuffer->lock(
+			uint16 *p16 = static_cast<uint16*>(id->indexBuffer->lock(
 				id->indexStart, 
 				id->indexCount * id->indexBuffer->getIndexSize(), 
 				HardwareBuffer::HBL_READ_ONLY));
@@ -898,7 +896,7 @@ namespace Ogre {
 	ShadowCaster::ShadowRenderableListIterator
 	StaticGeometry::Region::getShadowVolumeRenderableIterator(
 		ShadowTechnique shadowTechnique, const Light* light,
-		HardwareIndexBufferSharedPtr* indexBuffer,
+		HardwareIndexBufferSharedPtr* indexBuffer, size_t* indexBufferUsedSize,
 		bool extrude, Real extrusionDistance, unsigned long flags)
 	{
 		// Calculate the object space light details
@@ -920,8 +918,8 @@ namespace Ogre {
 		updateEdgeListLightFacing(edgeList, lightPos);
 
 		// Generate indexes and update renderables
-		generateShadowVolume(edgeList, *indexBuffer, light,
-			shadowRendList, flags);
+		generateShadowVolume(edgeList, *indexBuffer, *indexBufferUsedSize,
+			light, shadowRendList, flags);
 
 
 		return ShadowCaster::ShadowRenderableListIterator(shadowRendList.begin(), shadowRendList.end());

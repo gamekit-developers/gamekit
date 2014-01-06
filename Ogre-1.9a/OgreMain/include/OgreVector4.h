@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,12 +48,16 @@ namespace Ogre
         Real x, y, z, w;
 
     public:
+        /** Default constructor.
+            @note
+                It does <b>NOT</b> initialize the vector for efficiency.
+        */
         inline Vector4()
         {
         }
 
         inline Vector4( const Real fX, const Real fY, const Real fZ, const Real fW )
-            : x( fX ), y( fY ), z( fZ ), w( fW)
+            : x( fX ), y( fY ), z( fZ ), w( fW )
         {
         }
 

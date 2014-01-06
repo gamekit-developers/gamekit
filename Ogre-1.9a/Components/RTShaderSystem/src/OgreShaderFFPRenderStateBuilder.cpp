@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -50,7 +50,6 @@ namespace RTShader {
 //-----------------------------------------------------------------------
 FFPRenderStateBuilder* FFPRenderStateBuilder::getSingletonPtr()
 {
-	assert( msSingleton );  
 	return msSingleton;
 }
 
@@ -82,38 +81,38 @@ bool FFPRenderStateBuilder::initialize()
 
 	curFactory = OGRE_NEW FFPTransformFactory;	
 	ShaderGenerator::getSingleton().addSubRenderStateFactory(curFactory);
-	mFFPSubRenderStateFactoyList.push_back(curFactory);
+	mFFPSubRenderStateFactoryList.push_back(curFactory);
 
 	curFactory = OGRE_NEW FFPColourFactory;	
 	ShaderGenerator::getSingleton().addSubRenderStateFactory(curFactory);
-	mFFPSubRenderStateFactoyList.push_back(curFactory);
+	mFFPSubRenderStateFactoryList.push_back(curFactory);
 
 	curFactory = OGRE_NEW FFPLightingFactory;
 	ShaderGenerator::getSingleton().addSubRenderStateFactory(curFactory);
-	mFFPSubRenderStateFactoyList.push_back(curFactory);
+	mFFPSubRenderStateFactoryList.push_back(curFactory);
 
 	curFactory = OGRE_NEW FFPTexturingFactory;
 	ShaderGenerator::getSingleton().addSubRenderStateFactory(curFactory);
-	mFFPSubRenderStateFactoyList.push_back(curFactory);
+	mFFPSubRenderStateFactoryList.push_back(curFactory);
 
 	curFactory = OGRE_NEW FFPFogFactory;	
 	ShaderGenerator::getSingleton().addSubRenderStateFactory(curFactory);
-	mFFPSubRenderStateFactoyList.push_back(curFactory);
+	mFFPSubRenderStateFactoryList.push_back(curFactory);
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-void FFPRenderStateBuilder::finalize()
+void FFPRenderStateBuilder::destroy()
 {
 	SubRenderStateFactoryIterator it;
 
-	for (it = mFFPSubRenderStateFactoyList.begin(); it != mFFPSubRenderStateFactoyList.end(); ++it)
+	for (it = mFFPSubRenderStateFactoryList.begin(); it != mFFPSubRenderStateFactoryList.end(); ++it)
 	{
 		ShaderGenerator::getSingleton().removeSubRenderStateFactory(*it);		
 		OGRE_DELETE *it;		
 	}
-	mFFPSubRenderStateFactoyList.clear();
+	mFFPSubRenderStateFactoryList.clear();
 }
 
 

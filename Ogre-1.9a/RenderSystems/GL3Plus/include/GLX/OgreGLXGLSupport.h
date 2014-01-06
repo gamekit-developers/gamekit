@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -128,7 +128,7 @@ namespace Ogre {
 		 * @param mask	   Receiver for the output mask (alpha bitmap)
 		 * @returns		  true on success
 		 */
-		bool loadIcon(const std::string &name, Pixmap *pix, Pixmap *mask);
+		bool loadIcon(const String &name, Pixmap *pix, Pixmap *mask);
 
 		/**
 		 * Get the GLXFBConfig used to create a ::GLXContext

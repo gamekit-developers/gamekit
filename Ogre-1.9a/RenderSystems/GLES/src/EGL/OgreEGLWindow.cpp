@@ -5,7 +5,7 @@ This source file is part of OGRE
 For the latest info, see http://www.ogre3d.org/
 
 Copyright (c) 2008 Renato Araujo Oliveira Filho <renatox@gmail.com>
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -307,7 +307,7 @@ namespace Ogre {
 
   
 
-    void EGLWindow::swapBuffers(bool waitForVSync)
+    void EGLWindow::swapBuffers()
     {
         if (mClosed || mIsExternalGLControl)
         {
@@ -379,8 +379,10 @@ namespace Ogre {
 		RenderSystem* rsys = Root::getSingleton().getRenderSystem();
 		rsys->_setViewport(this->getViewport(0));
 
+#if OGRE_NO_GLES3_SUPPORT == 0
         if(dst.getWidth() != dst.rowPitch)
             glPixelStorei(GL_PACK_ROW_LENGTH, dst.rowPitch);
+#endif
 		// Must change the packing to ensure no overruns!
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
@@ -391,7 +393,9 @@ namespace Ogre {
 
 		// restore default alignment
 		glPixelStorei(GL_PACK_ALIGNMENT, 4);
+#if OGRE_NO_GLES3_SUPPORT == 0
         glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+#endif
         
         PixelUtil::bulkPixelVerticalFlip(dst);
     }

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -67,8 +67,6 @@ namespace Ogre {
         virtual ~ConfigFile();
         /// load from a filename (not using resource group locations)
         void load(const String& filename, const String& separators = "\t:=", bool trimWhitespace = true);
-        /// load from a filename (using resource group locations)
-        void load(const String& filename, const String& resourceGroup, const String& separators = "\t:=", bool trimWhitespace = true);
         /// load from a data stream
         void load(const DataStreamPtr& stream, const String& separators = "\t:=", bool trimWhitespace = true);
 		/// load from a filename (not using resource group locations)

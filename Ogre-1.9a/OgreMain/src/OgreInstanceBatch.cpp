@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@ namespace Ogre
 				mBoundsUpdated( false ),
 				mCurrentCamera( 0 ),
 				mMaterialLodIndex( 0 ),
+                mDirtyAnimation(true),
 				mTechnSupportsSkeletal( true ),
 				mCachedCamera( 0 ),
 				mTransformSharingDirty(true),
@@ -197,7 +198,7 @@ namespace Ogre
 	//-----------------------------------------------------------------------
 	InstancedEntity* InstanceBatch::generateInstancedEntity(size_t num)
 	{
-		return OGRE_NEW InstancedEntity( this, num);
+		return OGRE_NEW InstancedEntity(this, static_cast<uint32>(num));
 	}
 	//-----------------------------------------------------------------------
 	void InstanceBatch::deleteAllInstancedEntities()

@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -61,7 +61,6 @@ namespace RTShader {
 //-----------------------------------------------------------------------
 ProgramManager* ProgramManager::getSingletonPtr()
 {
-	assert( msSingleton );  
 	return msSingleton;
 }
 
@@ -466,9 +465,9 @@ GpuProgramPtr ProgramManager::createGpuProgram(Program* shaderProgram,
 		
 		pGpuProgram->setParameter("entry_point", shaderProgram->getEntryPointFunction()->getName());
 
-		// HLSL program requires specific target profile settings - we have to split the profile string.
 		if (language == "hlsl")
 		{
+			// HLSL program requires specific target profile settings - we have to split the profile string.
 			StringVector::const_iterator it = profilesList.begin();
 			StringVector::const_iterator itEnd = profilesList.end();
 			
@@ -482,6 +481,7 @@ GpuProgramPtr ProgramManager::createGpuProgram(Program* shaderProgram,
 			}
 
 			pGpuProgram->setParameter("enable_backwards_compatibility", "true");
+			pGpuProgram->setParameter("column_major_matrices", StringConverter::toString(shaderProgram->getUseColumnMajorMatrices()));
 		}
 		
 		pGpuProgram->setParameter("profiles", profiles);

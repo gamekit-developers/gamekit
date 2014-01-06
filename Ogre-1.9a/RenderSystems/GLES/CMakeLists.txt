@@ -13,7 +13,7 @@ file(GLOB HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file(GLOB SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 include_directories(src/StateCacheManager)
-if(OGRE_CONFIG_ENABLE_GLES_STATE_CACHE_SUPPORT)
+if(OGRE_CONFIG_ENABLE_GL_STATE_CACHE_SUPPORT)
   list(APPEND HEADER_FILES
       src/StateCacheManager/OgreGLESStateCacheManagerImp.h
   )
@@ -40,7 +40,7 @@ if (WIN32)
 # Add system specific settings
 elseif (APPLE)
   file(GLOB PLATFORM_HEADERS "include/EAGL/*.h")
-  file(GLOB PLATFORM_SOURCES "src/EAGL/*.mm")
+  file(GLOB PLATFORM_SOURCES "include/EAGL/*.mm")
 
   include_directories(src/EAGL include/EAGL)
   link_directories(${OPENGLES_LIBRARY_PATH})

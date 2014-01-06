@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ namespace Ogre {
     class _OgreGLExport GLPBuffer
     {
     public:
-        GLPBuffer(PixelComponentType format, size_t width, size_t height);
+        GLPBuffer(PixelComponentType format, uint32 width, uint32 height);
         virtual ~GLPBuffer();
         
         /** Get the GL context that needs to be active to render to this PBuffer.
@@ -46,15 +46,15 @@ namespace Ogre {
         virtual GLContext *getContext() = 0;
         
         PixelComponentType getFormat() { return mFormat; }
-        size_t getWidth() { return mWidth; }
-        size_t getHeight() { return mHeight; }
+        uint32 getWidth() { return mWidth; }
+        uint32 getHeight() { return mHeight; }
         
         /** Get PBuffer component format for an OGRE pixel format.
          */
         static PixelComponentType getPixelComponentType(PixelFormat fmt);
     protected:
         PixelComponentType mFormat;
-        size_t mWidth, mHeight;
+        uint32 mWidth, mHeight;
     };
     
 }

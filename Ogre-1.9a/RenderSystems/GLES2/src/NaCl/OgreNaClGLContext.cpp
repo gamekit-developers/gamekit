@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -84,13 +84,35 @@ namespace Ogre {
             mContext = pp::Graphics3D(mInstance, pp::Graphics3D(), attribs);
             if (mContext.is_null()) 
             {
+				LogManager::getSingleton().logMessage("\terror - gl context is null.");
                 glSetCurrentContextPPAPI(0);
                 return;
             }
+			LogManager::getSingleton().logMessage("\ttry bind context.");
             mInstance->BindGraphics(mContext);
+			LogManager::getSingleton().logMessage("\tend create context.");
         }
 
+
         glSetCurrentContextPPAPI(mContext.pp_resource());
+
+		if (!glGetCurrentContextPPAPI())
+			LogManager::getSingleton().logMessage("context is null!!!!!!");
+
+#if 0
+		static bool _inited = false;
+		if (!_inited)
+		{
+			 if (gleswInit())
+				LogManager::getSingleton().logMessage("Failed to initialize GL3W");
+			 else
+				LogManager::getSingleton().logMessage("initialize GL3W");
+
+			_inited = true;
+		}
+#endif
+
+		LogManager::getSingleton().logMessage("return NaClGLContext::setCurrent()");
         return;
     }
 
@@ -106,7 +128,7 @@ namespace Ogre {
         return res;
     }
 
-    void NaClGLContext::swapBuffers( bool waitForVSync )
+    void NaClGLContext::swapBuffers( )
     {
         mContext.SwapBuffers(*mSwapCallback);
     }

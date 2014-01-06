@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -348,7 +348,7 @@ namespace Ogre  {
 	}
 	//----------------------------------------------------------------------------- 
 
-	size_t GLPixelUtil::getMaxMipmaps(size_t width, size_t height, size_t depth, PixelFormat format)
+	size_t GLPixelUtil::getMaxMipmaps(uint32 width, uint32 height, uint32 depth, PixelFormat format)
 	{
 		size_t count = 0;
         if((width > 0) && (height > 0) && (depth > 0))
@@ -371,13 +371,13 @@ namespace Ogre  {
 		return count;
 	}
     //-----------------------------------------------------------------------------    
-    size_t GLPixelUtil::optionalPO2(size_t value)
+    uint32 GLPixelUtil::optionalPO2(uint32 value)
     {
         const RenderSystemCapabilities *caps = Root::getSingleton().getRenderSystem()->getCapabilities();
         if(caps->hasCapability(RSC_NON_POWER_OF_2_TEXTURES))
             return value;
         else
-            return Bitwise::firstPO2From((uint32)value);
+            return Bitwise::firstPO2From(value);
     }   
 
 	

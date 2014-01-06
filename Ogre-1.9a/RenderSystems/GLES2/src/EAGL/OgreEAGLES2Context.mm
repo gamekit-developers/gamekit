@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ THE SOFTWARE.
 */
 
 #include "OgreEAGLES2Context.h"
+#include "OgreEAGL2Support.h"
 #include "OgreGLES2RenderSystem.h"
 #include "OgreRoot.h"
 
@@ -111,10 +112,10 @@ namespace Ogre {
         OGRE_CHECK_GL_ERROR(glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &mBackingHeight));
         OGRE_CHECK_GL_ERROR(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mViewRenderbuffer));
 
-#if GL_APPLE_framebuffer_multisample
+#if GL_APPLE_framebuffer_multisample || OGRE_NO_GLES3_SUPPORT == 0
         if(mIsMultiSampleSupported && mNumSamples > 0)
         {
-            // Determine how many MSAS samples to use
+            // Determine how many MSAA samples to use
             GLint maxSamplesAllowed;
             glGetIntegerv(GL_MAX_SAMPLES_APPLE, &maxSamplesAllowed);
             int samplesToUse = (mNumSamples > maxSamplesAllowed) ? maxSamplesAllowed : mNumSamples;
@@ -127,13 +128,13 @@ namespace Ogre {
              * After rendering, the contents of this will be blitted into mFSAAFramebuffer */
             OGRE_CHECK_GL_ERROR(glGenRenderbuffers(1, &mFSAARenderbuffer));
             OGRE_CHECK_GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, mFSAARenderbuffer));
-            OGRE_CHECK_GL_ERROR(gleswRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, samplesToUse, GL_RGBA8_OES, mBackingWidth, mBackingHeight));
+            OGRE_CHECK_GL_ERROR(glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, samplesToUse, GL_RGBA8_OES, mBackingWidth, mBackingHeight));
             OGRE_CHECK_GL_ERROR(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mFSAARenderbuffer));
 
             // Create the FSAA depth buffer
             OGRE_CHECK_GL_ERROR(glGenRenderbuffers(1, &mDepthRenderbuffer));
             OGRE_CHECK_GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, mDepthRenderbuffer));
-            OGRE_CHECK_GL_ERROR(gleswRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, samplesToUse, GL_DEPTH_COMPONENT24_OES, mBackingWidth, mBackingHeight));
+            OGRE_CHECK_GL_ERROR(glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, samplesToUse, GL_DEPTH_COMPONENT16, mBackingWidth, mBackingHeight));
             OGRE_CHECK_GL_ERROR(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthRenderbuffer));
 
             // Validate the FSAA framebuffer
@@ -155,6 +156,7 @@ namespace Ogre {
             OGRE_CHECK_GL_ERROR(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthRenderbuffer));
         }
 
+        OGRE_CHECK_GL_ERROR(glBindRenderbuffer(GL_RENDERBUFFER, mViewRenderbuffer));
         OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, mViewFramebuffer));
         if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         {
@@ -170,7 +172,7 @@ namespace Ogre {
 
     void EAGLES2Context::destroyFramebuffer()
     {
-        OGRE_CHECK_GL_ERROR(gleswDeleteFramebuffers(1, &mViewFramebuffer));
+        OGRE_CHECK_GL_ERROR(glDeleteFramebuffers(1, &mViewFramebuffer));
         mViewFramebuffer = 0;
         OGRE_CHECK_GL_ERROR(glDeleteRenderbuffers(1, &mViewRenderbuffer));
         mViewRenderbuffer = 0;

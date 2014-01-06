@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@ namespace Ogre
 	GL3PlusDepthBuffer::GL3PlusDepthBuffer( uint16 poolId, GL3PlusRenderSystem *renderSystem, GL3PlusContext *creatorContext,
 									GL3PlusRenderBuffer *depth, GL3PlusRenderBuffer *stencil,
 									uint32 width, uint32 height, uint32 fsaa, uint32 multiSampleQuality,
-									bool isManual ) :
-				DepthBuffer( poolId, 0, width, height, fsaa, "", isManual ),
+									bool manual ) :
+				DepthBuffer( poolId, 0, width, height, fsaa, "", manual ),
 				mMultiSampleQuality( multiSampleQuality ),
 				mCreatorContext( creatorContext ),
 				mDepthBuffer( depth ),
@@ -101,7 +101,7 @@ namespace Ogre
 
 		if( !fbo )
 		{
-			GL3PlusContext *windowContext;
+			GL3PlusContext *windowContext = 0;
 			renderTarget->getCustomAttribute( GL3PlusRenderTexture::CustomAttributeString_GLCONTEXT, &windowContext );
 
 			//Non-FBO targets and FBO depth surfaces don't play along, only dummies which match the same

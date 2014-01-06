@@ -4,7 +4,7 @@ This source file is a part of OGRE
 
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -57,19 +57,18 @@ namespace Ogre {
 	#define UNICODE_ZERO 0x0030
     //---------------------------------------------------------------------
     TextAreaOverlayElement::TextAreaOverlayElement(const String& name)
-        : OverlayElement(name)
+        : OverlayElement(name), mColourBottom(ColourValue::White), mColourTop(ColourValue::White)
     {
         mTransparent = false;
         mAlignment = Left;
 
-        mColourTop = ColourValue::White;
-        mColourBottom = ColourValue::White;
         mColoursChanged = true;
 
         mAllocSize = 0;
 
         mCharHeight = 0.02;
 		mPixelCharHeight = 12;
+        mSpaceWidthOverridden = false;
 		mSpaceWidth = 0;
 		mPixelSpaceWidth = 0;
 		mViewportAspectCoef = 1;
@@ -174,9 +173,9 @@ namespace Ogre {
 		float top = -( (_getDerivedTop() * 2.0f ) - 1.0f );
 
 		// Derive space with from a number 0
-		if (mSpaceWidth == 0)
+        if(!mSpaceWidthOverridden)
 		{
-			mSpaceWidth = mFont->getGlyphAspectRatio(UNICODE_ZERO) * mCharHeight * 2.0f * mViewportAspectCoef;
+			mSpaceWidth = mFont->getGlyphAspectRatio(UNICODE_ZERO) * mCharHeight;
 		}
 
 		// Use iterator
@@ -199,7 +198,7 @@ namespace Ogre {
 					}
 					else if (character == UNICODE_SPACE) // space
 					{
-						len += mSpaceWidth;
+						len += mSpaceWidth * 2.0f * mViewportAspectCoef;
 					}
 					else 
 					{
@@ -244,7 +243,7 @@ namespace Ogre {
 			else if (character == UNICODE_SPACE) // space
 			{
 				// Just leave a gap, no tris
-				left += mSpaceWidth;
+				left += mSpaceWidth * 2.0f * mViewportAspectCoef;
 				// Also reduce tri count
 				mRenderOp.vertexData->vertexCount -= 6;
 				continue;
@@ -393,6 +392,7 @@ namespace Ogre {
 
     void TextAreaOverlayElement::setSpaceWidth( Real width )
     {
+        mSpaceWidthOverridden = true;
         if (mMetricsMode != GMM_RELATIVE)
         {
             mPixelSpaceWidth = static_cast<unsigned short>(width);

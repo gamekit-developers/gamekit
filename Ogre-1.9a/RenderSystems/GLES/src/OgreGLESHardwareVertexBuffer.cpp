@@ -5,7 +5,7 @@ This source file is part of OGRE
 For the latest info, see http://www.ogre3d.org/
 
 Copyright (c) 2008 Renato Araujo Oliveira Filho <renatox@gmail.com>
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -123,7 +123,7 @@ namespace Ogre {
                 mScratchPtr = retPtr;
                 mScratchUploadOnUnlock = (options != HBL_READ_ONLY);
 
-                if (options != HBL_DISCARD)
+                if (options != HBL_DISCARD && options != HBL_NO_OVERWRITE)
                 {
 					// have to read back the data before returning the pointer
                     readData(offset, length, retPtr);
@@ -144,7 +144,7 @@ namespace Ogre {
 			// Use glMapBuffer
 			glBindBuffer( GL_ARRAY_BUFFER, mBufferId );
 			// Use glMapBuffer
-			if(options == HBL_DISCARD)
+			if(options == HBL_DISCARD || options == HBL_NO_OVERWRITE)
 			{
 				// Discard the buffer
 				glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, NULL, 

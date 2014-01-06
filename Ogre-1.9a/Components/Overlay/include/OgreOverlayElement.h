@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -325,17 +325,17 @@ namespace Ogre {
         /** Gets the clipping region of the element */
         virtual void _getClippingRegion(RealRect &clippingRegion);
 
-        /** Internal method to notify the element when Zorder of parent overlay
+        /** Internal method to notify the element when Z-order of parent overlay
         has changed.
         @remarks
-        Overlays have explicit Z orders. OverlayElements do not, they inherit the 
-        ZOrder of the overlay, and the Zorder is incremented for every container
+        Overlays have explicit Z-orders. OverlayElements do not, they inherit the 
+        Z-order of the overlay, and the Z-order is incremented for every container
         nested within this to ensure that containers are displayed behind contained
         items. This method is used internally to notify the element of a change in
-        final zorder which is used to render the element.
-		@return Return the next zordering number available. For single elements, this
-		is simply newZOrder + 1, but for containers, they increment it once for each
-		child (more if those children are also containers).
+        final Z-order which is used to render the element.
+		@return Return the next Z-ordering number available. For single elements, this
+		is simply 'newZOrder + 1', except for containers. They increment it once for each
+		child (or even more if those children are also containers with their own elements).
         */
         virtual ushort _notifyZOrder(ushort newZOrder);
 

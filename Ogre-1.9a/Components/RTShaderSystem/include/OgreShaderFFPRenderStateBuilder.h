@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -96,9 +96,9 @@ public:
 	bool initialize();
 
 	/** 
-	Finalize the FFP builder instance.	
+	Destroy the FFP builder instance.
 	*/
-	void finalize();
+	void destroy();
 
 	/** 
 	Build render state from the given pass that emulates the fixed function pipeline behaviour.	
@@ -132,7 +132,7 @@ protected:
 // Attributes.
 protected:
 	// All factories needed by the FFP.
-	SubRenderStateFactoryList mFFPSubRenderStateFactoyList;
+	SubRenderStateFactoryList mFFPSubRenderStateFactoryList;
 	
 };
 

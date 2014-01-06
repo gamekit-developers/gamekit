@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ THE SOFTWARE.
 // Precompiler options
 #include "OgreGLSLESExtSupport.h"
 #include "OgreGLES2GpuProgram.h"
-#include "OgreGLES2UniformCache.h"
 
 namespace Ogre {
 
@@ -50,7 +49,6 @@ namespace Ogre {
     private:
 		/// GL Handle for the shader object
 		GLSLESProgram* mGLSLProgram;
-        GLES2UniformCache *mUniformCache;
 
 		/// Keep track of the number of vertex shaders created
 		static GLuint mVertexShaderCount;
@@ -89,8 +87,6 @@ namespace Ogre {
             Only used when programs are linked separately with GL_EXT_separate_shader_objects.
          */
         void setLinked(GLint flag) { mLinked = flag; }
-
-        GLES2UniformCache * getUniformCache(void) { return mUniformCache; }
 
     protected:
         /// Overridden from GpuProgram

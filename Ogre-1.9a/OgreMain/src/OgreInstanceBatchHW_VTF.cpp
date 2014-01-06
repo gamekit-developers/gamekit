@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -287,7 +287,7 @@ namespace Ogre
 
 			float *thisVec = static_cast<float*>(mInstanceVertexBuffer->lock(HardwareBuffer::HBL_DISCARD));
 
-			const size_t maxPixelsPerLine = std::min( mMatrixTexture->getWidth(), mMaxFloatsPerLine >> 2 );
+			const size_t maxPixelsPerLine = std::min( static_cast<size_t>(mMatrixTexture->getWidth()), mMaxFloatsPerLine >> 2 );
 
 			//Calculate UV offsets, which change per instance
 			for( size_t i=0; i<mInstancesPerBatch; ++i )

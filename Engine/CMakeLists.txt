@@ -130,6 +130,11 @@ if (OGREKIT_BUILD_ANDROID)
 	list(APPEND Core_SOURCE Android/gkWindowAndroid.cpp)
 endif()
 
+if (OGREKIT_BUILD_NACL)
+	list(APPEND Core_HEADER NaCl/gkWindowNaCl.h)
+	list(APPEND Core_SOURCE NaCl/gkWindowNaCl.cpp)
+endif()
+
 if(APPLE)
 	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE} ${Core_SOURCE_2})
 else()
@@ -1077,6 +1082,10 @@ endif()
 
 if (OGREKIT_BUILD_ANDROID)
 	include_directories(./Android)
+endif()
+
+if (OGREKIT_BUILD_NACL)
+	include_directories(./NaCl)
 endif()
 
 include_directories(

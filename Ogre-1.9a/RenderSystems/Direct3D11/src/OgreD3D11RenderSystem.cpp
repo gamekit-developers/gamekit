@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -131,9 +131,7 @@ bail:
 	{
 		LogManager::getSingleton().logMessage( "D3D11 : " + getName() + " created." );
 
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 		mEnableFixedPipeline = false;
-#endif
 
 		mRenderSystemWasInited = false;
 		initRenderSystem();
@@ -442,15 +440,6 @@ bail:
             }
 		}
 
-
-		if( name == "VSync" )
-		{
-			if (value == "Yes")
-				mVSync = true;
-			else
-				mVSync = false;
-		}
-
         if( name == "Min Requested Feature Levels" )
         {
             if (value == "9.1")
@@ -490,12 +479,6 @@ bail:
                 mMaxRequestedFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 #endif
         }
-
-
-		if( name == "VSync Interval" )
-		{
-			mVSyncInterval = StringConverter::parseUnsignedInt(value);
-		}
 
 		if( name == "Allow NVPerfHUD" )
 		{
@@ -590,12 +573,6 @@ bail:
 			return "Your DirectX driver name has changed since the last time you ran OGRE; "
 				"the 'Rendering Device' has been changed.";
 		}
-
-        it = mOptions.find( "VSync" );
-		if( it->second.currentValue == "Yes" )
-			mVSync = true;
-		else
-			mVSync = false;
 
         return StringUtil::BLANK;
 	}
@@ -775,7 +752,7 @@ bail:
             {
                 OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR, 
                     "Requested min level feature is bigger the requested max level feature.", 
-                    "D3D11RenderSystem::D3D11RenderSystem" );
+                    "D3D11RenderSystem::initialise" );
 
             }
 
@@ -896,7 +873,7 @@ bail:
 			bool hwGamma = false;
 			opt = mOptions.find( "sRGB Gamma Conversion" );
 			if( opt == mOptions.end() )
-				OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR, "Can't find sRGB option!", "D3D9RenderSystem::initialise" );
+				OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR, "Can't find sRGB option!", "D3D11RenderSystem::initialise" );
 			hwGamma = opt->second.currentValue == "Yes";
 			uint fsaa = 0;
 			String fsaaHint;
@@ -906,17 +883,25 @@ bail:
 				fsaa = StringConverter::parseUnsignedInt(values[0]);
 				if (values.size() > 1)
 					fsaaHint = values[1];
-			}				
-			
+			}						
 
 			NameValuePairList miscParams;
 			miscParams["colourDepth"] = StringConverter::toString(videoMode->getColourDepth());
 			miscParams["FSAA"] = StringConverter::toString(fsaa);
 			miscParams["FSAAHint"] = fsaaHint;
-			miscParams["vsync"] = StringConverter::toString(mVSync);
-			miscParams["vsyncInterval"] = StringConverter::toString(mVSyncInterval);
 			miscParams["useNVPerfHUD"] = StringConverter::toString(mUseNVPerfHUD);
 			miscParams["gamma"] = StringConverter::toString(hwGamma);
+
+            opt = mOptions.find("VSync");
+            if (opt == mOptions.end())
+                OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Can't find VSync options!", "D3D11RenderSystem::initialise");
+            bool vsync = (opt->second.currentValue == "Yes");
+            miscParams["vsync"] = StringConverter::toString(vsync);
+
+            opt = mOptions.find("VSync Interval");
+            if (opt == mOptions.end())
+                OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Can't find VSync Interval options!", "D3D11RenderSystem::initialise");
+            miscParams["vsyncInterval"] = opt->second.currentValue;
 
 			autoWindow = this->_createRenderWindow( windowTitle, width, height, 
 				fullScreen, &miscParams );
@@ -1096,6 +1081,12 @@ bail:
 		rsc->setCapability(RSC_HWSTENCIL);
 		rsc->setStencilBufferBitDepth(8);
 
+		rsc->setCapability(RSC_VBO);
+		UINT formatSupport;
+		if(mFeatureLevel >= D3D_FEATURE_LEVEL_9_2
+		|| SUCCEEDED(mDevice->CheckFormatSupport(DXGI_FORMAT_R32_UINT, &formatSupport)) && 0 != (formatSupport & D3D11_FORMAT_SUPPORT_IA_INDEX_BUFFER))
+			rsc->setCapability(RSC_32BIT_INDEX);
+
 		// Set number of texture units, always 16
 		rsc->setNumTextureUnits(16);
 		rsc->setCapability(RSC_ANISOTROPY);
@@ -1108,7 +1099,6 @@ bail:
 		// We always support compression, D3DX will decompress if device does not support
 		rsc->setCapability(RSC_TEXTURE_COMPRESSION);
 		rsc->setCapability(RSC_TEXTURE_COMPRESSION_DXT);
-		rsc->setCapability(RSC_VBO);
 		rsc->setCapability(RSC_SCISSOR_TEST);
 		rsc->setCapability(RSC_TWO_SIDED_STENCIL);
 		rsc->setCapability(RSC_STENCIL_WRAP);

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -470,7 +470,7 @@ namespace Ogre {
 	{
 		// is the name valid and already loaded?
 		// check with the high level program manager to see if it was loaded
-		HighLevelGpuProgramPtr hlProgram = HighLevelGpuProgramManager::getSingleton().getByName(name).staticCast<HighLevelGpuProgram>();
+		HighLevelGpuProgramPtr hlProgram = HighLevelGpuProgramManager::getSingleton().getByName(name);
 		if (!hlProgram.isNull())
 		{
 			if (hlProgram->getSyntaxCode() == "glsl")
@@ -553,13 +553,13 @@ namespace Ogre {
 		vector< String >::type linesOfSource = StringUtil::split(mSource, "\n");
 		if( message.find(precisionQualifierErrorString) != String::npos )
 		{
-			LogManager::getSingleton().logMessage("Fixing invalid type Type for default precision qualifier by deleting bad lines the re-compiling");
+			LogManager::getSingleton().logMessage("Fixing invalid type Type for default precision qualifier by deleting bad lines the re-compiling", LML_CRITICAL);
 
 			// remove relevant lines from source
 			vector< String >::type errors = StringUtil::split(message, "\n");
 
 			// going from the end so when we delete a line the numbers of the lines before will not change
-			for(int i = errors.size() - 1 ; i != -1 ; i--)
+			for(int i = (int)errors.size() - 1 ; i != -1 ; i--)
 			{
 				String & curError = errors[i];
 				size_t foundPos = curError.find(precisionQualifierErrorString);
@@ -579,7 +579,7 @@ namespace Ogre {
 				}
 			}	
 			// rebuild source
-			std::stringstream newSource;	
+			StringStream newSource;
 			for(size_t i = 0; i < linesOfSource.size()  ; i++)
 			{
 				newSource << linesOfSource[i] << "\n";
@@ -591,11 +591,11 @@ namespace Ogre {
 			// Check for load errors
             if (compile(true))
             {
-                LogManager::getSingleton().logMessage("The removing of the lines fixed the invalid type Type for default precision qualifier error.");
+                LogManager::getSingleton().logMessage("The removing of the lines fixed the invalid type Type for default precision qualifier error.", LML_CRITICAL);
             }
             else
             {
-                LogManager::getSingleton().logMessage("The removing of the lines didn't help.");
+                LogManager::getSingleton().logMessage("The removing of the lines didn't help.", LML_CRITICAL);
             }
 		}
 	}

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "OgreStringConverter.h"
 #include "OgreRoot.h"
 #include "OgreGLES2Util.h"
+#include "OgreGLES2RenderSystem.h"
 
 namespace Ogre {
 
@@ -67,9 +68,12 @@ namespace Ogre {
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
     void GLSLESLinkProgram::notifyOnContextLost()
     {
+		OGRE_CHECK_GL_ERROR(glDeleteProgram(mGLProgramHandle));
+		mGLProgramHandle = 0;
         mLinked = false;
         mTriedToLinkAndFailed = false;
         mUniformRefsBuilt = false;
+        mUniformCache->clearCache();
     }
     
     void GLSLESLinkProgram::notifyOnContextReset()
@@ -175,7 +179,7 @@ namespace Ogre {
 
         logObjectInfo( getCombinedName() + String("GLSL link result : "), mGLProgramHandle );
 
-#if GL_EXT_separate_shader_objects && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+#if OGRE_PLATFORM != OGRE_PLATFORM_NACL
         if(Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_SEPARATE_SHADER_OBJECTS))
         {
             OGRE_IF_IOS_VERSION_IS_GREATER_THAN(5.0)
@@ -204,15 +208,15 @@ namespace Ogre {
 
 				// Get buffer size
 				GLint binaryLength = 0;
-                if(getGLSupport()->checkExtension("GL_OES_get_program_binary") || gleswIsSupported(3, 0))
+                if(getGLES2SupportRef()->checkExtension("GL_OES_get_program_binary") || gleswIsSupported(3, 0))
                     OGRE_CHECK_GL_ERROR(glGetProgramiv(mGLProgramHandle, GL_PROGRAM_BINARY_LENGTH_OES, &binaryLength));
 
                 // Create microcode
                 GpuProgramManager::Microcode newMicrocode = 
-                    GpuProgramManager::getSingleton().createMicrocode((ulong)binaryLength + sizeof(GLenum));
+                    GpuProgramManager::getSingleton().createMicrocode(static_cast<uint32>(binaryLength + sizeof(GLenum)));
 
 				// Get binary
-                if(getGLSupport()->checkExtension("GL_OES_get_program_binary") || gleswIsSupported(3, 0))
+                if(getGLES2SupportRef()->checkExtension("GL_OES_get_program_binary") || gleswIsSupported(3, 0))
                     OGRE_CHECK_GL_ERROR(glGetProgramBinaryOES(mGLProgramHandle, binaryLength, NULL, (GLenum *)newMicrocode->getPtr(),
                                                           newMicrocode->getPtr() + sizeof(GLenum)));
 
@@ -253,16 +257,6 @@ namespace Ogre {
 		GLUniformReferenceIterator currentUniform = mGLUniformReferences.begin();
 		GLUniformReferenceIterator endUniform = mGLUniformReferences.end();
 
-        GLSLESGpuProgram *prog = 0;
-        if(fromProgType == GPT_VERTEX_PROGRAM)
-        {
-            prog = mVertexProgram;
-        }
-        else if(fromProgType == GPT_FRAGMENT_PROGRAM)
-        {
-            prog = mFragmentProgram;
-        }
-
 		for (;currentUniform != endUniform; ++currentUniform)
 		{
 			// Only pull values from buffer it's supposed to be in (vertex or fragment)
@@ -288,16 +282,15 @@ namespace Ogre {
                         case GCT_SAMPLER2DSHADOW:
                         case GCT_SAMPLER3D:
                         case GCT_SAMPLERCUBE:
-                            shouldUpdate = prog->getUniformCache()->updateUniform(currentUniform->mLocation,
+                            shouldUpdate = mUniformCache->updateUniform(currentUniform->mLocation,
                                                                                   params->getIntPointer(def->physicalIndex),
-                                                                                  def->elementSize * def->arraySize * sizeof(int));
+                                                                                  static_cast<GLsizei>(def->elementSize * def->arraySize * sizeof(int)));
                             break;
                         default:
-                            shouldUpdate = prog->getUniformCache()->updateUniform(currentUniform->mLocation,
+                            shouldUpdate = mUniformCache->updateUniform(currentUniform->mLocation,
                                                                                   params->getFloatPointer(def->physicalIndex),
-                                                                                  def->elementSize * def->arraySize * sizeof(float));
+                                                                                  static_cast<GLsizei>(def->elementSize * def->arraySize * sizeof(float)));
                             break;
-
                     }
 
                     if(!shouldUpdate)
@@ -465,24 +458,11 @@ namespace Ogre {
 				// Get the index in the parameter real list
 				if (index == currentUniform->mConstantDef->physicalIndex)
 				{
-                     if (mVertexProgram && currentUniform->mSourceProgType == GPT_VERTEX_PROGRAM)
-                     {
-                         if(!mVertexProgram->getUniformCache()->updateUniform(currentUniform->mLocation,
-                                                                              params->getFloatPointer(index),
-                                                                              currentUniform->mConstantDef->elementSize *
-                                                                              currentUniform->mConstantDef->arraySize *
-                                                                              sizeof(float)))
-                             return;
-                     }
-                     else
-                     {
-                         if(!mFragmentProgram->getUniformCache()->updateUniform(currentUniform->mLocation,
-                                                                              params->getFloatPointer(index),
-                                                                              currentUniform->mConstantDef->elementSize *
-                                                                              currentUniform->mConstantDef->arraySize *
-                                                                              sizeof(float)))
-                             return;
-                     }
+                     mUniformCache->updateUniform(currentUniform->mLocation,
+                                                  params->getFloatPointer(index),
+                                                  static_cast<GLsizei>(currentUniform->mConstantDef->elementSize *
+                                                  currentUniform->mConstantDef->arraySize *
+                                                  sizeof(float)));
 					// There will only be one multipass entry
 					return;
 				}

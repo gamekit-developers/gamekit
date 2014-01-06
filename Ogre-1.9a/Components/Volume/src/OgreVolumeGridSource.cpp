@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -79,7 +79,9 @@ namespace Volume {
     //-----------------------------------------------------------------------
 
     GridSource::GridSource(bool trilinearValue, bool trilinearGradient, bool sobelGradient) :
-        mTrilinearValue(trilinearValue), mTrilinearGradient(trilinearGradient), mSobelGradient(sobelGradient)
+        mWidth(0), mHeight(0), mDepth(0), mPosXScale(0), mPosYScale(0), mPosZScale(0),
+        mTrilinearValue(trilinearValue), mTrilinearGradient(trilinearGradient), mSobelGradient(sobelGradient),
+        mVolumeSpaceToWorldSpaceFactor(0)
     {
     }
 
@@ -235,12 +237,12 @@ namespace Volume {
         float value;
         int x, y;
         Vector3 scaledCenter(center.x * mPosXScale, center.y * mPosYScale, center.z * mPosZScale);
-        int xStart = Math::Clamp((size_t)(scaledCenter.x - radius * mPosXScale), (size_t)0, mWidth);
-        int xEnd = Math::Clamp((size_t)(scaledCenter.x + radius * mPosXScale), (size_t)0, mWidth);
-        int yStart = Math::Clamp((size_t)(scaledCenter.y - radius * mPosYScale), (size_t)0, mHeight);
-        int yEnd = Math::Clamp((size_t)(scaledCenter.y + radius * mPosYScale), (size_t)0, mHeight);
-        int zStart = Math::Clamp((size_t)(scaledCenter.z - radius * mPosZScale), (size_t)0, mDepth);
-        int zEnd = Math::Clamp((size_t)(scaledCenter.z + radius * mPosZScale), (size_t)0, mDepth);
+        int xStart = Math::Clamp(static_cast<int>(scaledCenter.x - radius * mPosXScale), 0, static_cast<int>(mWidth));
+        int xEnd = Math::Clamp(static_cast<int>(scaledCenter.x + radius * mPosXScale), 0, static_cast<int>(mWidth));
+        int yStart = Math::Clamp(static_cast<int>(scaledCenter.y - radius * mPosYScale), 0, static_cast<int>(mHeight));
+        int yEnd = Math::Clamp(static_cast<int>(scaledCenter.y + radius * mPosYScale), 0, static_cast<int>(mHeight));
+        int zStart = Math::Clamp(static_cast<int>(scaledCenter.z - radius * mPosZScale), 0, static_cast<int>(mDepth));
+        int zEnd = Math::Clamp(static_cast<int>(scaledCenter.z + radius * mPosZScale), 0, static_cast<int>(mDepth));
         Vector3 pos;
         for (int z = zStart; z < zEnd; ++z)
         {
@@ -249,7 +251,7 @@ namespace Volume {
                 for (x = xStart; x < xEnd; ++x)
                 {
                     pos.x = x * worldWidthScale;
-                    pos.y =  y * worldHeightScale;
+                    pos.y = y * worldHeightScale;
                     pos.z = z * worldDepthScale;
                     value = operation->getValue(pos);
                     setVolumeGridValue(x, y, z, value);

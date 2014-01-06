@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -49,14 +49,6 @@ namespace Ogre {
         destroyBuffer();
     }
 
-    void GLES2HardwareVertexBuffer::setFence(void)
-    {
-        if(!mFence && (getGLSupport()->checkExtension("GL_APPLE_sync") || gleswIsSupported(3, 0)))
-        {
-            OGRE_CHECK_GL_ERROR(mFence = glFenceSyncAPPLE(GL_SYNC_GPU_COMMANDS_COMPLETE_APPLE, 0));
-        }
-    }
-
     void GLES2HardwareVertexBuffer::createBuffer()
     {
         OGRE_CHECK_GL_ERROR(glGenBuffers(1, &mBufferId));
@@ -71,7 +63,6 @@ namespace Ogre {
 		static_cast<GLES2HardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
         OGRE_CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, NULL,
                                          GLES2HardwareBufferManager::getGLUsage(mUsage)));
-        mFence = 0;
     }
 
     void GLES2HardwareVertexBuffer::destroyBuffer()
@@ -116,7 +107,7 @@ namespace Ogre {
         {
             access = GL_MAP_WRITE_BIT_EXT;
             access |= GL_MAP_FLUSH_EXPLICIT_BIT_EXT;
-            if(options == HBL_DISCARD)
+            if(options == HBL_DISCARD || options == HBL_NO_OVERWRITE)
             {
                 // Discard the buffer
                 access |= GL_MAP_INVALIDATE_RANGE_BIT_EXT;
@@ -130,7 +121,7 @@ namespace Ogre {
 
         OGRE_CHECK_GL_ERROR(pBuffer = glMapBufferRangeEXT(GL_ARRAY_BUFFER, offset, length, access));
 #else
-        if(options == HBL_DISCARD)
+        if(options == HBL_DISCARD || options == HBL_NO_OVERWRITE)
         {
             // Discard the buffer
             OGRE_CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, mSizeInBytes, NULL,
@@ -146,18 +137,6 @@ namespace Ogre {
         {
             OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR,
                         "Vertex Buffer: Out of memory", "GLES2HardwareVertexBuffer::lock");
-        }
-
-        if(mFence && (getGLSupport()->checkExtension("GL_APPLE_sync") || gleswIsSupported(3, 0)))
-        {
-            GLenum result;
-            OGRE_CHECK_GL_ERROR(result = glClientWaitSyncAPPLE(mFence, GL_SYNC_FLUSH_COMMANDS_BIT_APPLE, GL_TIMEOUT_IGNORED_APPLE));
-            if(result == GL_WAIT_FAILED_APPLE)
-            {
-                // Some error
-            }
-            OGRE_CHECK_GL_ERROR(glDeleteSyncAPPLE(mFence));
-            mFence = 0;
         }
 
         // return offsetted
@@ -200,7 +179,7 @@ namespace Ogre {
         }
         else
         {
-            if(getGLSupport()->checkExtension("GL_EXT_map_buffer_range") || gleswIsSupported(3, 0))
+            if(getGLES2SupportRef()->checkExtension("GL_EXT_map_buffer_range") || gleswIsSupported(3, 0))
             {
                 // Map the buffer range then copy out of it into our destination buffer
                 void* srcData;

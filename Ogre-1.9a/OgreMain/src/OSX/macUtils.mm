@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ namespace Ogre {
         //cut off .bundle if present
         if(CFStringHasSuffix(nameRef, CFSTR(".bundle"))) {
             CFStringRef nameTempRef = nameRef;
-            int end = CFStringGetLength(nameTempRef) - CFStringGetLength(CFSTR(".bundle"));
+            long end = CFStringGetLength(nameTempRef) - CFStringGetLength(CFSTR(".bundle"));
             nameRef = CFStringCreateWithSubstring(NULL, nameTempRef, CFRangeMake(0, end));
             CFRelease(nameTempRef);
         }
@@ -96,21 +96,36 @@ namespace Ogre {
 
     void* mac_loadFramework(String name)
 	{
-		String fullPath=name + ".framework";
-		if(name[0]!='/')
-			fullPath = macFrameworksPath()+"/"+fullPath+"/"+name;
+        String fullPath;
+        if (name[0] != '/') { // just framework name, like "OgreTerrain"
+            // path/OgreTerrain.framework/OgreTerrain
+            fullPath = macFrameworksPath() + "/" + name + ".framework/" + name;
+        }
+        else { // absolute path, like "/Library/Frameworks/OgreTerrain.framework"
+            size_t lastSlashPos = name.find_last_of('/');
+            size_t extensionPos = name.rfind(".framework");
 
-		return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	}
+            if (lastSlashPos != String::npos && extensionPos != String::npos) {
+                String realName = name.substr(lastSlashPos + 1, extensionPos - lastSlashPos - 1);
 
-	void* mac_loadDylib(const char* name)
-	{
-		String fullPath=name;
-		if(name[0]!='/')
-			fullPath = macPluginPath()+"/"+fullPath;
-		
-		return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	}
+                fullPath = name + "/" + realName; 
+            }
+            else {
+                fullPath = name;
+            }
+        }
+
+    return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+}
+
+    void* mac_loadDylib(const char* name)
+    {
+        String fullPath=name;
+        if(name[0]!='/')
+            fullPath = macPluginPath()+"/"+fullPath;
+
+        return dlopen(fullPath.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+    }
 	
     String macBundlePath()
     {

@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -612,14 +612,14 @@ namespace Ogre
 
 			// Transfer bone assignments to the submesh
 			size_t offset = curVertexOffset + newVertexData->vertexCount;
-			for (; it != end; it++)
+			for (; it != end; ++it)
 			{
 				size_t vertexIdx = (*it).first;
 				if (vertexIdx > offset)
 					break;
 
 				VertexBoneAssignment boneAssignment = (*it).second;
-				boneAssignment.vertexIndex = boneAssignment.vertexIndex - curVertexOffset;
+				boneAssignment.vertexIndex = static_cast<unsigned int>(boneAssignment.vertexIndex - curVertexOffset);
 				subMesh->addBoneAssignment(boneAssignment);
 			}
 			curVertexOffset = newVertexData->vertexCount + 1;

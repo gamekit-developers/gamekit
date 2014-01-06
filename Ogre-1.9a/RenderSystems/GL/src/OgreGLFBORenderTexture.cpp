@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ namespace Ogre {
 		}
     }
 
-	void GLFBORenderTexture::swapBuffers(bool waitForVSync)
+	void GLFBORenderTexture::swapBuffers()
 	{
 		mFB.swapBuffers();
 	}
@@ -135,7 +135,7 @@ static const size_t depthBits[] =
 	{
 		if(!mRenderBufferMap.empty())
 		{
-			LogManager::getSingleton().logMessage("GL: Warning! GLFBOManager destructor called, but not all renderbuffers were released.");
+			LogManager::getSingleton().logMessage("GL: Warning! GLFBOManager destructor called, but not all renderbuffers were released.", LML_CRITICAL);
 		}
         
         glDeleteFramebuffersEXT(1, &mTempFBO);      
@@ -504,7 +504,7 @@ static const size_t depthBits[] =
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
     }
     
-    GLSurfaceDesc GLFBOManager::requestRenderBuffer(GLenum format, size_t width, size_t height, uint fsaa)
+    GLSurfaceDesc GLFBOManager::requestRenderBuffer(GLenum format, uint32 width, uint32 height, uint fsaa)
     {
         GLSurfaceDesc retval;
         retval.buffer = 0; // Return 0 buffer if GL_NONE is requested

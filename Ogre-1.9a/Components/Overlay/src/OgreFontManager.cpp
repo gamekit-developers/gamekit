@@ -4,7 +4,7 @@ This source file is a part of OGRE
 
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -258,8 +258,8 @@ namespace Ogre
 				if (itemVec.size() == 2)
 				{
 					pFont->addCodePointRange(Font::CodePointRange(
-						StringConverter::parseLong(itemVec[0]), 
-						StringConverter::parseLong(itemVec[1])));
+						StringConverter::parseUnsignedInt(itemVec[0]),
+						StringConverter::parseUnsignedInt(itemVec[1])));
 				}
 			}
 		}
@@ -269,7 +269,7 @@ namespace Ogre
     void FontManager::logBadAttrib(const String& line, FontPtr& pFont)
     {
         LogManager::getSingleton().logMessage("Bad attribute line: " + line +
-            " in font " + pFont->getName());
+            " in font " + pFont->getName(), LML_CRITICAL);
 
     }
 

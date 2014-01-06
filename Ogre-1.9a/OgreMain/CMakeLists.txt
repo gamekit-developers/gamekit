@@ -50,6 +50,10 @@ if (OGRE_BUILD_PLATFORM_NACL)
   file(GLOB PLATFORM_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/NaCl/*.cpp"
     src/OgreSearchOps.cpp)
 
+	list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLibManager.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLib.cpp")
+
+
   set(PLATFORM_LIBS nosys)
   set(PLATFORM_HEADER_INSTALL "NaCl")
 elseif (WIN32)
@@ -89,7 +93,6 @@ elseif (WIN32)
       src/WIN32/OgreWin32Resources.rc
       src/WIN32/winres.h
     )
-
     source_group(Resources FILES ${RESOURCE_FILES})
     set(PLATFORM_HEADER_INSTALL "WIN32")
 
@@ -179,6 +182,7 @@ endif()
 
 # Configure threading files
 file(GLOB THREAD_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/Threading/*.h")
+include_directories("include/Threading")
 
 if (OGRE_THREAD_PROVIDER EQUAL 0)
 	list(APPEND THREAD_HEADER_FILES
@@ -256,8 +260,6 @@ if (OGRE_CONFIG_ENABLE_ZIP)
 
   if(ANDROID)
     ADD_DEFINITIONS(-DZZIP_OMIT_CONFIG_H)
-    list(APPEND PLATFORM_HEADERS include/Android/OgreAPKZipArchive.h)
-    #list(APPEND PLATFORM_SOURCE_FILES src/Android/OgreAPKZipArchive.cpp)
   endif()
 
   list(APPEND LIBRARIES "${ZZip_LIBRARIES}")
@@ -290,6 +292,10 @@ if(WIN32 AND MSVC10 AND CMAKE_CL_64)
                       )
 else()
   set_target_properties(OgreMain PROPERTIES VERSION ${OGRE_SOVERSION} SOVERSION ${OGRE_SOVERSION})
+endif()
+
+if(OGRE_GCC_VERSION VERSION_EQUAL 4.8 OR OGRE_GCC_VERSION VERSION_GREATER 4.8)
+  list(APPEND LIBRARIES "-latomic")
 endif()
 
 if (APPLE)

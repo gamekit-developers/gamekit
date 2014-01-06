@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ namespace Ogre {
 	//-----------------------------------------------------------------------------
 	ManualObject::ManualObject(const String& name)
 		: MovableObject(name),
-		  mDynamic(false), mCurrentSection(0), mFirstVertex(true),
+		  mDynamic(false), mCurrentSection(0), mCurrentUpdating(false), mFirstVertex(true),
 		  mTempVertexPending(false),
 		  mTempVertexBuffer(0), mTempVertexSize(TEMP_INITIAL_VERTEX_SIZE),
 		  mTempIndexBuffer(0), mTempIndexSize(TEMP_INITIAL_INDEX_SIZE),
@@ -192,7 +192,7 @@ namespace Ogre {
 			LogManager::getSingleton().logMessage("Can't assign material " + materialName +
                                                   " to the ManualObject " + mName + " because this "
                                                   "Material does not exist. Have you forgotten to define it in a "
-                                                  ".material script?");
+                                                  ".material script?", LML_CRITICAL);
 
             material = MaterialManager::getSingleton().getByName("BaseWhite");
 
@@ -976,7 +976,7 @@ namespace Ogre {
 	ShadowCaster::ShadowRenderableListIterator
 	ManualObject::getShadowVolumeRenderableIterator(
 		ShadowTechnique shadowTechnique, const Light* light,
-		HardwareIndexBufferSharedPtr* indexBuffer,
+		HardwareIndexBufferSharedPtr* indexBuffer, size_t* indexBufferUsedSize,
 		bool extrude, Real extrusionDistance, unsigned long flags)
 	{
 		assert(indexBuffer && "Only external index buffers are supported right now");		
@@ -1058,8 +1058,8 @@ namespace Ogre {
 		updateEdgeListLightFacing(edgeList, lightPos);
 
 		// Generate indexes and update renderables
-		generateShadowVolume(edgeList, *indexBuffer, light,
-			mShadowRenderables, flags);
+		generateShadowVolume(edgeList, *indexBuffer, *indexBufferUsedSize, 
+			light, mShadowRenderables, flags);
 
 
 		return ShadowRenderableListIterator(

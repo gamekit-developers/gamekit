@@ -421,7 +421,7 @@ void gkEngine::finalize()
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 	Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
-	Ogre::RTShader::ShaderGenerator::finalize();
+	Ogre::RTShader::ShaderGenerator::destroy();
 #endif
 
 #ifdef OGREKIT_USE_COMPOSITOR

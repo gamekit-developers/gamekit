@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,63 +41,68 @@ namespace Ogre {
 	@remarks
 		Tries to minimise the number of texture changes.
 	*/
-    struct MinTextureStateChangeHashFunc : public Pass::HashFunc
-    {
-        uint32 operator()(const Pass* p) const
-        {
-            OGRE_LOCK_MUTEX(p->mTexUnitChangeMutex);
+	struct MinTextureStateChangeHashFunc : public Pass::HashFunc
+	{
+		uint32 operator()(const Pass* p) const
+		{
+                    OGRE_LOCK_MUTEX(p->mTexUnitChangeMutex);
 
-            _StringHash H;
-            uint32 hash = p->getIndex() << 28;
-            size_t c = p->getNumTextureUnitStates();
+			_StringHash H;
+			uint32 hash = p->getIndex() << 28;
+			size_t c = p->getNumTextureUnitStates();
 
-            for(size_t i = 0; i < c; ++i)
-            {
-                const TextureUnitState* tus = 0;
-                tus = p->getTextureUnitState(i);
-                if (tus && !tus->getTextureName().empty())
-                    hash += (static_cast<uint32>(H(tus->getTextureName()))
-                             % (1 << 14)) << 14;
-            }
+			const TextureUnitState* t0 = 0;
+			const TextureUnitState* t1 = 0;
+			if (c)
+				t0 = p->getTextureUnitState(0);
+			if (c > 1)
+				t1 = p->getTextureUnitState(1);
 
-            return hash;
-        }
-    };
-    MinTextureStateChangeHashFunc sMinTextureStateChangeHashFunc;
+			if (t0 && !t0->getTextureName().empty())
+				hash += (static_cast<uint32>(H(t0->getTextureName())) 
+					% (1 << 14)) << 14;
+			if (t1 && !t1->getTextureName().empty())
+				hash += (static_cast<uint32>(H(t1->getTextureName()))
+					% (1 << 14));
+
+			return hash;
+		}
+	};
+	MinTextureStateChangeHashFunc sMinTextureStateChangeHashFunc;
 	/** Alternate pass hash function.
 	@remarks
 		Tries to minimise the number of GPU program changes.
 	*/
-    struct MinGpuProgramChangeHashFunc : public Pass::HashFunc
-    {
-        uint32 operator()(const Pass* p) const
-        {
-            OGRE_LOCK_MUTEX(p->mGpuProgramChangeMutex);
+	struct MinGpuProgramChangeHashFunc : public Pass::HashFunc
+	{
+		uint32 operator()(const Pass* p) const
+		{
+			OGRE_LOCK_MUTEX(p->mGpuProgramChangeMutex);
 
-            _StringHash H;
-            uint32 hash = p->getIndex() << 28;
-            if (p->hasVertexProgram())
-                hash += (static_cast<uint32>(H(p->getVertexProgramName()))
-                    % (1 << 14)) << 14;
-            if (p->hasFragmentProgram())
-                hash += (static_cast<uint32>(H(p->getFragmentProgramName()))
-                    % (1 << 14));
-            if (p->hasGeometryProgram())
-                hash += (static_cast<uint32>(H(p->getGeometryProgramName()))
-                         % (1 << 14));
-            if (p->hasTesselationDomainProgram())
-                hash += (static_cast<uint32>(H(p->getTesselationDomainProgramName()))
-                         % (1 << 14));
-            if (p->hasTesselationHullProgram())
-                hash += (static_cast<uint32>(H(p->getTesselationHullProgramName()))
-                         % (1 << 14));
-            if (p->hasComputeProgram())
-                hash += (static_cast<uint32>(H(p->getComputeProgramName()))
-                         % (1 << 14));
+			_StringHash H;
+			uint32 hash = p->getIndex() << 28;
+			if (p->hasVertexProgram())
+				hash += (static_cast<uint32>(H(p->getVertexProgramName()))
+					% (1 << 14)) << 14;
+			if (p->hasFragmentProgram())
+				hash += (static_cast<uint32>(H(p->getFragmentProgramName()))
+					% (1 << 14));
+			if (p->hasGeometryProgram())
+				hash += (static_cast<uint32>(H(p->getGeometryProgramName()))
+						 % (1 << 14));
+			if (p->hasTesselationDomainProgram())
+				hash += (static_cast<uint32>(H(p->getTesselationDomainProgramName()))
+						 % (1 << 14));
+			if (p->hasTesselationHullProgram())
+				hash += (static_cast<uint32>(H(p->getTesselationHullProgramName()))
+						 % (1 << 14));
+			if (p->hasComputeProgram())
+				hash += (static_cast<uint32>(H(p->getComputeProgramName()))
+						 % (1 << 14));
 
-            return hash;
-        }
-    };
+			return hash;
+		}
+	};
 	MinGpuProgramChangeHashFunc sMinGpuProgramChangeHashFunc;
     //-----------------------------------------------------------------------------
 	Pass::PassSet Pass::msDirtyHashList;
@@ -681,8 +686,15 @@ namespace Ogre {
                 {
                     // its the last entry in the container so its index is size - 1
                     size_t idx = mTextureUnitStates.size() - 1;
-                    state->setName( StringConverter::toString(idx) );
-                    /** since the name was never set and a default one has been made, clear the alias name
+                    
+					// allow 8 digit hex number. there should never be that many texture units.
+					// This sprintf replaced a call to StringConverter::toString for performance reasons
+					char buff[9];
+					memset(buff, 0, 9);
+					sprintf(buff, "%lx", static_cast<long>(idx));
+                    state->setName( buff );
+                    
+					/** since the name was never set and a default one has been made, clear the alias name
                      so that when the texture unit name is set by the user, the alias name will be set to
                      that name
                     */

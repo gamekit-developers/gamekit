@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -76,17 +76,21 @@ public:
 	void* getProcAddress( const String& procname );
 
 	virtual bool supportsPBuffers();
-	virtual GLPBuffer* createPBuffer( PixelComponentType format, size_t width, size_t height );
+	virtual GLPBuffer* createPBuffer( PixelComponentType format, uint32 width, uint32 height );
 	
 	// Core Foundation Array callback function for sorting, must be static for the function ptr
 	static CFComparisonResult _compareModes (const void *val1, const void *val2, void *context);
 	// Core Fondation Dictionary helper functions, also static for ease of use in above static
 	static Boolean _getDictionaryBoolean(CFDictionaryRef dict, const void* key);
 	static long _getDictionaryLong(CFDictionaryRef dict, const void* key);
-	
+    bool OSVersionIsAtLeast(String newVersion);
+
 protected:
 	String mAPI;
 	String mContextType;
+
+    //Implement this in .mm and put all obj.c objects there
+    class OSXGLSupportImpl * mImpl;
 	
 }; // class OSXGLSupport
 

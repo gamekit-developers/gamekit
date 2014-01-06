@@ -72,9 +72,11 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	endif()
 
 	option(OGREKIT_BUILD_ANDROID	"Build GameKit on Android SDK" OFF)
+	option(OGREKIT_BUILD_NACL		"Build GameKit on NACL" OFF)
+
 	
-	if (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_IPHONE)
-		set(OGREKIT_BUILD_MOBILE 1)
+	if (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_IPHONE OR OGREKIT_BUILD_NACL)
+		set(OGREKIT_BUILD_MOBILE 1) #Force use GLES2, not GL.
 	endif()
     
     if (OGREKIT_BUILD_GLES2RS)
@@ -286,6 +288,23 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 
 		#message(${OGREKIT_BUILD_GLRS} "---" ${OGREKIT_BUILD_GLESRS} " --- " ${OPENGLES2_gl_LIBRARY})
 		
+	elseif (OGREKIT_BUILD_NACL)
+	
+		set(OGRE_BUILD_PLATFORM_NACL TRUE)
+		include_directories(${OPENGLES2_INCLUDE_DIR})
+		#include_directories(${OGRE_SOURCE_DIR}/RenderSystems/GLES2/include)
+		include_directories(${NACL_SDK_ROOT}/include)
+
+		set(OGREKIT_OPENAL_SOUND   CACHE BOOL "Forcing remove OpenAL"   FORCE)
+		
+		set(OGREKIT_BUILD_GLRS    FALSE CACHE BOOL "Forcing GLRS"   FORCE)
+		set(OGREKIT_BUILD_GLESRS  FALSE CACHE BOOL "Forcing remove GLESRS"   FORCE)
+        set(OGREKIT_BUILD_GLES2RS TRUE  CACHE BOOL "Forcing remove GLES2RS"   FORCE)
+
+		set(OGREKIT_MINIMAL_FREEIMAGE_CODEC  TRUE CACHE BOOL "Forcing FreeImage minimal codec" FORCE)
+        
+		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
+	
 	elseif (OGREKIT_BUILD_IPHONE)
 	
 		set(OGRE_BUILD_PLATFORM_IPHONE TRUE) #TODO: replace to OGRE_BUILD_APPLE_IOS 
@@ -425,7 +444,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 
 	message(STATUS "DEP_INCLUDES: ${OGREKIT_DEP_INCLUDE}")
 	
-	if (WIN32 AND NOT OGREKIT_BUILD_ANDROID)
+	if (WIN32 AND NOT (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_NACL))
 		# Use static library. No SDK needed at build time.
 		# Must have OpenAL32.dll installed on the system 
 		# In order to use OpenAL sound.

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -90,13 +90,13 @@ namespace Ogre {
 			@deprecated
 				Use loadingComplete instead.
 			*/
-			virtual void backgroundLoadingComplete(Resource*) {}
+			OGRE_DEPRECATED virtual void backgroundLoadingComplete(Resource*) {}
 
 			/** Callback to indicate that background preparing has completed.
 			@deprecated
 				Use preparingComplete instead.
 			*/
-			virtual void backgroundPreparingComplete(Resource*) {}
+			OGRE_DEPRECATED virtual void backgroundPreparingComplete(Resource*) {}
 
 			/** Called whenever the resource finishes loading. 
 			@remarks
@@ -109,7 +109,7 @@ namespace Ogre {
 			virtual void loadingComplete(Resource*) {}
 
 
-			/** called whenever the resource finishes preparing (paging into memory).
+			/** Called whenever the resource finishes preparing (paging into memory).
 			@remarks
 				If a Resource has been marked as background loaded (@see Resource::setBackgroundLoaded)
 				the call does not itself occur in the thread which is doing the preparing;
@@ -365,8 +365,8 @@ namespace Ogre {
 		virtual bool isBackgroundLoaded(void) const { return mIsBackgroundLoaded; }
 
 		/** Tells the resource whether it is background loaded or not.
-		@remarks
-			@see Resource::isBackgroundLoaded . Note that calling this only
+
+         @see Resource::isBackgroundLoaded. Note that calling this only
 			defers the normal on-demand loading behaviour of a resource, it
 			does not actually set up a thread to make sure the resource gets
 			loaded in the background. You should use ResourceBackgroundLoadingQueue

@@ -36,6 +36,8 @@ list(APPEND CMAKE_MODULE_PATH ${FBT_SOURCE_DIR}/CMake)
 #set(FBT_ZLIB_INCLUDE )
 #set(FBT_ZLIB_LIBRARY )
 
+message(STATUS "zlib target:" ${OGREKIT_ZLIB_TARGET})
+
 if(OGREKIT_ZLIB_TARGET) #use ZLib in Ogrekit dependence libraries
 	set(FBT_USE_ZLIB 1)
 	set(FBT_ZLIB_INCLUDE ${OGREKIT_ZLIB_INCLUDE})
@@ -57,7 +59,7 @@ endif()
 subdirs(File)
 subdirs(FileFormats/Blend)
 
-if (NOT OGREKIT_BUILD_IPHONE AND NOT OGREKIT_BUILD_ANDROID)
+if (NOT OGREKIT_BUILD_IPHONE AND NOT OGREKIT_BUILD_ANDROID AND NOT OGREKIT_BUILD_NACL)
 subdirs(Compiler)
 subdirs(FileFormats/Bullet)
 endif()

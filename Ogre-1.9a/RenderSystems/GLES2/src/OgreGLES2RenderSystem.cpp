@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -85,9 +85,7 @@ namespace Ogre {
         mRenderInstanceAttribsBound.reserve(100);
 #endif
 
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 		mEnableFixedPipeline = false;
-#endif
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
         mResourceManager = OGRE_NEW AndroidResourceManager();
@@ -132,7 +130,10 @@ namespace Ogre {
 
         mRenderTargets.clear();
         OGRE_DELETE mGLSupport;
+        mGLSupport = 0;
+
         OGRE_DELETE mStateCacheManager;
+        mStateCacheManager = 0;
 		
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
         if (mResourceManager != NULL)
@@ -231,6 +232,8 @@ namespace Ogre {
 
         // Vertex Buffer Objects are always supported by OpenGL ES
         rsc->setCapability(RSC_VBO);
+        if(mGLSupport->checkExtension("GL_OES_element_index_uint"))
+            rsc->setCapability(RSC_32BIT_INDEX);
 
 		// Check for hardware occlusion support
 		if(mGLSupport->checkExtension("GL_EXT_occlusion_query_boolean") || gleswIsSupported(3, 0))
@@ -370,19 +373,17 @@ namespace Ogre {
         rsc->setFragmentProgramConstantBoolCount((Ogre::ushort)floatConstantCount);
         rsc->setFragmentProgramConstantIntCount((Ogre::ushort)floatConstantCount);
 
-        // Geometry programs are not supported, report 0
-        rsc->setGeometryProgramConstantFloatCount(0);
-        rsc->setGeometryProgramConstantBoolCount(0);
-        rsc->setGeometryProgramConstantIntCount(0);
-        
         // Check for Float textures
-        if(mGLSupport->checkExtension("GL_OES_texture_float") || mGLSupport->checkExtension("GL_OES_texture_float"))
+        if(mGLSupport->checkExtension("GL_OES_texture_float") || mGLSupport->checkExtension("GL_OES_texture_half_float") || gleswIsSupported(3, 0))
             rsc->setCapability(RSC_TEXTURE_FLOAT);
 
 		rsc->setCapability(RSC_TEXTURE_1D);			
 #if OGRE_NO_GLES3_SUPPORT == 0
         rsc->setCapability(RSC_TEXTURE_3D);
 #endif
+
+        // ES 2 always supports NPOT textures
+        rsc->setCapability(RSC_NON_POWER_OF_2_TEXTURES);
 
         // Alpha to coverage always 'supported' when MSAA is available
         // although card may ignore it if it doesn't specifically support A2C
@@ -394,11 +395,17 @@ namespace Ogre {
         if(mGLSupport->checkExtension("GL_OES_vertex_array_object") || gleswIsSupported(3, 0))
             rsc->setCapability(RSC_VAO);
 
+#if OGRE_NO_GLES3_SUPPORT == 0
 		if (mGLSupport->checkExtension("GL_OES_get_program_binary") || gleswIsSupported(3, 0))
 		{
 			// http://www.khronos.org/registry/gles/extensions/OES/OES_get_program_binary.txt
+            GLint formats;
+            OGRE_CHECK_GL_ERROR(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
+
+            if(formats > 0)
 			rsc->setCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER);
 		}
+#endif
 
         if (mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0))
         {
@@ -552,10 +559,11 @@ namespace Ogre {
         if (!mGLInitialised)
         {
             initialiseContext(win);
-			
+			LogManager::getSingleton().logMessage("1");
             StringVector tokens = StringUtil::split(mGLSupport->getGLVersion(), ".");
             if (!tokens.empty())
             {
+				LogManager::getSingleton().logMessage("2");
                 mDriverVersion.major = StringConverter::parseInt(tokens[0]);
                 if (tokens.size() > 1)
                     mDriverVersion.minor = StringConverter::parseInt(tokens[1]);
@@ -563,6 +571,7 @@ namespace Ogre {
                     mDriverVersion.release = StringConverter::parseInt(tokens[2]);
             }
             mDriverVersion.build = 0;
+			LogManager::getSingleton().logMessage("3");
 
             // Get the shader language version
             const char* shadingLangVersion = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -576,6 +585,7 @@ namespace Ogre {
                     break;
             }
             mNativeShadingLanguageVersion = (StringConverter::parseUnsignedInt(tokens[i]) * 100) + StringConverter::parseUnsignedInt(tokens[i+1]);
+			LogManager::getSingleton().logMessage("4");
 
 			// Initialise GL after the first window has been created
 			// TODO: fire this from emulation options, and don't duplicate Real and Current capabilities
@@ -587,19 +597,24 @@ namespace Ogre {
 
             fireEvent("RenderSystemCapabilitiesCreated");
 
+			LogManager::getSingleton().logMessage("5");
             initialiseFromRenderSystemCapabilities(mCurrentCapabilities, (RenderTarget *) win);
 
 			// Initialise the main context
             _oneTimeContextInitialization();
             if (mCurrentContext)
                 mCurrentContext->setInitialized();
+
+			LogManager::getSingleton().logMessage("6");
         }
 
 		if( win->getDepthBufferPool() != DepthBuffer::POOL_NO_DEPTH )
 		{
+			LogManager::getSingleton().logMessage("7");
+
 			// Unlike D3D9, OGL doesn't allow sharing the main depth buffer, so keep them separate.
 			// Only Copy does, but Copy means only one depth buffer...
-			GLES2Context *windowContext;
+			GLES2Context *windowContext = 0;
 			win->getCustomAttribute( "GLCONTEXT", &windowContext );
 			GLES2DepthBuffer *depthBuffer = OGRE_NEW GLES2DepthBuffer( DepthBuffer::POOL_DEFAULT, this,
 															windowContext, 0, 0,
@@ -609,8 +624,10 @@ namespace Ogre {
 			mDepthBufferPool[depthBuffer->getPoolId()].push_back( depthBuffer );
 
 			win->attachDepthBuffer( depthBuffer );
+			LogManager::getSingleton().logMessage("8");
 		}
 
+		LogManager::getSingleton().logMessage("9");
         return win;
     }
 
@@ -688,7 +705,7 @@ namespace Ogre {
 
     void GLES2RenderSystem::_destroyDepthBuffer(RenderWindow* pWin)
     {
-        GLES2Context *windowContext;
+        GLES2Context *windowContext = 0;
         pWin->getCustomAttribute("GLCONTEXT", &windowContext);
         
         // 1 Window <-> 1 Context, should be always true
@@ -1526,6 +1543,12 @@ namespace Ogre {
                 break;
             case FT_MIP:
                 mMipFilter = fo;
+
+                // Combine with existing min filter
+                mStateCacheManager->setTexParameteri(mTextureTypes[unit],
+                                                     GL_TEXTURE_MIN_FILTER,
+                                                     getCombinedMinMipFilter());
+                
                 break;
         }
 
@@ -1536,8 +1559,8 @@ namespace Ogre {
 	{
 		GLfloat curAniso = 0;
         if(mGLSupport->checkExtension("GL_EXT_texture_filter_anisotropic"))
-            OGRE_CHECK_GL_ERROR(glGetTexParameterfv(mTextureTypes[unit],
-                                                    GL_TEXTURE_MAX_ANISOTROPY_EXT, &curAniso));
+            mStateCacheManager->getTexParameterfv(mTextureTypes[unit],
+                                                  GL_TEXTURE_MAX_ANISOTROPY_EXT, &curAniso);
 
 		return curAniso ? curAniso : 1;
 	}
@@ -1554,8 +1577,9 @@ namespace Ogre {
             if (maxAnisotropy > mCurrentCapabilities->getMaxSupportedAnisotropy())
                 maxAnisotropy = mCurrentCapabilities->getMaxSupportedAnisotropy() ? 
                 static_cast<uint>(mCurrentCapabilities->getMaxSupportedAnisotropy()) : 1;
-            if (_getCurrentAnisotropy(unit) != maxAnisotropy)
-                OGRE_CHECK_GL_ERROR(glTexParameterf(mTextureTypes[unit], GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)maxAnisotropy));
+
+            mStateCacheManager->setTexParameterf(mTextureTypes[unit],
+                                                  GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)maxAnisotropy);
         }
 
 		mStateCacheManager->activateGLTextureUnit(0);
@@ -1605,7 +1629,6 @@ namespace Ogre {
         if(useVAO)
             setVertexDeclaration(op.vertexData->vertexDeclaration, op.vertexData->vertexBufferBinding);
 
-//        uint boundAttrCount = 0;
         for (elemIter = decl.begin(); elemIter != elemEnd; ++elemIter)
         {
             const VertexElement & elem = *elemIter;
@@ -1618,9 +1641,6 @@ namespace Ogre {
                 op.vertexData->vertexBufferBinding->getBuffer(elemSource);
             bindVertexElementToGpu(elem, vertexBuffer, op.vertexData->vertexStart,
                                    mRenderAttribsBound, mRenderInstanceAttribsBound, true);
-
-            // Keep track of how many attributes have been enabled
-//            boundAttrCount++;
         }
 
         if(mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0))
@@ -1637,16 +1657,6 @@ namespace Ogre {
                 }
             }
         }
-
-        // Sort the list of bound attributes
-//        std::sort(mRenderAttribsBound.begin(), mRenderAttribsBound.end());
-//
-//        // Unbind all attributes that are not needed
-//        for (vector<GLuint>::type::iterator ai = mRenderAttribsBound.begin() + boundAttrCount; ai != mRenderAttribsBound.end(); ++ai)
-//        {
-//            OGRE_CHECK_GL_ERROR(glDisableVertexAttribArray(*ai));
-//        }
-//        mRenderAttribsBound.erase(mRenderAttribsBound.begin() + boundAttrCount, mRenderAttribsBound.end());
 
         // Find the correct type to render
         GLint primType;
@@ -1696,22 +1706,19 @@ namespace Ogre {
                                   mDerivedDepthBiasSlopeScale);
                 }
 
-                if(mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0))
-                {
-                    if(hasInstanceData)
+                if(hasInstanceData && (mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0)))
                     {
-                        OGRE_CHECK_GL_ERROR(glDrawElementsInstancedEXT((polyMode == GL_FILL) ? primType : polyMode, op.indexData->indexCount, indexType, pBufferData, numberOfInstances));
+                    OGRE_CHECK_GL_ERROR(glDrawElementsInstancedEXT((polyMode == GL_FILL) ? primType : polyMode, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData, static_cast<GLsizei>(numberOfInstances)));
                     }
-#if OGRE_NO_GLES3_SUPPORT == 0
                     else
                     {
+#if OGRE_NO_GLES3_SUPPORT == 0
                         GLuint indexEnd = op.indexData->indexCount - op.indexData->indexStart;
-                        OGRE_CHECK_GL_ERROR(glDrawRangeElements((polyMode == GL_FILL) ? primType : polyMode, op.indexData->indexStart, indexEnd, op.indexData->indexCount, indexType, pBufferData));
-                    }
+                    OGRE_CHECK_GL_ERROR(glDrawRangeElements((polyMode == GL_FILL) ? primType : polyMode, op.indexData->indexStart, indexEnd, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData));
+#else
+                    OGRE_CHECK_GL_ERROR(glDrawElements((polyMode == GL_FILL) ? primType : polyMode, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData));
 #endif
                 }
-                else
-                    OGRE_CHECK_GL_ERROR(glDrawElements((polyMode == GL_FILL) ? primType : polyMode, op.indexData->indexCount, indexType, pBufferData));
 
             } while (updatePassIterationRenderState());
         }
@@ -1729,11 +1736,11 @@ namespace Ogre {
 
                 if((mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0)) && hasInstanceData)
 				{
-					OGRE_CHECK_GL_ERROR(glDrawArraysInstancedEXT((polyMode == GL_FILL) ? primType : polyMode, 0, op.vertexData->vertexCount, numberOfInstances));
+					OGRE_CHECK_GL_ERROR(glDrawArraysInstancedEXT((polyMode == GL_FILL) ? primType : polyMode, 0, static_cast<GLsizei>(op.vertexData->vertexCount), static_cast<GLsizei>(numberOfInstances)));
 				}
 				else
 				{
-                    OGRE_CHECK_GL_ERROR(glDrawArrays((polyMode == GL_FILL) ? primType : polyMode, 0, op.vertexData->vertexCount));
+                    OGRE_CHECK_GL_ERROR(glDrawArrays((polyMode == GL_FILL) ? primType : polyMode, 0, static_cast<GLsizei>(op.vertexData->vertexCount)));
 				}
             } while (updatePassIterationRenderState());
         }
@@ -1749,25 +1756,18 @@ namespace Ogre {
             OGRE_CHECK_GL_ERROR(glBindVertexArrayOES(0));
 #endif
 
- 		// Unbind all attributes
+        // Unbind all attributes
 		for (vector<GLuint>::type::iterator ai = mRenderAttribsBound.begin(); ai != mRenderAttribsBound.end(); ++ai)
  		{
- 			OGRE_CHECK_GL_ERROR(glDisableVertexAttribArray(*ai));
+            mStateCacheManager->setVertexAttribDisabled(*ai);
+// 			OGRE_CHECK_GL_ERROR(glDisableVertexAttribArray(*ai));
   		}
 
-        // Set fences
-        for (elemIter = decl.begin(); elemIter != elemEnd; ++elemIter)
-        {
-            const VertexElement & elem = *elemIter;
-            size_t source = elem.getSource();
-
-            if (!op.vertexData->vertexBufferBinding->isBufferBound(source))
-                continue; // skip unbound elements
-
-            HardwareVertexBufferSharedPtr vertexBuffer =
-            op.vertexData->vertexBufferBinding->getBuffer(source);
-            static_cast<GLES2HardwareVertexBuffer*>(vertexBuffer.get())->setFence();
-        }
+        // Unbind any instance attributes
+		for (vector<GLuint>::type::iterator ai = mRenderInstanceAttribsBound.begin(); ai != mRenderInstanceAttribsBound.end(); ++ai)
+		{
+			glVertexAttribDivisorEXT(*ai, 0);
+		}
 
         mRenderAttribsBound.clear();
         mRenderInstanceAttribsBound.clear();
@@ -1782,7 +1782,7 @@ namespace Ogre {
         //  GL measures from the bottom, not the top
         size_t targetHeight = mActiveRenderTarget->getHeight();
         // Calculate the "lower-left" corner of the viewport
-        GLsizei w, h, x, y;
+        size_t w, h, x, y;
 
         if (enabled)
         {
@@ -1795,7 +1795,10 @@ namespace Ogre {
                 y = targetHeight - bottom;
             w = right - left;
             h = bottom - top;
-            OGRE_CHECK_GL_ERROR(glScissor(x, y, w, h));
+            OGRE_CHECK_GL_ERROR(glScissor(static_cast<GLsizei>(x),
+                                          static_cast<GLsizei>(y),
+                                          static_cast<GLsizei>(w),
+                                          static_cast<GLsizei>(h)));
         }
         else
         {
@@ -1808,7 +1811,10 @@ namespace Ogre {
                 y = mActiveViewport->getActualTop();
             else
                 y = targetHeight - mActiveViewport->getActualTop() - h;
-            OGRE_CHECK_GL_ERROR(glScissor(x, y, w, h));
+            OGRE_CHECK_GL_ERROR(glScissor(static_cast<GLsizei>(x),
+                                          static_cast<GLsizei>(y),
+                                          static_cast<GLsizei>(w),
+                                          static_cast<GLsizei>(h)));
         }
     }
 
@@ -1912,19 +1918,24 @@ namespace Ogre {
             mCurrentContext->endCurrent();
         mCurrentContext = context;
         mCurrentContext->setCurrent();
+		LogManager::getSingleton().logMessage("a1");
 
         // Check if the context has already done one-time initialisation
         if (!mCurrentContext->getInitialized())
         {
+			LogManager::getSingleton().logMessage("a2");
             _oneTimeContextInitialization();
             mCurrentContext->setInitialized();
         }
+		LogManager::getSingleton().logMessage("a3");
 
         // Rebind GPU programs to new context
 		if (mCurrentVertexProgram)
 			mCurrentVertexProgram->bindProgram();
 		if (mCurrentFragmentProgram)
 			mCurrentFragmentProgram->bindProgram();
+
+		LogManager::getSingleton().logMessage("a4");
         
         // Must reset depth/colour write mask to according with user desired, otherwise,
         // clearFrameBuffer would be wrong because the value we are recorded may be
@@ -1980,8 +1991,12 @@ namespace Ogre {
         if (mCurrentContext)
             mCurrentContext->setCurrent();
 
+		LogManager::getSingleton().logMessage("b1111");
+		if (mGLSupport == NULL)
+			LogManager::getSingleton().logMessage("error mGLSupport is null.");
 		// Setup GLSupport
         mGLSupport->initialiseExtensions();
+		LogManager::getSingleton().logMessage("b2");
 
         LogManager::getSingleton().logMessage("**************************************");
         LogManager::getSingleton().logMessage("*** OpenGL ES 2.x Renderer Started ***");
@@ -1995,7 +2010,7 @@ namespace Ogre {
             mRTTManager->unbind(mActiveRenderTarget);
 
         mActiveRenderTarget = target;
-		if (target)
+		if (target && mRTTManager)
 		{
 			// Switch context if different from current one
 			GLES2Context *newContext = 0;
@@ -2119,7 +2134,6 @@ namespace Ogre {
                     mCurrentFragmentProgram = glprg;
                 }
                 break;
-            case GPT_GEOMETRY_PROGRAM:
             default:
                 break;
 		}
@@ -2190,7 +2204,6 @@ namespace Ogre {
             case GPT_FRAGMENT_PROGRAM:
                 mCurrentFragmentProgram->bindProgramPassIterationParameters(mActiveFragmentGpuProgramParameters);
                 break;
-            case GPT_GEOMETRY_PROGRAM:
             default:
                 break;
 		}
@@ -2217,6 +2230,7 @@ namespace Ogre {
 
 		// Bind this new context to this thread.
 		newContext->setCurrent();
+		LogManager::getSingleton().logMessage("c1");
 
 		_oneTimeContextInitialization();
 		newContext->setInitialized();
@@ -2243,6 +2257,7 @@ namespace Ogre {
 		// reacquire context
         if(mCurrentContext)
             mCurrentContext->setCurrent();
+		LogManager::getSingleton().logMessage("d1");
 	}
 
 	unsigned int GLES2RenderSystem::getDisplayMonitorCount() const
@@ -2253,18 +2268,14 @@ namespace Ogre {
 	//---------------------------------------------------------------------
     void GLES2RenderSystem::beginProfileEvent( const String &eventName )
     {
-#ifdef GL_EXT_debug_marker
         if(mGLSupport->checkExtension("GL_EXT_debug_marker"))
             glPushGroupMarkerEXT(0, eventName.c_str());
-#endif
     }
     //---------------------------------------------------------------------
     void GLES2RenderSystem::endProfileEvent( void )
     {
-#ifdef GL_EXT_debug_marker
         if(mGLSupport->checkExtension("GL_EXT_debug_marker"))
             glPopGroupMarkerEXT();
-#endif
     }
     //---------------------------------------------------------------------
     void GLES2RenderSystem::markProfileEvent( const String &eventName )
@@ -2272,10 +2283,8 @@ namespace Ogre {
         if( eventName.empty() )
             return;
 
-#ifdef GL_EXT_debug_marker
         if(mGLSupport->checkExtension("GL_EXT_debug_marker"))
            glInsertEventMarkerEXT(0, eventName.c_str());
-#endif
     }
 	//---------------------------------------------------------------------
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
@@ -2384,7 +2393,7 @@ namespace Ogre {
                 {
                     if (hwGlBuffer->isInstanceData())
                     {
-                        OGRE_CHECK_GL_ERROR(glVertexAttribDivisorEXT(attrib, hwGlBuffer->getInstanceDataStepRate()));
+                        OGRE_CHECK_GL_ERROR(glVertexAttribDivisorEXT(attrib, static_cast<GLuint>(hwGlBuffer->getInstanceDataStepRate())));
                         instanceAttribsBound.push_back(attrib);
                     }
                 }
@@ -2412,15 +2421,8 @@ namespace Ogre {
                                                       static_cast<GLsizei>(vertexBuffer->getVertexSize()),
                                                       pBufferData));
             
-//            vector<GLuint>::type::iterator ai = std::find(mRenderAttribsBound.begin(), mRenderAttribsBound.end(), attrib);
-//            if(ai == mRenderAttribsBound.end())
-//            {
-                // If this attribute hasn't been enabled, do so and keep a record of it.
-                OGRE_CHECK_GL_ERROR(glEnableVertexAttribArray(attrib));
-
-//                mRenderAttribsBound.push_back(attrib);
-//            }
-
+            mStateCacheManager->setVertexAttribEnabled(attrib);
+//                OGRE_CHECK_GL_ERROR(glEnableVertexAttribArray(attrib));
             attribsBound.push_back(attrib);
         }
     }

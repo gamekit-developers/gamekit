@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,9 @@ namespace Ogre {
 
     //-----------------------------------------------------------------------------
     AutoParamDataSource::AutoParamDataSource()
-        : mWorldMatrixDirty(true),
+        : mWorldMatrixCount(0),
+         mWorldMatrixArray(0),
+         mWorldMatrixDirty(true),
          mViewMatrixDirty(true),
          mProjMatrixDirty(true),
          mWorldViewMatrixDirty(true),
@@ -58,6 +60,7 @@ namespace Ogre {
          mInverseTransposeWorldViewMatrixDirty(true),
 		 mCameraPositionDirty(true),
          mCameraPositionObjectSpaceDirty(true),
+         mPassNumber(0),
 		 mSceneDepthRangeDirty(true),
 		 mLodCameraPositionDirty(true),
 		 mLodCameraPositionObjectSpaceDirty(true),

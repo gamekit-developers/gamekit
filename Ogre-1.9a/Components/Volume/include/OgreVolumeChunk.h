@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -96,7 +96,7 @@ namespace Volume {
         */
         ChunkParameters(void) :
             sceneManager(0), src(0), baseError((Real)0.0), errorMultiplicator((Real)1.0), createOctreeVisualization(false),
-            createDualGridVisualization(false), lodCallback(0), scale((Real)1.0), createGeometryFromLevel(0),
+            createDualGridVisualization(false), skirtFactor(0), lodCallback(0), scale((Real)1.0), maxScreenSpaceError(0), createGeometryFromLevel(0),
             updateFrom(Vector3::ZERO), updateTo(Vector3::ZERO), async(false)
         {
         }

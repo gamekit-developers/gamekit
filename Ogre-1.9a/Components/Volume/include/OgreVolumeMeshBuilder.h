@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -245,7 +245,7 @@ namespace Volume {
             const Vector3 &c5,
             const Vector3 &c6,
             const Vector3 &c7,
-            size_t &baseIndex
+            uint32 &baseIndex
             )
         {
             manual->position(c0);

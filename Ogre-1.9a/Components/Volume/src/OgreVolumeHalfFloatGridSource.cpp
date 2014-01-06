@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -89,10 +89,10 @@ namespace Volume {
         ser.read<size_t>(&width);
         ser.read<size_t>(&height);
         ser.read<size_t>(&depth);
-        mWidth = (int)width;
-        mHeight = (int)height;
-        mDepth = (int)depth;
-        mDepthTimesHeight = mDepth * mHeight;
+        mWidth = static_cast<int>(width);
+        mHeight = static_cast<int>(height);
+        mDepth = static_cast<int>(depth);
+        mDepthTimesHeight = static_cast<int>(mDepth * mHeight);
         
         Vector3 worldDimension = readTo - readFrom;
         mPosXScale = (Real)1.0 / (Real)worldDimension.x * (Real)mWidth;
@@ -100,6 +100,7 @@ namespace Volume {
         mPosZScale = (Real)1.0 / (Real)worldDimension.z * (Real)mDepth;
 
         mVolumeSpaceToWorldSpaceFactor = (Real)worldDimension.x * (Real)mWidth;
+        mMaxClampedAbsoluteDensity = 0;
 
         // Read data
         size_t elementCount = mWidth * mHeight * mDepth;

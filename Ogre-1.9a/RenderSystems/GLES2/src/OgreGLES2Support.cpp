@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,20 +54,39 @@ namespace Ogre {
 
     void GLES2Support::initialiseExtensions(void)
     {
+#if OGRE_PLATFORM == OGRE_PLATFORM_NACL
+#define _NLOG(x) LogManager::getSingleton().logMessage(x)
+
+		_NLOG("k0");
+
+		if (glGetString == NULL)
+			_NLOG("error - glstring is null");
+
+		if (!glGetCurrentContextPPAPI())
+			_NLOG("context is null!!!!!!");
+
+#else
+#define _NLOG(x)
+#endif
+
+
         // Set version string
         const GLubyte* pcVer = glGetString(GL_VERSION);
-
+		_NLOG("k1");
         assert(pcVer && "Problems getting GL version string using glGetString");
+		_NLOG("k2");
 
         String tmpStr = (const char*)pcVer;
         LogManager::getSingleton().logMessage("GL_VERSION = " + tmpStr);
         mVersion = tmpStr.substr(0, tmpStr.find(" "));
 
-        // Get vendor
+       	_NLOG("k3");
+ // Get vendor
         const GLubyte* pcVendor = glGetString(GL_VENDOR);
         tmpStr = (const char*)pcVendor;
         LogManager::getSingleton().logMessage("GL_VENDOR = " + tmpStr);
         mVendor = tmpStr.substr(0, tmpStr.find(" "));
+		_NLOG("k4");
 
         // Get renderer
         const GLubyte* pcRenderer = glGetString(GL_RENDERER);

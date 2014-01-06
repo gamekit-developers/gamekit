@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -199,16 +199,14 @@ namespace Ogre
 			IndexData* idata = mIDataList[i];
 			// Now do index data
 			// no new buffer required, same size but some triangles remapped
-			uint16* p16 = 0;
-			uint32* p32 = 0;
 			if (idata->indexBuffer->getType() == HardwareIndexBuffer::IT_32BIT)
 			{
-				p32 = static_cast<uint32*>(idata->indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
+				uint32* p32 = static_cast<uint32*>(idata->indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
 				remapIndexes(p32, i, res);
 			}
 			else
 			{
-				p16 = static_cast<uint16*>(idata->indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
+				uint16* p16 = static_cast<uint16*>(idata->indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
 				remapIndexes(p16, i, res);
 			}
 			idata->indexBuffer->unlock();

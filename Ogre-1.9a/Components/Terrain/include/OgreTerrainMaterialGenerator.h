@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -86,7 +86,10 @@ namespace Ogre
 				elementCount == e.elementCount;
 		}
 
-		TerrainLayerSamplerElement() {}
+		TerrainLayerSamplerElement() : 
+            source(0), semantic(TLSS_ALBEDO), elementStart(0), elementCount(0)
+        {}
+
 		TerrainLayerSamplerElement(uint8 src, TerrainLayerSamplerSemantic sem,
 			uint8 elemStart, uint8 elemCount)
 			: source(src), semantic(sem), elementStart(elemStart), elementCount(elemCount)
@@ -109,7 +112,10 @@ namespace Ogre
 			return alias == s.alias && format == s.format;
 		}
 
-		TerrainLayerSampler() {}
+        TerrainLayerSampler()
+            : alias(""), format(PF_UNKNOWN)
+        {
+        }
 
 		TerrainLayerSampler(const String& aliasName, PixelFormat fmt)
 			: alias(aliasName), format(fmt)

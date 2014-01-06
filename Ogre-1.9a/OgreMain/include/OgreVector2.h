@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,10 @@ namespace Ogre
         Real x, y;
 
     public:
+        /** Default constructor.
+            @note
+                It does <b>NOT</b> initialize the vector for efficiency.
+        */
         inline Vector2()
         {
         }
@@ -505,14 +509,13 @@ namespace Ogre
                 vector will not be normalised, normalise it if you wish
                 afterwards.
         */
-        inline Vector2 randomDeviant(Real angle) const
+        inline Vector2 randomDeviant(Radian angle) const
         {
-
-            angle *=  Math::UnitRandom() * Math::TWO_PI;
-            Real cosa = cos(angle);
-            Real sina = sin(angle);
-            return  Vector2(cosa * x - sina * y,
-                            sina * x + cosa * y);
+            angle *= Math::RangeRandom(-1, 1);
+            Real cosa = Math::Cos(angle);
+            Real sina = Math::Sin(angle);
+            return Vector2(cosa * x - sina * y,
+                           sina * x + cosa * y);
         }
 
         /** Returns true if this vector is zero length. */

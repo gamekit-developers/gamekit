@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -366,7 +366,7 @@ namespace Ogre
         static inline double saturate(double t) { return (t < 0) ? 0 : ((t > 1) ? 1 : t); }
         
         //Simulate the shader function lerp which performers linear interpolation
-        //given 3 parameters v0, v1 and t the function returns the value of (1 – t)* v0 + t * v1. 
+        //given 3 parameters v0, v1 and t the function returns the value of (1 ?t)* v0 + t * v1. 
         //where v0 and v1 are matching vector or scalar types and t can be either a scalar or a vector of the same type as a and b.
         template<typename V, typename T> static V lerp(const V& v0, const V& v1, const T& t) { 
             return v0 * (1 - t) + v1 * t; }

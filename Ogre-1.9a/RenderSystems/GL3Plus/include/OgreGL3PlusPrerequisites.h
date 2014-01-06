@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -123,8 +123,9 @@ namespace Ogre {
             default:                                                            break; \
         } \
         char msgBuf[4096]; \
-        sprintf(msgBuf, "OpenGL error 0x%04X %s in %s at line %i for %s\n", e, errorString, __PRETTY_FUNCTION__, __LINE__, #glFunc); \
-        LogManager::getSingleton().logMessage(msgBuf); \
+        StringVector tokens = StringUtil::split(#glFunc, "("); \
+        sprintf(msgBuf, "OpenGL error 0x%04X %s in %s at line %i for %s\n", e, errorString, __PRETTY_FUNCTION__, __LINE__, tokens[0].c_str()); \
+        LogManager::getSingleton().logMessage(msgBuf, LML_CRITICAL); \
     } \
 }
 #else

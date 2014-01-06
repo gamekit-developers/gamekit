@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -61,6 +61,7 @@ namespace Ogre {
           mSkelAnimVertexData(0),
 		  mSoftwareVertexAnimVertexData(0),
 		  mHardwareVertexAnimVertexData(0),
+          mVertexAnimationAppliedThisFrame(false),
           mPreparedForShadowVolumes(false),
           mBoneWorldMatrices(NULL),
           mBoneMatrices(NULL),
@@ -99,6 +100,7 @@ namespace Ogre {
 		mSkelAnimVertexData(0),
 		mSoftwareVertexAnimVertexData(0),
 		mHardwareVertexAnimVertexData(0),
+        mVertexAnimationAppliedThisFrame(false),
         mPreparedForShadowVolumes(false),
         mBoneWorldMatrices(NULL),
         mBoneMatrices(NULL),
@@ -476,7 +478,7 @@ namespace Ogre {
         // Notify any child objects
         ChildObjectList::iterator child_itr = mChildObjectList.begin();
         ChildObjectList::iterator child_itr_end = mChildObjectList.end();
-        for( ; child_itr != child_itr_end; child_itr++)
+        for( ; child_itr != child_itr_end; ++child_itr)
         {
             (*child_itr).second->_notifyCurrentCamera(cam);
         }
@@ -506,10 +508,10 @@ namespace Ogre {
 
         ChildObjectList::const_iterator child_itr = mChildObjectList.begin();
         ChildObjectList::const_iterator child_itr_end = mChildObjectList.end();
-        for( ; child_itr != child_itr_end; child_itr++)
+        for( ; child_itr != child_itr_end; ++child_itr)
         {
             aa_box = child_itr->second->getBoundingBox();
-            TagPoint* tp = (TagPoint*)child_itr->second->getParentNode();
+            TagPoint* tp = static_cast<TagPoint*>(child_itr->second->getParentNode());
             // Use transform local to skeleton since world xform comes later
             aa_box.transformAffine(tp->_getFullLocalTransform());
 
@@ -526,7 +528,7 @@ namespace Ogre {
 			// derive child bounding boxes
 			ChildObjectList::const_iterator child_itr = mChildObjectList.begin();
 			ChildObjectList::const_iterator child_itr_end = mChildObjectList.end();
-			for( ; child_itr != child_itr_end; child_itr++)
+			for( ; child_itr != child_itr_end; ++child_itr)
 			{
 				child_itr->second->getWorldBoundingBox(true);
 			}
@@ -541,7 +543,7 @@ namespace Ogre {
 			// derive child bounding boxes
 			ChildObjectList::const_iterator child_itr = mChildObjectList.begin();
 			ChildObjectList::const_iterator child_itr_end = mChildObjectList.end();
-			for( ; child_itr != child_itr_end; child_itr++)
+			for( ; child_itr != child_itr_end; ++child_itr)
 			{
 				child_itr->second->getWorldBoundingSphere(true);
 			}
@@ -642,7 +644,7 @@ namespace Ogre {
             //--- pass this point,  we are sure that the transformation matrix of each bone and tagPoint have been updated
             ChildObjectList::iterator child_itr = mChildObjectList.begin();
             ChildObjectList::iterator child_itr_end = mChildObjectList.end();
-            for( ; child_itr != child_itr_end; child_itr++)
+            for( ; child_itr != child_itr_end; ++child_itr)
             {
                 MovableObject* child = child_itr->second;
                 bool visible = child->isVisible();
@@ -908,7 +910,7 @@ namespace Ogre {
             //--- Update the child object's transforms
             ChildObjectList::iterator child_itr = mChildObjectList.begin();
             ChildObjectList::iterator child_itr_end = mChildObjectList.end();
-            for( ; child_itr != child_itr_end; child_itr++)
+            for( ; child_itr != child_itr_end; ++child_itr)
             {
                 (*child_itr).second->getParentNode()->_update(true, true);
             }
@@ -1403,14 +1405,12 @@ namespace Ogre {
     {
         // Create SubEntities
         unsigned short i, numSubMeshes;
-        SubMesh* subMesh;
-        SubEntity* subEnt;
 
         numSubMeshes = mesh->getNumSubMeshes();
         for (i = 0; i < numSubMeshes; ++i)
         {
-            subMesh = mesh->getSubMesh(i);
-            subEnt = OGRE_NEW SubEntity(this, subMesh);
+            SubMesh* subMesh = mesh->getSubMesh(i);
+            SubEntity* subEnt = OGRE_NEW SubEntity(this, subMesh);
             if (subMesh->isMatInitialised())
                 subEnt->setMaterialName(subMesh->getMaterialName(), mesh->getGroup());
             sublist->push_back(subEnt);
@@ -1841,7 +1841,7 @@ namespace Ogre {
     ShadowCaster::ShadowRenderableListIterator
         Entity::getShadowVolumeRenderableIterator(
         ShadowTechnique shadowTechnique, const Light* light,
-        HardwareIndexBufferSharedPtr* indexBuffer,
+        HardwareIndexBufferSharedPtr* indexBuffer, size_t* indexBufferUsedSize,
         bool extrude, Real extrusionDistance, unsigned long flags)
     {
         assert(indexBuffer && "Only external index buffers are supported right now");
@@ -1867,8 +1867,8 @@ namespace Ogre {
 				}
             }
             return mLodEntityList[mMeshLodIndex-1]->getShadowVolumeRenderableIterator(
-                shadowTechnique, light, indexBuffer, extrude,
-                extrusionDistance, flags);
+                shadowTechnique, light, indexBuffer, indexBufferUsedSize,
+                extrude, extrusionDistance, flags);
         }
 
 
@@ -2002,8 +2002,8 @@ namespace Ogre {
         updateEdgeListLightFacing(edgeList, lightPos);
 
         // Generate indexes and update renderables
-        generateShadowVolume(edgeList, *indexBuffer, light,
-            mShadowRenderables, flags);
+        generateShadowVolume(edgeList, *indexBuffer, *indexBufferUsedSize,
+            light, mShadowRenderables, flags);
 
 
         return ShadowRenderableListIterator(mShadowRenderables.begin(), mShadowRenderables.end());

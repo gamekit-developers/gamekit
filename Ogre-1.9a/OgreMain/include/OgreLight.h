@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -503,7 +503,8 @@ namespace Ogre {
         void setCustomParameter(uint16 index, const Vector4& value);
 
         /** Gets the custom value associated with this Light at the given index.
-        @param index @see setCustomParameter for full details.
+        @param index Index of the parameter to retrieve
+        @see setCustomParameter for full details.
         */
         const Vector4& getCustomParameter(uint16 index) const;
 

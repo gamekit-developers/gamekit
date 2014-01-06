@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -216,7 +216,7 @@ namespace Ogre
             per batch
         @param materialName Name of the material to base on
         @param suggestedSize Suggested amount of instances per batch
-        @param flags @see InstanceManagerFlags
+        @param flags Flags to pass to the InstanceManager. @see InstanceManagerFlags
         @return The max/best amount of instances per batch given the suggested size and flags
         */
         size_t getMaxOrBestNumInstancesPerBatch( String materialName, size_t suggestedSize, uint16 flags );

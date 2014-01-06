@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -96,7 +96,7 @@ namespace Ogre {
         return getDescriptionFor(format).elemBytes;
     }
 	//-----------------------------------------------------------------------
-	size_t PixelUtil::getMemorySize(size_t width, size_t height, size_t depth, PixelFormat format)
+	size_t PixelUtil::getMemorySize(uint32 width, uint32 height, uint32 depth, PixelFormat format)
 	{
 		if(isCompressed(format))
 		{
@@ -240,7 +240,7 @@ namespace Ogre {
         rgba[3] = des.abits;
     }
 	//-----------------------------------------------------------------------
-	void PixelUtil::getBitMasks(PixelFormat format, uint32 rgba[4])
+	void PixelUtil::getBitMasks(PixelFormat format, uint64 rgba[4])
     {
         const PixelFormatDescription &des = getDescriptionFor(format);
         rgba[0] = des.rmask;

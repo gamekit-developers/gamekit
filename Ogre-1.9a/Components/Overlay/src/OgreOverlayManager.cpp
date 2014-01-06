@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -70,6 +70,11 @@ namespace Ogre {
 		destroyAllOverlayElements(false);
 		destroyAllOverlayElements(true);
         destroyAll();
+
+		for(FactoryMap::iterator i = mFactories.begin(); i != mFactories.end(); ++i)
+        {
+            OGRE_DELETE i->second;
+        }
 
         // Unregister with resource group manager
 		ResourceGroupManager::getSingleton()._unregisterScriptLoader(this);
@@ -379,7 +384,7 @@ namespace Ogre {
 					LogManager::getSingleton().logMessage( 
 						"Bad element/container line: '"
 						+ line + "' in " + parent->getTypeName()+ " " + parent->getName() +
-						", expecting ':' templateName");
+						", expecting ':' templateName", LML_CRITICAL);
 					skipToNextCloseBrace(stream);
 					// barf 
 					return ret;
@@ -389,7 +394,7 @@ namespace Ogre {
 					LogManager::getSingleton().logMessage( 
 						"Bad element/container line: '"
 						+ line + "' in " + parent->getTypeName()+ " " + parent->getName() +
-						", expecting ':' for element inheritance");
+						", expecting ':' for element inheritance", LML_CRITICAL);
 					skipToNextCloseBrace(stream);
 					// barf 
 					return ret;
@@ -433,7 +438,7 @@ namespace Ogre {
         else
         {
             LogManager::getSingleton().logMessage("Bad overlay attribute line: '"
-                + line + "' for overlay " + pOverlay->getName());
+                + line + "' for overlay " + pOverlay->getName(), LML_CRITICAL);
         }
     }
     //---------------------------------------------------------------------
@@ -449,7 +454,7 @@ namespace Ogre {
             // BAD command. BAD!
             LogManager::getSingleton().logMessage("Bad element attribute line: '"
                 + line + "' for element " + pElement->getName() + " in overlay " + 
-                (!pOverlay ? StringUtil::BLANK : pOverlay->getName()));
+                (!pOverlay ? StringUtil::BLANK : pOverlay->getName()), LML_CRITICAL);
         }
     }
     //-----------------------------------------------------------------------

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ namespace Ogre {
                 "GLHardwareVertexBuffer::GLHardwareVertexBuffer");
         }
 
-        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 
         // Initialise mapped buffer and set usage
         glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, 
@@ -58,7 +58,7 @@ namespace Ogre {
 	//---------------------------------------------------------------------
     GLHardwareVertexBuffer::~GLHardwareVertexBuffer()
     {
-        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->deleteGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->deleteGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
     }
 	//---------------------------------------------------------------------
     void* GLHardwareVertexBuffer::lockImpl(size_t offset, 
@@ -90,7 +90,7 @@ namespace Ogre {
 				mScratchPtr = retPtr;
 				mScratchUploadOnUnlock = (options != HBL_READ_ONLY);
 
-				if (options != HBL_DISCARD)
+				if (options != HBL_DISCARD && options != HBL_NO_OVERWRITE)
 				{
 					// have to read back the data before returning the pointer
 					readData(offset, length, retPtr);
@@ -102,15 +102,36 @@ namespace Ogre {
 		{
             GLenum access = 0;
 			// Use glMapBuffer
-            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 			// Use glMapBuffer
-			if(options == HBL_DISCARD)
+			if(options == HBL_DISCARD || options == HBL_NO_OVERWRITE) // TODO: check possibility to use GL_MAP_UNSYNCHRONIZED_BIT for HBL_NO_OVERWRITE locking promise
 			{
 				// Discard the buffer
 				glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL, 
 					GLHardwareBufferManager::getGLUsage(mUsage));
-
+                
+                GLenum error = glGetError();
+                if(error != 0)
+                {
+                    String glErrDesc;
+                    const char* glerrStr = (const char*)gluErrorString(error);
+                    if (glerrStr)
+                        glErrDesc = glerrStr;
+                    
+                    LogManager::getSingleton().logMessage("GLHardwareVertexBuffer::lock - Error: failed to Discard the buffer. Try to recreate the buffer", LML_CRITICAL);
+                    
+                    static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->deleteGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
+                    mBufferId = 0;
+                    
+                    glGenBuffersARB( 1, &mBufferId );
+                    
+                    static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
+                    
+                    glBufferDataARB(GL_ARRAY_BUFFER_ARB, mSizeInBytes, NULL,
+                                    GLHardwareBufferManager::getGLUsage(mUsage));
+                }
 			}
+            
 			if (mUsage & HBU_WRITE_ONLY)
 				access = GL_WRITE_ONLY_ARB;
 			else if (options == HBL_READ_ONLY)
@@ -119,8 +140,7 @@ namespace Ogre {
 				access = GL_READ_WRITE_ARB;
 
 			void* pBuffer = glMapBufferARB( GL_ARRAY_BUFFER_ARB, access);
-
-			if(pBuffer == 0)
+            if(pBuffer == 0)
 			{
 				OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, 
 					"Vertex Buffer: Out of memory", "GLHardwareVertexBuffer::lock");
@@ -155,8 +175,7 @@ namespace Ogre {
 		}
 		else
 		{
-
-            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 
 			if(!glUnmapBufferARB( GL_ARRAY_BUFFER_ARB ))
 			{
@@ -182,7 +201,7 @@ namespace Ogre {
         else
         {
             // get data from the real buffer
-            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 
             glGetBufferSubDataARB(GL_ARRAY_BUFFER_ARB, offset, length, pDest);
         }
@@ -191,7 +210,7 @@ namespace Ogre {
     void GLHardwareVertexBuffer::writeData(size_t offset, size_t length, 
             const void* pSource, bool discardWholeBuffer)
     {
-        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+        static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 
         // Update the shadow buffer
         if(mUseShadowBuffer)
@@ -227,7 +246,7 @@ namespace Ogre {
             const void *srcData = mShadowBuffer->lock(
                 mLockStart, mLockSize, HBL_READ_ONLY);
 
-            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER, mBufferId);
+            static_cast<GLHardwareBufferManagerBase*>(mMgr)->getStateCacheManager()->bindGLBuffer(GL_ARRAY_BUFFER_ARB, mBufferId);
 
             // Update whole buffer if possible, otherwise normal
             if (mLockStart == 0 && mLockSize == mSizeInBytes)

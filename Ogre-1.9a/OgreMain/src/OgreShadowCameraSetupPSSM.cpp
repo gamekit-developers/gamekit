@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Copyright (c) 2006 Matthias Fink, netAllied GmbH <matthias.fink@web.de>								
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,7 @@ namespace Ogre
 {
 	//---------------------------------------------------------------------
 	PSSMShadowCameraSetup::PSSMShadowCameraSetup()
-		: mSplitPadding(1.0f)
+		: mSplitPadding(1.0f), mCurrentIteration(0)
 	{
 		calculateSplitPoints(3, 100, 100000);
 		setOptimalAdjustFactor(0, 5);
@@ -50,7 +50,7 @@ namespace Ogre
 	{
 	}
 	//---------------------------------------------------------------------
-	void PSSMShadowCameraSetup::calculateSplitPoints(size_t splitCount, Real nearDist, Real farDist, Real lambda)
+	void PSSMShadowCameraSetup::calculateSplitPoints(uint splitCount, Real nearDist, Real farDist, Real lambda)
 	{
 		if (splitCount < 2)
 			OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Cannot specify less than 2 splits", 
@@ -78,7 +78,7 @@ namespace Ogre
 		if (newSplitPoints.size() < 3) // 3, not 2 since splits + 1 points
 			OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Cannot specify less than 2 splits", 
 			"PSSMShadowCameraSetup::setSplitPoints");
-		mSplitCount = newSplitPoints.size() - 1;
+		mSplitCount = static_cast<uint>(newSplitPoints.size() - 1);
 		mSplitPoints = newSplitPoints;
 		mOptimalAdjustFactors.resize(mSplitCount);
 	}

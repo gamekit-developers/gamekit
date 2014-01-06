@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 Also see acknowledgements in Readme.html
 
 You may use this sample code for anything you like, it is not covered by the
@@ -53,7 +53,7 @@ D:        Step right
 
 using namespace Ogre;
 
-#ifdef USE_RTSHADER_SYSTEM
+#ifdef INCLUDE_RTSHADER_SYSTEM
 #include "OgreRTShaderSystem.h"
 #endif
 
@@ -138,7 +138,7 @@ public:
 		WindowEventUtilities::addWindowEventListener(mWindow, this);		
 	}
 
-#ifdef USE_RTSHADER_SYSTEM
+#ifdef INCLUDE_RTSHADER_SYSTEM
 	virtual void processShaderGeneratorInput()
 	{		
 		// Switch to default scheme.
@@ -439,7 +439,7 @@ public:
 			if( processUnbufferedKeyInput(evt) == false )
 				return false;
 
-#ifdef USE_RTSHADER_SYSTEM
+#ifdef INCLUDE_RTSHADER_SYSTEM
 		processShaderGeneratorInput();
 #endif
 

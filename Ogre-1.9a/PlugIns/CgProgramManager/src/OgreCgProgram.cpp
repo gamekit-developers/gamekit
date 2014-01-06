@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -366,10 +366,11 @@ namespace Ogre {
 	{
 		String name = String("CG_") + mName;
 		size_t programStringSize = mProgramString.size();
-        size_t sizeOfMicrocode = sizeof(size_t) +   // size of mProgramString
-							     programStringSize + // microcode - mProgramString
-							     sizeof(size_t) + // size of param map
-							     mParametersMapSizeAsBuffer;
+        uint32 sizeOfMicrocode = static_cast<uint32>(
+                                                     sizeof(size_t) +   // size of mProgramString
+                                                     programStringSize + // microcode - mProgramString
+                                                     sizeof(size_t) + // size of param map
+                                                     mParametersMapSizeAsBuffer);
 
 		// create microcode
 		GpuProgramManager::Microcode newMicrocode = 

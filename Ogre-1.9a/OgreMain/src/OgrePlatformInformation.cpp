@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,12 @@ THE SOFTWARE.
         #include <sys/sysctl.h>
         #if __MACH__
             #include <mach/machine.h>
+            #ifndef CPU_SUBTYPE_ARM64_V8
+                #define CPU_SUBTYPE_ARM64_V8 ((cpu_subtype_t) 1)
+            #endif
+            #ifndef CPU_SUBTYPE_ARM_V8
+                #define CPU_SUBTYPE_ARM_V8 ((cpu_subtype_t) 13)
+            #endif
         #endif
     #endif
 #endif
@@ -525,7 +531,7 @@ namespace Ogre {
 #if defined(__ARM_NEON__)
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
         int hasNEON;
-        size_t len = sizeof(size_t);;
+        size_t len = sizeof(size_t);
         sysctlbyname("hw.optional.neon", &hasNEON, &len, NULL, 0);
 
         if(hasNEON)
@@ -544,7 +550,7 @@ namespace Ogre {
         // Get the size of the CPU subtype struct
         size_t size;
         sysctlbyname("hw.cpusubtype", NULL, &size, NULL, 0);
-        
+
         // Get the ARM CPU subtype
         cpu_subtype_t cpusubtype = 0;
         sysctlbyname("hw.cpusubtype", &cpusubtype, &size, NULL, 0);
@@ -560,6 +566,15 @@ namespace Ogre {
             case CPU_SUBTYPE_ARM_V7F:
                 cpuID = "ARM Cortex-A9";
                 break;
+            case CPU_SUBTYPE_ARM_V7S:
+                cpuID = "ARM Swift";
+                break;
+            case CPU_SUBTYPE_ARM_V8:
+                cpuID = "ARMv8";
+                break;
+            case CPU_SUBTYPE_ARM64_V8:
+                cpuID = "ARM64v8";
+                break;
             default:
                 cpuID = "Unknown ARM";
                 break;
@@ -568,7 +583,27 @@ namespace Ogre {
         return cpuID;
     }
     
-#else   // OGRE_CPU == OGRE_CPU_ARM
+#elif OGRE_CPU == OGRE_CPU_MIPS  // OGRE_CPU == OGRE_CPU_ARM
+
+    //---------------------------------------------------------------------
+    static uint _detectCpuFeatures(void)
+    {
+        // Use preprocessor definitions to determine architecture and CPU features
+        uint features = 0;
+#if defined(__mips_msa)
+        features |= PlatformInformation::CPU_FEATURE_MSA;
+#endif
+        return features;
+    }
+    //---------------------------------------------------------------------
+    static String _detectCpuIdentifier(void)
+    {
+        String cpuID = "MIPS";
+
+        return cpuID;
+    }
+
+#else   // OGRE_CPU == OGRE_CPU_MIPS
 
     //---------------------------------------------------------------------
     static uint _detectCpuFeatures(void)
@@ -643,6 +678,9 @@ namespace Ogre {
 				" *      VFP: " + StringConverter::toString(hasCpuFeature(CPU_FEATURE_VFP), true));
         pLog->logMessage(
 				" *     NEON: " + StringConverter::toString(hasCpuFeature(CPU_FEATURE_NEON), true));
+#elif OGRE_CPU == OGRE_CPU_MIPS
+        pLog->logMessage(
+                " *      MSA: " + StringConverter::toString(hasCpuFeature(CPU_FEATURE_MSA), true));
 #endif
 		pLog->logMessage("-------------------------");
 

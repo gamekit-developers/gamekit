@@ -327,7 +327,9 @@ void fbtMemoryStream::open(const void* buffer, FBTsize size, fbtStream::StreamMo
 
 		} else
 		{
+#if FBT_USE_GZ_FILE == 1
 			bool result = gzipInflate((char*)buffer,size);
+#endif
 		}
 
 	}

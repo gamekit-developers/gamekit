@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,8 @@ namespace Ogre
 		/** Constructor.
 		@param instance The application instance
 		*/
-		D3D9RenderWindow					(HINSTANCE instance);
-		~D3D9RenderWindow					();
-		
+		D3D9RenderWindow					    (HINSTANCE instance);
+		~D3D9RenderWindow					    ();	
 		
 		void				create				(const String& name, unsigned int width, unsigned int height,
 												 bool fullScreen, const NameValuePairList *miscParams);
@@ -60,7 +59,7 @@ namespace Ogre
 		unsigned int		getVSyncInterval	() const;
 		void 				reposition			(int left, int top);
 		void 				resize				(unsigned int width, unsigned int height);
-		void 				swapBuffers			( bool waitForVSync = true );
+		void 				swapBuffers			();
 		HWND 				getWindowHandle		() const { return mHWnd; }				
 		IDirect3DDevice9*	getD3D9Device		();
 		D3D9Device*			getDevice			();
@@ -101,7 +100,7 @@ namespace Ogre
 		/// Returns true if this window use depth buffer.
 		bool isDepthBuffered() const;
 
-		/// Returns true if this window should use NV perf hud adapter.
+		/// Returns true if this window should use NV Perf HUD adapter.
 		bool isNvPerfHUDEnable() const;
 
 		/** Validate the device for this window. */

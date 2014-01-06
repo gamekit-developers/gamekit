@@ -1,0 +1,57 @@
+cmake_minimum_required( VERSION 2.6.3 )
+
+set(NACL_SDK_ROOT $ENV{NACL_SDK_ROOT})
+STRING(REGEX REPLACE "\\\\" "/" NACL_SDK_ROOT ${NACL_SDK_ROOT})
+
+message(STATUS "nacl:"${NACL_SDK_ROOT})
+
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_VERSION 1)
+set(CMAKE_SYSTEM_PROCESSOR x86)
+
+set(NACL_LIB "glibc")
+#set(NACL_LIB "newlib")
+set(NACL_ARCH "x86")
+set(NACL_ARCH_PREFIX "x86_64")
+set(NACL_ARCH_POSTFIX ".exe")
+
+
+if (OGREKIT_BUILD_ARCH_X64)
+	set(NACL_ARCH_ADDR "64")
+else()
+	set(NACL_ARCH_ADDR "32")
+endif()
+
+if (CMAKE_HOST_APPLE)
+	set(NACL_HOST_SYSTEM_NAME "mac_${NACL_ARCH}_${NACL_LIB}")
+elseif(CMAKE_HOST_WIN32)
+	set(NACL_HOST_SYSTEM_NAME "win_${NACL_ARCH}_${NACL_LIB}") 
+elseif(CMAKE_HOST_UNIX)
+	set(NACL_HOST_SYSTEM_NAME "linux_${NACL_ARCH}_${NACL_LIB}")
+else()
+	message(FATAL_ERROR "Unknown platform.")
+endif()
+
+set(CMAKETOOLS_CONFIG_NO_INLINE_ASM 1)
+
+set(NACL_TOOL_PATH "${NACL_SDK_ROOT}/toolchain/${NACL_HOST_SYSTEM_NAME}/bin")
+
+set(CMAKE_AR "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-ar${NACL_ARCH_POSTFIX}" CACHE PATH "archive")
+set(CMAKE_LINKER "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-ld${NACL_ARCH_POSTFIX}" CACHE PATH "linker")
+#set(CMAKE_LINKER "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-g++${NACL_ARCH_POSTFIX}" CACHE PATH "linker")
+
+set(CMAKE_ASM_COMPILER "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-as${NACL_ARCH_POSTFIX}")
+set(CMAKE_C_COMPILER "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-gcc${NACL_ARCH_POSTFIX}")
+set(CMAKE_CXX_COMPILER "${NACL_TOOL_PATH}/${NACL_ARCH_PREFIX}-nacl-g++${NACL_ARCH_POSTFIX}")
+
+set(CMAKE_FIND_ROOT_PATH "${NACL_SDK_ROOT}/toolchain/${NACL_HOST_SYSTEM_NAME}")
+
+set(NACL_LIB_PATH "${NACL_SDK_ROOT}/lib/${NACL_LIB}_${NACL_ARCH}_${NACL_ARCH_ADDR}/Release")
+set(CMAKE_CXX_FLAGS "-std=gnu++98 -Wno-deprecated-declarations -Wno-write-strings -m${NACL_ARCH_ADDR} -pthread -pedantic -O2 -Wno-long-long -fno-builtin -fno-stack-protector -fdiagnostics-show-option -D_GNU_SOURCE=1 -D__STDC_FORMAT_MACROS=1 -D_BSD_SOURCE=1 -D_POSIX_C_SOURCE=199506 -D_XOPEN_SOURCE=600")
+set(CMAKE_EXE_LINKER_FLAGS "-melf_nacl -m${NACL_ARCH_ADDR} --strip-all -ldl -lppapi -lppapi_cpp -lnosys -lppapi_gles2 -L${NACL_LIB_PATH}")
+set(CMAKE_EXECUTABLE_POSFIX "nexe")
+set(CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})
+
+set(OGREKIT_EXE_POSTFIX "${NACL_ARCH}_${NACL_ARCH_ADDR}.nexe")
+
+#set(OPENGLES2_gl_LIBRARY ${NACL_LIB_PATH}/libppapi_gles2.a)

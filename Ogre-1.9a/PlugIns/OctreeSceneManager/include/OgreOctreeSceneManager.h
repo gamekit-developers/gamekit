@@ -12,7 +12,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -188,11 +188,11 @@ public:
     /** Overridden from SceneManager */
     void clearScene(void);
 
-    AxisAlignedBoxSceneQuery* createAABBQuery(const AxisAlignedBox& box, unsigned long mask);
-    SphereSceneQuery* createSphereQuery(const Sphere& sphere, unsigned long mask);
-    PlaneBoundedVolumeListSceneQuery* createPlaneBoundedVolumeQuery(const PlaneBoundedVolumeList& volumes, unsigned long mask);
-    RaySceneQuery* createRayQuery(const Ray& ray, unsigned long mask);
-    IntersectionSceneQuery* createIntersectionQuery(unsigned long mask);
+    AxisAlignedBoxSceneQuery* createAABBQuery(const AxisAlignedBox& box, uint32 mask);
+    SphereSceneQuery* createSphereQuery(const Sphere& sphere, uint32 mask);
+    PlaneBoundedVolumeListSceneQuery* createPlaneBoundedVolumeQuery(const PlaneBoundedVolumeList& volumes, uint32 mask);
+    RaySceneQuery* createRayQuery(const Ray& ray, uint32 mask);
+    IntersectionSceneQuery* createIntersectionQuery(uint32 mask);
 
 protected:
 

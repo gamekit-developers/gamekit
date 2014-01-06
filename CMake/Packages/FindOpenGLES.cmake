@@ -13,7 +13,6 @@
 #  OPENGLES_FOUND        - system has OpenGLES
 #  OPENGLES_INCLUDE_DIR  - the GL include directory
 #  OPENGLES_LIBRARIES    - Link these to use OpenGLES
-include(FindPkgMacros)
 
 IF (WIN32)
   IF (CYGWIN)

@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -347,7 +347,12 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Serializer::writeObject(const Quaternion& q)
     {
-        float tmp[4] = { q.x, q.y, q.z, q.w };
+        float tmp[4] = {
+            static_cast<float>(q.x),
+            static_cast<float>(q.y),
+            static_cast<float>(q.z),
+            static_cast<float>(q.w)
+        };
         writeFloats(tmp, 4);
     }
     //---------------------------------------------------------------------
@@ -394,10 +399,9 @@ namespace Ogre {
     
     void Serializer::flipEndian(void * pData, size_t size)
     {
-        char swapByte;
         for(unsigned int byteIndex = 0; byteIndex < size/2; byteIndex++)
         {
-            swapByte = *(char *)((size_t)pData + byteIndex);
+            char swapByte = *(char *)((size_t)pData + byteIndex);
             *(char *)((size_t)pData + byteIndex) = *(char *)((size_t)pData + size - byteIndex - 1);
             *(char *)((size_t)pData + size - byteIndex - 1) = swapByte;
         }

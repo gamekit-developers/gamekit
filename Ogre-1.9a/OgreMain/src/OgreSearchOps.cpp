@@ -4,7 +4,7 @@ This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ intptr_t _findfirst(const char *pattern, struct _finddata_t *data)
     const char *mask = strrchr (pattern, '/');
     if (mask)
     {
-        fs->dirlen = mask - pattern;
+        fs->dirlen = static_cast<int>(mask - pattern);
         mask++;
         fs->directory = (char *)malloc (fs->dirlen + 1);
         memcpy (fs->directory, pattern, fs->dirlen);
@@ -90,7 +90,7 @@ intptr_t _findfirst(const char *pattern, struct _finddata_t *data)
 
 int _findnext(intptr_t id, struct _finddata_t *data)
 {
-    _find_search_t *fs = (_find_search_t *)id;
+    _find_search_t *fs = reinterpret_cast<_find_search_t *>(id);
 
     /* Loop until we run out of entries or find the next one */
     dirent *entry;
@@ -143,7 +143,7 @@ int _findnext(intptr_t id, struct _finddata_t *data)
 int _findclose(intptr_t id)
 {
     int ret;
-    _find_search_t *fs = (_find_search_t *)id;
+    _find_search_t *fs = reinterpret_cast<_find_search_t *>(id);
     
     ret = fs->dirfd ? closedir (fs->dirfd) : 0;
     free (fs->pattern);

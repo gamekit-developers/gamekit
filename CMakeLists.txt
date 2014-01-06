@@ -141,6 +141,10 @@ if (OGREKIT_BUILD_ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOGREKIT_BUILD_ANDROID")
 endif ()
 
+if (OGREKIT_BUILD_NACL)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOGREKIT_BUILD_NACL -DNACL")
+endif ()
+
 subdirs(Dependencies)
 
 # ---------------------------------------------------------

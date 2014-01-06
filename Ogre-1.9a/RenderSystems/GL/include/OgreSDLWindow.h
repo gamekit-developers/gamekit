@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,8 @@ namespace Ogre {
         SDL_Surface* mScreen;
         bool mActive;
         bool mClosed;
-            
+        bool mVSync;
+
         // Process pending events
         void processEvents(void);
 
@@ -63,11 +64,16 @@ namespace Ogre {
         /** Overridden - see RenderWindow */
         void resize(unsigned int width, unsigned int height);
         /** Overridden - see RenderWindow */
-        void swapBuffers(bool waitForVSync);
+        void swapBuffers();
 
         /** Overridden - see RenderTarget. */
         void copyContentsToMemory(const PixelBox &dst, FrameBuffer buffer);
-        
+
+        /** @copydoc see RenderWindow::setVSyncEnabled */
+        void setVSyncEnabled(bool vsync);
+        /** @copydoc see RenderWindow::isVSyncEnabled */
+        bool isVSyncEnabled() const;
+
         /** Overridden - see RenderTarget.
         */
         void getCustomAttribute( const String& name, void* pData )

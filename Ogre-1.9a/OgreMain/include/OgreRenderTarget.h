@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -104,9 +104,9 @@ namespace Ogre {
         /// Retrieve information about the render target.
         virtual void getMetrics(unsigned int& width, unsigned int& height, unsigned int& colourDepth);
 
-        virtual unsigned int getWidth(void) const;
-        virtual unsigned int getHeight(void) const;
-        virtual unsigned int getColourDepth(void) const;
+        virtual uint32 getWidth(void) const;
+        virtual uint32 getHeight(void) const;
+        virtual uint32 getColourDepth(void) const;
 
 		/**
 		 * Sets the pool ID this RenderTarget should query from. Default value is POOL_DEFAULT.
@@ -163,21 +163,8 @@ namespace Ogre {
                 during rendering. Once rendering has completed (to
                 an off-screen version of the window) the buffers
                 are swapped to display the new frame.
-
-            @param
-                waitForVSync If true, the system waits for the
-                next vertical blank period (when the CRT beam turns off
-                as it travels from bottom-right to top-left at the
-                end of the pass) before flipping. If false, flipping
-                occurs no matter what the beam position. Waiting for
-                a vertical blank can be slower (and limits the
-                framerate to the monitor refresh rate) but results
-                in a steadier image with no 'tearing' (a flicker
-                resulting from flipping buffers when the beam is
-                in the progress of drawing the last frame).
         */
-        virtual void swapBuffers(bool waitForVSync = true)
-        { (void)waitForVSync; }
+        virtual void swapBuffers() {}
 
         /** Adds a viewport to the rendering target.
             @remarks
@@ -191,8 +178,8 @@ namespace Ogre {
                 cam The camera from which the viewport contents will be rendered (mandatory)
             @param
                 ZOrder The relative order of the viewport with others on the target (allows overlapping
-                viewports i.e. picture-in-picture). Higher ZOrders are on top of lower ones. The actual number
-                is irrelevant, only the relative ZOrder matters (you can leave gaps in the numbering)
+                viewports i.e. picture-in-picture). Higher Z-orders are on top of lower ones. The actual number
+                is irrelevant, only the relative Z-order matters (you can leave gaps in the numbering)
             @param
                 left The relative position of the left of the viewport on the target, as a value between 0 and 1.
             @param
@@ -211,15 +198,15 @@ namespace Ogre {
         /** Retrieves a pointer to the viewport with the given index. */
         virtual Viewport* getViewport(unsigned short index);
 
-		/** Retrieves a pointer to the viewport with the given zorder. 
+		/** Retrieves a pointer to the viewport with the given Z-order. 
 			@remarks throws if not found.
 		*/
         virtual Viewport* getViewportByZOrder(int ZOrder);
 
-		/** Returns true if and only if a viewport exists at the given ZOrder. */
+		/** Returns true if and only if a viewport exists at the given Z-order. */
 		virtual bool hasViewportWithZOrder(int ZOrder);
 
-        /** Removes a viewport at a given ZOrder.
+        /** Removes a viewport at a given Z-order.
         */
         virtual void removeViewport(int ZOrder);
 
@@ -427,7 +414,7 @@ namespace Ogre {
 			renderTarget->_updateViewport(2); // which is not auto updated
 			renderTarget->_updateAutoUpdatedViewports();
 			renderTarget->_endUpdate();
-			renderTarget->swapBuffers(true);
+			renderTarget->swapBuffers();
 		</pre>
 			Please note that in that case, the zorder may not work as you expect,
 			since you are responsible for calling _updateViewport in the correct order.
@@ -479,9 +466,9 @@ namespace Ogre {
 		/// The priority of the render target.
 		uchar mPriority;
 
-        unsigned int mWidth;
-        unsigned int mHeight;
-        unsigned int mColourDepth;
+        uint32 mWidth;
+        uint32 mHeight;
+        uint32 mColourDepth;
 		uint16		 mDepthBufferPoolId;
         DepthBuffer	*mDepthBuffer;
 

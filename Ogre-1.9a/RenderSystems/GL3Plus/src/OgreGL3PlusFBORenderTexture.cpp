@@ -4,7 +4,7 @@ This source file is part of OGRE
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
-Copyright (c) 2000-2013 Torus Knot Software Ltd
+Copyright (c) 2000-2014 Torus Knot Software Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ namespace Ogre {
 		}
     }
 
-	void GL3PlusFBORenderTexture::swapBuffers(bool waitForVSync)
+	void GL3PlusFBORenderTexture::swapBuffers()
 	{
 		mFB.swapBuffers();
 	}
@@ -136,7 +136,7 @@ namespace Ogre {
 	{
 		if(!mRenderBufferMap.empty())
 		{
-			LogManager::getSingleton().logMessage("GL: Warning! GL3PlusFBOManager destructor called, but not all renderbuffers were released.");
+			LogManager::getSingleton().logMessage("GL: Warning! GL3PlusFBOManager destructor called, but not all renderbuffers were released.", LML_CRITICAL);
 		}
         
         OGRE_CHECK_GL_ERROR(glDeleteFramebuffers(1, &mTempFBO));
@@ -277,7 +277,7 @@ namespace Ogre {
         // Try all formats, and report which ones work as target
         GLuint fb = 0, tid = 0;
 
-        for(size_t x=0; x<PF_COUNT; ++x)
+        for(int x = 0; x < PF_COUNT; ++x)
         {
             mProps[x].valid = false;
 
@@ -285,7 +285,7 @@ namespace Ogre {
 			GLenum fmt = GL3PlusPixelUtil::getGLInternalFormat((PixelFormat)x);
 			GLenum fmt2 = GL3PlusPixelUtil::getGLOriginFormat((PixelFormat)x);
 			GLenum type = GL3PlusPixelUtil::getGLOriginDataType((PixelFormat)x);
-            if(fmt == GL_NONE && x!=0)
+            if(fmt == GL_NONE && x != 0)
                 continue;
 
 			// No test for compressed formats
@@ -460,7 +460,7 @@ namespace Ogre {
             OGRE_CHECK_GL_ERROR(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
     
-    GL3PlusSurfaceDesc GL3PlusFBOManager::requestRenderBuffer(GLenum format, size_t width, size_t height, uint fsaa)
+    GL3PlusSurfaceDesc GL3PlusFBOManager::requestRenderBuffer(GLenum format, uint32 width, uint32 height, uint fsaa)
     {
         GL3PlusSurfaceDesc retval;
         retval.buffer = 0; // Return 0 buffer if GL_NONE is requested
