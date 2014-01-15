@@ -14,7 +14,7 @@ include(MacroLogFeature)
 #######################################################################
 
 # Find X11
-if (UNIX AND NOT OGREKIT_BUILD_MOBILE) 
+if (UNIX AND NOT APPLE AND NOT OGREKIT_BUILD_MOBILE) 
 	## TEST THIS
 	find_package(X11)
 	macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")

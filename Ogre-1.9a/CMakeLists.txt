@@ -74,7 +74,7 @@ set(OGRE_CONFIG_ENABLE_ETC TRUE)
 
 
 if (Cg_FOUND AND NOT OGREKIT_BUILD_MOBILE) 
-    option(OGRE_BUILD_PLUGIN_CG                 "Enable / Disable Ogre cgProgramManager" ON)
+    option(OGRE_BUILD_PLUGIN_CG                 "Enable / Disable Ogre cgProgramManager" OFF)
 else()
     set(OGRE_BUILD_PLUGIN_CG 0)
 endif()
