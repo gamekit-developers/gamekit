@@ -1040,15 +1040,32 @@ if (OGREKIT_GENERATE_BUILTIN_RES)
 	LIST(APPEND Resources_FILES	${GEN_PARTICLE_OUT})
 	
 	#rtshader
-	set(RTSHADER_TMPL User/RTShaderLib.zip)
+	set(RTSHADER_TMPL 
+		User/RTShaderLib/RTShaderLib_Cg.zip
+		User/RTShaderLib/RTShaderLib_GLSL.zip
+		User/RTShaderLib/RTShaderLib_GLSL150.zip
+		User/RTShaderLib/RTShaderLib_GLSLES.zip
+		User/RTShaderLib/RTShaderLib_HLSL.zip
+		User/RTShaderLib/RTShaderLib_materials.zip
+	)
 	add_templates(1 GEN_RTSHADER_OUT User/gkRTShaderTemplates.inl ${RTSHADER_TMPL})
 	LIST(APPEND Resources_FILES	${GEN_RTSHADER_OUT})
 	
-	#compositor
-	set(COMPOSITOR_TMPL User/Compositor.zip)
-	add_templates(1 GEN_COMPOSITOR_OUT User/gkCompositorTemplates.inl ${COMPOSITOR_TMPL})
-	LIST(APPEND Resources_FILES	${GEN_COMPOSITOR_OUT})
 	
+	#compositor
+	set(MATERIALS_TMPL 
+		User/materials/materials_programs_Cg.zip
+		User/materials/materials_programs_GLSL.zip
+		User/materials/materials_programs_GLSL150.zip
+		User/materials/materials_programs_GLSL400.zip
+		User/materials/materials_programs_GLSLES.zip
+		User/materials/materials_programs_HLSL.zip
+		User/materials/materials_scripts.zip
+		User/materials/materials_scripts_SSAO.zip
+	)
+	add_templates(1 GEN_MATERIALS_OUT User/gkMaterialsTemplates.inl ${MATERIALS_TMPL})
+	LIST(APPEND Resources_FILES	${GEN_MATERIALS_OUT})
+		
 	#compositor textures
 	set(COMPOSITOR_TEX_TMPL User/CompositorTextures.zip)
 	add_templates(1 GEN_COMPOSITOR_TEX_OUT User/gkCompositorTextures.inl ${COMPOSITOR_TEX_TMPL})

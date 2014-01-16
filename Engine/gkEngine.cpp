@@ -253,7 +253,6 @@ void gkEngine::initialize()
 	m_private->windowsystem = new gkWindowSystem();
 
 	// gk Managers
-	new gkResourceGroupManager();
 	new gkSceneManager();
 #ifdef OGREKIT_COMPILE_ENET
 	new gkNetworkManager();
@@ -291,11 +290,14 @@ void gkEngine::initialize()
 	new gkSoundManager();
 #endif
 
+	initializeWindow();
+
+	new gkResourceGroupManager();
+
 #ifdef OGREKIT_USE_COMPOSITOR
 	new gkCompositorManager();
 #endif
-
-	initializeWindow();
+	
 	if (!defs.resources.empty())
 		loadResources(defs.resources);
 

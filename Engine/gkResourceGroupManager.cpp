@@ -40,6 +40,7 @@
 #include "OgreResourceGroupManager.h"
 #include "OgreZip.h"
 #include "OgreRoot.h"
+#include "OgreGpuProgramManager.h"
 
 #include "gkSceneManager.h"
 
@@ -58,7 +59,7 @@
 #endif
 
 #ifdef OGREKIT_USE_COMPOSITOR
-#include "User/gkCompositorTemplates.inl"
+#include "User/gkMaterialsTemplates.inl"
 #endif
 
 #ifdef OGREKIT_USE_COMPOSITOR_TEX
@@ -77,19 +78,85 @@ gkResourceGroupManager::gkResourceGroupManager()
 
 		mgr.addResourceLocation("", gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
-#ifdef OGREKIT_USE_RTSHADER_SYSTEM		
-		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib.zip", RTSHADERLIB, RTSHADERLIB_SIZE, 0);
-		mgr.addResourceLocation("RTShaderLib.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		gkString type = "EmbeddedZip";
+		gkString group = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM	
+	    if (Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsles"))
+        {
+			Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib_GLSLES.zip", RTSHADERLIB_GLSLES, RTSHADERLIB_GLSLES_SIZE, 0);
+			mgr.addResourceLocation("RTShaderLib_GLSLES.zip", type, group);
+        }
+
+        else if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsl"))
+        {
+			Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib_GLSL.zip", RTSHADERLIB_GLSL, RTSHADERLIB_GLSL_SIZE, 0);
+			mgr.addResourceLocation("RTShaderLib_GLSL.zip", type, group);
+
+            if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsl150"))
+            {
+				Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib_GLSL150.zip", RTSHADERLIB_GLSL150, RTSHADERLIB_GLSL150_SIZE, 0);
+				mgr.addResourceLocation("RTShaderLib_GLSL150.zip", type, group);
+            }
+        }
+        else if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("hlsl"))
+        {
+			Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib_HLSL.zip", RTSHADERLIB_HLSL, RTSHADERLIB_HLSL_SIZE, 0);
+			mgr.addResourceLocation("RTShaderLib_HLSL.zip", type, group);
+        }
+#ifdef OGRE_BUILD_PLUGIN_CG
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib_Cg.zip", RTSHADERLIB_CG, RTSHADERLIB_CG_SIZE, 0);
+		mgr.addResourceLocation("RTShaderLib_Cg.zip", type, group);
 #endif
+		
+#endif //OGREKIT_USE_RTSHADER_SYSTEM
 
 #ifdef OGREKIT_USE_COMPOSITOR
-		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("Compositor.zip", COMPOSITOR, COMPOSITOR_SIZE, 0);
-		mgr.addResourceLocation("Compositor.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	    if (Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsles"))
+        {
+			Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_GLSLES.zip", MATERIALS_PROGRAMS_GLSLES, MATERIALS_PROGRAMS_GLSLES_SIZE, 0);
+			mgr.addResourceLocation("materials_programs_GLSLES.zip", type, group);
+        }
+
+        else if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsl"))
+        {
+            if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsl150"))
+            {
+				Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_GLSL150.zip", MATERIALS_PROGRAMS_GLSL150, MATERIALS_PROGRAMS_GLSL150_SIZE, 0);
+				mgr.addResourceLocation("materials_programs_GLSL150.zip", type, group);
+            }
+			else
+			{
+				Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_GLSL.zip", MATERIALS_PROGRAMS_GLSL, MATERIALS_PROGRAMS_GLSL_SIZE, 0);
+				mgr.addResourceLocation("materials_programs_GLSL.zip", type, group);
+			}
+
+			if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("glsl400"))
+            {
+				Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_GLSL400.zip", MATERIALS_PROGRAMS_GLSL400, MATERIALS_PROGRAMS_GLSL400_SIZE, 0);
+				mgr.addResourceLocation("materials_programs_GLSL400.zip", type, group);
+            }
+        }
+        else if(Ogre::GpuProgramManager::getSingleton().isSyntaxSupported("hlsl"))
+        {
+			Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_HLSL.zip", MATERIALS_PROGRAMS_HLSL, MATERIALS_PROGRAMS_HLSL_SIZE, 0);
+			mgr.addResourceLocation("materials_programs_HLSL.zip", type, group);
+        }
+#ifdef OGRE_BUILD_PLUGIN_CG
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_programs_Cg.zip", MATERIALS_PROGRAMS_CG, MATERIALS_PROGRAMS_CG_SIZE, 0);
+		mgr.addResourceLocation("materials_programs_Cg.zip", type, group);
+#endif
+
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_scripts.zip", MATERIALS_SCRIPTS, MATERIALS_SCRIPTS_SIZE, 0);
+		mgr.addResourceLocation("materials_scripts.zip", type, group);
+
+		//Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("materials_scripts_SSAO.zip", MATERIALS_SCRIPTS_SSAO, MATERIALS_SCRIPTS_SSAO_SIZE, 0);
+		//mgr.addResourceLocation("materials_scripts_SSAO.zip", type, group);
 #endif
 
 #ifdef OGREKIT_USE_COMPOSITOR_TEX
 		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("CompositorTextures.zip", COMPOSITORTEXTURES, COMPOSITORTEXTURES_SIZE, 0);
-		mgr.addResourceLocation("CompositorTextures.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		mgr.addResourceLocation("CompositorTextures.zip", "EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
 #endif
 	}
 	catch (Ogre::Exception& e)
