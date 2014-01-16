@@ -65,9 +65,11 @@ endif()
 
 
 
-# Find Cg (Disabled Not used right now!)
-# find_package(Cg)
-# macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
+# Find Cg
+if (NOT OGREKIT_BUILD_MOBILE)
+	find_package(Cg)
+	macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
+endif()
 
 if(NOT WIN32 AND NOT OGREKIT_BUILD_ANDROID AND NOT OGREKIT_BUILD_NACL)
 	# Use static loader On win32 platforms 

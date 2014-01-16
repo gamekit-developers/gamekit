@@ -162,27 +162,27 @@ set(AI_HEADER
 )
 
 if (OGREKIT_COMPILE_RECAST)
-list(APPEND AI_SOURCE AI/gkRecast.cpp)
-list(APPEND AI_HEADER AI/gkRecast.h)
+	list(APPEND AI_SOURCE AI/gkRecast.cpp)
+	list(APPEND AI_HEADER AI/gkRecast.h)
 endif()
 
 if (OGREKIT_COMPILE_OPENSTEER)
-list(APPEND AI_SOURCE
-	AI/gkNavPath.cpp
-	AI/gkSteeringObject.cpp
-	AI/gkSteeringCapture.cpp
-	AI/gkSteeringPathFollowing.cpp
-	AI/gkSteeringWander.cpp
-	AI/gkSceneObstacle.cpp
-)
-list(APPEND AI_HEADER 
-	AI/gkNavPath.h
-	AI/gkSteeringObject.h
-	AI/gkSteeringCapture.h
-	AI/gkSteeringPathFollowing.h
-	AI/gkSteeringWander.h
-	AI/gkSceneObstacle.h
-)
+	list(APPEND AI_SOURCE
+		AI/gkNavPath.cpp
+		AI/gkSteeringObject.cpp
+		AI/gkSteeringCapture.cpp
+		AI/gkSteeringPathFollowing.cpp
+		AI/gkSteeringWander.cpp
+		AI/gkSceneObstacle.cpp
+	)
+	list(APPEND AI_HEADER 
+		AI/gkNavPath.h
+		AI/gkSteeringObject.h
+		AI/gkSteeringCapture.h
+		AI/gkSteeringPathFollowing.h
+		AI/gkSteeringWander.h
+		AI/gkSceneObstacle.h
+	)
 endif()
 
 if(APPLE)
