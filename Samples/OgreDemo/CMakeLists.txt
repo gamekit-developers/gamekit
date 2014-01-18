@@ -217,14 +217,14 @@ endif()
 
 else()
 
-IF (WIN32)
+if (WIN32)
 	set(RESOURCE_FILES
 		${OGRE_SOURCE_DIR}/OgreMain/src/WIN32/resource.h
 		${OGRE_SOURCE_DIR}/OgreMain/src/WIN32/OgreWin32Resources.rc
 		${OGRE_SOURCE_DIR}/OgreMain/src/WIN32/winres.h
 	)
 	source_group(Resources FILES ${RESOURCE_FILES})
-ENDIF()	
+endif()	
 
 #MESSAGE(STATUS "res:" ${RESOURCE_FILES} " static:" ${OGRE_STATIC} "ogre: " ${OGRE_SOURCE_DIR})
 
@@ -250,14 +250,22 @@ if (SAMPLE_DEPENDENCIES)
 endif ()
 
 # create resources.cfg
-configure_file(${OGRE_TEMPLATES_DIR}/resources_d.cfg.in ${OGRE_BINARY_DIR}/bin/debug/resources_d.cfg)
+if (APPLE)
+	configure_file(${OGRE_TEMPLATES_DIR}/resources.cfg.in ${OGRE_BINARY_DIR}/bin/debug/resources.cfg)
+else()
+	configure_file(${OGRE_TEMPLATES_DIR}/resources_d.cfg.in ${OGRE_BINARY_DIR}/bin/debug/resources_d.cfg)
+endif()
 configure_file(${OGRE_TEMPLATES_DIR}/resources.cfg.in ${OGRE_BINARY_DIR}/bin/release/resources.cfg)
 configure_file(${OGRE_TEMPLATES_DIR}/resources.cfg.in ${OGRE_BINARY_DIR}/bin/relwithdebinfo/resources.cfg)
 configure_file(${OGRE_TEMPLATES_DIR}/resources.cfg.in ${OGRE_BINARY_DIR}/bin/minsizerel/resources.cfg)
 # create samples.cfg
-configure_file(${OGRE_TEMPLATES_DIR}/samples_d.cfg.in ${OGRE_BINARY_DIR}/bin/debug/samples_d.cfg)
+if (APPLE)
+	configure_file(${OGRE_TEMPLATES_DIR}/samples.cfg.in ${OGRE_BINARY_DIR}/bin/debug/samples.cfg)
+else()
+	configure_file(${OGRE_TEMPLATES_DIR}/samples_d.cfg.in ${OGRE_BINARY_DIR}/bin/debug/samples_d.cfg)
+endif()
 configure_file(${OGRE_TEMPLATES_DIR}/samples.cfg.in ${OGRE_BINARY_DIR}/bin/release/samples.cfg)
-configure_file(${OGRE_TEMPLATES_DIR}/samples_d.cfg.in ${OGRE_BINARY_DIR}/bin/relwithdebinfo/samples.cfg)
+configure_file(${OGRE_TEMPLATES_DIR}/samples.cfg.in ${OGRE_BINARY_DIR}/bin/relwithdebinfo/samples.cfg)
 configure_file(${OGRE_TEMPLATES_DIR}/samples.cfg.in ${OGRE_BINARY_DIR}/bin/minsizerel/samples.cfg)
 
 
@@ -283,8 +291,8 @@ if (APPLE)
 
 	# On OS X, create .app bundle
 	set_property(TARGET SampleBrowser PROPERTY MACOSX_BUNDLE TRUE)
-	set_property(TARGET SampleBrowser PROPERTY MACOSX_BUNDLE_ICON_FILE SampleBrowser_OSX.icns)
-	set_property(TARGET SampleBrowser PROPERTY MACOSX_BUNDLE_INFO_PLIST Common/misc/Info.plist)
+	set_property(TARGET SampleBrowser PROPERTY MACOSX_BUNDLE_ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Common/misc/SampleBrowser_OSX.icns)
+	set_property(TARGET SampleBrowser PROPERTY MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Common/misc/Info.plist)
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.ogre3d.\${PRODUCT_NAME:rfc1034identifier}")
     set_target_properties(SampleBrowser PROPERTIES XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH "NO")
 
@@ -292,7 +300,7 @@ if (APPLE)
     set_target_properties(SampleBrowser PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2")
     set(OGRE_SAMPLE_CONTENTS_PATH ${OGRE_BINARY_DIR}/bin/$(CONFIGURATION)/SampleBrowser.app)
     add_custom_command(TARGET SampleBrowser POST_BUILD
-      COMMAND ditto Common/misc/*.png ${OGRE_SAMPLE_CONTENTS_PATH}/
+      COMMAND ditto ${CMAKE_CURRENT_SOURCE_DIR}/Common/misc/*.png ${OGRE_SAMPLE_CONTENTS_PATH}/
       COMMAND ditto ${OGRE_BINARY_DIR}/bin/*.cfg ${OGRE_SAMPLE_CONTENTS_PATH}/
     )
     if(OGRE_SDK_BUILD)
@@ -303,9 +311,10 @@ if (APPLE)
     else()
         add_custom_command(TARGET SampleBrowser POST_BUILD
           COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/
-          COMMAND ditto ${OGRE_SOURCE_DIR}/Samples/Media ${OGRE_SAMPLE_CONTENTS_PATH}/Media
+          COMMAND ditto ${OGRE_MEDIA_DIR} ${OGRE_SAMPLE_CONTENTS_PATH}/Media
         )
     endif(OGRE_SDK_BUILD)
+    
   else()
 
     include_directories(
@@ -368,10 +377,10 @@ if (APPLE)
 		${OGRE_SAMPLE_CONTENTS_PATH}/Resources/
 		COMMAND ln ARGS -s -f ${OGRE_BINARY_DIR}/bin/quakemap.cfg 
 		${OGRE_SAMPLE_CONTENTS_PATH}/Resources/
-		COMMAND ln ARGS -s -f ${OGRE_SOURCE_DIR}/Samples/Media
+		COMMAND ln ARGS -s -f ${CMAKE_CURRENT_SOURCE_DIR}/Media
 		${OGRE_SAMPLE_CONTENTS_PATH}/Resources/
         COMMAND ditto 
-		${OGRE_SOURCE_DIR}/Samples/Common/misc/SampleBrowser_OSX.icns ${OGRE_SAMPLE_CONTENTS_PATH}/Resources
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/misc/SampleBrowser_OSX.icns ${OGRE_SAMPLE_CONTENTS_PATH}/Resources
 		)
 	endif()
 
