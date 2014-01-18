@@ -16,20 +16,6 @@ file(GLOB HEADER_FILES
 	ShaderSystem/include/*.h
 	)
 
-IF (0)
-set (HEADER_FILES
-	include/SampleBrowser.h
-	Common/include/Sample.h
-	Common/include/SampleContext.h
-	Common/include/SamplePlugin.h
-	Common/include/SdkCameraMan.h
-	Common/include/SdkSample.h
-	Common/include/SdkTrays.h
-	Common/include/OgreStaticPluginLoader.h
-	BezierPatch/include/BezierPatch.h
-)
-ENDIF()
-
 set(SOURCE_FILES src/SampleBrowser.cpp)
 # Get the list of configured samples
 get_property(OGRE_SAMPLES_LIST GLOBAL PROPERTY "OGRE_SAMPLES_LIST")
@@ -82,7 +68,7 @@ include_directories(
 )
 
 if(ANDROID)
-	if(1)
+	
 	include_directories(
 		${ANDROID_NDK}/sources/android/native_app_glue
 		${OGRE_SOURCE_DIR}/RenderSystems/GLES2/include/EGL
@@ -105,7 +91,7 @@ if(ANDROID)
 	)
     #add_dependencies(SampleBrowser ${OGRE_SAMPLES_LIST})
 	#add_dependencies(SampleBrowser Sample_BezierPatch)
-	endif()
+	
 	
 	#file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp "int x = 0;")
 
@@ -182,40 +168,7 @@ if(ANDROID)
 		RUNTIME_OUTPUT_DIRECTORY ${NDKOUT}/libs/${ANDROID_ABI}
 		)	
 
-if (0)    
-	add_custom_command(
-	                    TARGET SampleBrowser
-                        POST_BUILD
-	                    COMMAND ${ANDROID_EXECUTABLE} update project --target ${ANDROID_TARGET} --path "${NDKOUT}"
-	                    WORKING_DIRECTORY ${NDKOUT}
-	                  )
-	
-	if(DEBUG)	 
-	 	add_custom_command(
-							TARGET SampleBrowser
-						    POST_BUILD
-					        COMMAND ${NDK_BUILD_EXECUTABLE} all -j2 V=1 NDK_DEBUG=1
-				            WORKING_DIRECTORY ${NDKOUT}
-			              )
-	else()
-		add_custom_command(
-							TARGET SampleBrowser
-						    POST_BUILD
-					        COMMAND ${NDK_BUILD_EXECUTABLE} all -j2
-				            WORKING_DIRECTORY ${NDKOUT}
-			              )
-	endif()
-	                  
-	add_custom_command(
-	                    TARGET SampleBrowser
-                        POST_BUILD
-	                    COMMAND ${ANT_EXECUTABLE} debug
-	                    WORKING_DIRECTORY ${NDKOUT}
-	                  )
-
-endif()
-
-else()
+else(ANDROID)
 
 if (WIN32)
 	set(RESOURCE_FILES
@@ -427,19 +380,7 @@ if (APPLE)
 	endif()
   endif()
 endif (APPLE)
-
-if (OGRE_INSTALL_SAMPLES)
-	ogre_install_target(SampleBrowser "" FALSE)
-	if (OGRE_INSTALL_PDB)
-		# install debug pdb files
-		install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_DEBUG_PATH}/SampleBrowser_d.pdb
-			DESTINATION bin${OGRE_DEBUG_PATH} CONFIGURATIONS Debug
-			)
-		install(FILES ${OGRE_BINARY_DIR}/bin${OGRE_RELWDBG_PATH}/SampleBrowser.pdb
-			DESTINATION bin${OGRE_RELWDBG_PATH} CONFIGURATIONS RelWithDebInfo
-			)
-	endif ()
-endif ()	
+	
 endif(ANDROID)
 
 
