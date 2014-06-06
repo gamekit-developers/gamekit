@@ -1162,6 +1162,10 @@ include_directories(${OGREKIT_BULLET_INCLUDE})
 
 configure_rendersystem()
 
+# ---------------------------------------------------------
+# CMake Files
+# ---------------------------------------------------------
+
 file(GLOB_RECURSE CMakeCMakeLists ../CMake/*.cmake)
 file(GLOB_RECURSE TemplatesFiles ../CMake/*.in)
 set(HiddenDepenCMakeLists ../Dependencies/CMakeLists.txt)
@@ -1169,6 +1173,11 @@ source_group(CMakeLists\\Dependencies FILES ${HiddenDepenCMakeLists})
 source_group(CMakeLists\\CMake FILES ${CMakeCMakeLists})
 source_group(CMakeLists\\Templates FILES ${TemplatesFiles})
 
+# ---------------------------------------------------------
+# Addon Files
+# ---------------------------------------------------------
+file(GLOB_RECURSE AddonFiles ../BlenderAddon/*.py)
+source_group(Addon\\Python FILES ${AddonFiles})
 
 # for swig no __declspec(dllexport)
 add_definitions(-DSTATIC_LINKED)
@@ -1209,6 +1218,7 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Particles_SOURCE}  ${Particles_HEADER}
 			${External_SOURCE}   ${External_HEADER}
 			${HiddenDepenCMakeLists} ${CMakeCMakeLists} ${TemplatesFiles}
+			${AddonFiles}
 			${Extra_SOURCE}
 			${Resources_FILES}
 			${Script_SOURCE}     ${Script_HEADER}
