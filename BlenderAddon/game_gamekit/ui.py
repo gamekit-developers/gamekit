@@ -236,8 +236,8 @@ class RENDER_PT_gamekit_runtime(RenderButtonsPanel, bpy.types.Panel):
         col = layout.column()
         
         col.prop(gks, "gk_window_title")
-        col.prop(gks, "gk_runtime_exec_path")
-        col.prop(gks, "gk_runtime_working_dir")
+        #col.prop(gks, "gk_runtime_exec_path")
+        #col.prop(gks, "gk_runtime_working_dir")
         col.prop(gks, "gk_log_file")
 
 # Main Gamekit panel
@@ -328,6 +328,14 @@ class GamekitRender(bpy.types.RenderEngine):
 
 def remProperties():
     # bpy.types.Scene.RemoveProperty("gamekit")
+    bpy.utils.unregister_class(WORLD_PT_world)
+    bpy.utils.unregister_class(WORLD_PT_mist)
+
+    bpy.utils.unregister_class(RENDER_PT_gamekit)
+    bpy.utils.unregister_class(RENDER_PT_gamekit_runtime)
+    bpy.utils.unregister_class(RENDER_PT_gamekit_performance)
+    
+    
     bpy.utils.unregister_class(GamekitRender)
     bpy.utils.unregister_class(GamekitSettings)    
     
@@ -348,7 +356,8 @@ def addProperties():
     
     cfg = config.GamekitConfig()
     cfg.load_defaults()
-        
+    
+    """
     GamekitSettings.gk_runtime_exec_path = bpy.props.StringProperty(
                     name="Runtime",
                     description="Path of the gamekit executable",
@@ -363,7 +372,7 @@ def addProperties():
                     maxlen = 512,
                     default = cfg.get('workingdir'),
                     subtype='FILE_PATH')
-
+   """
     GamekitSettings.gk_render_system = bpy.props.EnumProperty(
                     name="Render system",
                     items=(('GL', 'OpenGL', 'gl'),

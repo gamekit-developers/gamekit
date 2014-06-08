@@ -27,9 +27,9 @@
 bl_info = {
     'name': 'Gamekit Engine',
     'author': 'Xavier Thomas (xat)',
-    'version': (0,0,601),
+    'version': (0,0,611),
     'api': 35899,
-    'blender': (2, 5, 7),
+    'blender': (2, 6, 6),
     'location': 'Info Window > Render Engine > Gamekit',
     'description': 'Launch game using the fine gamekit engine',
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Gamekit_Engine',
@@ -41,9 +41,11 @@ if "bpy" in locals():
     #if "operators" in locals():
     imp.reload(operators)
     imp.reload(ui)
+    imp.reload(config)
 else:
     from . import operators
     from . import ui
+    from . import config
 
 
 #init_data = True
@@ -55,6 +57,7 @@ def register():
     
     bpy.utils.register_class(operators.GamekitExportStartupFileOperator)
     bpy.utils.register_class(operators.GamekitStartGameOperator)
+    bpy.utils.register_class(config.GamekitAddonPreferences)
 
     ui.addProperties()
 
@@ -63,6 +66,7 @@ def unregister():
     
     bpy.utils.unregister_class(operators.GamekitExportStartupFileOperator)
     bpy.utils.unregister_class(operators.GamekitStartGameOperator)
+    bpy.utils.unregister_class(config.GamekitAddonPreferences)
     
     ui.remProperties()
 

@@ -24,7 +24,29 @@
 
 
 import bpy
+from bpy.types import Operator, AddonPreferences
+from bpy.props import StringProperty, IntProperty, BoolProperty
 import os, os.path
+
+class GamekitAddonPreferences(AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __package__
+
+    runtime_path = StringProperty(
+            name="Runtime File Path",
+            subtype='FILE_PATH',
+            )
+    working_dir = StringProperty(
+            name="Working Directory",
+            subtype='FILE_PATH',
+            )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Gamekit Runtime options")
+        layout.prop(self, "runtime_path")
+        layout.prop(self, "working_dir")
 
 class GamekitConfig:
     cfg = dict()

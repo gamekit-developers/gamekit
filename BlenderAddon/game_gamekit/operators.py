@@ -77,11 +77,11 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         gdata = context.scene.game_settings
         gks = context.scene.gamekit
         scene = context.scene
-
+                
         cfg = config.GamekitConfig()
         
-        cfg.set("runtime", gks.gk_runtime_exec_path)
-        cfg.set("workingdir", gks.gk_runtime_working_dir)
+        #cfg.set("runtime", gks.gk_runtime_exec_path)
+        #cfg.set("workingdir", gks.gk_runtime_working_dir)
         cfg.set("rendersystem", gks.gk_render_system.lower())
         cfg.set('log', gks.gk_log_file)
         cfg.set('debugfps', str(gdata.show_framerate_profile))
@@ -135,7 +135,13 @@ class GamekitStartGameOperator(bpy.types.Operator):
         scene = context.scene
         gks = scene.gamekit
         
-        execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons[__package__].preferences
+        
+        execpath = bpy.path.abspath(addon_prefs.runtime_path)
+        working_dir = bpy.path.abspath(addon_prefs.working_dir)
+        
+        #execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
         if execpath[0:2] in { "./", ".\\" }:
             pwd = os.path.dirname(bpy.app.binary_path)
             execpath = pwd + os.sep + execpath
@@ -144,7 +150,8 @@ class GamekitStartGameOperator(bpy.types.Operator):
         gamefile = tmpdir + "gamekit_tmp.blend"
         cfgfile = tmpdir + "gamekit_startup.cfg"
         cmdline = execpath + " -c " + cfgfile + " " + gamefile
-        workingdir = assure_temp_dir(bpy.path.abspath(gks.gk_runtime_working_dir))
+        #workingdir = assure_temp_dir(bpy.path.abspath(gks.gk_runtime_working_dir))
+        workingdir = assure_temp_dir(working_dir)
         
         args =  shlex.split(cmdline.replace(os.sep, '/'))        
 
