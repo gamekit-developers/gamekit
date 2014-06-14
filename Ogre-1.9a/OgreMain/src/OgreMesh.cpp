@@ -1479,7 +1479,7 @@ namespace Ogre {
 				{
 					usage.edgeData = eb.build();
 
-                #if OGRE_DEBUG_MODE
+                #if 0 && OGRE_DEBUG_MODE
                     // Override default log
                     Log* log = LogManager::getSingleton().createLog(
                         mName + "_lod" + StringConverter::toString(lodIndex) +

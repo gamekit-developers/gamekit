@@ -102,6 +102,15 @@ namespace Ogre {
 #   define FORCEINLINE __inline
 #endif
 
+/* define OGRE_NORETURN macro */
+#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+#	define OGRE_NORETURN __declspec(noreturn)
+#elif OGRE_COMPILER == OGRE_COMPILER_GCC || OGRE_COMPILER == OGRE_COMPILER_CLANG
+#	define OGRE_NORETURN __attribute__((noreturn))
+#else
+#	define OGRE_NORETURN
+#endif
+
 /* Finds the current platform */
 #if (defined( __WIN32__ ) || defined( _WIN32 )) && !defined(__ANDROID__)
 #	if defined(WINAPI_FAMILY)
@@ -318,22 +327,8 @@ namespace Ogre {
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
 //	Locales are not supported by the C lib you have to go through JNI.
 #	define OGRE_DEFAULT_LOCALE ""
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-#	define OGRE_DEFAULT_LOCALE "C"
 #else
-#	if OGRE_COMPILER == OGRE_COMPILER_MSVC
-#		if _MSC_VER >= 1700
-#			define OGRE_DEFAULT_LOCALE "en-GB"
-#		else
-// 			http://msdn.microsoft.com/en-us/library/39cwe7zf%28v=vs.90%29.aspx
-#			define OGRE_DEFAULT_LOCALE "uk"
-#		endif
-#	elif OGRE_COMPILER == OGRE_COMPILER_GCCE
-//		http://gcc.gnu.org/onlinedocs/libstdc++/manual/localization.html
-#   	define OGRE_DEFAULT_LOCALE "en_GB.UTF8"
-#	else
-#       define OGRE_DEFAULT_LOCALE "en_GB.UTF-8"
-#	endif
+#   define OGRE_DEFAULT_LOCALE "C"
 #endif
 
 //----------------------------------------------------------------------------
