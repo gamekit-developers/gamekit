@@ -63,6 +63,9 @@ configure_file("${OGRE_TEMPLATES_DIR}/eclipse.project.in" "${NDKOUT}/.project" @
 configure_file("${DEMO_SRC}/AndroidManifest.xml.in" "${NDKOUT}/AndroidManifest.xml" @ONLY)
 file(COPY "${DEMO_SRC}/assets" DESTINATION "${NDKOUT}")
 file(COPY "${DEMO_SRC}/res" DESTINATION "${NDKOUT}")
+FILE(COPY "${DEMO_SRC}/src" DESTINATION "${NDKOUT}")
+FILE(COPY "${DEMO_SRC}/.classpath" DESTINATION "${NDKOUT}")
+file(COPY "${OGREKIT_OPENAL_LIBRARY}" DESTINATION "${NDKOUT}/libs/${ANDROID_ABI}")
 #file(COPY "${DEMO_SRC}/.project" DESTINATION "${NDKOUT}")
 	
 set (OUTPUT_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}) #lib<name>.so

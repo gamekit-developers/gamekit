@@ -122,6 +122,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 	set(OGREKIT_DEP_WIN_DIR ${ROOT}/Dependencies/Win32)
+	set(OGREKIT_DEP_ANDROID_DIR ${ROOT}/Dependencies/Android)
 	
 	set(OGRE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Bin)
 	SET(OGRE_SOURCE_DIR ${OGREPATH})
@@ -274,7 +275,7 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	
 		set(OGRE_BUILD_PLATFORM_ANDROID TRUE)
 
-		set(OGREKIT_OPENAL_SOUND   CACHE BOOL "Forcing remove OpenAL"   FORCE)
+		#set(OGREKIT_OPENAL_SOUND   CACHE BOOL "Forcing remove OpenAL"   FORCE)
 		
 		set(OGREKIT_BUILD_GLRS    FALSE CACHE BOOL "Forcing GLRS"   FORCE)
 		set(OGREKIT_BUILD_GLESRS  FALSE CACHE BOOL "Forcing remove GLESRS"   FORCE)
@@ -444,7 +445,8 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 
 	message(STATUS "DEP_INCLUDES: ${OGREKIT_DEP_INCLUDE}")
 	
-	if (WIN32 AND NOT (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_NACL))
+	#if (WIN32 AND NOT (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_NACL))
+	if ((WIN32 OR OGREKIT_BUILD_ANDROID) AND NOT OGREKIT_BUILD_NACL)
 		# Use static library. No SDK needed at build time.
 		# Must have OpenAL32.dll installed on the system 
 		# In order to use OpenAL sound.
@@ -455,7 +457,11 @@ macro (configure_ogrekit ROOT OGREPATH OGRE_BACKEND)
 	if (OPENAL_FOUND)
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" ON)
 		
-		if (WIN32)
+		if (OGREKIT_BUILD_ANDROID)
+			set(OGREKIT_OPENAL_INCLUDE ${OGREKIT_DEP_ANDROID_DIR}/OpenAL/include)
+			set(OGREKIT_OPENAL_LIBRARY ${OGREKIT_DEP_ANDROID_DIR}/OpenAL/bin/armeabi-v7a/libopenal.so)
+			#set(OGREKIT_OPENAL_LIBRARY ${OGREKIT_DEP_ANDROID_DIR}/OpenAL/bin/armeabi/libopenal.so)
+		elseif (WIN32)
 			add_definitions(-DAL_STATIC_LIB -DALC_STATIC_LIB)
 			set(OGREKIT_OPENAL_INCLUDE ${OGREKIT_DEP_DIR}/OpenAL/)
 			set(OGREKIT_OPENAL_LIBRARY OpenAL)

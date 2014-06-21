@@ -1,0 +1,4 @@
+http://pielot.org/2010/12/14/openal-on-android/
+http://pielot.org/2010/12/14/openal-on-android/#comment-1160
+
+http://repo.or.cz/w/openal-soft/android.git/snapshot/ea44b95252ce15dd38fb7563477e9e35b1c147dc.zip
