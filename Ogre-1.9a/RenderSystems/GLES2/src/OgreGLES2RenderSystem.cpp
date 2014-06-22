@@ -135,7 +135,7 @@ namespace Ogre {
 
         OGRE_DELETE mStateCacheManager;
         mStateCacheManager = 0;
-		
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
         if (mResourceManager != NULL)
 		{
@@ -378,7 +378,7 @@ namespace Ogre {
         if(mGLSupport->checkExtension("GL_OES_texture_float") || mGLSupport->checkExtension("GL_OES_texture_half_float") || gleswIsSupported(3, 0))
             rsc->setCapability(RSC_TEXTURE_FLOAT);
 
-		rsc->setCapability(RSC_TEXTURE_1D);			
+		rsc->setCapability(RSC_TEXTURE_1D);
 #if OGRE_NO_GLES3_SUPPORT == 0
         rsc->setCapability(RSC_TEXTURE_3D);
 #endif
@@ -387,7 +387,7 @@ namespace Ogre {
 #if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
         if(mGLSupport->checkExtension("GL_OES_texture_npot") || mGLSupport->checkExtension("GL_ARB_texture_non_power_of_two") || gleswIsSupported(3, 0))
         {
-        rsc->setCapability(RSC_NON_POWER_OF_2_TEXTURES);
+            rsc->setCapability(RSC_NON_POWER_OF_2_TEXTURES);
             rsc->setNonPOW2TexturesLimited(false);
         }
         else
@@ -414,7 +414,7 @@ namespace Ogre {
             OGRE_CHECK_GL_ERROR(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
 
             if(formats > 0)
-			rsc->setCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER);
+                rsc->setCapability(RSC_CAN_GET_COMPILED_SHADER_BUFFER);
 		}
 #endif
 
@@ -570,11 +570,10 @@ namespace Ogre {
         if (!mGLInitialised)
         {
             initialiseContext(win);
-			LogManager::getSingleton().logMessage("1");
+			
             StringVector tokens = StringUtil::split(mGLSupport->getGLVersion(), ".");
             if (!tokens.empty())
             {
-				LogManager::getSingleton().logMessage("2");
                 mDriverVersion.major = StringConverter::parseInt(tokens[0]);
                 if (tokens.size() > 1)
                     mDriverVersion.minor = StringConverter::parseInt(tokens[1]);
@@ -582,7 +581,6 @@ namespace Ogre {
                     mDriverVersion.release = StringConverter::parseInt(tokens[2]);
             }
             mDriverVersion.build = 0;
-			LogManager::getSingleton().logMessage("3");
 
             // Get the shader language version
             const char* shadingLangVersion = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -596,7 +594,6 @@ namespace Ogre {
                     break;
             }
             mNativeShadingLanguageVersion = (StringConverter::parseUnsignedInt(tokens[i]) * 100) + StringConverter::parseUnsignedInt(tokens[i+1]);
-			LogManager::getSingleton().logMessage("4");
 
 			// Initialise GL after the first window has been created
 			// TODO: fire this from emulation options, and don't duplicate Real and Current capabilities
@@ -608,21 +605,16 @@ namespace Ogre {
 
             fireEvent("RenderSystemCapabilitiesCreated");
 
-			LogManager::getSingleton().logMessage("5");
             initialiseFromRenderSystemCapabilities(mCurrentCapabilities, (RenderTarget *) win);
 
 			// Initialise the main context
             _oneTimeContextInitialization();
             if (mCurrentContext)
                 mCurrentContext->setInitialized();
-
-			LogManager::getSingleton().logMessage("6");
         }
 
 		if( win->getDepthBufferPool() != DepthBuffer::POOL_NO_DEPTH )
 		{
-			LogManager::getSingleton().logMessage("7");
-
 			// Unlike D3D9, OGL doesn't allow sharing the main depth buffer, so keep them separate.
 			// Only Copy does, but Copy means only one depth buffer...
 			GLES2Context *windowContext = 0;
@@ -635,10 +627,8 @@ namespace Ogre {
 			mDepthBufferPool[depthBuffer->getPoolId()].push_back( depthBuffer );
 
 			win->attachDepthBuffer( depthBuffer );
-			LogManager::getSingleton().logMessage("8");
 		}
 
-		LogManager::getSingleton().logMessage("9");
         return win;
     }
 
@@ -1587,6 +1577,7 @@ namespace Ogre {
 
 		if (!mStateCacheManager->activateGLTextureUnit(unit))
 			return;
+
         if(mGLSupport->checkExtension("GL_EXT_texture_filter_anisotropic"))
         {
             if (maxAnisotropy > mCurrentCapabilities->getMaxSupportedAnisotropy())
@@ -1722,13 +1713,13 @@ namespace Ogre {
                 }
 
                 if(hasInstanceData && (mGLSupport->checkExtension("GL_EXT_instanced_arrays") || gleswIsSupported(3, 0)))
-                    {
+                {
                     OGRE_CHECK_GL_ERROR(glDrawElementsInstancedEXT((polyMode == GL_FILL) ? primType : polyMode, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData, static_cast<GLsizei>(numberOfInstances)));
-                    }
-                    else
-                    {
+                }
+                else
+                {
 #if OGRE_NO_GLES3_SUPPORT == 0
-                        GLuint indexEnd = op.indexData->indexCount - op.indexData->indexStart;
+                    GLuint indexEnd = op.indexData->indexCount - op.indexData->indexStart;
                     OGRE_CHECK_GL_ERROR(glDrawRangeElements((polyMode == GL_FILL) ? primType : polyMode, op.indexData->indexStart, indexEnd, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData));
 #else
                     OGRE_CHECK_GL_ERROR(glDrawElements((polyMode == GL_FILL) ? primType : polyMode, static_cast<GLsizei>(op.indexData->indexCount), indexType, pBufferData));
@@ -1933,24 +1924,19 @@ namespace Ogre {
             mCurrentContext->endCurrent();
         mCurrentContext = context;
         mCurrentContext->setCurrent();
-		LogManager::getSingleton().logMessage("a1");
 
         // Check if the context has already done one-time initialisation
         if (!mCurrentContext->getInitialized())
         {
-			LogManager::getSingleton().logMessage("a2");
             _oneTimeContextInitialization();
             mCurrentContext->setInitialized();
         }
-		LogManager::getSingleton().logMessage("a3");
 
         // Rebind GPU programs to new context
 		if (mCurrentVertexProgram)
 			mCurrentVertexProgram->bindProgram();
 		if (mCurrentFragmentProgram)
 			mCurrentFragmentProgram->bindProgram();
-
-		LogManager::getSingleton().logMessage("a4");
         
         // Must reset depth/colour write mask to according with user desired, otherwise,
         // clearFrameBuffer would be wrong because the value we are recorded may be
@@ -2006,12 +1992,8 @@ namespace Ogre {
         if (mCurrentContext)
             mCurrentContext->setCurrent();
 
-		LogManager::getSingleton().logMessage("b1111");
-		if (mGLSupport == NULL)
-			LogManager::getSingleton().logMessage("error mGLSupport is null.");
 		// Setup GLSupport
         mGLSupport->initialiseExtensions();
-		LogManager::getSingleton().logMessage("b2");
 
         LogManager::getSingleton().logMessage("**************************************");
         LogManager::getSingleton().logMessage("*** OpenGL ES 2.x Renderer Started ***");
@@ -2245,7 +2227,6 @@ namespace Ogre {
 
 		// Bind this new context to this thread.
 		newContext->setCurrent();
-		LogManager::getSingleton().logMessage("c1");
 
 		_oneTimeContextInitialization();
 		newContext->setInitialized();
@@ -2272,7 +2253,6 @@ namespace Ogre {
 		// reacquire context
         if(mCurrentContext)
             mCurrentContext->setCurrent();
-		LogManager::getSingleton().logMessage("d1");
 	}
 
 	unsigned int GLES2RenderSystem::getDisplayMonitorCount() const
@@ -2433,7 +2413,7 @@ namespace Ogre {
                                                       normalised,
                                                       static_cast<GLsizei>(vertexBuffer->getVertexSize()),
                                                       pBufferData));
-            
+
             mStateCacheManager->setVertexAttribEnabled(attrib);
 //                OGRE_CHECK_GL_ERROR(glEnableVertexAttribArray(attrib));
             attribsBound.push_back(attrib);

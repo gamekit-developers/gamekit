@@ -96,6 +96,7 @@ bool OgreKit::init(const gkString& blend)
 	m_prefs.winsize.x        = 800;
 	m_prefs.winsize.y        = 480;
 	m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
+	m_prefs.shaderCachePath = ".";
 
 	gkPath path = cfgfname;
 
@@ -173,11 +174,7 @@ jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 
 	LOGI("****** %s ******", file.c_str());
 
-	//Ogre::LogManager *lm = new Ogre::LogManager();
-	//gLog = lm->createLog("AndroidLog", true, true, true);
-	//g_ll = new AndroidLogListener();
 
-		printf("kkkkkkkkkk\n");
 	gkPrintf("-----------******-------------------");
 	Ogre::LogManager::getSingleton().stream() << "ffffffffffffffff";
  

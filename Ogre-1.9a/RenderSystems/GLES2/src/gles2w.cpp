@@ -103,26 +103,15 @@ static void *get_proc(const char *proc)
 	CFRelease(procname);
 	return res;
 }
-#elif 1 //OGRE_PLATFORM != OGRE_PLATFORM_NACL
+#else
 #include <dlfcn.h>
 #include <EGL/egl.h>
 
-#include "OgreLogManager.h"
-
 static void *libgl;
-
 
 static void open_libgl(void)
 {
-#if 1
 	libgl = dlopen("libGLESv2.so", RTLD_LAZY | RTLD_GLOBAL);
-#else
-	libgl = dlopen("libppapi_gles2.so", RTLD_LAZY | RTLD_GLOBAL);
-#endif
-	if (libgl)
-		Ogre::LogManager::getSingleton().logMessage("libgl is loaded");
-	else
-		Ogre::LogManager::getSingleton().logMessage("libgl is null");
 }
 
 static void close_libgl(void)
@@ -134,30 +123,7 @@ static void *get_proc(const char *proc)
 {
 	void *res;
     res = dlsym(libgl, proc);
-	if (res)
-		Ogre::LogManager::getSingleton().logMessage(proc);
 	return res;
-}
-#else
-#include <EGL/egl.h>
-
-#include "OgreLogManager.h"
-
-static void *libgl;
-
-
-static void open_libgl(void)
-{
-	Ogre::LogManager::getSingleton().logMessage("dummy open_libgl");
-}
-
-static void close_libgl(void)
-{	
-}
-
-static void *get_proc(const char *proc)
-{
-	return NULL;
 }
 #endif
 
@@ -177,13 +143,9 @@ static void load_procs(void);
 
 int gleswInit(void)
 {
-	Ogre::LogManager::getSingleton().logMessage("p1");
 	open_libgl();
-	Ogre::LogManager::getSingleton().logMessage("p2");
 	load_procs();
-	Ogre::LogManager::getSingleton().logMessage("p3");
 	close_libgl();
-	Ogre::LogManager::getSingleton().logMessage("p4");
 	return parse_version();
 }
 
@@ -810,9 +772,4 @@ static void load_procs(void)
 	gleswExtGetProgramBinarySourceQCOM = (PFNGLEXTGETPROGRAMBINARYSOURCEQCOMPROC) get_proc("glExtGetProgramBinarySourceQCOM");
 	gleswStartTilingQCOM = (PFNGLSTARTTILINGQCOMPROC) get_proc("glStartTilingQCOM");
 	gleswEndTilingQCOM = (PFNGLENDTILINGQCOMPROC) get_proc("glEndTilingQCOM");
-
-	if (gleswGetString)
-		Ogre::LogManager::getSingleton().logMessage("gleswGetString inited.");
-	else
-		Ogre::LogManager::getSingleton().logMessage("gleswGetString is null.");
 }

@@ -41,8 +41,6 @@ namespace Ogre {
         : mGLSupport(glsupport),
           mContext(0)
     {
-		LogManager::getSingleton().logMessage("q1");
-
 		assert(drawable);
         GLES2RenderSystem* renderSystem = static_cast<GLES2RenderSystem*>(Root::getSingleton().getRenderSystem());
         EGLContext* mainContext = static_cast<EGLContext*>(renderSystem->_getMainContext());
@@ -80,17 +78,11 @@ namespace Ogre {
                         "EGLContext::EGLContext");
         }
 
-		LogManager::getSingleton().logMessage("e1");
-
         setCurrent();
-
-		LogManager::getSingleton().logMessage("e2");
 
         // Initialise GL3W
         if (gleswInit())
             LogManager::getSingleton().logMessage("Failed to initialize GL3W");
-
-		LogManager::getSingleton().logMessage("e3");
     }
     
     void EGLContext::_destroyInternalResources()

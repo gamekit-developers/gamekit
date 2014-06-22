@@ -50,8 +50,8 @@ if (OGRE_BUILD_PLATFORM_NACL)
   file(GLOB PLATFORM_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/NaCl/*.cpp"
     src/OgreSearchOps.cpp)
 
-	list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLibManager.cpp"
-		"${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLib.cpp")
+	#list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLibManager.cpp"
+	#	"${CMAKE_CURRENT_SOURCE_DIR}/src/OgreDynLib.cpp")
 
 
   set(PLATFORM_LIBS nosys)

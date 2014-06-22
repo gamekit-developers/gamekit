@@ -84,7 +84,7 @@ THE SOFTWARE.
 #include "OgreWindowEventUtilities.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-#  include "macUtils.h"
+#include "macUtils.h"
 #endif
 #if OGRE_NO_PVRTC_CODEC == 0
 #  include "OgrePVRTCCodec.h"
@@ -149,10 +149,8 @@ namespace Ogre {
         LogManager::getSingleton().getDefaultLog()->addListener(mAndroidLogger);
 #endif
 
-#if OGRE_PLATFORM != OGRE_PLATFORM_NACL
         // Dynamic library manager
         mDynLibManager = OGRE_NEW DynLibManager();
-#endif
 
         mArchiveManager = OGRE_NEW ArchiveManager();
 
@@ -806,16 +804,15 @@ namespace Ogre {
         mRemovedFrameListeners.erase(newListener);
         mAddedFrameListeners.insert(newListener);
     }
-
     //-----------------------------------------------------------------------
     void Root::removeFrameListener(FrameListener* oldListener)
     {
         mAddedFrameListeners.erase(oldListener);
-			mRemovedFrameListeners.insert(oldListener);
+        mRemovedFrameListeners.insert(oldListener);
     }
     //-----------------------------------------------------------------------
     void Root::_syncAddedRemovedFrameListeners()
-        {
+    {
         for (set<FrameListener*>::type::iterator i = mRemovedFrameListeners.begin(); i != mRemovedFrameListeners.end(); i++)
             mFrameListeners.erase(*i);
         mRemovedFrameListeners.clear();
@@ -838,7 +835,6 @@ namespace Ogre {
         }
 
         return true;
-
     }
 	//-----------------------------------------------------------------------
     bool Root::_fireFrameRenderingQueued(FrameEvent& evt)
@@ -855,7 +851,6 @@ namespace Ogre {
         }
 
         return true;
-
     }
     //-----------------------------------------------------------------------
     bool Root::_fireFrameEnded(FrameEvent& evt)
