@@ -122,8 +122,13 @@ function(ogrekit_add_executable TARGETNAME)
 endfunction()
 
 macro(ogrekit_add_library TARGETNAME LIBTYPE)  
-  set(IS_UNITY_BUILD ${OGREKIT_UNITY_BUILD})
-  create_unity_build_files(${TARGETNAME} ${ARGN})
+  set(TMP_UTITY_BUILD ${OGRE_UNITY_BUILD})
+  set(OGRE_UNITY_BUILD ${OGREKIT_UNITY_BUILD})
+  
+  create_unity_build_files(${TARGETNAME} ${ARGN})  
+  
+  set(OGRE_UNITY_BUILD ${TMP_UTITY_BUILD})
+
   add_library(${TARGETNAME} ${LIBTYPE} ${_SOURCES})
 endmacro()
 
