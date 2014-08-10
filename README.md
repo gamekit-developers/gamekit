@@ -17,13 +17,24 @@ Building
 Use cmake on Windows, Linux and MacOSX should build without further configuration,
 all dependencies are included in the source tree.
 
-Example for MacOSX creating GNU Makefiles using CMake:
+It is easiest to use ''cmake-gui'' to configure all settings and create the build files.
+Alternatively you can use the commandline cmake tool,
+for example for MacOSX creating GNU Makefiles using CMake:
 
+```
 mkdir gmake
 cd gmake
 cmake ..
 make
+```
+Here are a examples to generate other build / project files, just run cmake without arguments to see other options:
 
+```
+cmake .. -G Xcode
+cmake .. -G "Visual Studio 12"
+cmake .. -G "Ninja"
+cmake .. -G "CodeBlocks - Unix Makefiles"
+```
 
 Further information
 ===================
