@@ -7,7 +7,8 @@
  * COPYRIGHT:
  *   Copyright (C) Stephen Thompson, <stephen@solarflare.org.uk>, 2011-2013
  *   Portions written By Erwin Coumans: replacing Eigen math library by Bullet LinearMath and a dedicated 6x6 matrix inverse (solveImatrix)
-
+ *   Spatial Algebra Layer and multi-dof support by Jakub Stephien
+ 
  This software is provided 'as-is', without any express or implied warranty.
  In no event will the authors be held liable for any damages arising from the use of this software.
  Permission is granted to anyone to use this software for any purpose,
