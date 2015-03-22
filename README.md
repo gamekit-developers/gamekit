@@ -39,4 +39,7 @@ cmake .. -G "CodeBlocks - Unix Makefiles"
 Further information
 ===================
 
-See http://gamekit.org or http://gamekit.googlecode.com
+See:
+* http://gamekit.org 
+* http://gamekit.googlecode.com
+* https://github.com/gamekit-developers/gamekit/wiki
